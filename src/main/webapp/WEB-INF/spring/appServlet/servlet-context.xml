@@ -11,7 +11,6 @@
     <resources mapping="swagger-ui.html" location="classpath:/META-INF/resources/"/>
     <resources mapping="/webjars/**" location="classpath:/META-INF/resources/webjars/"/>
     <resources mapping="/static/**" location="/WEB-INF/static/"/>
-    <resources mapping="/resoucres/**" location="/WEB-INF/static/resources/"/>
     <resources mapping="/css/**" location="/WEB-INF/static/css/"/>
     <resources mapping="/js/**" location="/WEB-INF/static/js/"/>
 
