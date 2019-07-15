@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="My_Spring_Maven_Swagger_API_Vuetify_Project:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <module>My_Spring_Maven_Swagger_API_Vuetify_Project</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
+    <root id="archive" name="ROOT.war">
+      <element id="artifact" artifact-name="My_Spring_Maven_Swagger_API_Vuetify_Project:war exploded" />
+    </root>
+  </artifact>
+</component>
