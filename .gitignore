@@ -27,5 +27,5 @@ hs_err_pid*
 /.idea/hotswap_agent.xml
 /.idea/workspace.xml
 /.idea/misc.xml
-/.idea/libraries/**
-/vue/node_modules/**
+/.idea/libraries/
+/vue/node_modules/

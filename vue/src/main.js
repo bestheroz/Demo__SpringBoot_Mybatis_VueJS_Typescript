@@ -5,6 +5,10 @@ import Vue from 'vue'
 import vuetify from '@/plugins/vuetify'
 import App from "./App";
 import router from './router'
+import axios from 'axios';
+
+window.axios = axios;
+axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'; //only when using Laravel
 
 new Vue({
   vuetify,
