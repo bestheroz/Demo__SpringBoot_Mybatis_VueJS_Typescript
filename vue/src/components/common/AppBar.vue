@@ -5,7 +5,7 @@
       dark
       app
     >
-      <v-btn icon>
+      <v-btn icon to="/">
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-icon dark v-on="on">home</v-icon>
