@@ -16,7 +16,7 @@ public class InitWebConstantContext {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private static String contextPath = null;
 
-    @Autowired(required = false)
+    @Autowired
     public void setConstant(final ServletContext servletContext) throws IllegalArgumentException {
         this.setContextPath(servletContext);
 

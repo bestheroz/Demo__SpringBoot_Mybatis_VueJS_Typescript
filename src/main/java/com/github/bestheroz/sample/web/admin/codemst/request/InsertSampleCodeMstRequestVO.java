@@ -1,4 +1,4 @@
-package com.github.bestheroz.sample.web.admin.valuelabel.request;
+package com.github.bestheroz.sample.web.admin.codemst.request;
 
 import io.swagger.annotations.ApiModelProperty;
 

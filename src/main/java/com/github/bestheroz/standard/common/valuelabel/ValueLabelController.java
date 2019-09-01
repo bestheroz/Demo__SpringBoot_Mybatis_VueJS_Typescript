@@ -14,14 +14,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Api(tags = "<value, label> 코드")
 @RestController
+@RequestMapping(value = "/common/valuelabel")
 public class ValueLabelController {
     @Autowired
     private ValueLabelService valueLabelService;
 
     @ApiOperation(value = "<value, label> 데이터 취득")
     @ApiResponses(value = {@ApiResponse(response = GetValueLabeVOListResponseVO.class, responseContainer = "List", code = 200, message = CommonCode.SWAGGER_COMMON_200_MESSAGE)})
-    @RequestMapping(value = "/common/valuelabel/getValueLabeVOList", method = RequestMethod.POST)
-    public CommonResponseVO getValueLabeVOList(@ApiParam(value = "그룹 코드", required = true) @RequestParam(value = "grcode") final String grcode) throws CommonException {
-        return MyResponseUtils.getSuccessCommonResponseVO(this.valueLabelService.getValueLabeVOList(grcode));
+    @RequestMapping(method = RequestMethod.GET)
+    public CommonResponseVO get(@ApiParam(value = "그룹 코드", required = true) @RequestParam(value = "grcode") final String grcode) throws CommonException {
+        return MyResponseUtils.getSuccessCommonResponseVO(this.valueLabelService.getList(grcode));
     }
 }

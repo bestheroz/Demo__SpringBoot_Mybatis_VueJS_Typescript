@@ -1,11 +1,15 @@
-package com.github.bestheroz.sample.web.admin.valuelabel.response;
+package com.github.bestheroz.sample.web.admin.codemst.request;
 
 import io.swagger.annotations.ApiModelProperty;
 
-public class GetSampleCodeMstVOListResponseVO {
-    @ApiModelProperty(value = "그룹 코드")
+import javax.validation.constraints.NotEmpty;
+
+public class UpdateSampleCodeMstRequestVO {
+    @NotEmpty
+    @ApiModelProperty(value = "그룹 코드", required = true)
     private String grcode;
-    @ApiModelProperty(value = "그룹 코드 명")
+    @NotEmpty
+    @ApiModelProperty(value = "그룹 코드 명", required = true)
     private String grcodeNm;
     @ApiModelProperty(value = "비고")
     private String remark1;

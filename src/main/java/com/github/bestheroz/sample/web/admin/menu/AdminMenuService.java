@@ -18,28 +18,28 @@ public class AdminMenuService {
     @Autowired
     private TableSampleMenuMstDAO tableSampleMenuMstDAO;
 
-    public List<GetSampleMenuMstVOListResponseVO> getSampleMenuMstVOList(final Integer menuId, final String menuNm) throws CommonException {
+    public List<GetSampleMenuMstVOListResponseVO> getList(final Integer menuId, final String menuNm) throws CommonException {
         final TableSampleMenuMstVO tableSampleMenuMstVO = new TableSampleMenuMstVO();
         tableSampleMenuMstVO.setMenuId(menuId);
         tableSampleMenuMstVO.setMenuNm(menuNm);
-        return this.adminMenuDAO.getSampleMenuMstVOList(tableSampleMenuMstVO);
+        return this.adminMenuDAO.getList(tableSampleMenuMstVO);
     }
 
-    public void insertSampleMenuMst(final TableSampleMenuMstVO vo) throws CommonException {
-        this.tableSampleMenuMstDAO.insertSampleMenuMst(vo);
+    public void insert(final TableSampleMenuMstVO vo) throws CommonException {
+        this.tableSampleMenuMstDAO.insert(vo);
     }
 
-    public void updateSampleMenuMst(final TableSampleMenuMstVO vo) throws CommonException {
-        this.tableSampleMenuMstDAO.updateSampleMenuMst(vo, Collections.singletonList("menuId"), null);
+    public void update(final TableSampleMenuMstVO vo) throws CommonException {
+        this.tableSampleMenuMstDAO.update(vo, Collections.singleton("menuId"), null);
     }
 
-    public void deleteSampleMenuMst(final Integer menuId) throws CommonException {
+    public void delete(final Integer menuId) throws CommonException {
         final TableSampleMenuMstVO vo = new TableSampleMenuMstVO();
         vo.setMenuId(menuId);
-        this.tableSampleMenuMstDAO.deleteSampleMenuMst(vo, Collections.singletonList("menuId"));
+        this.tableSampleMenuMstDAO.delete(vo, Collections.singleton("menuId"));
     }
 
-    public List<GetValueLabeVOListResponseVO> getPMenuValueLableVOList() throws CommonException {
-        return this.adminMenuDAO.getPMenuValueLableVOList();
+    public List<GetValueLabeVOListResponseVO> getMenuTypG() throws CommonException {
+        return this.adminMenuDAO.getMenuTypG();
     }
 }

@@ -30,7 +30,7 @@ public class DbTableVOCheckerContext {
     public static final String DEFAULT_DATE_TYPE = "LocalDateTime";
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Autowired(required = false)
+    @Autowired
     public void validDbTableVO(final SqlSession sqlSession) {
         try (Statement stmt = new SqlSessionFactoryBuilder().build(sqlSession.getConfiguration()).openSession().getConnection().createStatement()) {
             final List<Class<?>> targetClassList = this.findMyTypes("com.github.bestheroz");

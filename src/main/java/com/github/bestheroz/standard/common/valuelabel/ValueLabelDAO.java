@@ -14,7 +14,7 @@ import java.util.Map;
 public interface ValueLabelDAO {
     @Select(value = "SELECT SCD.CODE, SCD.CODE_NM FROM SAMPLE_CODE_DET SCD WHERE SCD.GRCODE = #{grcode, jdbcType=VARCHAR} ORDER BY SCD.DISP_SEQ ASC")
     @Results(value = {@Result(column = "CODE", property = "value"), @Result(column = "CODE_NM", property = "label")})
-    List<GetValueLabeVOListResponseVO> getValueLabeVOList(final String grcode) throws CommonException;
+    List<GetValueLabeVOListResponseVO> getList(final String grcode) throws CommonException;
 
     @Select(value = "SELECT SCD.CODE_NM FROM SAMPLE_CODE_DET SCD WHERE SCD.GRCODE = #{grcode, jdbcType=VARCHAR} AND SCD.CODE = #{code, jdbcType=VARCHAR}  ORDER BY SCD.DISP_SEQ ASC")
     @Results(value = {@Result(column = "CODE_NM", property = "label")})

@@ -1,27 +1,25 @@
-package com.github.bestheroz.sample.web.tablevo.samplecodedet;
+package com.github.bestheroz.sample.web.admin.codedet.response;
 
-import org.joda.time.LocalDateTime;
+import io.swagger.annotations.ApiModelProperty;
 
-import java.io.Serializable;
-
-@SuppressWarnings("ALL")
-public class TableSampleCodeDetVO implements Serializable {
+public class GetSampleCodeDetVOResponseVO {
+    @ApiModelProperty(value = "그룹 코드")
     private String grcode;
+    @ApiModelProperty(value = "코드")
     private String code;
+    @ApiModelProperty(value = "코드 명")
     private String codeNm;
+    @ApiModelProperty(value = "사용 여부")
     private String useYn;
+    @ApiModelProperty(value = "출력 순서")
     private Integer dispSeq;
+    @ApiModelProperty(value = "비고")
     private String remark1;
-    private String regMemberId;
-    private LocalDateTime regDt;
-    private String updMemberId;
-    private LocalDateTime updDt;
 
     public String getGrcode() {
         return this.grcode;
     }
 
-    @SuppressWarnings("unused")
     public void setGrcode(final String grcode) {
         this.grcode = grcode;
     }
@@ -64,38 +62,6 @@ public class TableSampleCodeDetVO implements Serializable {
 
     public void setRemark1(final String remark1) {
         this.remark1 = remark1;
-    }
-
-    public String getRegMemberId() {
-        return this.regMemberId;
-    }
-
-    public void setRegMemberId(final String regMemberId) {
-        this.regMemberId = regMemberId;
-    }
-
-    public LocalDateTime getRegDt() {
-        return this.regDt;
-    }
-
-    public void setRegDt(final LocalDateTime regDt) {
-        this.regDt = regDt;
-    }
-
-    public String getUpdMemberId() {
-        return this.updMemberId;
-    }
-
-    public void setUpdMemberId(final String updMemberId) {
-        this.updMemberId = updMemberId;
-    }
-
-    public LocalDateTime getUpdDt() {
-        return this.updDt;
-    }
-
-    public void setUpdDt(final LocalDateTime updDt) {
-        this.updDt = updDt;
     }
 
 }

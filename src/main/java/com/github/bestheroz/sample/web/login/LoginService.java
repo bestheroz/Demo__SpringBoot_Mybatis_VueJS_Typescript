@@ -24,7 +24,7 @@ public class LoginService {
         final TableSampleMemberMstVO tableSampleMemberMstVO = new TableSampleMemberMstVO();
         tableSampleMemberMstVO.setMemberId(memberId);
         tableSampleMemberMstVO.setMemberPw(memberPw);
-        final TableSampleMemberMstVO sampleMemberMstVO = this.tableSampleMemberMstDAO.getSampleMemberMstVO(tableSampleMemberMstVO, Collections.singletonList("memberId"));
+        final TableSampleMemberMstVO sampleMemberMstVO = this.tableSampleMemberMstDAO.getVO(tableSampleMemberMstVO, Collections.singleton("memberId"));
 
         // 로그인 관문
         // 1. 유저가 없으면

@@ -1,4 +1,4 @@
-package com.github.bestheroz.sample.web.admin.valuelabel.response;
+package com.github.bestheroz.sample.web.admin.codedet.response;
 
 import io.swagger.annotations.ApiModelProperty;
 

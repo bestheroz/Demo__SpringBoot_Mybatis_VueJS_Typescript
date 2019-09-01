@@ -73,6 +73,7 @@ public class TableSampleFileMstVO implements Serializable {
         this.regDt = regDt;
     }
 
+    @SuppressWarnings("unused")
     public String getUpdMemberId() {
         return this.updMemberId;
     }
@@ -85,6 +86,7 @@ public class TableSampleFileMstVO implements Serializable {
         return this.updDt;
     }
 
+    @SuppressWarnings("unused")
     public void setUpdDt(final LocalDateTime updDt) {
         this.updDt = updDt;
     }

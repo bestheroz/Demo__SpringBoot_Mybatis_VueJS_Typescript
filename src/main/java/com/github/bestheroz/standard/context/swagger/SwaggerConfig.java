@@ -35,7 +35,12 @@ public class SwaggerConfig {
 
     @Bean
     public Docket api5() {
-        return this.getDocket("코드관리", "com.github.bestheroz.sample.web.admin.valuelabel", "/sample/admin/valuelabel/**");
+        return this.getDocket("코드mst관리", "com.github.bestheroz.sample.web.admin.codemst", "/sample/admin/codemst/**");
+    }
+
+    @Bean
+    public Docket api6() {
+        return this.getDocket("코드det관리", "com.github.bestheroz.sample.web.admin.codedet", "/sample/admin/codedet/**");
     }
 
     public Docket getDocket(final String groupName, final String basePackage, final String paths) {

@@ -1,11 +1,11 @@
-package com.github.bestheroz.sample.web.admin.valuelabel.request;
+package com.github.bestheroz.sample.web.admin.codedet.request;
 
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
-public class UpdateSampleCodeDetRequestVO {
+public class InsertSampleCodeDetRequestVO {
     @NotEmpty
     @ApiModelProperty(value = "그룹 코드", required = true)
     private String grcode;

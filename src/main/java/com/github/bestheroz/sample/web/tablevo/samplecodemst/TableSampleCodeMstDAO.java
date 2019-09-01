@@ -1,28 +1,19 @@
 package com.github.bestheroz.sample.web.tablevo.samplecodemst;
 
 import com.github.bestheroz.standard.common.exception.CommonException;
+import com.github.bestheroz.standard.common.tablevo.SqlForTableDAO;
 import com.github.bestheroz.standard.common.tablevo.SqlForTableVO;
-import org.apache.ibatis.annotations.*;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.SelectProvider;
 
 import java.util.List;
+import java.util.Set;
 
 @Mapper
-public interface TableSampleCodeMstDAO {
-    @SelectProvider(type = SqlForTableVO.class, method = SqlForTableVO.COUNT)
-    int countSampleCodeMst(final TableSampleCodeMstVO vo, List<String> whereKey) throws CommonException;
-
+public interface TableSampleCodeMstDAO extends SqlForTableDAO {
     @SelectProvider(type = SqlForTableVO.class, method = SqlForTableVO.SELECT)
-    List<TableSampleCodeMstVO> getSampleCodeMstVOList(final TableSampleCodeMstVO vo, List<String> whereKey, String orderByColumns) throws CommonException;
+    List<TableSampleCodeMstVO> getList(final TableSampleCodeMstVO vo, final Set<String> whereKeys, final String orderByColumns) throws CommonException;
 
     @SelectProvider(type = SqlForTableVO.class, method = SqlForTableVO.SELECT_ONE)
-    TableSampleCodeMstVO getSampleCodeMstVO(final TableSampleCodeMstVO vo, List<String> whereKey) throws CommonException;
-
-    @InsertProvider(type = SqlForTableVO.class, method = SqlForTableVO.INSERT)
-    void insertSampleCodeMst(final TableSampleCodeMstVO vo) throws CommonException;
-
-    @UpdateProvider(type = SqlForTableVO.class, method = SqlForTableVO.UPDATE)
-    void updateSampleCodeMst(final TableSampleCodeMstVO vo, List<String> whereKey, List<String> forcedUpdateKey) throws CommonException;
-
-    @DeleteProvider(type = SqlForTableVO.class, method = SqlForTableVO.DELETE)
-    void deleteSampleCodeMst(final TableSampleCodeMstVO vo, List<String> whereKey) throws CommonException;
+    TableSampleCodeMstVO getVO(final TableSampleCodeMstVO vo, final Set<String> whereKeys) throws CommonException;
 }

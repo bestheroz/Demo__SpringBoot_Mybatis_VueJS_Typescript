@@ -3,7 +3,7 @@ package com.github.bestheroz.sample.web.admin.member.response;
 import io.swagger.annotations.ApiModelProperty;
 import org.joda.time.LocalDateTime;
 
-public class GetSampleMemberMstVOListResponseVO {
+public class GetSampleMemberMstVOResponseVO {
     @ApiModelProperty(value = "회원 아이디")
     private String memberId;
     @ApiModelProperty(value = "회원 명")

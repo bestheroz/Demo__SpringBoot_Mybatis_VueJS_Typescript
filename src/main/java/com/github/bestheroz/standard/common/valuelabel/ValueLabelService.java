@@ -14,8 +14,8 @@ public class ValueLabelService {
     @Autowired
     private ValueLabelDAO valueLabelDAO;
 
-    public List<GetValueLabeVOListResponseVO> getValueLabeVOList(final String grcode) throws CommonException {
-        return this.valueLabelDAO.getValueLabeVOList(grcode);
+    public List<GetValueLabeVOListResponseVO> getList(final String grcode) throws CommonException {
+        return this.valueLabelDAO.getList(grcode);
     }
 
     public String getLabelByValue(final Map<String, Object> params) throws CommonException {
@@ -24,7 +24,7 @@ public class ValueLabelService {
 
     public JsonObject getValueLabelVoListToJsonObject(final String grcode) throws CommonException {
         final JsonObject result = new JsonObject();
-        for (final GetValueLabeVOListResponseVO vo : this.getValueLabeVOList(grcode)) {
+        for (final GetValueLabeVOListResponseVO vo : this.getList(grcode)) {
             result.addProperty(vo.getValue(), vo.getLabel());
         }
         return result;
