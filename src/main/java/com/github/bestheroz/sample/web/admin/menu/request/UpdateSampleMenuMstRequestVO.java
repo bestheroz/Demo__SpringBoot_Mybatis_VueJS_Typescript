@@ -6,9 +6,6 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 public class UpdateSampleMenuMstRequestVO {
-    @NotNull
-    @ApiModelProperty(value = "메뉴 아이디", required = true)
-    private Integer menuId;
     @NotEmpty
     @ApiModelProperty(value = "메뉴 명", required = true)
     private String menuNm;
@@ -31,14 +28,6 @@ public class UpdateSampleMenuMstRequestVO {
     private String url;
     @ApiModelProperty(value = "비고")
     private String remark1;
-
-    public Integer getMenuId() {
-        return this.menuId;
-    }
-
-    public void setMenuId(final Integer menuId) {
-        this.menuId = menuId;
-    }
 
     public String getMenuNm() {
         return this.menuNm;

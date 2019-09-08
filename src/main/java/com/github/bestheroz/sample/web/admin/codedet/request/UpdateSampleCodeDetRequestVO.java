@@ -7,12 +7,6 @@ import javax.validation.constraints.NotNull;
 
 public class UpdateSampleCodeDetRequestVO {
     @NotEmpty
-    @ApiModelProperty(value = "그룹 코드", required = true)
-    private String grcode;
-    @NotEmpty
-    @ApiModelProperty(value = "코드", required = true)
-    private String code;
-    @NotEmpty
     @ApiModelProperty(value = "코드 명", required = true)
     private String codeNm;
     @NotEmpty
@@ -23,22 +17,6 @@ public class UpdateSampleCodeDetRequestVO {
     private Integer dispSeq;
     @ApiModelProperty(value = "비고")
     private String remark1;
-
-    public String getGrcode() {
-        return this.grcode;
-    }
-
-    public void setGrcode(final String grcode) {
-        this.grcode = grcode;
-    }
-
-    public String getCode() {
-        return this.code;
-    }
-
-    public void setCode(final String code) {
-        this.code = code;
-    }
 
     public String getCodeNm() {
         return this.codeNm;

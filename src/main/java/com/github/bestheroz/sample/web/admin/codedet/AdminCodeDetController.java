@@ -6,14 +6,16 @@ import com.github.bestheroz.sample.web.admin.codedet.response.GetSampleCodeDetVO
 import com.github.bestheroz.sample.web.tablevo.samplecodedet.TableSampleCodeDetVO;
 import com.github.bestheroz.standard.common.constant.CommonCode;
 import com.github.bestheroz.standard.common.exception.CommonException;
+import com.github.bestheroz.standard.common.exception.CommonExceptionCode;
 import com.github.bestheroz.standard.common.protocol.CommonResponseVO;
 import com.github.bestheroz.standard.common.util.MyMapperUtils;
 import com.github.bestheroz.standard.common.util.MyResponseUtils;
 import io.swagger.annotations.*;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -21,50 +23,63 @@ import javax.annotation.Resource;
 @RestController
 @RequestMapping(value = "/sample/admin/codedet")
 public class AdminCodeDetController {
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     @Resource
-    private AdminCodeDetService adminValueLabelService;
+    private AdminCodeDetService adminCodeDetService;
 
     @ApiOperation(value = "상세 코드 데이터 취득")
     @ApiResponses(value = {@ApiResponse(response = GetSampleCodeDetVOListResponseVO.class, responseContainer = "List", code = 200, message = CommonCode.SWAGGER_COMMON_200_MESSAGE)})
-    @RequestMapping(value="{grcode}", method = RequestMethod.GET)
+    @RequestMapping(value = "{grcode}", method = RequestMethod.GET)
     public CommonResponseVO getList(@ApiParam("그룹 코드") @PathVariable(value = "grcode") final String grcode) throws CommonException {
-        return MyResponseUtils.getSuccessCommonResponseVO(this.adminValueLabelService.getList(grcode));
+        return MyResponseUtils.getSuccessCommonResponseVO(this.adminCodeDetService.getList(grcode));
     }
 
     @ApiOperation(value = "상세 코드 데이터 취득")
     @ApiResponses(value = {@ApiResponse(code = 200, message = CommonCode.SWAGGER_COMMON_200_MESSAGE)})
-    @RequestMapping(value="{grcode}/{code}", method = RequestMethod.GET)
+    @RequestMapping(value = "{grcode}/{code}", method = RequestMethod.GET)
     public CommonResponseVO getVO(@ApiParam("그룹 코드") @PathVariable(value = "grcode") final String grcode,
                                   @ApiParam("상세 코드") @PathVariable(value = "code", required = false) final String code) throws CommonException {
-        return MyResponseUtils.getSuccessCommonResponseVO(this.adminValueLabelService.getVO(grcode, code));
+        return MyResponseUtils.getSuccessCommonResponseVO(this.adminCodeDetService.getVO(grcode, code));
     }
 
     @ApiOperation(value = "상세 코드 데이터 추가")
     @ApiResponses({@ApiResponse(code = 200, message = CommonCode.SWAGGER_COMMON_200_MESSAGE)})
     @RequestMapping(method = RequestMethod.POST)
-    public CommonResponseVO insert(final InsertSampleCodeDetRequestVO vo) throws CommonException {
+    public CommonResponseVO insert(@RequestBody final InsertSampleCodeDetRequestVO vo, final BindingResult bindingResult) throws CommonException {
+        for (final FieldError fieldError : bindingResult.getFieldErrors()) {
+            this.logger.warn(new CommonException(CommonExceptionCode.ERROR_INVALID_PARAMETER, fieldError.getDefaultMessage()).getJsonObject().toString());
+        }
         final TableSampleCodeDetVO tableSampleCodeDetVO = MyMapperUtils.writeObjectAsObject(vo, TableSampleCodeDetVO.class);
         tableSampleCodeDetVO.setRegMemberId("insert");
-        this.adminValueLabelService.insert(tableSampleCodeDetVO);
+        tableSampleCodeDetVO.setUpdMemberId("insert");
+        this.adminCodeDetService.insert(tableSampleCodeDetVO);
         return MyResponseUtils.SUCCESS_NORMAL;
     }
 
     @ApiOperation(value = "상세 코드 데이터 수정")
     @ApiResponses({@ApiResponse(code = 200, message = CommonCode.SWAGGER_COMMON_200_MESSAGE)})
-    @RequestMapping(method = RequestMethod.PATCH)
-    public CommonResponseVO update(final UpdateSampleCodeDetRequestVO vo) throws CommonException {
+    @RequestMapping(value = "{grcode}/{code}", method = RequestMethod.PATCH)
+    public CommonResponseVO update(@ApiParam("그룹 코드") @PathVariable(value = "grcode") final String grcode,
+                                   @ApiParam("상세 코드") @PathVariable(value = "code") final String code, @RequestBody final UpdateSampleCodeDetRequestVO vo, final BindingResult bindingResult)
+            throws CommonException {
+        for (final FieldError fieldError : bindingResult.getFieldErrors()) {
+            this.logger.warn(new CommonException(CommonExceptionCode.ERROR_INVALID_PARAMETER, fieldError.getDefaultMessage()).getJsonObject().toString());
+        }
         final TableSampleCodeDetVO tableSampleCodeDetVO = MyMapperUtils.writeObjectAsObject(vo, TableSampleCodeDetVO.class);
+        tableSampleCodeDetVO.setGrcode(grcode);
+        tableSampleCodeDetVO.setCode(code);
         tableSampleCodeDetVO.setUpdMemberId("update");
-        this.adminValueLabelService.update(tableSampleCodeDetVO);
+        this.adminCodeDetService.update(tableSampleCodeDetVO);
         return MyResponseUtils.SUCCESS_NORMAL;
     }
 
     @ApiOperation(value = "상세 코드 데이터 삭제")
     @ApiResponses({@ApiResponse(code = 200, message = CommonCode.SWAGGER_COMMON_200_MESSAGE)})
-    @RequestMapping(value="{grcode}/{code}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "{grcode}/{code}", method = RequestMethod.DELETE)
     public CommonResponseVO delete(@ApiParam("그룹 코드") @PathVariable(value = "grcode") final String grcode,
                                    @ApiParam("상세 코드") @PathVariable(value = "code") final String code) throws CommonException {
-        this.adminValueLabelService.delete(grcode, code);
+        this.adminCodeDetService.delete(grcode, code);
         return MyResponseUtils.SUCCESS_NORMAL;
     }
 }

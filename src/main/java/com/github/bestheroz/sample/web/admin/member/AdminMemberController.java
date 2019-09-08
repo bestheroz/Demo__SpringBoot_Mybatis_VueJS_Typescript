@@ -15,10 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
@@ -48,23 +45,25 @@ public class AdminMemberController {
     @ApiOperation(value = "회원 데이터 추가")
     @ApiResponses({@ApiResponse(code = 200, message = CommonCode.SWAGGER_COMMON_200_MESSAGE)})
     @RequestMapping(method = RequestMethod.POST)
-    public CommonResponseVO insert(@Valid final InsertSampleMemberMstRequestVO vo, final BindingResult bindingResult) throws CommonException {
+    public CommonResponseVO insert(@Valid @RequestBody final InsertSampleMemberMstRequestVO vo, final BindingResult bindingResult) throws CommonException {
         for (final FieldError fieldError : bindingResult.getFieldErrors()) {
             this.logger.warn(new CommonException(CommonExceptionCode.ERROR_INVALID_PARAMETER, fieldError.getDefaultMessage()).getJsonObject().toString());
         }
         final TableSampleMemberMstVO tableSampleMemberMstVO = MyMapperUtils.writeObjectAsObject(vo, TableSampleMemberMstVO.class);
-        if (tableSampleMemberMstVO.getMemberId().equals("22")) {
-            throw new CommonException(CommonExceptionCode.ERROR_INVALID_PARAMETER);
-        }
         tableSampleMemberMstVO.setRegMemberId("insert");
+        tableSampleMemberMstVO.setUpdMemberId("insert");
         this.adminMemberService.insert(tableSampleMemberMstVO);
         return MyResponseUtils.SUCCESS_NORMAL;
     }
 
     @ApiOperation(value = "회원 데이터 수정")
     @ApiResponses({@ApiResponse(code = 200, message = CommonCode.SWAGGER_COMMON_200_MESSAGE)})
-    @RequestMapping(method = RequestMethod.PATCH)
-    public CommonResponseVO update(final UpdateSampleMemberMstRequestVO vo) throws CommonException {
+    @RequestMapping(value = "{memberId}", method = RequestMethod.PATCH)
+    public CommonResponseVO update(@ApiParam(value = "회원 아이디", required = true) @PathVariable(value = "memberId") final String memberId, @RequestBody final UpdateSampleMemberMstRequestVO vo,
+                                   final BindingResult bindingResult) throws CommonException {
+        for (final FieldError fieldError : bindingResult.getFieldErrors()) {
+            this.logger.warn(new CommonException(CommonExceptionCode.ERROR_INVALID_PARAMETER, fieldError.getDefaultMessage()).getJsonObject().toString());
+        }
         final TableSampleMemberMstVO tableSampleMemberMstVO = MyMapperUtils.writeObjectAsObject(vo, TableSampleMemberMstVO.class);
         tableSampleMemberMstVO.setUpdMemberId("update");
         this.adminMemberService.update(tableSampleMemberMstVO);
@@ -73,7 +72,7 @@ public class AdminMemberController {
 
     @ApiOperation(value = "회원 데이터 삭제")
     @ApiResponses({@ApiResponse(code = 200, message = CommonCode.SWAGGER_COMMON_200_MESSAGE)})
-    @RequestMapping(value="{memberId}",method = RequestMethod.DELETE)
+    @RequestMapping(value = "{memberId}", method = RequestMethod.DELETE)
     public CommonResponseVO delete(@ApiParam(value = "회원 아이디", required = true) @PathVariable(value = "memberId") final String memberId) throws CommonException {
         this.adminMemberService.delete(memberId);
         return MyResponseUtils.SUCCESS_NORMAL;

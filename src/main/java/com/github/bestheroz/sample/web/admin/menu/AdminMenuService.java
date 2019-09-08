@@ -5,24 +5,37 @@ import com.github.bestheroz.sample.web.tablevo.samplemenumst.TableSampleMenuMstD
 import com.github.bestheroz.sample.web.tablevo.samplemenumst.TableSampleMenuMstVO;
 import com.github.bestheroz.standard.common.exception.CommonException;
 import com.github.bestheroz.standard.common.valuelabel.response.GetValueLabeVOListResponseVO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class AdminMenuService {
-    @Autowired
+    @Resource
     private AdminMenuDAO adminMenuDAO;
-    @Autowired
+    @Resource
     private TableSampleMenuMstDAO tableSampleMenuMstDAO;
 
-    public List<GetSampleMenuMstVOListResponseVO> getList(final Integer menuId, final String menuNm) throws CommonException {
+    public List<GetSampleMenuMstVOListResponseVO> getList() throws CommonException {
+        return this.adminMenuDAO.getList(new TableSampleMenuMstVO(), Collections.EMPTY_SET, "UPD_DT DESC");
+    }
+
+    public GetSampleMenuMstVOListResponseVO getVO(final Integer menuId, final String menuNm) throws CommonException {
         final TableSampleMenuMstVO tableSampleMenuMstVO = new TableSampleMenuMstVO();
+        Set<String> whereKeys = new HashSet<>();
         tableSampleMenuMstVO.setMenuId(menuId);
         tableSampleMenuMstVO.setMenuNm(menuNm);
-        return this.adminMenuDAO.getList(tableSampleMenuMstVO);
+        if (menuId != null) {
+            whereKeys.add("menuId");
+        }
+        if (menuNm != null) {
+            whereKeys.add("menuNm");
+        }
+        return this.adminMenuDAO.getVO(tableSampleMenuMstVO, whereKeys);
     }
 
     public void insert(final TableSampleMenuMstVO vo) throws CommonException {
@@ -39,7 +52,7 @@ public class AdminMenuService {
         this.tableSampleMenuMstDAO.delete(vo, Collections.singleton("menuId"));
     }
 
-    public List<GetValueLabeVOListResponseVO> getMenuTypG() throws CommonException {
+    List<GetValueLabeVOListResponseVO> getMenuTypG() throws CommonException {
         return this.adminMenuDAO.getMenuTypG();
     }
 }

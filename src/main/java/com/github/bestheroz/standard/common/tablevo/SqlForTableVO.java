@@ -38,7 +38,7 @@ public class SqlForTableVO {
     private static final String ENCRYPTED_FIELD_LIST = "ENCRYPTED_COLUMN_LIST";
     private static final Set<String> EXCLUDE_FIELD_LIST = Sets.newHashSet("SERIAL_VERSION_U_I_D", "serialVersionUID", "E_N_C_R_Y_P_T_E_D__C_O_L_U_M_N__L_I_S_T");
     // 참고용: 각VO에 암호화 컬럼 정의 방법
-    // public static transient final Set<String> ENCRYPTED_COLUMN_LIST = Arrays.asList("mbrMobl", "emailId").stream().collect(Collectors.toSet());
+    // public static transient final Set<String> ENCRYPTED_COLUMN_LIST = Sets.newHashSet("mbrMobl", "emailId").stream().collect(Collectors.toSet());
     private static final String SELECT_ENCRYPTED_STRING = "XX1.DEC_VARCHAR2_SEL ({0}, 10, ''SSN'', ''{1}'', ''{0}'') AS {0}";
     private static final String INSERT_BIND_STRING = "#'{'{0}{1}'}'";
     private static final String INSERT_BIND_ENCRYPTED_STRING = "XX1.ENC_VARCHAR2_INS (#'{'{1}{2}'}', 11, ''SSN'', ''{3}'', ''{0}'')";
