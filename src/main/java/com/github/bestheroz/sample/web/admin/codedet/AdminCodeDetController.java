@@ -10,17 +10,18 @@ import com.github.bestheroz.standard.common.protocol.CommonResponseVO;
 import com.github.bestheroz.standard.common.util.MyMapperUtils;
 import com.github.bestheroz.standard.common.util.MyResponseUtils;
 import io.swagger.annotations.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
+
 @Api(tags = "코드 관리")
 @RestController
 @RequestMapping(value = "/sample/admin/codedet")
 public class AdminCodeDetController {
-    @Autowired
+    @Resource
     private AdminCodeDetService adminValueLabelService;
 
     @ApiOperation(value = "상세 코드 데이터 취득")
@@ -50,7 +51,7 @@ public class AdminCodeDetController {
 
     @ApiOperation(value = "상세 코드 데이터 수정")
     @ApiResponses({@ApiResponse(code = 200, message = CommonCode.SWAGGER_COMMON_200_MESSAGE)})
-    @RequestMapping(method = RequestMethod.PUT)
+    @RequestMapping(method = RequestMethod.PATCH)
     public CommonResponseVO update(final UpdateSampleCodeDetRequestVO vo) throws CommonException {
         final TableSampleCodeDetVO tableSampleCodeDetVO = MyMapperUtils.writeObjectAsObject(vo, TableSampleCodeDetVO.class);
         tableSampleCodeDetVO.setUpdMemberId("update");

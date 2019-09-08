@@ -13,7 +13,6 @@ import com.github.bestheroz.standard.common.util.MyResponseUtils;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import javax.validation.Valid;
 
 @Api(tags = "회원 관리")
@@ -28,7 +28,7 @@ import javax.validation.Valid;
 @RequestMapping(value = "/sample/admin/member")
 public class AdminMemberController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-    @Autowired
+    @Resource
     private AdminMemberService adminMemberService;
 
     @ApiOperation(value = "회원 데이터 취득")
@@ -40,7 +40,7 @@ public class AdminMemberController {
 
     @ApiOperation(value = "회원 데이터 취득")
     @ApiResponses({@ApiResponse(response = GetSampleMemberMstVOResponseVO.class, code = 200, message = CommonCode.SWAGGER_COMMON_200_MESSAGE)})
-    @RequestMapping(value="memberId", method = RequestMethod.GET)
+    @RequestMapping(value = "{memberId}", method = RequestMethod.GET)
     public CommonResponseVO getVO(@ApiParam(value = "회원 아이디") @PathVariable(value = "memberId") final String memberId) throws CommonException {
         return MyResponseUtils.getSuccessCommonResponseVO(this.adminMemberService.getVO(memberId));
     }
@@ -63,7 +63,7 @@ public class AdminMemberController {
 
     @ApiOperation(value = "회원 데이터 수정")
     @ApiResponses({@ApiResponse(code = 200, message = CommonCode.SWAGGER_COMMON_200_MESSAGE)})
-    @RequestMapping(method = RequestMethod.PUT)
+    @RequestMapping(method = RequestMethod.PATCH)
     public CommonResponseVO update(final UpdateSampleMemberMstRequestVO vo) throws CommonException {
         final TableSampleMemberMstVO tableSampleMemberMstVO = MyMapperUtils.writeObjectAsObject(vo, TableSampleMemberMstVO.class);
         tableSampleMemberMstVO.setUpdMemberId("update");
