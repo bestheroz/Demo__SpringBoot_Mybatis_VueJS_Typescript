@@ -19,7 +19,7 @@
         <beans:property name="prefix" value="/WEB-INF/static/"/>
         <beans:property name="suffix" value=".html"/>
         <beans:property name="viewClass" value="org.springframework.web.servlet.view.InternalResourceView"/>
-        <beans:property name="contentType" value="text/html;charset=UTF-8"></beans:property>
+        <beans:property name="contentType" value="text/html;charset=UTF-8"/>
     </beans:bean>
 
     <context:component-scan base-package="com.github.bestheroz"/>
@@ -28,24 +28,17 @@
     <annotation-driven conversion-service="conversionService"/>
     <default-servlet-handler/>
 
-    <!-- 인터셉트 -->
-    <!-- <interceptors> -->
-    <!-- <interceptor> -->
-    <!-- <mapping path="/**" /> -->
-    <!-- <exclude-mapping path="/favicon.ico" /> -->
-    <!-- <exclude-mapping path="/swagger-ui.html" /> -->
-    <!-- <exclude-mapping path="/swagger-resources/**" /> -->
-    <!-- <exclude-mapping path="/configuration/**" /> -->
-    <!-- <exclude-mapping path="/webjars/**" /> -->
-    <!-- <exclude-mapping path="/v2/api-docs" /> -->
+    <cors>
+        <mapping path="/**"/>
+        <!--        <mapping path="/**" allowed-origins="http://localhost, http://example1.com, http://localhost:8080" />-->
+    </cors>
 
-    <!-- <exclude-mapping path="/" /> -->
-    <!-- <exclude-mapping path="/csrf" /> -->
-    <!-- <exclude-mapping path="/common/valuelabel/getValueLabeVOList.json" /> -->
-    <!-- <exclude-mapping path="/favicon.ico" /> -->
-    <!-- <exclude-mapping path="/common/exception/**" /> -->
-    <!-- <beans:bean class="Interceptor"></beans:bean> -->
-    <!-- </interceptor> -->
-    <!-- </interceptors> -->
+    <!-- 인터셉트 -->
+    <interceptors>
+        <interceptor>
+            <mapping path="/**"/>
+            <beans:bean class="com.github.bestheroz.standard.common.interceptor.Interceptor"/>
+        </interceptor>
+    </interceptors>
 
 </beans:beans>

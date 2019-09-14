@@ -131,28 +131,28 @@
 
         methods: {
             getList(){
-                this.$http.get(`${baseURI}/sample/admin/member/`)
+                this.$http.get(`${apiURL}/sample/admin/member/`)
                     .then((result) => {
-                        console.log(result)
+                        console.log(result);
                         this.posts = result.data
                     });
             },
 
             editItem(item) {
-                this.editedIndex = this.desserts.indexOf(item)
-                this.editedItem = Object.assign({}, item)
+                this.editedIndex = this.desserts.indexOf(item);
+                this.editedItem = Object.assign({}, item);
                 this.dialog = true
             },
 
             deleteItem(item) {
-                const index = this.desserts.indexOf(item)
+                const index = this.desserts.indexOf(item);
                 confirm('Are you sure you want to delete this item?') && this.desserts.splice(index, 1)
             },
 
             close() {
-                this.dialog = false
+                this.dialog = false;
                 setTimeout(() => {
-                    this.editedItem = Object.assign({}, this.defaultItem)
+                    this.editedItem = Object.assign({}, this.defaultItem);
                     this.editedIndex = -1
                 }, 300)
             },

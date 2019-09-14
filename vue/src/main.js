@@ -10,7 +10,7 @@ import axios from 'axios';
 Vue.prototype.$http = axios;
 window.axios = axios;
 axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'; //only when using Laravel
-window.baseURI = 'http://localhost:8000';
+window.apiURL = 'http://localhost:8000';
 
 new Vue({
   vuetify,
