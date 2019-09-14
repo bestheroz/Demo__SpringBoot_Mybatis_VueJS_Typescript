@@ -70,6 +70,9 @@
           delete
         </v-icon>
       </template>
+      <template v-slot:item.expireDt="{ item }">
+        {{ $moment(item.expireDt).format('YYYY-MM-DD HH:mm:ss')}}
+      </template>
       <template v-slot:no-data>
         <v-btn color="primary" @click="getList">Reset</v-btn>
       </template>
@@ -80,6 +83,7 @@
 <script>
     export default {
         name: "ManageMember",
+        components: {},
         data: () => ({
             dialog: false,
             headers: [
@@ -131,7 +135,7 @@
 
         methods: {
             async getList() {
-                const result = await this.$http.get(`${apiURL}/sample/admin/member/`);
+                const result = await this.axios.get(`${apiURL}/sample/admin/member/`);
                 console.log(result);
                 this.listData = result.data.responseData;
             },
