@@ -130,12 +130,10 @@
         },
 
         methods: {
-            getList(){
-                this.$http.get(`${apiURL}/sample/admin/member/`)
-                    .then((result) => {
-                        console.log(result);
-                        this.posts = result.data
-                    });
+            async getList() {
+                const result = await this.$http.get(`${apiURL}/sample/admin/member/`);
+                console.log(result);
+                this.listData = result.data.responseData;
             },
 
             editItem(item) {
