@@ -50,7 +50,7 @@ public class SwaggerConfig {
     }
 
     private ApiInfo getApiInfo(final String groupName) {
-        return new ApiInfoBuilder().title("SK M&Service API System").description(groupName + " API Document").termsOfServiceUrl("http://www.myervice.com").version("181107")
+        return new ApiInfoBuilder().title("API System").description(groupName + " API Document").termsOfServiceUrl("https://github.com/bestheroz").version("190915")
                 .license("Apache License Version 2.0").licenseUrl("http://www.apache.org/licenses/LICENSE-2.0").build();
     }
 }
