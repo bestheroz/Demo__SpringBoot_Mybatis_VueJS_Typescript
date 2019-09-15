@@ -66,7 +66,7 @@ public class AdminMenuController {
 
     @ApiOperation(value = "메뉴 데이터 삭제")
     @ApiResponses({@ApiResponse(code = 200, message = CommonCode.SWAGGER_COMMON_200_MESSAGE)})
-    @RequestMapping(value = "{menuId}", method = RequestMethod.POST)
+    @RequestMapping(value = "{menuId}", method = RequestMethod.DELETE)
     public CommonResponseVO delete(@ApiParam("메뉴 아이디") @PathVariable(value = "menuId") final Integer menuId) throws CommonException {
         this.adminMenuService.delete(menuId);
         return MyResponseUtils.SUCCESS_NORMAL;
@@ -74,7 +74,7 @@ public class AdminMenuController {
 
     @ApiOperation(value = "부모 메뉴<menuId, menuNm> 리스트 취득")
     @ApiResponses(value = {@ApiResponse(response = GetSampleMenuMstVOListResponseVO.class, responseContainer = "List", code = 200, message = CommonCode.SWAGGER_COMMON_200_MESSAGE)})
-    @RequestMapping(value = "getMenuTypG", method = RequestMethod.POST)
+    @RequestMapping(value = "getMenuTypG", method = RequestMethod.GET)
     public CommonResponseVO getMenuTypG() throws CommonException {
         return MyResponseUtils.getSuccessCommonResponseVO(this.adminMenuService.getMenuTypG());
     }
