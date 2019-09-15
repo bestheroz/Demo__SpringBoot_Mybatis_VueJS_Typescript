@@ -14,19 +14,11 @@
     <resources mapping="/css/**" location="/WEB-INF/static/css/"/>
     <resources mapping="/js/**" location="/WEB-INF/static/js/"/>
 
-    <!-- Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory -->
-    <beans:bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-        <beans:property name="prefix" value="/WEB-INF/static/"/>
-        <beans:property name="suffix" value=".html"/>
-        <beans:property name="viewClass" value="org.springframework.web.servlet.view.InternalResourceView"/>
-        <beans:property name="contentType" value="text/html;charset=UTF-8"/>
-    </beans:bean>
-
     <context:component-scan base-package="com.github.bestheroz"/>
 
     <!-- Enables the Spring MVC @Controller programming model -->
     <annotation-driven conversion-service="conversionService"/>
-    <!--    <default-servlet-handler/>-->
+    <default-servlet-handler/>
 
     <cors>
         <mapping path="/**"/>

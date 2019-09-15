@@ -1,13 +1,13 @@
-package com.github.bestheroz.standard.common.swagger;
+package com.github.bestheroz.standard.common.main;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
-public class SwaggerController {
-    @RequestMapping(value = "/swagger", method = RequestMethod.GET)
+public class MainController {
+    @RequestMapping(value = "/", method = RequestMethod.GET)
     public String home() {
-        return "forward:/swagger-ui.html";
+        return "forward:/static/index.html";
     }
 }
