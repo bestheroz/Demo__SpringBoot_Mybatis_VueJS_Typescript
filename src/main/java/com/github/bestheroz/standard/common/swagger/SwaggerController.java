@@ -8,6 +8,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class SwaggerController {
     @RequestMapping(value = "/swagger", method = RequestMethod.GET)
     public String home() {
-        return "forward:/swagger-ui.html";
+        return "redirect:/swagger-ui.html";
     }
 }
