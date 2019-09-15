@@ -33,12 +33,4 @@
         <!--        <mapping path="/**" allowed-origins="http://localhost, http://example1.com, http://localhost:8080" />-->
     </cors>
 
-    <!-- 인터셉트 -->
-    <interceptors>
-        <interceptor>
-            <mapping path="/**"/>
-            <beans:bean class="com.github.bestheroz.standard.common.interceptor.Interceptor"/>
-        </interceptor>
-    </interceptors>
-
 </beans:beans>
