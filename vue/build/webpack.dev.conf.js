@@ -4,20 +4,17 @@ const webpack = require('webpack');
 const merge = require('webpack-merge');
 const baseConfig = require('./webpack.base.conf');
 
-const HOST = 'localhost';
-const PORT = 8080;
-
 module.exports = merge(baseConfig, {
   mode: 'development',
 
   devServer: {
-    clientLogLevel: 'warning',
+    clientLogLevel: 'debug',
     hot: true,
     contentBase: 'dist',
     compress: true,
-    host: HOST,
-    port: PORT,
-    open: true,
+    host: 'localhost',
+    port: 8080,
+    open: false,
     overlay: { warnings: false, errors: true },
     publicPath: '/',
     quiet: true,

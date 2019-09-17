@@ -21,9 +21,6 @@ module.exports = merge(baseConfig, {
     },
   },
   devtool: false,
-  output: {
-    path: config.build.assetsRoot,
-  },
   module: {
     rules: [
       {
