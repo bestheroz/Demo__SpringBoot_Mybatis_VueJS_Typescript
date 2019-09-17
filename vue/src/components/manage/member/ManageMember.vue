@@ -19,8 +19,8 @@
           />
           <div class="flex-grow-1" />
           <v-dialog
-            max-width="500px"
             v-model="dialog"
+            max-width="500px"
           >
             <template v-slot:activator="{ on }">
               <v-btn
@@ -46,8 +46,8 @@
                       sm="6"
                     >
                       <v-text-field
-                        label="Dessert name"
                         v-model="editedItem.name"
+                        label="Dessert name"
                       />
                     </v-col>
                     <v-col
@@ -56,8 +56,8 @@
                       sm="6"
                     >
                       <v-text-field
-                        label="Calories"
                         v-model="editedItem.calories"
+                        label="Calories"
                       />
                     </v-col>
                     <v-col
@@ -66,8 +66,8 @@
                       sm="6"
                     >
                       <v-text-field
-                        label="Fat (g)"
                         v-model="editedItem.fat"
+                        label="Fat (g)"
                       />
                     </v-col>
                     <v-col
@@ -76,8 +76,8 @@
                       sm="6"
                     >
                       <v-text-field
-                        label="Carbs (g)"
                         v-model="editedItem.carbs"
+                        label="Carbs (g)"
                       />
                     </v-col>
                     <v-col
@@ -86,8 +86,8 @@
                       sm="6"
                     >
                       <v-text-field
-                        label="Protein (g)"
                         v-model="editedItem.protein"
+                        label="Protein (g)"
                       />
                     </v-col>
                   </v-row>
@@ -97,16 +97,16 @@
               <v-card-actions>
                 <div class="flex-grow-1" />
                 <v-btn
-                  @click="close"
                   color="blue darken-1"
                   text
+                  @click="close"
                 >
                   Cancel
                 </v-btn>
                 <v-btn
-                  @click="save"
                   color="blue darken-1"
                   text
+                  @click="save"
                 >
                   Save
                 </v-btn>
@@ -135,8 +135,8 @@
       </template>
       <template v-slot:no-data>
         <v-btn
-          @click="getList"
           color="primary"
+          @click="getList"
         >
           Reset
         </v-btn>
@@ -202,27 +202,27 @@ export default {
     async getList () {
       const result = await this.axios.get(
         `${this.apiURL}/sample/admin/member/`
-      );
-      console.log(result);
+      )
+      console.log(result)
       this.listData = result.data.responseData
     },
 
     editItem (item) {
-      this.editedIndex = this.desserts.indexOf(item);
-      this.editedItem = Object.assign({}, item);
+      this.editedIndex = this.desserts.indexOf(item)
+      this.editedItem = Object.assign({}, item)
       this.dialog = true
     },
 
     deleteItem (item) {
-      const index = this.desserts.indexOf(item);
+      const index = this.desserts.indexOf(item)
       confirm('Are you sure you want to delete this item?') &&
         this.desserts.splice(index, 1)
     },
 
     close () {
-      this.dialog = false;
+      this.dialog = false
       setTimeout(() => {
-        this.editedItem = Object.assign({}, this.defaultItem);
+        this.editedItem = Object.assign({}, this.defaultItem)
         this.editedIndex = -1
       }, 300)
     },
