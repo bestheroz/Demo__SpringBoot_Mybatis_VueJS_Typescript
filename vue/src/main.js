@@ -8,14 +8,14 @@ import router from "./router";
 import axios from "axios";
 import VueAxios from "vue-axios";
 
-axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest' // only when using Laravel
-Vue.prototype.apiURL = 'http://localhost:8000'
+axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'; // only when using Laravel
+Vue.prototype.apiURL = 'http://localhost:8000';
 
-Vue.use(VueAxios, axios)
-Vue.use(require('vue-moment'))
+Vue.use(VueAxios, axios);
+Vue.use(require('vue-moment'));
 
 new Vue({
   vuetify,
   render: h => h(App),
   router
-}).$mount('#app')
+}).$mount('#app');
