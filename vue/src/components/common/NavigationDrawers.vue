@@ -15,7 +15,10 @@
           </v-list-item-icon>
           <v-list-item-title>My Files</v-list-item-title>
         </v-list-item>
-        <v-list-item link to="/manage/member">
+        <v-list-item
+          link
+          to="/manage/member"
+        >
           <v-list-item-icon>
             <v-icon>mdi-account-multiple</v-icon>
           </v-list-item-icon>
@@ -33,9 +36,9 @@
 </template>
 
 <script>
-    export default {
-        name: "navigation-drawers"
-    }
+export default {
+  name: 'NavigationDrawers'
+}
 </script>
 
 <style scoped>
