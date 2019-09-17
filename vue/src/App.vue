@@ -24,11 +24,11 @@
 </template>
 
 <script>
-  import NavigationDrawers from "./components/common/NavigationDrawers";
-  import AppBar from "./components/common/AppBar";
-  import Footer from "./components/common/Footer";
+import NavigationDrawers from './components/common/NavigationDrawers'
+import AppBar from './components/common/AppBar'
+import Footer from './components/common/Footer'
 
-  export default {
+export default {
   name: 'App',
   components: {
     NavigationDrawers: NavigationDrawers,
