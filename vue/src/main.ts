@@ -26,3 +26,5 @@ new Vue({
 
 require('dotenv').config()
 console.log(process.env.NODE_ENV)
+
+// TODO: eslint 설정 다시 추가
