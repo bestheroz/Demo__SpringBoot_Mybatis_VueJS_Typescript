@@ -18,7 +18,7 @@ public class UpdateSampleMemberMstRequestVO {
     @ApiModelProperty(value = "로그인 실패 건수")
     private Integer loginFailCnt;
     @ApiModelProperty(value = "계정 잠김 여부")
-    private String closeYn;
+    private String isClosed;
     @ApiModelProperty(value = "계정 만료 일시")
     private LocalDateTime expireDt;
 
@@ -55,11 +55,11 @@ public class UpdateSampleMemberMstRequestVO {
     }
 
     public String getCloseYn() {
-        return this.closeYn;
+        return this.isClosed;
     }
 
-    public void setCloseYn(final String closeYn) {
-        this.closeYn = closeYn;
+    public void setCloseYn(final String isClosed) {
+        this.isClosed = isClosed;
     }
 
     public LocalDateTime getExpireDt() {
