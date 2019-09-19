@@ -21,7 +21,7 @@
           <span>Home</span>
         </v-tooltip>
       </v-btn>
-      <v-toolbar-title>My Spring + Vue + Vuetify ver.190826</v-toolbar-title>
+      <v-toolbar-title>My Spring + Swggaer API + Vue + Vuetify ver.190919</v-toolbar-title>
 
       <div class="flex-grow-1" />
 
