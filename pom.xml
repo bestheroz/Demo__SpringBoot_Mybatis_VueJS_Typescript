@@ -5,7 +5,7 @@
     <groupId>com.github.bestheroz</groupId>
     <artifactId>My_Spring_Swagger_API_Vue_Project</artifactId>
     <name>My_Spring_Swagger_API_Vue_Project</name>
-    <!--    <packaging>war</packaging>-->
+    <packaging>war</packaging>
     <version>1.0.0-BUILD-SNAPSHOT</version>
     <properties>
         <m2eclipse.wtp.contextRoot>/ROOT</m2eclipse.wtp.contextRoot>
