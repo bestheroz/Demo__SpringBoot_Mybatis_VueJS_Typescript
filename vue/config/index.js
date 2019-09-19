@@ -34,11 +34,11 @@ module.exports = {
 
   build: {
     // Template for index.html
-    index: path.resolve(__dirname, '../../src/main/webapp/WEB-INF/static/index.html'),
+    index: path.resolve(__dirname, '../../src/main/resources/static/index.html'),
 
     // Paths
-    assetsRoot: path.resolve(__dirname, '../../src/main/webapp/WEB-INF'),
-    assetsSubDirectory: 'static',
+    assetsRoot: path.resolve(__dirname, '../../src/main/resources/static'),
+    assetsSubDirectory: '',
     assetsPublicPath: '/',
 
     /**

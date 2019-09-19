@@ -1,6 +1,7 @@
 'use strict';
 
 const path = require('path');
+const config = require('../config');
 
 module.exports = {
   resolve: function (dir) {
@@ -8,7 +9,6 @@ module.exports = {
   },
 
   assetsPath: function (_path) {
-    const assetsSubDirectory = 'static';
-    return path.posix.join(assetsSubDirectory, _path)
+    return path.posix.join(config.build.assetsSubDirectory, _path)
   }
 };

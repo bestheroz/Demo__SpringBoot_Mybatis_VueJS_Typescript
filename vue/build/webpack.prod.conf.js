@@ -41,7 +41,7 @@ module.exports = merge(baseConfig, {
   },
   plugins: [
     new MiniCssExtractPlugin({
-      filename: 'static/main.css'
+      filename: 'main.css'
     })
   ]
 });
