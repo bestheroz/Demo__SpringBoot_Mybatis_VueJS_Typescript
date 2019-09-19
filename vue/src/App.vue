@@ -23,27 +23,39 @@
   </v-app>
 </template>
 
-<script>
-import NavigationDrawers from './components/common/NavigationDrawers'
-import AppBar from './components/common/AppBar'
-import Footer from './components/common/Footer'
-
-export default {
-  name: 'App',
+<script lang="ts">
+import { Component, Vue } from "vue-property-decorator";
+import NavigationDrawers from "@/components/common/NavigationDrawers.vue";
+import AppBar from "@/components/common/AppBar.vue";
+import Footer from "@/components/common/Footer.vue";
+@Component({
   components: {
-    NavigationDrawers: NavigationDrawers,
-    AppBar: AppBar,
-    Footer: Footer
+    NavigationDrawers,
+    AppBar,
+    Footer
   }
-}
+})
+export default class App extends Vue {}
 </script>
 
 <style>
-  #app {
-    font-family: 'Avenir', Helvetica, Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-align: center;
-    color: #2c3e50;
-  }
+#app {
+  font-family: "Avenir", Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+}
+#nav {
+  padding: 30px;
+}
+
+#nav a {
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+#nav a.router-link-exact-active {
+  color: #42b983;
+}
 </style>

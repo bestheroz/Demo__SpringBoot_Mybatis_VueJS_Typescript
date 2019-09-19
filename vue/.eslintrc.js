@@ -1,7 +1,7 @@
 module.exports = {
   root: true,
   parserOptions: {
-    parser: "babel-eslint"
+    parser: '@typescript-eslint/parser',
   },
   env: {
     browser: true,
@@ -12,9 +12,10 @@ module.exports = {
   globals: {
     expect: true
   },
-  extends: ["plugin:vue/recommended", "standard"],
+  extends: ['plugin:vue/essential', '@vue/prettier', '@vue/typescript'],
   plugins: ["vue"],
   rules: {
+    'no-console': 'off',
     "generator-star-spacing": "off",
     "no-debugger": process.env.NODE_ENV === "production" ? "error" : "off"
   }
