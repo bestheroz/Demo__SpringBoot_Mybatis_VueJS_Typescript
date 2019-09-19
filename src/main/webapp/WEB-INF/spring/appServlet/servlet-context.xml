@@ -19,7 +19,6 @@
 
     <!-- Enables the Spring MVC @Controller programming model -->
     <annotation-driven conversion-service="conversionService"/>
-    <default-servlet-handler/>
 
     <cors>
         <mapping path="/**"/>
