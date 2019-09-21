@@ -12,8 +12,8 @@
         </v-tooltip>
       </v-btn>
       <v-toolbar-title
-        >My Spring + Mybatis + Swggaer API + Vue + Vuetify {{ appVersions }}</v-toolbar-title
-      >
+        >My Spring + Mybatis + Swggaer API + Vue + Vuetify {{ appVersions }}
+      </v-toolbar-title>
 
       <div class="flex-grow-1" />
 
@@ -33,9 +33,10 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+
 @Component({})
 export default class AppBar extends Vue {
-  appVersions : string = process.env.APP_VERSIONS;
+  appVersions: string = process.env.APP_VERSIONS;
 }
 </script>
 
