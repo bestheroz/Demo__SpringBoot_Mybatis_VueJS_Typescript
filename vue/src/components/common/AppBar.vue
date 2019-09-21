@@ -36,7 +36,7 @@ import { Component, Vue } from "vue-property-decorator";
 
 @Component({})
 export default class AppBar extends Vue {
-  appVersions: string = process.env.APP_VERSIONS;
+  appVersions: string = process.env.VUE_APP_VERSIONS;
 }
 </script>
 

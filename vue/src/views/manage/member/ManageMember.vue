@@ -106,7 +106,7 @@ export default class ManageMember extends Vue {
     memberTyp: "",
     loginFailCnt: 0,
     isClosed: false,
-    expireDt: new Date(),
+    expireDt: new Date()
   };
 
   created() {
