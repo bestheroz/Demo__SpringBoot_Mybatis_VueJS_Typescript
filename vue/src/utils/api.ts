@@ -114,7 +114,8 @@ export async function updateDataApi<T>(
 export async function patchDataApi<T>(
   url: String,
   data: T,
-  key: String | Number
+  key: String | Number,
+  alertOptions?: AlertOptions
 ): Promise<ApiResult<T>> {
   try {
     const response = await axiosInstance.patch<ApiDataResult<T>>(
@@ -122,6 +123,9 @@ export async function patchDataApi<T>(
       data
     );
     // response.status === 200
+    if (alertOptions) {
+      alertOptions.result = Object.assign({}, response.data);
+    }
     return {
       status: response.status,
       code: response.data.responseCode,
@@ -136,11 +140,15 @@ export async function patchDataApi<T>(
 export async function deleteDataApi<T>(
   url: String,
   data: T,
-  key: String | Number
+  key: String | Number,
+  alertOptions?: AlertOptions
 ): Promise<ApiResult<T>> {
   try {
     const response = await axiosInstance.delete(`${url}${key}/`);
     // response.status === 204
+    if (alertOptions) {
+      alertOptions.result = Object.assign({}, response.data);
+    }
     return {
       status: response.status,
       code: response.data.responseCode,

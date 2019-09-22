@@ -9,7 +9,7 @@
     :top="position === 'top'"
   >
     {{ text }}
-    <v-btn dark text @click="updateAlert">
+    <v-btn dark text @click="updateAlert(false)">
       Close
     </v-btn>
   </v-snackbar>
@@ -68,12 +68,12 @@ export default class Alert extends Vue {
     } else if (value && _.startsWith(value.responseCode, "F")) {
       this.color = "error";
     }
-    this.snackbar = true;
+    this.updateAlert(true);
   }
 
   @Emit()
-  updateAlert(): boolean {
-    return false
+  updateAlert(snackbar: boolean): boolean {
+    return snackbar
   }
 }
 </script>

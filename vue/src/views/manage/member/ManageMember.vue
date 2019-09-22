@@ -146,7 +146,7 @@
       </template>
     </v-data-table>
 
-    <Alert :options="alertOptions" @updateAlert="updateAlert" />
+    <Alert :options="alertOptions" @update-alert="updateAlert" />
   </div>
 </template>
 
@@ -183,7 +183,11 @@ import _ from "lodash";
       },
       memberPw: {
         required(value: string) {
-          if (!this.$data.isUpdate || ( this.$data.memberPwCheck !== ""  && this.$data.memberPwCheck !== undefined)) {
+          if (
+            !this.$data.isUpdate ||
+            (this.$data.memberPwCheck !== "" &&
+              this.$data.memberPwCheck !== undefined)
+          ) {
             if (value === undefined || value === "") {
               return false;
             } else {
@@ -208,7 +212,11 @@ import _ from "lodash";
     },
     memberPwCheck: {
       required(value: string) {
-        if (!this.$data.isUpdate || ( this.$data.item.memberPw !== ""  && this.$data.item.memberPw !== undefined) ) {
+        if (
+          !this.$data.isUpdate ||
+          (this.$data.item.memberPw !== "" &&
+            this.$data.item.memberPw !== undefined)
+        ) {
           if (value === undefined || value === "") {
             return false;
           } else {
@@ -279,6 +287,7 @@ export default class ManageMember extends Vue {
   }
 
   editItem(item: Member) {
+    (this.$v.item as Validation).$reset();
     this.isUpdate = item !== undefined;
     if (item === undefined) {
       this.item = Object.assign(
@@ -307,7 +316,8 @@ export default class ManageMember extends Vue {
     const result = await deleteDataApi<Member>(
       `/sample/admin/member/`,
       this.item,
-      this.item.memberId!
+      this.item.memberId!,
+      this.alertOptions
     );
     if (_.startsWith(result.code, "S")) {
       this.getList();
@@ -350,7 +360,8 @@ export default class ManageMember extends Vue {
     const result = await patchDataApi<Member>(
       `/sample/admin/member/`,
       this.item,
-      this.item.memberId!
+      this.item.memberId!,
+      this.alertOptions
     );
     if (_.startsWith(result.code, "S")) {
       this.getList();
@@ -363,6 +374,7 @@ export default class ManageMember extends Vue {
   }
 
   updateAlert(snackbar: boolean) {
+    console.info(snackbar)
     this.alertOptions.snackbar = snackbar;
   }
 }

@@ -65,6 +65,7 @@ public class AdminMemberController {
             this.logger.warn(new CommonException(CommonExceptionCode.FAIL_INVALID_PARAMETER, fieldError.getDefaultMessage()).getJsonObject().toString());
         }
         final TableSampleMemberMstVO tableSampleMemberMstVO = MyMapperUtils.writeObjectAsObject(vo, TableSampleMemberMstVO.class);
+        tableSampleMemberMstVO.setMemberId(memberId);
         tableSampleMemberMstVO.setUpdMemberId("update");
         this.adminMemberService.update(tableSampleMemberMstVO);
         return MyResponseUtils.SUCCESS_NORMAL;
