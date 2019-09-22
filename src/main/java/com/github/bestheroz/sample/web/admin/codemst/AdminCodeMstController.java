@@ -30,21 +30,21 @@ public class AdminCodeMstController {
 
     @ApiOperation(value = "그룹 코드 데이터 리스트 취득")
     @ApiResponses(value = {@ApiResponse(response = GetSampleCodeMstVOListResponseVO.class, responseContainer = "List", code = 200, message = CommonCode.SWAGGER_COMMON_200_MESSAGE)})
-    @RequestMapping(method = RequestMethod.GET)
+    @GetMapping
     public CommonResponseVO getList() throws CommonException {
         return MyResponseUtils.getSuccessCommonResponseVO(this.adminCodeMstService.getList());
     }
 
     @ApiOperation(value = "그룹 코드 데이터 취득")
     @ApiResponses({@ApiResponse(response = TableSampleCodeMstVO.class, code = 200, message = CommonCode.SWAGGER_COMMON_200_MESSAGE)})
-    @RequestMapping(value = "{grcode}", method = RequestMethod.GET)
+    @GetMapping(value = "{grcode}")
     public CommonResponseVO get(@ApiParam("그룹 코드") @PathVariable(value = "grcode", required = false) final String grcode) throws CommonException {
         return MyResponseUtils.getSuccessCommonResponseVO(this.adminCodeMstService.getVO(grcode));
     }
 
     @ApiOperation(value = "그룹 코드 데이터 추가")
     @ApiResponses({@ApiResponse(code = 200, message = CommonCode.SWAGGER_COMMON_200_MESSAGE)})
-    @RequestMapping(method = RequestMethod.POST)
+    @PostMapping
     public CommonResponseVO post(@RequestBody final InsertSampleCodeMstRequestVO vo, final BindingResult bindingResult) throws CommonException {
         for (final FieldError fieldError : bindingResult.getFieldErrors()) {
             this.logger.warn(new CommonException(CommonExceptionCode.FAIL_INVALID_PARAMETER, fieldError.getDefaultMessage()).getJsonObject().toString());
@@ -58,7 +58,7 @@ public class AdminCodeMstController {
 
     @ApiOperation(value = "그룹 코드 데이터 수정")
     @ApiResponses({@ApiResponse(code = 200, message = CommonCode.SWAGGER_COMMON_200_MESSAGE)})
-    @RequestMapping(value = "{grcode}", method = RequestMethod.PATCH)
+    @PatchMapping(value = "{grcode}")
     public CommonResponseVO patch(@ApiParam("그룹 코드") @PathVariable(value = "grcode") final String grcode, @RequestBody final UpdateSampleCodeMstRequestVO vo, final BindingResult bindingResult)
             throws CommonException {
         for (final FieldError fieldError : bindingResult.getFieldErrors()) {
@@ -73,7 +73,7 @@ public class AdminCodeMstController {
 
     @ApiOperation(value = "그룹 코드 데이터 삭제")
     @ApiResponses({@ApiResponse(code = 200, message = CommonCode.SWAGGER_COMMON_200_MESSAGE)})
-    @RequestMapping(value = "{grcode}", method = RequestMethod.DELETE)
+    @DeleteMapping(value = "{grcode}")
     public CommonResponseVO delete(@ApiParam("그룹 코드") @PathVariable(value = "grcode") final String grcode) throws CommonException {
         this.adminCodeMstService.delete(grcode);
         return MyResponseUtils.SUCCESS_NORMAL;

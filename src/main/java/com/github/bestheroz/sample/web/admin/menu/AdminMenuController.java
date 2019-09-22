@@ -23,28 +23,28 @@ public class AdminMenuController {
 
     @ApiOperation(value = "메뉴 데이터 취득")
     @ApiResponses(value = {@ApiResponse(response = GetSampleMenuMstVOListResponseVO.class, responseContainer = "List", code = 200, message = CommonCode.SWAGGER_COMMON_200_MESSAGE)})
-    @RequestMapping(method = RequestMethod.GET)
+    @GetMapping
     public CommonResponseVO getList() throws CommonException {
         return MyResponseUtils.getSuccessCommonResponseVO(this.adminMenuService.getList());
     }
 
     @ApiOperation(value = "메뉴 데이터 취득")
     @ApiResponses(value = {@ApiResponse(code = 200, message = CommonCode.SWAGGER_COMMON_200_MESSAGE)})
-    @RequestMapping(value = "menuId/{menuId}", method = RequestMethod.GET)
+    @GetMapping(value = "menuId/{menuId}")
     public CommonResponseVO getVO(@ApiParam("메뉴 아이디") @PathVariable(value = "menuId", required = false) final Integer menuId) throws CommonException {
         return MyResponseUtils.getSuccessCommonResponseVO(this.adminMenuService.getVO(menuId, null));
     }
 
     @ApiOperation(value = "메뉴 데이터 취득")
     @ApiResponses(value = {@ApiResponse(code = 200, message = CommonCode.SWAGGER_COMMON_200_MESSAGE)})
-    @RequestMapping(value = "menuNm/{menuNm}", method = RequestMethod.GET)
+    @GetMapping(value = "menuNm/{menuNm}")
     public CommonResponseVO getVO(@ApiParam("메뉴 명") @PathVariable(value = "menuNm", required = false) final String menuNm) throws CommonException {
         return MyResponseUtils.getSuccessCommonResponseVO(this.adminMenuService.getVO(null, menuNm));
     }
 
     @ApiOperation(value = "메뉴 데이터 추가")
     @ApiResponses({@ApiResponse(code = 200, message = CommonCode.SWAGGER_COMMON_200_MESSAGE)})
-    @RequestMapping(method = RequestMethod.POST)
+    @PostMapping
     public CommonResponseVO insert(@RequestBody final InsertSampleMenuMstRequestVO vo) throws CommonException {
         final TableSampleMenuMstVO tableSampleMenuMstVO = MyMapperUtils.writeObjectAsObject(vo, TableSampleMenuMstVO.class);
         tableSampleMenuMstVO.setRegMemberId("insert");
@@ -55,7 +55,7 @@ public class AdminMenuController {
 
     @ApiOperation(value = "메뉴 데이터 수정")
     @ApiResponses({@ApiResponse(code = 200, message = CommonCode.SWAGGER_COMMON_200_MESSAGE)})
-    @RequestMapping(value = "{menuId}", method = RequestMethod.PATCH)
+    @PatchMapping(value = "{menuId}")
     public CommonResponseVO update(@ApiParam("메뉴 아이디") @PathVariable(value = "menuId") final Integer menuId, @RequestBody final UpdateSampleMenuMstRequestVO vo) throws CommonException {
         final TableSampleMenuMstVO tableSampleMenuMstVO = MyMapperUtils.writeObjectAsObject(vo, TableSampleMenuMstVO.class);
         tableSampleMenuMstVO.setMenuId(menuId);
@@ -66,7 +66,7 @@ public class AdminMenuController {
 
     @ApiOperation(value = "메뉴 데이터 삭제")
     @ApiResponses({@ApiResponse(code = 200, message = CommonCode.SWAGGER_COMMON_200_MESSAGE)})
-    @RequestMapping(value = "{menuId}", method = RequestMethod.DELETE)
+    @DeleteMapping(value = "{menuId}")
     public CommonResponseVO delete(@ApiParam("메뉴 아이디") @PathVariable(value = "menuId") final Integer menuId) throws CommonException {
         this.adminMenuService.delete(menuId);
         return MyResponseUtils.SUCCESS_NORMAL;
@@ -74,7 +74,7 @@ public class AdminMenuController {
 
     @ApiOperation(value = "부모 메뉴<menuId, menuNm> 리스트 취득")
     @ApiResponses(value = {@ApiResponse(response = GetSampleMenuMstVOListResponseVO.class, responseContainer = "List", code = 200, message = CommonCode.SWAGGER_COMMON_200_MESSAGE)})
-    @RequestMapping(value = "getMenuTypG", method = RequestMethod.GET)
+    @GetMapping(value = "getMenuTypG")
     public CommonResponseVO getMenuTypG() throws CommonException {
         return MyResponseUtils.getSuccessCommonResponseVO(this.adminMenuService.getMenuTypG());
     }
