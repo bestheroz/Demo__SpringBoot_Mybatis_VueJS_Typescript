@@ -7,7 +7,6 @@ import "./registerServiceWorker";
 import axios from "axios";
 import { AxiosInstance } from "axios";
 
-
 Vue.config.productionTip = false;
 
 export const axiosInstance: AxiosInstance = axios.create({
@@ -27,8 +26,8 @@ new Vue({
 
 require("dotenv").config();
 
-import { Component } from 'vue-property-decorator';
-import Vuelidate from 'vuelidate';
+import { Component } from "vue-property-decorator";
+import Vuelidate from "vuelidate";
 Vue.use(Vuelidate);
 
-Component.registerHooks(['validations']);
+Component.registerHooks(["validations"]);

@@ -98,8 +98,7 @@ export default class DateStartEndPicker extends Vue {
   @Prop({ type: [String, Number, Date], default: new Date() })
   readonly startDay!: string | number | Date;
   @Prop({
-    type: [String, Number, Date],
-    default: this.$moment().add(1, "month").toDate
+    type: [String, Number, Date]
   })
   readonly endDay!: string | number | Date;
   @Prop({ type: String, default: "시작 날짜 선택" })
@@ -117,12 +116,12 @@ export default class DateStartEndPicker extends Vue {
   datepickerTo: boolean = false;
   snackbar: boolean = false;
 
-  @Watch("startDay", {immediate: true})
+  @Watch("startDay", { immediate: true })
   watchStartDayHandler(value: string | number | Date): void {
     this.fromDay = this.$moment(value).format("YYYY-MM-DD");
   }
 
-  @Watch("endDay", {immediate: true})
+  @Watch("endDay", { immediate: true })
   watchEndDayHandler(value: string | number | Date): void {
     this.toDay = this.$moment(value).format("YYYY-MM-DD");
   }

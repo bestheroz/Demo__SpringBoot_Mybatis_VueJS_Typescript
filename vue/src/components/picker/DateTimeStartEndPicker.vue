@@ -159,8 +159,7 @@ export default class DatetimeStartEndPicker extends Vue {
   @Prop({ type: [String, Number, Date], default: new Date() })
   readonly startDt!: string | number | Date;
   @Prop({
-    type: [String, Number, Date],
-    default: this.$moment().add(1, "month").toDate
+    type: [String, Number, Date]
   })
   readonly endDt!: string | number | Date;
   @Prop({ type: String, default: "시작 날짜 선택" })
