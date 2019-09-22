@@ -30,24 +30,24 @@ public class AdminMemberController {
 
     @ApiOperation(value = "회원 데이터 취득")
     @ApiResponses({@ApiResponse(response = GetSampleMemberMstVOResponseVO.class, responseContainer = "List", code = 200, message = CommonCode.SWAGGER_COMMON_200_MESSAGE)})
-    @RequestMapping(method = RequestMethod.GET)
+    @GetMapping
     public CommonResponseVO getList() throws CommonException {
         return MyResponseUtils.getSuccessCommonResponseVO(this.adminMemberService.getList());
     }
 
     @ApiOperation(value = "회원 데이터 취득")
     @ApiResponses({@ApiResponse(response = GetSampleMemberMstVOResponseVO.class, code = 200, message = CommonCode.SWAGGER_COMMON_200_MESSAGE)})
-    @RequestMapping(value = "{memberId}", method = RequestMethod.GET)
+    @GetMapping(value = "{memberId}")
     public CommonResponseVO getVO(@ApiParam(value = "회원 아이디") @PathVariable(value = "memberId") final String memberId) throws CommonException {
         return MyResponseUtils.getSuccessCommonResponseVO(this.adminMemberService.getVO(memberId));
     }
 
     @ApiOperation(value = "회원 데이터 추가")
     @ApiResponses({@ApiResponse(code = 200, message = CommonCode.SWAGGER_COMMON_200_MESSAGE)})
-    @RequestMapping(method = RequestMethod.POST)
+    @PostMapping
     public CommonResponseVO insert(@Valid @RequestBody final InsertSampleMemberMstRequestVO vo, final BindingResult bindingResult) throws CommonException {
         for (final FieldError fieldError : bindingResult.getFieldErrors()) {
-            this.logger.warn(new CommonException(CommonExceptionCode.ERROR_INVALID_PARAMETER, fieldError.getDefaultMessage()).getJsonObject().toString());
+            this.logger.warn(new CommonException(CommonExceptionCode.FAIL_INVALID_PARAMETER, fieldError.getDefaultMessage()).getJsonObject().toString());
         }
         final TableSampleMemberMstVO tableSampleMemberMstVO = MyMapperUtils.writeObjectAsObject(vo, TableSampleMemberMstVO.class);
         tableSampleMemberMstVO.setRegMemberId("insert");
@@ -58,11 +58,11 @@ public class AdminMemberController {
 
     @ApiOperation(value = "회원 데이터 수정")
     @ApiResponses({@ApiResponse(code = 200, message = CommonCode.SWAGGER_COMMON_200_MESSAGE)})
-    @RequestMapping(value = "{memberId}", method = RequestMethod.PATCH)
+    @PatchMapping(value = "{memberId}")
     public CommonResponseVO update(@ApiParam(value = "회원 아이디", required = true) @PathVariable(value = "memberId") final String memberId, @RequestBody final UpdateSampleMemberMstRequestVO vo,
                                    final BindingResult bindingResult) throws CommonException {
         for (final FieldError fieldError : bindingResult.getFieldErrors()) {
-            this.logger.warn(new CommonException(CommonExceptionCode.ERROR_INVALID_PARAMETER, fieldError.getDefaultMessage()).getJsonObject().toString());
+            this.logger.warn(new CommonException(CommonExceptionCode.FAIL_INVALID_PARAMETER, fieldError.getDefaultMessage()).getJsonObject().toString());
         }
         final TableSampleMemberMstVO tableSampleMemberMstVO = MyMapperUtils.writeObjectAsObject(vo, TableSampleMemberMstVO.class);
         tableSampleMemberMstVO.setUpdMemberId("update");
@@ -72,7 +72,7 @@ public class AdminMemberController {
 
     @ApiOperation(value = "회원 데이터 삭제")
     @ApiResponses({@ApiResponse(code = 200, message = CommonCode.SWAGGER_COMMON_200_MESSAGE)})
-    @RequestMapping(value = "{memberId}", method = RequestMethod.DELETE)
+    @DeleteMapping(value = "{memberId}")
     public CommonResponseVO delete(@ApiParam(value = "회원 아이디", required = true) @PathVariable(value = "memberId") final String memberId) throws CommonException {
         this.adminMemberService.delete(memberId);
         return MyResponseUtils.SUCCESS_NORMAL;

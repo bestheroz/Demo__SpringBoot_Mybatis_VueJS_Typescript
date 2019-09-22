@@ -25,9 +25,9 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import NavigationDrawers from "@/components/common/NavigationDrawers.vue";
-import AppBar from "@/components/common/AppBar.vue";
-import Footer from "@/components/common/Footer.vue";
+import NavigationDrawers from "@/components/layout/NavigationDrawers.vue";
+import AppBar from "@/components/layout/AppBar.vue";
+import Footer from "@/components/layout/Footer.vue";
 @Component({
   components: {
     NavigationDrawers,

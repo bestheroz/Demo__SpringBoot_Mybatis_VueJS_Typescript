@@ -17,10 +17,10 @@ import java.util.List;
 public class CommonException extends RuntimeException {
     private static final Logger LOGGER = LoggerFactory.getLogger(CommonException.class);
     public static final CommonException EXCEPTION_SUCCESS_NORMAL = new CommonException(CommonExceptionCode.SUCCESS_NORMAL);
-    public static final CommonException EXCEPTION_ERROR_SYSTEM = new CommonException(CommonExceptionCode.ERROR_SYSTEM_ERROR);
-    public static final CommonException EXCEPTION_ERROR_INVALID_REQUEST = new CommonException(CommonExceptionCode.ERROR_INVALID_REQUEST);
-    public static final CommonException EXCEPTION_ERROR_INVALID_PARAMETER = new CommonException(CommonExceptionCode.ERROR_INVALID_PARAMETER);
-    public static final CommonException EXCEPTION_ERROR_NO_DATA_SUCCESS = new CommonException(CommonExceptionCode.ERROR_NO_DATA_SUCCESS);
+    public static final CommonException EXCEPTION_ERROR_SYSTEM = new CommonException(CommonExceptionCode.FAIL_SYSTEM_ERROR);
+    public static final CommonException EXCEPTION_ERROR_INVALID_REQUEST = new CommonException(CommonExceptionCode.FAIL_INVALID_REQUEST);
+    public static final CommonException EXCEPTION_ERROR_INVALID_PARAMETER = new CommonException(CommonExceptionCode.FAIL_INVALID_PARAMETER);
+    public static final CommonException EXCEPTION_ERROR_NO_DATA_SUCCESS = new CommonException(CommonExceptionCode.FAIL_NO_DATA_SUCCESS);
 
     private String responseCode;
     private String responseMessage;
@@ -107,19 +107,19 @@ public class CommonException extends RuntimeException {
     }
 
     private CommonExceptionCode extractResultCode(final String exceptionName) {
-        CommonExceptionCode commonExceptionCode = CommonExceptionCode.ERROR_SYSTEM_ERROR;
+        CommonExceptionCode commonExceptionCode = CommonExceptionCode.FAIL_SYSTEM_ERROR;
         switch (exceptionName) {
             case "UncategorizedSQLException":
             case "BindException":
-                commonExceptionCode = CommonExceptionCode.ERROR_INVALID_PARAMETER;
+                commonExceptionCode = CommonExceptionCode.FAIL_INVALID_PARAMETER;
                 break;
             case "HttpMediaTypeNotAcceptableException":
             case "HttpMediaTypeNotSupportedException":
             case "HttpRequestMethodNotSupportedException":
-                commonExceptionCode = CommonExceptionCode.ERROR_INVALID_REQUEST;
+                commonExceptionCode = CommonExceptionCode.FAIL_INVALID_REQUEST;
                 break;
             case "FileNotFoundException":
-                commonExceptionCode = CommonExceptionCode.ERROR_FILE_NOT_FOUND;
+                commonExceptionCode = CommonExceptionCode.FAIL_FILE_NOT_FOUND;
                 break;
             default:
                 break;
@@ -170,7 +170,7 @@ public class CommonException extends RuntimeException {
     }
 
     public boolean isExceptionNoDataSuccesss() {
-        return this.isEquals(CommonExceptionCode.ERROR_NO_DATA_SUCCESS);
+        return this.isEquals(CommonExceptionCode.FAIL_NO_DATA_SUCCESS);
     }
 
     public boolean isSuccess() {
@@ -178,7 +178,7 @@ public class CommonException extends RuntimeException {
     }
 
     public boolean isFail() {
-        return StringUtils.startsWith(this.responseCode, "E");
+        return StringUtils.startsWith(this.responseCode, "F");
     }
 
     @Override

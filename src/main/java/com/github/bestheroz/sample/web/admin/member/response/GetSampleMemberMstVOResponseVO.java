@@ -13,7 +13,7 @@ public class GetSampleMemberMstVOResponseVO {
     @ApiModelProperty(value = "로그인 실패 건수")
     private Integer loginFailCnt;
     @ApiModelProperty(value = "계정 잠김 여부")
-    private String isClosed;
+    private Boolean isClosed;
     @ApiModelProperty(value = "계정 만료 일시")
     private LocalDateTime expireDt;
 
@@ -49,11 +49,11 @@ public class GetSampleMemberMstVOResponseVO {
         this.loginFailCnt = loginFailCnt;
     }
 
-    public String getCloseYn() {
+    public Boolean getCloseYn() {
         return this.isClosed;
     }
 
-    public void setCloseYn(final String isClosed) {
+    public void setCloseYn(final Boolean isClosed) {
         this.isClosed = isClosed;
     }
 

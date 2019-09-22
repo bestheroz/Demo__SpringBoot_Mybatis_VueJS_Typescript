@@ -29,21 +29,21 @@ public class LoginService {
         // 로그인 관문
         // 1. 유저가 없으면
         if (sampleMemberMstVO == null) {
-            this.logger.warn(new CommonException(CommonExceptionCode.ERROR_NOT_ALLOWED_MEMBER).getJsonObject().toString());
-            throw new CommonException(CommonExceptionCode.ERROR_NOT_ALLOWED_MEMBER);
+            this.logger.warn(new CommonException(CommonExceptionCode.FAIL_NOT_ALLOWED_MEMBER).getJsonObject().toString());
+            throw new CommonException(CommonExceptionCode.FAIL_NOT_ALLOWED_MEMBER);
         }
 
         // 2. LOGIN_FAIL_CNT가 5회 이상 인가
         if (sampleMemberMstVO.getLoginFailCnt().intValue() >= 5) {
-            this.logger.warn(new CommonException(CommonExceptionCode.ERROR_LOGIN_FAIL_CNT, null, "고객센터로 문의하시기 바랍니다.").getJsonObject().toString());
-            throw new CommonException(CommonExceptionCode.ERROR_LOGIN_FAIL_CNT, null, "고객센터로 문의하시기 바랍니다.");
+            this.logger.warn(new CommonException(CommonExceptionCode.FAIL_LOGIN_FAIL_CNT, null, "고객센터로 문의하시기 바랍니다.").getJsonObject().toString());
+            throw new CommonException(CommonExceptionCode.FAIL_LOGIN_FAIL_CNT, null, "고객센터로 문의하시기 바랍니다.");
         }
 
         // 3. 패스워드가 틀리면
         if (!StringUtils.equals(memberPw, sampleMemberMstVO.getMemberPw())) {
             this.loginDAO.updatePlusLoginFailCnt(memberId);
-            this.logger.warn(new CommonException(CommonExceptionCode.ERROR_NOT_ALLOWED_MEMBER).getJsonObject().toString());
-            throw new CommonException(CommonExceptionCode.ERROR_NOT_ALLOWED_MEMBER);
+            this.logger.warn(new CommonException(CommonExceptionCode.FAIL_NOT_ALLOWED_MEMBER).getJsonObject().toString());
+            throw new CommonException(CommonExceptionCode.FAIL_NOT_ALLOWED_MEMBER);
         }
 
         // 4. 아래는 성공

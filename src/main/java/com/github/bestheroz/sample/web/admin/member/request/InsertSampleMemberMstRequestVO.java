@@ -1,7 +1,10 @@
 package com.github.bestheroz.sample.web.admin.member.request;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.github.bestheroz.standard.common.util.typeadapter.LocalDateTimeSerializerTypeAdapter;
 import io.swagger.annotations.ApiModelProperty;
 import org.joda.time.LocalDateTime;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotEmpty;
 
@@ -21,7 +24,7 @@ public class InsertSampleMemberMstRequestVO {
     @ApiModelProperty(value = "로그인 실패 건수")
     private Integer loginFailCnt;
     @ApiModelProperty(value = "계정 잠김 여부")
-    private String isClosed;
+    private Boolean isClosed;
     @ApiModelProperty(value = "계정 만료 일시")
     private LocalDateTime expireDt;
 
@@ -65,11 +68,11 @@ public class InsertSampleMemberMstRequestVO {
         this.loginFailCnt = loginFailCnt;
     }
 
-    public String getCloseYn() {
+    public Boolean getCloseYn() {
         return this.isClosed;
     }
 
-    public void setCloseYn(final String isClosed) {
+    public void setCloseYn(final Boolean isClosed) {
         this.isClosed = isClosed;
     }
 

@@ -64,6 +64,6 @@ public class CommonResponseVO implements Serializable {
     }
 
     public boolean isFail() {
-        return StringUtils.startsWith(this.responseCode, "E");
+        return StringUtils.startsWith(this.responseCode, "F");
     }
 }

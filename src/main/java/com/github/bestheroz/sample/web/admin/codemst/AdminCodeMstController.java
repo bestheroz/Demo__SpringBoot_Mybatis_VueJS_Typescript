@@ -47,7 +47,7 @@ public class AdminCodeMstController {
     @RequestMapping(method = RequestMethod.POST)
     public CommonResponseVO post(@RequestBody final InsertSampleCodeMstRequestVO vo, final BindingResult bindingResult) throws CommonException {
         for (final FieldError fieldError : bindingResult.getFieldErrors()) {
-            this.logger.warn(new CommonException(CommonExceptionCode.ERROR_INVALID_PARAMETER, fieldError.getDefaultMessage()).getJsonObject().toString());
+            this.logger.warn(new CommonException(CommonExceptionCode.FAIL_INVALID_PARAMETER, fieldError.getDefaultMessage()).getJsonObject().toString());
         }
         final TableSampleCodeMstVO tableSampleCodeMstVO = MyMapperUtils.writeObjectAsObject(vo, TableSampleCodeMstVO.class);
         tableSampleCodeMstVO.setRegMemberId("insert");
@@ -62,7 +62,7 @@ public class AdminCodeMstController {
     public CommonResponseVO patch(@ApiParam("그룹 코드") @PathVariable(value = "grcode") final String grcode, @RequestBody final UpdateSampleCodeMstRequestVO vo, final BindingResult bindingResult)
             throws CommonException {
         for (final FieldError fieldError : bindingResult.getFieldErrors()) {
-            this.logger.warn(new CommonException(CommonExceptionCode.ERROR_INVALID_PARAMETER, fieldError.getDefaultMessage()).getJsonObject().toString());
+            this.logger.warn(new CommonException(CommonExceptionCode.FAIL_INVALID_PARAMETER, fieldError.getDefaultMessage()).getJsonObject().toString());
         }
         final TableSampleCodeMstVO tableSampleCodeMstVO = MyMapperUtils.writeObjectAsObject(vo, TableSampleCodeMstVO.class);
         tableSampleCodeMstVO.setGrcode(grcode);

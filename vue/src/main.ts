@@ -7,6 +7,7 @@ import "./registerServiceWorker";
 import axios from "axios";
 import { AxiosInstance } from "axios";
 
+
 Vue.config.productionTip = false;
 
 export const axiosInstance: AxiosInstance = axios.create({
@@ -14,7 +15,7 @@ export const axiosInstance: AxiosInstance = axios.create({
   headers: { "X-Requested-With": "XMLHttpRequest" }
 });
 
-Vue.use(require("vue-moment"));
+Vue.use(require("vue-moment") as any);
 
 new Vue({
   router,
@@ -24,7 +25,10 @@ new Vue({
   render: h => h(App)
 }).$mount("#app");
 
-require('dotenv').config()
-console.log(process.env.NODE_ENV)
+require("dotenv").config();
 
-// TODO: eslint 설정 다시 추가
+import { Component } from 'vue-property-decorator';
+import Vuelidate from 'vuelidate';
+Vue.use(Vuelidate);
+
+Component.registerHooks(['validations']);

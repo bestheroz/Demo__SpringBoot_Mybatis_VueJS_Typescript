@@ -19,6 +19,7 @@ public class MyDateUtils {
     public static final String HH_MM_SS = "HH:mm:ss";
     public static final String YYYY_MM_DD = "yyyy-MM-dd";
     public static final String YYYY_MM_DD_HH_MM_SS = "yyyy-MM-dd HH:mm:ss";
+    public static final String ISO_8601 = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
 
     public static final String HHMMSS = "HHmmss";
     public static final String YYYYMM = "yyyyMM";
@@ -152,6 +153,44 @@ public class MyDateUtils {
             }
         }
         return res;
+    }
+
+    public static LocalDateTime getLocalDateTimeIgnoreException(String arg0) {
+        final DateTime dateTimeIgnoreException = getDateTimeIgnoreException(arg0);
+        return dateTimeIgnoreException == null ? null : dateTimeIgnoreException.toLocalDateTime();
+    }
+
+    public static DateTime getDateTimeIgnoreException(String arg0) {
+        if (StringUtils.isNotEmpty(arg0)) {
+            try {
+                // 1. long값(timestamp)
+                return getDateTime(Long.parseLong(arg0));
+            } catch (final Throwable e) {
+                try {
+                    // 2. yyyy-MM-dd
+                    return getDateTime(arg0, MyDateUtils.YYYY_MM_DD);
+                } catch (final Throwable e2) {
+                    try {
+                        // 3. yyyy-MM-ddTHH:mm:ss.SSSZ
+                        return getDateTime(arg0, MyDateUtils.ISO_8601);
+                    } catch (final Throwable e3) {
+                        try {
+                            // 4. yyyyMMdd
+                            return getDateTime(arg0, MyDateUtils.YYYYMMDD);
+                        } catch (final Throwable e4) {
+                            try {
+                                // 5. yyyyMMddHHmmss
+                                return getDateTime(arg0, MyDateUtils.YYYYMMDDHHMMSS);
+                            } catch (final Throwable e5) {
+                                return null;
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            return null;
+        }
     }
 
 }
