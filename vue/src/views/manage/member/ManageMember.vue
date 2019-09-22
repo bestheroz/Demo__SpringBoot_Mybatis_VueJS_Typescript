@@ -374,7 +374,6 @@ export default class ManageMember extends Vue {
   }
 
   updateAlert(snackbar: boolean) {
-    console.info(snackbar)
     this.alertOptions.snackbar = snackbar;
   }
 }

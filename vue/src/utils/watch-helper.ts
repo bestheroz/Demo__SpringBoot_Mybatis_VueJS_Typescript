@@ -23,7 +23,6 @@ export function getChangedPropInObject<T>(
 ): (any | 0 | undefined) {
   let changedProp = undefined;
   Object.keys(obj).some((prop: string) => {
-    console.info(prop)
     if (oldObj) {
       if (hasKey(obj, prop)) {
         if (typeof obj[prop] === "object") {

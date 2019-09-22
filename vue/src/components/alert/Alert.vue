@@ -73,7 +73,7 @@ export default class Alert extends Vue {
 
   @Emit()
   updateAlert(snackbar: boolean): boolean {
-    return snackbar
+    return snackbar;
   }
 }
 </script>
