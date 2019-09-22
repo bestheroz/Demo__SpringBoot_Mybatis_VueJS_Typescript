@@ -22,13 +22,13 @@
         <io.springfox-version>2.9.2</io.springfox-version>
         <javax.validation-version>2.0.1.Final</javax.validation-version>
         <org.hibernate.validator-version>6.0.17.Final</org.hibernate.validator-version>
-        <joda-time-version>2.10.3</joda-time-version>
+        <joda-time-version>2.10.4</joda-time-version>
         <lang3-version>3.9</lang3-version>
         <mybatis-version>3.5.2</mybatis-version>
         <mybatis-spring-version>2.0.2</mybatis-spring-version>
-        <HikariCP-version>3.3.1</HikariCP-version>
+        <HikariCP-version>3.4.0</HikariCP-version>
         <commons-codec-version>1.13</commons-codec-version>
-        <junit-version>5.5.1</junit-version>
+        <junit-version>5.5.2</junit-version>
         <servlet-api-version>4.0.1</servlet-api-version> <!-- tomcat9 : 4.0.1 tomcat8.5 : 3.1.0, tomcat7 : 3.0.1 -->
         <lucy-version>1.6.3</lucy-version>
         <mockito-version>2.28.2</mockito-version>
