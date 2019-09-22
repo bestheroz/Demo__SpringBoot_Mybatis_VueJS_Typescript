@@ -5,7 +5,7 @@ import HelloWorld from "@/views/HelloWorld.vue";
 Vue.use(Router);
 
 export default new Router({
-  mode: "history",
+  // mode: "history",
   base: process.env.BASE_URL,
   routes: [
     {
@@ -19,5 +19,8 @@ export default new Router({
       component: () =>
         import(/* webpackChunkName: "about" */ "@/views/manage/member/ManageMember.vue")
     }
-  ]
+  ],
+  scrollBehavior(to, from, savedPoisition) {
+    return savedPoisition || { x: 0, y: 0 };
+  },
 });
