@@ -27,7 +27,7 @@
     <annotation-driven conversion-service="conversionService" />
 
     <cors>
-        <mapping path="/**"/>
+        <mapping path="/**" allowed-methods="GET, POST, PUT, PATCH, DELETE, OPTIONS"/>
         <!--        <mapping path="/**" allowed-origins="http://localhost, http://example1.com, http://localhost:8080" />-->
     </cors>
 
