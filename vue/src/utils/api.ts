@@ -1,6 +1,6 @@
-import axios, { AxiosError } from "axios";
-import { axiosInstance } from "@/main";
-import { AlertOptions } from "@/components/alert/common/types";
+import axios, { AxiosError } from 'axios';
+import { axiosInstance } from '@/main';
+import { AlertOptions } from '@/components/alert/common/types';
 
 export interface ApiDataResult<T> {
   responseCode: string;
@@ -25,7 +25,7 @@ function getErrorResult<T>(error: AxiosError): ApiResult<T> {
     console.error(error);
     return {
       status: error.response.status,
-      errorMessage: error.response.data.errorMessage
+      errorMessage: error.response.data.errorMessage,
     };
   } else if (error.request) {
     // The request was made but no response was received
@@ -34,21 +34,21 @@ function getErrorResult<T>(error: AxiosError): ApiResult<T> {
     console.error(error.request);
     return {
       status: 400,
-      errorMessage: "The request was made but no response was received!"
+      errorMessage: `The request was made but no response was received!`,
     };
   } else {
     // Something happened in setting up the request that triggered an Error
-    console.error("Error", error.message);
+    console.error(`Error`, error.message);
     return {
       status: 400,
-      errorMessage: error.message
+      errorMessage: error.message,
     };
   }
 }
 
 export async function getDataApi<T>(
   url: String,
-  id: number = 0
+  id: number = 0,
 ): Promise<ApiResult<T>> {
   try {
     const response = await axiosInstance.get<ApiDataResult<T>>(`${url}${id}/`);
@@ -56,7 +56,7 @@ export async function getDataApi<T>(
       status: response.status,
       code: response.data.responseCode,
       message: response.data.responseMessage,
-      data: response.data.responseData
+      data: response.data.responseData,
     };
   } catch (error) {
     return getErrorResult(error);
@@ -66,7 +66,7 @@ export async function getDataApi<T>(
 export async function createDataApi<T>(
   url: String,
   data: T,
-  alertOptions?: AlertOptions
+  alertOptions?: AlertOptions,
 ): Promise<ApiResult<T>> {
   try {
     const response = await axiosInstance.post<ApiDataResult<T>>(`${url}`, data);
@@ -78,7 +78,7 @@ export async function createDataApi<T>(
       status: response.status,
       code: response.data.responseCode,
       message: response.data.responseMessage,
-      data: response.data.responseData
+      data: response.data.responseData,
     };
   } catch (error) {
     return getErrorResult(error);
@@ -89,12 +89,12 @@ export async function updateDataApi<T>(
   url: String,
   data: T,
   key: String | Number,
-  alertOptions?: AlertOptions
+  alertOptions?: AlertOptions,
 ): Promise<ApiResult<T>> {
   try {
     const response = await axiosInstance.put<ApiDataResult<T>>(
       `${url}${key}/`,
-      data
+      data,
     );
     // response.status === 200
     if (alertOptions) {
@@ -104,7 +104,7 @@ export async function updateDataApi<T>(
       status: response.status,
       code: response.data.responseCode,
       message: response.data.responseMessage,
-      data: response.data.responseData
+      data: response.data.responseData,
     };
   } catch (error) {
     return getErrorResult(error);
@@ -115,12 +115,12 @@ export async function patchDataApi<T>(
   url: String,
   data: T,
   key: String | Number,
-  alertOptions?: AlertOptions
+  alertOptions?: AlertOptions,
 ): Promise<ApiResult<T>> {
   try {
     const response = await axiosInstance.patch<ApiDataResult<T>>(
       `${url}${key}/`,
-      data
+      data,
     );
     // response.status === 200
     if (alertOptions) {
@@ -130,7 +130,7 @@ export async function patchDataApi<T>(
       status: response.status,
       code: response.data.responseCode,
       message: response.data.responseMessage,
-      data: response.data.responseData
+      data: response.data.responseData,
     };
   } catch (error) {
     return getErrorResult(error);
@@ -141,7 +141,7 @@ export async function deleteDataApi<T>(
   url: String,
   data: T,
   key: String | Number,
-  alertOptions?: AlertOptions
+  alertOptions?: AlertOptions,
 ): Promise<ApiResult<T>> {
   try {
     const response = await axiosInstance.delete(`${url}${key}/`);
@@ -153,7 +153,7 @@ export async function deleteDataApi<T>(
       status: response.status,
       code: response.data.responseCode,
       message: response.data.responseMessage,
-      data: response.data.responseData
+      data: response.data.responseData,
     };
   } catch (error) {
     return getErrorResult(error);
@@ -175,7 +175,7 @@ export interface PagingListParams {
 }
 
 export async function getOnlyListDataApi<T>(
-  url: String
+  url: String,
 ): Promise<ApiResult<T>> {
   try {
     const response = await axiosInstance.get<ApiDataResult<T>>(`${url}`);
@@ -183,7 +183,7 @@ export async function getOnlyListDataApi<T>(
       status: response.status,
       code: response.data.responseCode,
       message: response.data.responseMessage,
-      data: response.data.responseData
+      data: response.data.responseData,
     };
   } catch (error) {
     return getErrorResult(error);
@@ -191,11 +191,11 @@ export async function getOnlyListDataApi<T>(
 }
 
 export async function getCodeListDataApi<SelectItem>(
-  key: String
+  key: String,
 ): Promise<SelectItem[]> {
   try {
     const response = await axiosInstance.get<ApiDataResult<SelectItem[]>>(
-      `/sample/admin/codedet/${key}`
+      `/sample/admin/codedet/${key}`,
     );
     return response.data.responseData || [];
   } catch (error) {

@@ -137,7 +137,7 @@
         <v-checkbox :readonly="true" :value="item.isClosed"></v-checkbox>
       </template>
       <template v-slot:item.expireDt="{ item }">
-        {{ $moment(item.expireDt).format("YYYY-MM-DD HH:mm:ss") }}
+        {{ $moment(item.expireDt).format('YYYY-MM-DD HH:mm:ss') }}
       </template>
       <template v-slot:no-data>
         <v-btn color="primary" @click="getList">
@@ -151,27 +151,27 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from "vue-property-decorator";
-import { Member } from "@/views/manage/member/common/types";
+import { Component, Vue, Watch } from 'vue-property-decorator';
+import { Member } from '@/views/manage/member/common/types';
 import {
   createDataApi,
   deleteDataApi,
   getCodeListDataApi,
   getOnlyListDataApi,
-  patchDataApi
-} from "@/utils/api";
-import { DataTableHeader, SelectItem } from "@/common/types";
-import DatetimePicker from "@/components/picker/DateTimePicker.vue";
-import { Validation } from "vuelidate";
+  patchDataApi,
+} from '@/utils/api';
+import { DataTableHeader, SelectItem } from '@/common/types';
+import DatetimePicker from '@/components/picker/DateTimePicker.vue';
+import { Validation } from 'vuelidate';
 import {
   delayTouch,
   getVErrors,
   maxLength,
-  required
-} from "@/utils/validation-helper";
-import Alert from "@/components/alert/Alert.vue";
-import { AlertOptions } from "@/components/alert/common/types";
-import _ from "lodash";
+  required,
+} from '@/utils/validation-helper';
+import Alert from '@/components/alert/Alert.vue';
+import { AlertOptions } from '@/components/alert/common/types';
+import _ from 'lodash';
 
 @Component({
   components: { DatetimePicker, Alert },
@@ -179,16 +179,16 @@ import _ from "lodash";
     item: {
       memberId: {
         required,
-        maxLength: maxLength(20)
+        maxLength: maxLength(20),
       },
       memberPw: {
         required(value: string) {
           if (
             !this.$data.isUpdate ||
-            (this.$data.memberPwCheck !== "" &&
+            (this.$data.memberPwCheck !== `` &&
               this.$data.memberPwCheck !== undefined)
           ) {
-            if (value === undefined || value === "") {
+            if (value === undefined || value === ``) {
               return false;
             } else {
               return true;
@@ -197,27 +197,27 @@ import _ from "lodash";
             return true;
           }
         },
-        maxLength: maxLength(20)
+        maxLength: maxLength(20),
       },
       memberNm: {
         required,
-        maxLength: maxLength(20)
+        maxLength: maxLength(20),
       },
       loginFailCnt: {
-        required
+        required,
       },
       expireDt: {
-        required
-      }
+        required,
+      },
     },
     memberPwCheck: {
       required(value: string) {
         if (
           !this.$data.isUpdate ||
-          (this.$data.item.memberPw !== "" &&
+          (this.$data.item.memberPw !== `` &&
             this.$data.item.memberPw !== undefined)
         ) {
-          if (value === undefined || value === "") {
+          if (value === undefined || value === ``) {
             return false;
           } else {
             return true;
@@ -226,9 +226,9 @@ import _ from "lodash";
           return true;
         }
       },
-      maxLength: maxLength(20)
-    }
-  }
+      maxLength: maxLength(20),
+    },
+  },
 })
 export default class ManageMember extends Vue {
   readonly $moment: any;
@@ -241,40 +241,40 @@ export default class ManageMember extends Vue {
   items: Member[] = [];
   item: Member = {
     expireDt: this.$moment()
-      .add(1, "months")
-      .endOf("days")
-      .toDate()
+      .add(1, `months`)
+      .endOf(`days`)
+      .toDate(),
   };
-  memberPwCheck: string = "";
+  memberPwCheck: string = ``;
   alertOptions: AlertOptions = {
     color: undefined, // watch 때문에 option 값들 있어야함
     position: undefined,
     result: undefined,
     snackbar: false,
     timeout: undefined,
-    text: undefined
+    text: undefined,
   };
 
   created() {
     this.headers = [
       {
-        text: "회원 아이디",
-        align: "start",
-        value: "memberId"
+        text: `회원 아이디`,
+        align: `start`,
+        value: `memberId`,
       },
-      { text: "회원 명", value: "memberNm" },
-      { text: "회원 타입", value: "memberTyp" },
-      { text: "로그인 실패 건수", value: "loginFailCnt" },
-      { text: "계정 잠김 여부", value: "isClosed" },
-      { text: "계정 만료 일시", value: "expireDt" },
-      { text: "Actions", value: "action", sortable: false }
+      { text: `회원 명`, value: `memberNm` },
+      { text: `회원 타입`, value: `memberTyp` },
+      { text: `로그인 실패 건수`, value: `loginFailCnt` },
+      { text: `계정 잠김 여부`, value: `isClosed` },
+      { text: `계정 만료 일시`, value: `expireDt` },
+      { text: `Actions`, value: `action`, sortable: false },
     ];
     this.getList();
     this.getMEMBER_TYP();
   }
 
   get formTitle() {
-    return this.isUpdate ? "회원 수정" : "회원 추가";
+    return this.isUpdate ? `회원 수정` : `회원 추가`;
   }
 
   async getList() {
@@ -283,7 +283,7 @@ export default class ManageMember extends Vue {
   }
 
   async getMEMBER_TYP() {
-    this.MEMBER_TYP = await getCodeListDataApi("MEMBER_TYP");
+    this.MEMBER_TYP = await getCodeListDataApi(`MEMBER_TYP`);
   }
 
   editItem(item: Member) {
@@ -295,12 +295,12 @@ export default class ManageMember extends Vue {
         {
           isClosed: false,
           expireDt: this.$moment()
-            .add(1, "months")
-            .endOf("days")
-            .toDate()
-        }
+            .add(1, `months`)
+            .endOf(`days`)
+            .toDate(),
+        },
       );
-      this.memberPwCheck = "";
+      this.memberPwCheck = ``;
     } else {
       this.item = item;
     }
@@ -309,7 +309,7 @@ export default class ManageMember extends Vue {
 
   async deleteItem(item: Member) {
     const index = this.items.indexOf(item);
-    if (!confirm("Are you sure you want to delete this item?")) {
+    if (!confirm(`Are you sure you want to delete this item?`)) {
       return;
     }
 
@@ -317,9 +317,9 @@ export default class ManageMember extends Vue {
       `/sample/admin/member/`,
       this.item,
       this.item.memberId!,
-      this.alertOptions
+      this.alertOptions,
     );
-    if (_.startsWith(result.code, "S")) {
+    if (_.startsWith(result.code, `S`)) {
       this.getList();
       this.closeModal();
     }
@@ -337,8 +337,8 @@ export default class ManageMember extends Vue {
       [
         this.alertOptions.color,
         this.alertOptions.text,
-        this.alertOptions.snackbar
-      ] = ["error", "입력 검증 후 다시 시도해주세요.", true];
+        this.alertOptions.snackbar,
+      ] = [`error`, `입력 검증 후 다시 시도해주세요.`, true];
       return;
     }
     this.isUpdate ? this.patch() : this.create();
@@ -348,9 +348,9 @@ export default class ManageMember extends Vue {
     const result = await createDataApi<Member>(
       `/sample/admin/member/`,
       this.item,
-      this.alertOptions
+      this.alertOptions,
     );
-    if (_.startsWith(result.code, "S")) {
+    if (_.startsWith(result.code, `S`)) {
       this.getList();
       this.closeModal();
     }
@@ -361,9 +361,9 @@ export default class ManageMember extends Vue {
       `/sample/admin/member/`,
       this.item,
       this.item.memberId!,
-      this.alertOptions
+      this.alertOptions,
     );
-    if (_.startsWith(result.code, "S")) {
+    if (_.startsWith(result.code, `S`)) {
       this.getList();
       this.closeModal();
     }

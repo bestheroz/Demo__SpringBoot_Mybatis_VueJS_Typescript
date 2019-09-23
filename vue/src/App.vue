@@ -24,23 +24,23 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import NavigationDrawers from "@/components/layout/NavigationDrawers.vue";
-import AppBar from "@/components/layout/AppBar.vue";
-import Footer from "@/components/layout/Footer.vue";
+import { Component, Vue } from 'vue-property-decorator';
+import NavigationDrawers from '@/components/layout/NavigationDrawers.vue';
+import AppBar from '@/components/layout/AppBar.vue';
+import Footer from '@/components/layout/Footer.vue';
 @Component({
   components: {
     NavigationDrawers,
     AppBar,
-    Footer
-  }
+    Footer,
+  },
 })
 export default class App extends Vue {}
 </script>
 
 <style>
 #app {
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
+  font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;

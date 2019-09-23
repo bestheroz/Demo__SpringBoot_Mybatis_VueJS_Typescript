@@ -52,30 +52,30 @@
 </template>
 
 <script lang="ts">
-import { Component, Emit, Prop, Vue, Watch } from "vue-property-decorator";
+import { Component, Emit, Prop, Vue, Watch } from 'vue-property-decorator';
 
 @Component
 export default class DatetimePicker extends Vue {
   @Prop({ type: [String, Number, Date], default: new Date() })
   readonly date!: string | number | Date;
-  @Prop({ type: String, default: "날짜 선택" })
+  @Prop({ type: String, default: `날짜 선택` })
   readonly dayLabel!: string;
-  @Prop({ type: String, default: "시간 선택" })
+  @Prop({ type: String, default: `시간 선택` })
   readonly timeLabel!: string;
   @Prop({ type: Boolean, default: false })
   readonly disabled!: boolean;
 
   readonly $moment: any;
   readonly APP_LANGUAGE: string = process.env.VUE_APP_LANGUAGE;
-  day: string = "";
+  day: string = ``;
   dayModal: boolean = false;
-  time: string = "";
+  time: string = ``;
   timeModal: boolean = false;
 
-  @Watch("date", { immediate: true })
+  @Watch(`date`, { immediate: true })
   watchStartDtHandler(value: string | number | Date): void {
-    this.day = this.$moment(value).format("YYYY-MM-DD");
-    this.time = this.$moment(value).format("HH:mm");
+    this.day = this.$moment(value).format(`YYYY-MM-DD`);
+    this.time = this.$moment(value).format(`HH:mm`);
   }
 
   @Emit()
