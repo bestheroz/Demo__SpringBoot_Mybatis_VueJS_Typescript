@@ -50,7 +50,7 @@ public class SwaggerConfig {
     }
 
     private ApiInfo getApiInfo(final String groupName) {
-        return new ApiInfoBuilder().title("bestheroz's API Platform").description(groupName + " API Document").termsOfServiceUrl("https://github.com/bestheroz").version("190922")
+        return new ApiInfoBuilder().title("bestheroz's API Platform").description(groupName + " API Document").termsOfServiceUrl("https://github.com/bestheroz").version("190925")
                 .license("Apache License Version 2.0").licenseUrl("http://www.apache.org/licenses/LICENSE-2.0").build();
     }
 }
