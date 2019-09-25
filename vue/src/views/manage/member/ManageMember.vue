@@ -270,7 +270,7 @@ export default class ManageMember extends Vue {
       { text: `Actions`, value: `action`, sortable: false },
     ];
     this.getList();
-    this.getMEMBER_TYP();
+    this.getMemberTyp();
   }
 
   get formTitle() {
@@ -282,7 +282,7 @@ export default class ManageMember extends Vue {
     this.items = result.data || [];
   }
 
-  async getMEMBER_TYP() {
+  async getMemberTyp() {
     this.MEMBER_TYP = await getCodeListDataApi(`MEMBER_TYP`);
   }
 

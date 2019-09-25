@@ -31,7 +31,7 @@
               text
               color="primary"
               @click="updateStartDay(formatNowTZ('YYYY-MM-DD'))"
-              >{{ $t("msg.today") }}
+              >{{ $t('msg.today') }}
             </v-btn>
           </v-date-picker>
         </v-menu>
@@ -71,7 +71,7 @@
               text
               color="primary"
               @click="updateEndDay(formatNowTZ('YYYY-MM-DD'))"
-              >{{ $t("msg.today") }}
+              >{{ $t('msg.today') }}
             </v-btn>
           </v-date-picker>
         </v-menu>
@@ -80,9 +80,9 @@
     <v-layout row wrap>
       <v-flex xs12 md11 lg10>
         <v-snackbar v-model="snackbar" color="error" :timeout="2000">
-          {{ $t("msg.askCheckDateFieldValidation") }}
+          {{ $t('msg.askCheckDateFieldValidation') }}
           <v-btn dark text @click="snackbar = false">{{
-            $t("msg.close")
+            $t('msg.close')
           }}</v-btn>
         </v-snackbar>
       </v-flex>
@@ -91,39 +91,39 @@
 </template>
 
 <script lang="ts">
-import { Component, Emit, Prop, Vue, Watch } from "vue-property-decorator";
+import { Component, Emit, Prop, Vue, Watch } from 'vue-property-decorator';
 
 @Component
 export default class DateStartEndPicker extends Vue {
   @Prop({ type: [String, Number, Date], default: new Date() })
   readonly startDay!: string | number | Date;
   @Prop({
-    type: [String, Number, Date]
+    type: [String, Number, Date],
   })
   readonly endDay!: string | number | Date;
-  @Prop({ type: String, default: "시작 날짜 선택" })
+  @Prop({ type: String, default: `시작 날짜 선택` })
   readonly startDayLabel!: string;
-  @Prop({ type: String, default: "시작 시간 선택" })
+  @Prop({ type: String, default: `시작 시간 선택` })
   readonly endDayLabel!: string;
   @Prop({ type: Boolean, default: false })
   readonly disabled!: boolean;
 
   readonly $moment: any;
   readonly APP_LANGUAGE: string = process.env.VUE_APP_LANGUAGE;
-  fromDay: string = "";
-  toDay: string = "";
+  fromDay: string = ``;
+  toDay: string = ``;
   datepickerFrom: boolean = false;
   datepickerTo: boolean = false;
   snackbar: boolean = false;
 
-  @Watch("startDay", { immediate: true })
+  @Watch(`startDay`, { immediate: true })
   watchStartDayHandler(value: string | number | Date): void {
-    this.fromDay = this.$moment(value).format("YYYY-MM-DD");
+    this.fromDay = this.$moment(value).format(`YYYY-MM-DD`);
   }
 
-  @Watch("endDay", { immediate: true })
+  @Watch(`endDay`, { immediate: true })
   watchEndDayHandler(value: string | number | Date): void {
-    this.toDay = this.$moment(value).format("YYYY-MM-DD");
+    this.toDay = this.$moment(value).format(`YYYY-MM-DD`);
   }
 
   @Emit()

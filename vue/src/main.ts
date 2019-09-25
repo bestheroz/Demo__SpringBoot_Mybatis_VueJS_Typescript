@@ -4,8 +4,13 @@ import App from './App.vue';
 import router from './router';
 import store from './store';
 import './registerServiceWorker';
+// eslint-disable-next-line import/no-duplicates
 import axios from 'axios';
+// eslint-disable-next-line import/no-duplicates
 import { AxiosInstance } from 'axios';
+
+import { Component } from 'vue-property-decorator';
+import Vuelidate from 'vuelidate';
 
 Vue.config.productionTip = false;
 
@@ -25,9 +30,6 @@ new Vue({
 }).$mount(`#app`);
 
 require(`dotenv`).config();
-
-import { Component } from 'vue-property-decorator';
-import Vuelidate from 'vuelidate';
 Vue.use(Vuelidate);
 
 Component.registerHooks([`validations`]);

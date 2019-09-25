@@ -33,6 +33,7 @@
     "@vue/cli-plugin-typescript": "latest",
     "@vue/cli-service": "latest",
     "@vue/eslint-config-prettier": "latest",
+    "@vue/eslint-config-standard": "latest",
     "@vue/eslint-config-typescript": "latest",
     "babel-eslint": "latest",
     "eslint": "~5",

@@ -32,7 +32,7 @@
               text
               color="primary"
               @click="updateStartDt(formatNowTZ('YYYY-MM-DD'))"
-              >{{ $t("msg.today") }}
+              >{{ $t('msg.today') }}
             </v-btn>
           </v-date-picker>
         </v-menu>
@@ -64,7 +64,7 @@
               text
               color="primary"
               @click="updateStartDt(formatNowTZ('HH:mm'))"
-              >{{ $t("msg.now") }}
+              >{{ $t('msg.now') }}
             </v-btn>
           </v-time-picker>
         </v-menu>
@@ -104,7 +104,7 @@
               text
               color="primary"
               @click="updateEndDt(formatNowTZ('YYYY-MM-DD'))"
-              >{{ $t("msg.today") }}
+              >{{ $t('msg.today') }}
             </v-btn>
           </v-date-picker>
         </v-menu>
@@ -134,7 +134,7 @@
               text
               color="primary"
               @click="updateEndDt(formatNowTZ('HH:mm'))"
-              >{{ $t("msg.now") }}
+              >{{ $t('msg.now') }}
             </v-btn>
           </v-time-picker>
         </v-menu>
@@ -152,56 +152,56 @@
 </template>
 
 <script lang="ts">
-import { Component, Emit, Prop, Vue, Watch } from "vue-property-decorator";
+import { Component, Emit, Prop, Vue, Watch } from 'vue-property-decorator';
 
 @Component
 export default class DatetimeStartEndPicker extends Vue {
   @Prop({ type: [String, Number, Date], default: new Date() })
   readonly startDt!: string | number | Date;
   @Prop({
-    type: [String, Number, Date]
+    type: [String, Number, Date],
   })
   readonly endDt!: string | number | Date;
-  @Prop({ type: String, default: "시작 날짜 선택" })
+  @Prop({ type: String, default: `시작 날짜 선택` })
   readonly startDayLabel!: string;
-  @Prop({ type: String, default: "시작 시간 선택" })
+  @Prop({ type: String, default: `시작 시간 선택` })
   readonly endDayLabel!: string;
-  @Prop({ type: String, default: "종료 날짜 선택" })
+  @Prop({ type: String, default: `종료 날짜 선택` })
   readonly startTimeLabel!: string;
-  @Prop({ type: String, default: "종료 시간 선택" })
+  @Prop({ type: String, default: `종료 시간 선택` })
   readonly endTimeLabel!: string;
   @Prop({ type: Boolean, default: false })
   readonly disabled!: boolean;
 
   readonly $moment: any;
   readonly APP_LANGUAGE: string = process.env.VUE_APP_LANGUAGE;
-  fromDay: string = "";
-  fromTime: string = "";
-  toDay: string = "";
-  toTime: string = "";
+  fromDay: string = ``;
+  fromTime: string = ``;
+  toDay: string = ``;
+  toTime: string = ``;
   datepickerFrom: boolean = false;
   timepickerFrom: boolean = false;
   datepickerTo: boolean = false;
   timepickerTo: boolean = false;
   snackbar: boolean = false;
 
-  @Watch("startDt", { immediate: true })
+  @Watch(`startDt`, { immediate: true })
   watchStartDtHandler(value: string | number | Date): void {
-    this.fromDay = this.$moment(value).format("YYYY-MM-DD");
-    this.fromTime = this.$moment(value).format("HH:mm");
+    this.fromDay = this.$moment(value).format(`YYYY-MM-DD`);
+    this.fromTime = this.$moment(value).format(`HH:mm`);
   }
 
-  @Watch("endDt", { immediate: true })
+  @Watch(`endDt`, { immediate: true })
   watchEndDtHandler(value: string | number | Date): void {
-    this.toDay = this.$moment(value).format("YYYY-MM-DD");
-    this.toTime = this.$moment(value).format("HH:mm");
+    this.toDay = this.$moment(value).format(`YYYY-MM-DD`);
+    this.toTime = this.$moment(value).format(`HH:mm`);
   }
 
   @Emit()
   updateStartDt(value: string): string {
     let startDay;
     let startTime;
-    if (value.includes("-")) {
+    if (value.includes(`-`)) {
       startDay = value;
       startTime = this.fromTime;
     } else {
@@ -220,7 +220,7 @@ export default class DatetimeStartEndPicker extends Vue {
   updateEndDt(value: string): string {
     let endDay;
     let endTime;
-    if (value.includes("-")) {
+    if (value.includes(`-`)) {
       endDay = value;
       endTime = this.toTime;
     } else {

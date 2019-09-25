@@ -1,14 +1,18 @@
-import { hasKey } from "@/utils/common";
+import { hasKey } from '@/utils/common';
 
 export function getChangedPropInArray<T>(
   obj: T[],
-  oldObj: T[]
-): (any | 0 | undefined) {
+  oldObj: T[],
+): any | 0 | undefined {
   // Return property of the object that changed
-  let changedProp = undefined;
+  let changedProp;
   let changedIndex = 0;
   obj.filter((p: T, idx: number) => {
-    [changedProp, changedIndex] = getChangedPropInObject<T>(p, oldObj[idx], idx);
+    [changedProp, changedIndex] = getChangedPropInObject<T>(
+      p,
+      oldObj[idx],
+      idx,
+    );
     return changedProp;
   });
   // console.log(changedProp);
@@ -19,13 +23,13 @@ export function getChangedPropInArray<T>(
 export function getChangedPropInObject<T>(
   obj: T,
   oldObj: T,
-  index : number = 0
-): (any | 0 | undefined) {
-  let changedProp = undefined;
+  index: number = 0,
+): any | 0 | undefined {
+  let changedProp;
   Object.keys(obj).some((prop: string) => {
     if (oldObj) {
       if (hasKey(obj, prop)) {
-        if (typeof obj[prop] === "object") {
+        if (typeof obj[prop] === `object`) {
           // depth 3
           // @ts-ignore
           if (obj[prop] && Object.keys(obj[prop]).length > 0) {

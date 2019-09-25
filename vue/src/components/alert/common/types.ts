@@ -1,4 +1,4 @@
-import { ApiDataResult } from "@/utils/api";
+import { ApiDataResult } from '@/utils/api';
 
 export interface AlertOptions {
   color?: string;
