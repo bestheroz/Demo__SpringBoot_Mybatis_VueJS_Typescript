@@ -1,0 +1,13 @@
+{
+  "ok": "확인",
+  "cancel": "취소",
+  "today": "오늘",
+  "now": "지금",
+  "dayPicker": "날짜",
+  "timePicker": "시간",
+  "startDayPicker": "날짜(From)",
+  "endDayPicker": "날짜(To)",
+  "startTimePicker": "시간(From)",
+  "endTimePicker": "시간(To)",
+  "checkDateFieldValidation": "날짜 범위의 값이 유효한지 확인해주세요."
+}
