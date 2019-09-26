@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@types/lodash": "^4.14.139",
+    "@types/vuelidate": "^0.7.7",
     "axios": "^0.19.0",
     "core-js": "^2.6.9",
     "fibers": "^4.0.1",
