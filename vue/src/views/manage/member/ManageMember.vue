@@ -151,7 +151,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator';
+import { Component, Vue } from 'vue-property-decorator';
 import { Member } from '@/views/manage/member/common/types';
 import {
   createDataApi,
@@ -308,7 +308,6 @@ export default class ManageMember extends Vue {
   }
 
   async deleteItem(item: Member) {
-    const index = this.items.indexOf(item);
     if (!confirm(`Are you sure you want to delete this item?`)) {
       return;
     }
