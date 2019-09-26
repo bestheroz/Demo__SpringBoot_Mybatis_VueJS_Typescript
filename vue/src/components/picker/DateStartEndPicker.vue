@@ -1,92 +1,121 @@
 <template>
   <div>
-    <v-layout wrap>
-      <v-flex md3>
-        <v-menu
-          v-model="datepickerFrom"
-          :close-on-content-click="false"
-          :nudge-right="40"
-          transition="scale-transition"
-          offset-y
-          min-width="290px"
+    <v-row>
+      <v-col cols="3">
+        <v-dialog
+          ref="startDialog"
+          v-model="localStartDayMenu"
+          :return-value.sync="localStartDay"
+          persistent
+          width="290px"
           :disabled="disabled"
         >
           <template v-slot:activator="{ on }">
             <v-text-field
-              :label="fromLabel"
-              prepend-inner-icon="event"
+              v-model="localStartDay"
+              :label="localStartDayLabel"
+              :hint="startDayHint"
+              :persistent-hint="startDayHint !== undefined"
+              prepend-icon="event"
               readonly
               v-on="on"
-              v-model="fromDay"
             ></v-text-field>
           </template>
           <v-date-picker
-            v-model="fromDay"
-            @change="updateStartDay"
-            @input="datepickerFrom = false"
-            :max="toDay"
+            v-model="localStartDay"
+            :locale="APP_LANGUAGE"
+            scrollable
           >
-            <v-spacer></v-spacer>
+            <div class="flex-grow-1"></div>
             <v-btn
               text
               color="primary"
-              @click="updateStartDay(formatNowTZ('YYYY-MM-DD'))"
-              >{{ $t('msg.today') }}
+              @click="
+                () => {
+                  localStartDay = formatNowTZ('YYYY-MM-DD');
+                  $refs.startDialog.save(localStartDay);
+                  updateStartDay();
+                }
+              "
+              >{{ $t('today') }}
+            </v-btn>
+            <v-btn text color="primary" @click="localStartDayMenu = false"
+              >{{ $t('cancel') }}
+            </v-btn>
+            <v-btn
+              text
+              color="primary"
+              @click="
+                () => {
+                  $refs.startDialog.save(localStartDay);
+                  updateStartDay();
+                }
+              "
+              >{{ $t('ok') }}
             </v-btn>
           </v-date-picker>
-        </v-menu>
-      </v-flex>
-      <v-flex md1 style="margin:auto 0;">
-        <v-layout align-center justify-center>
-          <v-icon>mdi-tilde</v-icon>
-        </v-layout>
-      </v-flex>
-      <v-flex md3>
-        <v-menu
-          v-model="datepickerTo"
-          :close-on-content-click="false"
-          :nudge-right="40"
-          transition="scale-transition"
-          offset-y
-          min-width="290px"
+        </v-dialog>
+      </v-col>
+      <v-col cols="1" class="my-auto mx-0 text-center">
+        <v-icon>mdi-tilde</v-icon>
+      </v-col>
+      <v-col cols="3">
+        <v-dialog
+          ref="endDialog"
+          v-model="localEndDayMenu"
+          :return-value.sync="localEndDay"
+          persistent
+          width="290px"
           :disabled="disabled"
         >
           <template v-slot:activator="{ on }">
             <v-text-field
-              :label="toLabel"
-              prepend-inner-icon="event"
+              v-model="localEndDay"
+              :label="localEndDayLabel"
+              :hint="endDayHint"
+              :persistent-hint="endDayHint !== undefined"
+              prepend-icon="access_time"
               readonly
               v-on="on"
-              v-model="toDay"
             ></v-text-field>
           </template>
-          <v-date-picker
-            v-model="toDay"
-            @change="updateEndDay"
-            @input="datepickerTo = false"
-            :min="fromDay"
+          <v-time-picker
+            v-if="localEndDayMenu"
+            v-model="localEndDay"
+            full-width
+            format="24hr"
           >
-            <v-spacer></v-spacer>
+            <div class="flex-grow-1"></div>
             <v-btn
               text
               color="primary"
-              @click="updateEndDay(formatNowTZ('YYYY-MM-DD'))"
-              >{{ $t('msg.today') }}
+              @click="
+                () => {
+                  localEndDay = formatNowTZ('YYYY-MM-DD');
+                  $refs.endDialog.save(localEndDay);
+                  updateEndDay();
+                }
+              "
+              >{{ $t('today') }}
             </v-btn>
-          </v-date-picker>
-        </v-menu>
-      </v-flex>
-    </v-layout>
-    <v-layout row wrap>
-      <v-flex xs12 md11 lg10>
-        <v-snackbar v-model="snackbar" color="error" :timeout="2000">
-          {{ $t('msg.askCheckDateFieldValidation') }}
-          <v-btn dark text @click="snackbar = false">{{
-            $t('msg.close')
-          }}</v-btn>
-        </v-snackbar>
-      </v-flex>
-    </v-layout>
+            <v-btn text color="primary" @click="localEndDayMenu = false"
+              >{{ $t('cancel') }}
+            </v-btn>
+            <v-btn
+              text
+              color="primary"
+              @click="
+                () => {
+                  $refs.endDialog.save(localEndDay);
+                  updateEndDay();
+                }
+              "
+              >OK
+            </v-btn>
+          </v-time-picker>
+        </v-dialog>
+      </v-col>
+    </v-row>
   </div>
 </template>
 
@@ -99,53 +128,72 @@ export default class DateStartEndPicker extends Vue {
   readonly startDay!: string | number | Date;
   @Prop({
     type: [String, Number, Date],
+    default: new Date(
+      new Date().getFullYear(),
+      new Date().getMonth() + 1,
+      new Date().getDate(),
+    ),
   })
   readonly endDay!: string | number | Date;
-  @Prop({ type: String, default: `시작 날짜 선택` })
+  @Prop({ type: String, default: undefined })
   readonly startDayLabel!: string;
-  @Prop({ type: String, default: `시작 시간 선택` })
+  @Prop({ type: String, default: undefined })
+  readonly startDayHint!: string;
+  @Prop({ type: String, default: undefined })
   readonly endDayLabel!: string;
+  @Prop({ type: Boolean, default: false })
+  readonly endDayHint!: string;
   @Prop({ type: Boolean, default: false })
   readonly disabled!: boolean;
 
   readonly $moment: any;
-  readonly APP_LANGUAGE: string = process.env.VUE_APP_LANGUAGE;
-  fromDay: string = ``;
-  toDay: string = ``;
-  datepickerFrom: boolean = false;
-  datepickerTo: boolean = false;
-  snackbar: boolean = false;
+  readonly APP_LANGUAGE: string | undefined = process.env.VUE_APP_LANGUAGE;
 
-  @Watch(`startDay`, { immediate: true })
+  localStartDay: string = '';
+  localEndDay: string = '';
+  localStartDayLabel?: string = undefined;
+  localEndDayLabel?: string = undefined;
+  localStartDayMenu: boolean = false;
+  localEndDayMenu: boolean = false;
+
+  created(): void {
+    this.localStartDayLabel =
+      this.startDayLabel || this.$t('startDayPicker').toString();
+    this.localEndDayLabel =
+      this.endDayLabel || this.$t('endDayPicker').toString();
+  }
+
+  @Watch('startDay', { immediate: true })
   watchStartDayHandler(value: string | number | Date): void {
-    this.fromDay = this.$moment(value).format(`YYYY-MM-DD`);
+    this.localStartDay = this.$moment(value).format('YYYY-MM-DD');
   }
 
   @Watch(`endDay`, { immediate: true })
   watchEndDayHandler(value: string | number | Date): void {
-    this.toDay = this.$moment(value).format(`YYYY-MM-DD`);
+    this.localEndDay = this.$moment(value).format('YYYY-MM-DD');
   }
 
   @Emit()
-  updateStartDay(startDay: string): string {
-    if (startDay > this.toDay) {
+  updateStartDay(): string {
+    if (this.localStartDay > this.localEndDay) {
       this.snackbarError();
     }
-    this.datepickerFrom = false;
-    return `${startDay}T00:00:00`;
+    return `${this.localStartDay}T00:00:00${process.env.VUE_APP_TIMEZONE_OFFSET_STRING}`;
   }
 
   @Emit()
-  updateEndDay(endDay: string): string {
-    if (endDay < this.fromDay) {
+  updateEndDay(): string {
+    if (this.localEndDay < this.localStartDay) {
       this.snackbarError();
     }
-    this.datepickerTo = false;
-    return `${endDay}T23:59:59.999999`;
+    return `${this.localEndDay}T23:59:59.999999${process.env.VUE_APP_TIMEZONE_OFFSET_STRING}`;
   }
 
   snackbarError() {
-    this.snackbar = true;
+    this.$store.commit('pushSnack', {
+      color: 'warning',
+      text: this.$t('checkDateFieldValidation').toString(),
+    });
   }
 }
 </script>

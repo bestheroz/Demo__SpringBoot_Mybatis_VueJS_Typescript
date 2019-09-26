@@ -8,6 +8,7 @@ import './registerServiceWorker';
 import axios from 'axios';
 // eslint-disable-next-line import/no-duplicates
 import { AxiosInstance } from 'axios';
+import i18n from './plugins/vue-i18n';
 
 import { Component } from 'vue-property-decorator';
 import Vuelidate from 'vuelidate';
@@ -25,6 +26,7 @@ new Vue({
   router,
   store,
   // @ts-ignore
+  i18n,
   vuetify,
   render: h => h(App),
 }).$mount(`#app`);
