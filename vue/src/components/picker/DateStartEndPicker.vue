@@ -24,6 +24,7 @@
           <v-date-picker
             v-model="localStartDay"
             :locale="APP_LANGUAGE"
+            :max="localEndDay"
             scrollable
           >
             <div class="flex-grow-1"></div>
@@ -74,16 +75,16 @@
               :label="localEndDayLabel"
               :hint="endDayHint"
               :persistent-hint="endDayHint !== undefined"
-              prepend-icon="access_time"
+              prepend-icon="event"
               readonly
               v-on="on"
             ></v-text-field>
           </template>
-          <v-time-picker
+          <v-date-picker
             v-if="localEndDayMenu"
             v-model="localEndDay"
-            full-width
-            format="24hr"
+            :min="localStartDay"
+            scrollable
           >
             <div class="flex-grow-1"></div>
             <v-btn
@@ -112,7 +113,7 @@
               "
               >OK
             </v-btn>
-          </v-time-picker>
+          </v-date-picker>
         </v-dialog>
       </v-col>
     </v-row>

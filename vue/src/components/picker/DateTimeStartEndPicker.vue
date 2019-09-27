@@ -24,6 +24,7 @@
           <v-date-picker
             v-model="localStartDay"
             :locale="APP_LANGUAGE"
+            :max="localEndDay"
             scrollable
           >
             <div class="flex-grow-1"></div>
@@ -79,6 +80,7 @@
           <v-time-picker
             v-if="localStartTimeMenu"
             v-model="localStartTime"
+            :max="localStartDay === localEndDay ? localEndDay : ''"
             full-width
             format="24hr"
           >
@@ -138,6 +140,7 @@
           <v-date-picker
             v-model="localEndDay"
             :locale="APP_LANGUAGE"
+            :min="localStartDay"
             scrollable
           >
             <div class="flex-grow-1"></div>
@@ -193,6 +196,7 @@
           <v-time-picker
             v-if="localEndTimeMenu"
             v-model="localEndTime"
+            :min="localStartDay === localEndDay ? localStartTime : ''"
             full-width
             format="24hr"
           >
