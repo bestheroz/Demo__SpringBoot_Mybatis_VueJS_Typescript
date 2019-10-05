@@ -72,7 +72,7 @@ public class TestTableSampleMenuMstVO implements Serializable {
         return this.displayOrder;
     }
 
-    public void setDispSeq(final Integer displayOrder) {
+    public void setDisplayOrder(final Integer displayOrder) {
         this.displayOrder = displayOrder;
     }
 

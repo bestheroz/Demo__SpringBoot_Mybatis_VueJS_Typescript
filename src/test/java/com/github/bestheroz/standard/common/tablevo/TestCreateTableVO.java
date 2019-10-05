@@ -27,11 +27,11 @@ public class TestCreateTableVO {
 
     @Test
     public void test11() {
-        try (Statement stmt = this.sqlSession.getConnection().createStatement()) {
+        try (final Statement stmt = this.sqlSession.getConnection().createStatement()) {
 
-            final String tableName = "SAMPLE_MENU_MST";
+            final String tableName = "udrs_event_alarm_his";
 
-            try (ResultSet rs = stmt.executeQuery("SELECT * FROM " + tableName + " WHERE ROWNUM=0")) {
+            try (final ResultSet rs = stmt.executeQuery("SELECT * FROM " + tableName + " LIMIT 0")) {
                 final ResultSetMetaData metaInfo = rs.getMetaData();
 
                 // 1. VO만들기
@@ -41,7 +41,7 @@ public class TestCreateTableVO {
                     final String columnName = metaInfo.getColumnName(i + 1);
                     final String columnTypeName = metaInfo.getColumnTypeName(i + 1);
                     final String camelColumnName = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, columnName);
-                    String fieldType;
+                    final String fieldType;
                     if (StringUtils.equalsAny(columnTypeName, "VARCHAR", "VARCHAR2", "CHAR", "CLOB")) {
                         fieldType = "String";
                     } else if (StringUtils.equalsAny(columnTypeName, "NUMBER")) {
@@ -60,9 +60,9 @@ public class TestCreateTableVO {
                                 // fieldType = "Double";
                             }
                         }
-                    } else if (StringUtils.equalsAny(columnTypeName, "INTEGER")) {
+                    } else if (StringUtils.equalsAny(columnTypeName, "INTEGER", "INT", "INT UNSIGNED")) {
                         fieldType = "Integer";
-                    } else if (StringUtils.equalsAny(columnTypeName, "TIMESTAMP", "DATE")) {
+                    } else if (StringUtils.equalsAny(columnTypeName, "TIMESTAMP", "DATE", "DATETIME")) {
                         fieldType = DbTableVOCheckerContext.DEFAULT_DATE_TYPE;
                     } else if (StringUtils.equalsAny(columnTypeName, "BLOB")) {
                         fieldType = "Byte[]";
@@ -72,7 +72,6 @@ public class TestCreateTableVO {
                         this.logger.warn("케이스 빠짐 {} : {}", columnName, columnTypeName);
                     }
                     this.appendNewline(voSb, "private " + fieldType + " " + camelColumnName + ";");
-
                 }
                 System.out.println(voSb);
             }
@@ -83,15 +82,6 @@ public class TestCreateTableVO {
     }
 
     private StringBuilder appendNewline(final StringBuilder sb, final String appendStr) {
-        return this.appendNewline(sb, appendStr, 0);
+        return sb.append(appendStr).append("\n");
     }
-
-    private StringBuilder appendNewline(final StringBuilder sb, final String appendStr, final int indent) {
-        for (int i = 0; i < indent; i++) {
-            sb.append("    ");
-        }
-        sb.append(appendStr);
-        return sb.append("\n");
-    }
-
 }

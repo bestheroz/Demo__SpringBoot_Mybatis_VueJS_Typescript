@@ -29,7 +29,7 @@ public class TestAdminMenuController extends DefaultTestClass {
     public void 메뉴데이터_추가() throws Exception {
         final TableSampleMenuMstVO vo = new TableSampleMenuMstVO();
         vo.setMenuName("메뉴데이터_추가");
-        vo.setDispSeq(999);
+        vo.setDisplayOrder(999);
         vo.setMenuType("P");
         vo.setPower(999);
         vo.setParMenuId(1);
