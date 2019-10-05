@@ -385,35 +385,8 @@ SELECT '모든 프로젝트 보기',
        MENU_ID,
        TRUE,
        300,
-       1,
-       'http://10.125.251.12/explore/projects',
-       'bestheroz',
-       SYSDATE,
-       'bestheroz',
-       SYSDATE
-FROM SAMPLE_MENU_MST
-WHERE MENU_NAME = 'Github';
-
-INSERT
-INTO SAMPLE_MENU_MST
-(MENU_NAME,
- MENU_TYPE,
- PAR_MENU_ID,
- USE_TF,
- POWER,
- DISPLAY_ORDER,
- URL,
- CREATED_BY,
- CREATED,
- UPDATED_BY,
- UPDATED)
-SELECT '개발환경구축가이드',
-       'P',
-       MENU_ID,
-       TRUE,
-       300,
        10,
-       NULL,
+       'https://github.com/bestheroz?tab=repositories',
        'bestheroz',
        SYSDATE,
        'bestheroz',
@@ -434,13 +407,67 @@ INTO SAMPLE_MENU_MST
  CREATED,
  UPDATED_BY,
  UPDATED)
-SELECT '표준 웹 프로젝트',
+SELECT 'Spring_MyBatis_jQuery_Web_Project',
        'P',
        MENU_ID,
        TRUE,
        300,
        20,
-       NULL,
+       'https://github.com/bestheroz/My_Spring_MyBatis_jQuery_Web_Project',
+       'bestheroz',
+       SYSDATE,
+       'bestheroz',
+       SYSDATE
+FROM SAMPLE_MENU_MST
+WHERE MENU_NAME = 'Github';
+
+INSERT
+INTO SAMPLE_MENU_MST
+(MENU_NAME,
+ MENU_TYPE,
+ PAR_MENU_ID,
+ USE_TF,
+ POWER,
+ DISPLAY_ORDER,
+ URL,
+ CREATED_BY,
+ CREATED,
+ UPDATED_BY,
+ UPDATED)
+SELECT 'Spring_Mybatis_Swagger_API_Project',
+       'P',
+       MENU_ID,
+       TRUE,
+       300,
+       30,
+       'https://github.com/bestheroz/My_Spring_Mybatis_Swagger_API_Project',
+       'bestheroz',
+       SYSDATE,
+       'bestheroz',
+       SYSDATE
+FROM SAMPLE_MENU_MST
+WHERE MENU_NAME = 'Github';
+
+INSERT
+INTO SAMPLE_MENU_MST
+(MENU_NAME,
+ MENU_TYPE,
+ PAR_MENU_ID,
+ USE_TF,
+ POWER,
+ DISPLAY_ORDER,
+ URL,
+ CREATED_BY,
+ CREATED,
+ UPDATED_BY,
+ UPDATED)
+SELECT 'Spring_MyBatis_Swagger_API_Vue_Project',
+       'P',
+       MENU_ID,
+       TRUE,
+       300,
+       40,
+       'https://github.com/bestheroz/My_Spring_MyBatis_Swagger_API_Vue_Project',
        'bestheroz',
        SYSDATE,
        'bestheroz',
@@ -915,38 +942,8 @@ INTO SAMPLE_CODE_MST
  CREATED,
  UPDATED_BY,
  UPDATED)
-VALUES ('USE_TF',
-        '사용여부',
-        'bestheroz',
-        SYSDATE,
-        'bestheroz',
-        SYSDATE);
-
-INSERT
-INTO SAMPLE_CODE_MST
-(GROUP_CODE,
- GROUP_CODE_NAME,
- CREATED_BY,
- CREATED,
- UPDATED_BY,
- UPDATED)
 VALUES ('MEMBER_TYPE',
         '회원구분',
-        'bestheroz',
-        SYSDATE,
-        'bestheroz',
-        SYSDATE);
-
-INSERT
-INTO SAMPLE_CODE_MST
-(GROUP_CODE,
- GROUP_CODE_NAME,
- CREATED_BY,
- CREATED,
- UPDATED_BY,
- UPDATED)
-VALUES ('USE_TF_REVERSE',
-        '사용여부(아니오부터 출력)',
         'bestheroz',
         SYSDATE,
         'bestheroz',
@@ -967,47 +964,6 @@ CREATE TABLE SAMPLE_CODE_DET
     UPDATED       DATETIME      NOT NULL
 );
 
-INSERT
-INTO SAMPLE_CODE_DET
-(GROUP_CODE,
- CODE,
- CODE_NAME,
- USE_TF,
- DISPLAY_ORDER,
- CREATED_BY,
- CREATED,
- UPDATED_BY,
- UPDATED)
-VALUES ('USE_TF',
-        'TRUE',
-        '예',
-        TRUE,
-        1,
-        'bestheroz',
-        SYSDATE,
-        'bestheroz',
-        SYSDATE);
-
-INSERT
-INTO SAMPLE_CODE_DET
-(GROUP_CODE,
- CODE,
- CODE_NAME,
- USE_TF,
- DISPLAY_ORDER,
- CREATED_BY,
- CREATED,
- UPDATED_BY,
- UPDATED)
-VALUES ('USE_TF',
-        'FALSE',
-        '아니요',
-        TRUE,
-        2,
-        'bestheroz',
-        SYSDATE,
-        'bestheroz',
-        SYSDATE);
 
 INSERT
 INTO SAMPLE_CODE_DET
@@ -1051,47 +1007,6 @@ VALUES ('MENU_TYPE',
         'bestheroz',
         SYSDATE);
 
-INSERT
-INTO SAMPLE_CODE_DET
-(GROUP_CODE,
- CODE,
- CODE_NAME,
- USE_TF,
- DISPLAY_ORDER,
- CREATED_BY,
- CREATED,
- UPDATED_BY,
- UPDATED)
-VALUES ('USE_TF_REVERSE',
-        FALSE,
-        '아니요',
-        TRUE,
-        1,
-        'bestheroz',
-        SYSDATE,
-        'bestheroz',
-        SYSDATE);
-
-INSERT
-INTO SAMPLE_CODE_DET
-(GROUP_CODE,
- CODE,
- CODE_NAME,
- USE_TF,
- DISPLAY_ORDER,
- CREATED_BY,
- CREATED,
- UPDATED_BY,
- UPDATED)
-VALUES ('USE_TF_REVERSE',
-        TRUE,
-        '예',
-        TRUE,
-        2,
-        'bestheroz',
-        SYSDATE,
-        'bestheroz',
-        SYSDATE);
 
 INSERT
 INTO SAMPLE_CODE_DET

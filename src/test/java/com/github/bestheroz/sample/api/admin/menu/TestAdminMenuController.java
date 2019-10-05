@@ -32,7 +32,7 @@ public class TestAdminMenuController extends DefaultTestClass {
         vo.setDispSeq(999);
         vo.setMenuType("P");
         vo.setPower(999);
-        vo.setParMenuId(1000000000);
+        vo.setParMenuId(1);
         vo.setUseTf(true);
         final MvcResult mvcResult = MyTestUtils.performPost("/sample/admin/menu/insertSampleMenuMst", vo).andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON)).andReturn();
@@ -43,7 +43,7 @@ public class TestAdminMenuController extends DefaultTestClass {
     @Test
     public void 메뉴데이터_수정() throws Exception {
         final TableSampleMenuMstVO vo = new TableSampleMenuMstVO();
-        vo.setMenuId(1000000000);
+        vo.setMenuId(1);
         vo.setRemark1("메뉴데이터_수정");
         final MvcResult mvcResult = MyTestUtils.performPost("/sample/admin/menu/updateSampleMenuMst", vo).andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON)).andReturn();
@@ -54,7 +54,7 @@ public class TestAdminMenuController extends DefaultTestClass {
     @Test
     public void 메뉴데이터_삭제() throws Exception {
         final TableSampleMenuMstVO vo = new TableSampleMenuMstVO();
-        vo.setMenuId(1000000000);
+        vo.setMenuId(1);
         final MvcResult mvcResult = MyTestUtils.performPost("/sample/admin/menu/deleteSampleMenuMst", vo).andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON)).andReturn();
         Assertions.assertEquals(MyMapperUtils.writeObjectAsJsonObject(mvcResult.getResponse().getContentAsString()), CommonException.EXCEPTION_SUCCESS_NORMAL.getJsonObject());

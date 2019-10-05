@@ -26,12 +26,12 @@ public class SqlForTableVO {
     public static final String INSERT = "insertTableVO";
     public static final String UPDATE = "updateTableVO";
     public static final String DELETE = "deleteTableVO";
-    private static final String TABLE_COLUMN_NAME_REG_ID = "REG_ID";
+    private static final String TABLE_COLUMN_NAME_CREATED_BY = "CREATED_BY";
     private static final String TABLE_COLUMN_NAME_CREATED = "CREATED";
-    private static final String TABLE_COLUMN_NAME_UPDT_DT = "UPDATED";
-    private static final String VARIABLE_NAME_REG_ID = "regId";
+    private static final String TABLE_COLUMN_NAME_UPDATED = "UPDATED";
+    private static final String VARIABLE_NAME_CREATED_BY = "createdBy";
     private static final String VARIABLE_NAME_CREATED = "created";
-    private static final String VARIABLE_NAME_UPDT_DT = "updated";
+    private static final String VARIABLE_NAME_UPDATED = "updated";
     private static final String SYSDATE = "SYSDATE";
     private static final String ENCRYPTED_FIELD_LIST = "ENCRYPTED_COLUMN_LIST";
     private static final Set<String> EXCLUDE_FIELD_LIST = Sets.newHashSet("SERIAL_VERSION_U_I_D", "serialVersionUID", "E_N_C_R_Y_P_T_E_D__C_O_L_U_M_N__L_I_S_T");
@@ -163,7 +163,7 @@ public class SqlForTableVO {
         for (final Entry<String, Object> entry : param.entrySet()) {
             final String camelFieldName = entry.getKey();
             final String fieldName = CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, camelFieldName);
-            if (StringUtils.equalsAny(camelFieldName, VARIABLE_NAME_CREATED, VARIABLE_NAME_UPDT_DT)) {
+            if (StringUtils.equalsAny(camelFieldName, VARIABLE_NAME_CREATED, VARIABLE_NAME_UPDATED)) {
                 sql.VALUES(fieldName, SYSDATE);
             } else {
                 final String columnTypeName = entry.getValue().getClass().getSimpleName();
@@ -182,8 +182,8 @@ public class SqlForTableVO {
                 continue;
             } else if (StringUtils.equals(camelFieldName, VARIABLE_NAME_CREATED)) {
                 sql.VALUES(TABLE_COLUMN_NAME_CREATED, SYSDATE);
-            } else if (StringUtils.equals(camelFieldName, VARIABLE_NAME_UPDT_DT)) {
-                sql.VALUES(TABLE_COLUMN_NAME_UPDT_DT, SYSDATE);
+            } else if (StringUtils.equals(camelFieldName, VARIABLE_NAME_UPDATED)) {
+                sql.VALUES(TABLE_COLUMN_NAME_UPDATED, SYSDATE);
             }
         }
 
@@ -205,12 +205,12 @@ public class SqlForTableVO {
             final String fieldName = CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, camelFieldName);
             if (EXCLUDE_FIELD_LIST.contains(fieldName)) {
                 continue;
-            } else if (StringUtils.equalsAny(camelFieldName, VARIABLE_NAME_REG_ID, VARIABLE_NAME_CREATED, VARIABLE_NAME_UPDT_DT)) {
+            } else if (StringUtils.equalsAny(camelFieldName, VARIABLE_NAME_CREATED_BY, VARIABLE_NAME_CREATED, VARIABLE_NAME_UPDATED)) {
                 continue;
             }
             final String columnTypeName = field.getType().getSimpleName();
             if (forcedUpdateKey != null && !whereKeys.contains(camelFieldName) && (forcedUpdateKey.contains("**") || forcedUpdateKey.contains(camelFieldName))
-                    && !StringUtils.equalsAny(camelFieldName, TABLE_COLUMN_NAME_REG_ID, TABLE_COLUMN_NAME_CREATED)) {
+                    && !StringUtils.equalsAny(camelFieldName, TABLE_COLUMN_NAME_CREATED_BY, TABLE_COLUMN_NAME_CREATED)) {
                 if (encryptedColumnList.contains(camelFieldName)) {
                     sql.SET(MessageFormat.format(SET_BIND_ENCRYPTED_STRING, fieldName, camelFieldName, this.getJdbcType(columnTypeName), tableName));
                 } else {
@@ -223,7 +223,7 @@ public class SqlForTableVO {
                     } else {
                         sql.WHERE(MessageFormat.format(WHERE_BIND_STRING, fieldName, camelFieldName, this.getJdbcType(columnTypeName)));
                     }
-                } else if (StringUtils.equalsAny(camelFieldName, VARIABLE_NAME_CREATED, VARIABLE_NAME_UPDT_DT)) {
+                } else if (StringUtils.equalsAny(camelFieldName, VARIABLE_NAME_CREATED, VARIABLE_NAME_UPDATED)) {
                     sql.SET(fieldName + " = " + SYSDATE);
                 } else {
                     if (encryptedColumnList.contains(camelFieldName)) {
@@ -241,8 +241,8 @@ public class SqlForTableVO {
             final String fieldName = CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, camelFieldName);
             if (EXCLUDE_FIELD_LIST.contains(fieldName)) {
                 continue;
-            } else if (StringUtils.equals(camelFieldName, VARIABLE_NAME_UPDT_DT)) {
-                sql.SET(TABLE_COLUMN_NAME_UPDT_DT + " = " + SYSDATE);
+            } else if (StringUtils.equals(camelFieldName, VARIABLE_NAME_UPDATED)) {
+                sql.SET(TABLE_COLUMN_NAME_UPDATED + " = " + SYSDATE);
             }
         }
         this.logger.debug(sql.toString());

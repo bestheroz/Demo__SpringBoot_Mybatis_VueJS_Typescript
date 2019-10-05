@@ -25,7 +25,7 @@ import java.io.Serializable;
 @EnableTransactionManagement
 @MapperScan(basePackages = "com.github.bestheroz", annotationClass = Mapper.class)
 public class H2dbMybatisContext {
-    private static final EmbeddedDatabase EMBEDDED_DATABASE = new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2).addScript("/removabledb/sample.sql").build();
+    private static final EmbeddedDatabase EMBEDDED_DATABASE = new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2).addScript("/removabledb/h2.sql").build();
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Bean(name = "dataSource")
