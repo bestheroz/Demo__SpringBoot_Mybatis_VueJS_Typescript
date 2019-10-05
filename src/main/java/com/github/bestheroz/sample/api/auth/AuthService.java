@@ -1,5 +1,10 @@
 package com.github.bestheroz.sample.api.auth;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.github.bestheroz.sample.api.tablevo.samplemembermst.TableSampleMemberMstDAO;
 import com.github.bestheroz.sample.api.tablevo.samplemembermst.TableSampleMemberMstVO;
 import com.github.bestheroz.standard.common.exception.CommonException;
@@ -20,7 +25,7 @@ public class AuthService {
     @Autowired
     private TableSampleMemberMstDAO tableSampleMemberMstDAO;
 
-    public void doLogin(final String memberId, final String memberPw) throws CommonException {
+    public void login(final String memberId, final String memberPw) throws CommonException {
         final TableSampleMemberMstVO tableSampleMemberMstVO = new TableSampleMemberMstVO();
         tableSampleMemberMstVO.setMemberId(memberId);
         tableSampleMemberMstVO.setMemberPw(memberPw);
@@ -51,5 +56,26 @@ public class AuthService {
             this.authDAO.updateZeroLoginFailCnt(memberId);
         }
         // MySessionUtil.printAttributeList(session);
+        final Algorithm algorithm = Algorithm.HMAC256("secret");
+        final String token = JWT.create().withIssuer("auth0").sign(algorithm);
+        sampleMemberMstVO.setToken(token);
+        this.tableSampleMemberMstDAO.update(sampleMemberMstVO, Collections.singleton("id"), null);
+    }
+
+    void verify(final String token) {
+        try {
+            final Algorithm algorithm = Algorithm.HMAC256("secret");
+            final JWTVerifier verifier = JWT.require(algorithm).withIssuer("auth0").build(); //Reusable verifier instance
+            final DecodedJWT jwt = verifier.verify(token);
+        } catch (final JWTVerificationException e) {
+            this.logger.warn(new CommonException(CommonExceptionCode.FAIL_NOT_ALLOWED_MEMBER).getJsonObject().toString());
+            throw new CommonException(CommonExceptionCode.FAIL_NOT_ALLOWED_MEMBER);
+        }
+        final TableSampleMemberMstVO tableSampleMemberMstVO = new TableSampleMemberMstVO();
+        tableSampleMemberMstVO.setToken(token);
+        if (this.tableSampleMemberMstDAO.getVO(tableSampleMemberMstVO, Collections.singleton("token")) == null) {
+            this.logger.warn(new CommonException(CommonExceptionCode.FAIL_NOT_ALLOWED_MEMBER).getJsonObject().toString());
+            throw new CommonException(CommonExceptionCode.FAIL_NOT_ALLOWED_MEMBER);
+        }
     }
 }

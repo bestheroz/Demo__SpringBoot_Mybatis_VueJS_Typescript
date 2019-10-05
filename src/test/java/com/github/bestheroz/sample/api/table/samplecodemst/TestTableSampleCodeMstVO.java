@@ -6,7 +6,7 @@ import java.io.Serializable;
 
 @SuppressWarnings("serial")
 public class TestTableSampleCodeMstVO implements Serializable {
-    private String grcode;
+    private String groupCode;
     private String grcodeNm;
     private String remark1;
     private String regMemberId;
@@ -14,12 +14,12 @@ public class TestTableSampleCodeMstVO implements Serializable {
     private String updMemberId;
     private DateTime updDt;
 
-    public String getGrcode() {
-        return this.grcode;
+    public String getGroupCode() {
+        return this.groupCode;
     }
 
-    public void setGrcode(final String grcode) {
-        this.grcode = grcode;
+    public void setGroupCode(final String groupCode) {
+        this.groupCode = groupCode;
     }
 
     public String getGrcodeNm() {

@@ -6,23 +6,23 @@ import java.io.Serializable;
 
 @SuppressWarnings("serial")
 public class TestTableSampleCodeDetVO implements Serializable {
-    private String grcode;
+    private String groupCode;
     private String code;
     private String codeNm;
-    private String useYn;
-    private Integer dispSeq;
+    private Boolean useTf;
+    private Integer displayOrder;
     private String remark1;
     private String regMemberId;
     private DateTime regDt;
     private String updMemberId;
     private DateTime updDt;
 
-    public String getGrcode() {
-        return this.grcode;
+    public String getGroupCode() {
+        return this.groupCode;
     }
 
-    public void setGrcode(final String grcode) {
-        this.grcode = grcode;
+    public void setGroupCode(final String groupCode) {
+        this.groupCode = groupCode;
     }
 
     public String getCode() {
@@ -41,20 +41,20 @@ public class TestTableSampleCodeDetVO implements Serializable {
         this.codeNm = codeNm;
     }
 
-    public String getUseYn() {
-        return this.useYn;
+    public Boolean getUseTf() {
+        return this.useTf;
     }
 
-    public void setUseYn(final String useYn) {
-        this.useYn = useYn;
+    public void setUseTf(final Boolean useTf) {
+        this.useTf = useTf;
     }
 
-    public Integer getDispSeq() {
-        return this.dispSeq;
+    public Integer getDisplayOrder() {
+        return this.displayOrder;
     }
 
-    public void setDispSeq(final Integer dispSeq) {
-        this.dispSeq = dispSeq;
+    public void setDispSeq(final Integer displayOrder) {
+        this.displayOrder = displayOrder;
     }
 
     public String getRemark1() {

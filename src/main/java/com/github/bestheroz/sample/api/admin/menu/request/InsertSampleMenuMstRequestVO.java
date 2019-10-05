@@ -17,13 +17,13 @@ public class InsertSampleMenuMstRequestVO {
     private Integer parMenuId;
     @NotEmpty
     @ApiModelProperty(value = "사용 여부", required = true)
-    private String useYn;
+    private Boolean useTf;
     @NotNull
     @ApiModelProperty(value = "메뉴 권한", required = true)
     private Integer power;
     @NotNull
     @ApiModelProperty(value = "출력 순서", required = true)
-    private Integer dispSeq;
+    private Integer displayOrder;
     @ApiModelProperty(value = "링크 URL")
     private String url;
     @ApiModelProperty(value = "비고")
@@ -53,12 +53,12 @@ public class InsertSampleMenuMstRequestVO {
         this.parMenuId = parMenuId;
     }
 
-    public String getUseYn() {
-        return this.useYn;
+    public Boolean getUseTf() {
+        return this.useTf;
     }
 
-    public void setUseYn(final String useYn) {
-        this.useYn = useYn;
+    public void setUseTf(final Boolean useTf) {
+        this.useTf = useTf;
     }
 
     public Integer getPower() {
@@ -69,12 +69,12 @@ public class InsertSampleMenuMstRequestVO {
         this.power = power;
     }
 
-    public Integer getDispSeq() {
-        return this.dispSeq;
+    public Integer getDisplayOrder() {
+        return this.displayOrder;
     }
 
-    public void setDispSeq(final Integer dispSeq) {
-        this.dispSeq = dispSeq;
+    public void setDispSeq(final Integer displayOrder) {
+        this.displayOrder = displayOrder;
     }
 
     public String getUrl() {

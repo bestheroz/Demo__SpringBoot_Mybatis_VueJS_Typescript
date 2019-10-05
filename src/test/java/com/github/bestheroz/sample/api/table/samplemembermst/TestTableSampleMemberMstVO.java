@@ -11,7 +11,8 @@ public class TestTableSampleMemberMstVO implements Serializable {
     private String memberNm;
     private String memberTyp;
     private Integer loginFailCnt;
-    private String isClosed;
+    private Boolean closeTf;
+    private String token;
     private DateTime expireDt;
     private String regMemberId;
     private DateTime regDt;
@@ -58,12 +59,20 @@ public class TestTableSampleMemberMstVO implements Serializable {
         this.loginFailCnt = loginFailCnt;
     }
 
-    public String getCloseYn() {
-        return this.isClosed;
+    public Boolean getCloseTf() {
+        return this.closeTf;
     }
 
-    public void setCloseYn(final String isClosed) {
-        this.isClosed = isClosed;
+    public void setCloseTf(final Boolean closeTf) {
+        this.closeTf = closeTf;
+    }
+
+    public String getToken() {
+        return this.token;
+    }
+
+    public void setToken(final String token) {
+        this.token = token;
     }
 
     public DateTime getExpireDt() {
@@ -105,5 +114,4 @@ public class TestTableSampleMemberMstVO implements Serializable {
     public void setUpdDt(final DateTime updDt) {
         this.updDt = updDt;
     }
-
 }

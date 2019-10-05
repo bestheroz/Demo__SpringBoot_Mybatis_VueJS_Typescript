@@ -11,8 +11,9 @@ public class TableSampleMemberMstVO implements Serializable {
     private String memberNm;
     private String memberTyp;
     private Integer loginFailCnt;
-    private Boolean isClosed;
     private LocalDateTime expireDt;
+    private Boolean isClosed;
+    private String token;
     private String regMemberId;
     private LocalDateTime regDt;
     private String updMemberId;
@@ -58,20 +59,28 @@ public class TableSampleMemberMstVO implements Serializable {
         this.loginFailCnt = loginFailCnt;
     }
 
-    public Boolean getCloseYn() {
-        return this.isClosed;
-    }
-
-    public void setCloseYn(final Boolean isClosed) {
-        this.isClosed = isClosed;
-    }
-
     public LocalDateTime getExpireDt() {
         return this.expireDt;
     }
 
     public void setExpireDt(final LocalDateTime expireDt) {
         this.expireDt = expireDt;
+    }
+
+    public Boolean getClosed() {
+        return this.isClosed;
+    }
+
+    public void setClosed(final Boolean closed) {
+        this.isClosed = closed;
+    }
+
+    public String getToken() {
+        return this.token;
+    }
+
+    public void setToken(final String token) {
+        this.token = token;
     }
 
     public String getRegMemberId() {
@@ -105,5 +114,4 @@ public class TableSampleMemberMstVO implements Serializable {
     public void setUpdDt(final LocalDateTime updDt) {
         this.updDt = updDt;
     }
-
 }

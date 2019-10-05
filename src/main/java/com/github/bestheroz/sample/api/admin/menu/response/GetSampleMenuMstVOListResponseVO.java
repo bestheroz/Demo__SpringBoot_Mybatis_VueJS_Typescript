@@ -15,11 +15,11 @@ public class GetSampleMenuMstVOListResponseVO implements Serializable {
     @ApiModelProperty(value = "메뉴 타입")
     private String menuTyp;
     @ApiModelProperty(value = "사용 여부")
-    private String useYn;
+    private Boolean useTf;
     @ApiModelProperty(value = "메뉴 권한")
     private Integer power;
     @ApiModelProperty(value = "출력 순서")
-    private Integer dispSeq;
+    private Integer displayOrder;
     @ApiModelProperty(value = "링크 URL")
     private String url;
     @ApiModelProperty(value = "비고")
@@ -57,12 +57,12 @@ public class GetSampleMenuMstVOListResponseVO implements Serializable {
         this.menuTyp = menuTyp;
     }
 
-    public String getUseYn() {
-        return this.useYn;
+    public Boolean getUseTf() {
+        return this.useTf;
     }
 
-    public void setUseYn(final String useYn) {
-        this.useYn = useYn;
+    public void setUseTf(final Boolean useTf) {
+        this.useTf = useTf;
     }
 
     public Integer getPower() {
@@ -73,12 +73,12 @@ public class GetSampleMenuMstVOListResponseVO implements Serializable {
         this.power = power;
     }
 
-    public Integer getDispSeq() {
-        return this.dispSeq;
+    public Integer getDisplayOrder() {
+        return this.displayOrder;
     }
 
-    public void setDispSeq(final Integer dispSeq) {
-        this.dispSeq = dispSeq;
+    public void setDispSeq(final Integer displayOrder) {
+        this.displayOrder = displayOrder;
     }
 
     public String getUrl() {

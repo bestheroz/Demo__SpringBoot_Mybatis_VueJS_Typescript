@@ -10,9 +10,9 @@ public class TestTableSampleMenuMstVO implements Serializable {
     private String menuNm;
     private String menuTyp;
     private Integer parMenuId;
-    private String useYn;
+    private Boolean useTf;
     private Integer power;
-    private Integer dispSeq;
+    private Integer displayOrder;
     private String url;
     private String remark1;
     private String regMemberId;
@@ -52,12 +52,12 @@ public class TestTableSampleMenuMstVO implements Serializable {
         this.parMenuId = parMenuId;
     }
 
-    public String getUseYn() {
-        return this.useYn;
+    public Boolean getUseTf() {
+        return this.useTf;
     }
 
-    public void setUseYn(final String useYn) {
-        this.useYn = useYn;
+    public void setUseTf(final Boolean useTf) {
+        this.useTf = useTf;
     }
 
     public Integer getPower() {
@@ -68,12 +68,12 @@ public class TestTableSampleMenuMstVO implements Serializable {
         this.power = power;
     }
 
-    public Integer getDispSeq() {
-        return this.dispSeq;
+    public Integer getDisplayOrder() {
+        return this.displayOrder;
     }
 
-    public void setDispSeq(final Integer dispSeq) {
-        this.dispSeq = dispSeq;
+    public void setDispSeq(final Integer displayOrder) {
+        this.displayOrder = displayOrder;
     }
 
     public String getUrl() {
@@ -123,5 +123,4 @@ public class TestTableSampleMenuMstVO implements Serializable {
     public void setUpdDt(final DateTime updDt) {
         this.updDt = updDt;
     }
-
 }

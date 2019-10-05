@@ -7,19 +7,19 @@ import javax.validation.constraints.NotEmpty;
 public class UpdateSampleCodeMstRequestVO {
     @NotEmpty
     @ApiModelProperty(value = "그룹 코드", required = true)
-    private String grcode;
+    private String groupCode;
     @NotEmpty
     @ApiModelProperty(value = "그룹 코드 명", required = true)
     private String grcodeNm;
     @ApiModelProperty(value = "비고")
     private String remark1;
 
-    public String getGrcode() {
-        return this.grcode;
+    public String getGroupCode() {
+        return this.groupCode;
     }
 
-    public void setGrcode(final String grcode) {
-        this.grcode = grcode;
+    public void setGroupCode(final String groupCode) {
+        this.groupCode = groupCode;
     }
 
     public String getGrcodeNm() {
