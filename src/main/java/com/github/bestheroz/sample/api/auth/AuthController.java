@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
-@Api(tags = "로그인")
+@Api(tags = "권한")
 @RestController
 @RequestMapping(value="/sample/auth")
 public class AuthController {

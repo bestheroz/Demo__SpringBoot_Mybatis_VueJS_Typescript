@@ -15,7 +15,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 public class SwaggerConfig {
     @Bean
     public Docket api1() {
-        return this.getDocket("로그인", "com.github.bestheroz.sample.api.auth", "/sample/auth/**");
+        return this.getDocket("권한", "com.github.bestheroz.sample.api.auth", "/sample/auth/**");
     }
 
     @Bean
