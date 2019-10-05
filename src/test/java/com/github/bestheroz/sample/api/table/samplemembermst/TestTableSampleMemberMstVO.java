@@ -8,15 +8,16 @@ import java.io.Serializable;
 public class TestTableSampleMemberMstVO implements Serializable {
     private String memberId;
     private String memberPw;
-    private String memberNm;
-    private String memberTyp;
+    private String memberName;
+    private String memberType;
     private Integer loginFailCnt;
-    private String isClosed;
-    private DateTime expireDt;
-    private String regMemberId;
-    private DateTime regDt;
-    private String updMemberId;
-    private DateTime updDt;
+    private Boolean closeTf;
+    private String token;
+    private DateTime expired;
+    private String createdBy;
+    private DateTime created;
+    private String updatedBy;
+    private DateTime updated;
 
     public String getMemberId() {
         return this.memberId;
@@ -34,20 +35,20 @@ public class TestTableSampleMemberMstVO implements Serializable {
         this.memberPw = memberPw;
     }
 
-    public String getMemberNm() {
-        return this.memberNm;
+    public String getMemberName() {
+        return this.memberName;
     }
 
-    public void setMemberNm(final String memberNm) {
-        this.memberNm = memberNm;
+    public void setMemberName(final String memberName) {
+        this.memberName = memberName;
     }
 
-    public String getMemberTyp() {
-        return this.memberTyp;
+    public String getMemberType() {
+        return this.memberType;
     }
 
-    public void setMemberTyp(final String memberTyp) {
-        this.memberTyp = memberTyp;
+    public void setMemberType(final String memberType) {
+        this.memberType = memberType;
     }
 
     public Integer getLoginFailCnt() {
@@ -58,52 +59,59 @@ public class TestTableSampleMemberMstVO implements Serializable {
         this.loginFailCnt = loginFailCnt;
     }
 
-    public String getCloseYn() {
-        return this.isClosed;
+    public Boolean getCloseTf() {
+        return this.closeTf;
     }
 
-    public void setCloseYn(final String isClosed) {
-        this.isClosed = isClosed;
+    public void setCloseTf(final Boolean closeTf) {
+        this.closeTf = closeTf;
     }
 
-    public DateTime getExpireDt() {
-        return this.expireDt;
+    public String getToken() {
+        return this.token;
     }
 
-    public void setExpireDt(final DateTime expireDt) {
-        this.expireDt = expireDt;
+    public void setToken(final String token) {
+        this.token = token;
     }
 
-    public String getRegMemberId() {
-        return this.regMemberId;
+    public DateTime getExpired() {
+        return this.expired;
     }
 
-    public void setRegMemberId(final String regMemberId) {
-        this.regMemberId = regMemberId;
+    public void setExpired(final DateTime expired) {
+        this.expired = expired;
     }
 
-    public DateTime getRegDt() {
-        return this.regDt;
+    public String getCreatedBy() {
+        return this.createdBy;
     }
 
-    public void setRegDt(final DateTime regDt) {
-        this.regDt = regDt;
+    public void setCreatedBy(final String createdBy) {
+        this.createdBy = createdBy;
     }
 
-    public String getUpdMemberId() {
-        return this.updMemberId;
+    public DateTime getCreated() {
+        return this.created;
     }
 
-    public void setUpdMemberId(final String updMemberId) {
-        this.updMemberId = updMemberId;
+    public void setCreated(final DateTime created) {
+        this.created = created;
     }
 
-    public DateTime getUpdDt() {
-        return this.updDt;
+    public String getUpdatedBy() {
+        return this.updatedBy;
     }
 
-    public void setUpdDt(final DateTime updDt) {
-        this.updDt = updDt;
+    public void setUpdatedBy(final String updatedBy) {
+        this.updatedBy = updatedBy;
     }
 
+    public DateTime getUpdated() {
+        return this.updated;
+    }
+
+    public void setUpdated(final DateTime updated) {
+        this.updated = updated;
+    }
 }

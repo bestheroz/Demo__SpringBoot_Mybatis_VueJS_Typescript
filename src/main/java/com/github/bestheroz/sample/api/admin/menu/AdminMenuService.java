@@ -21,19 +21,19 @@ public class AdminMenuService {
     private TableSampleMenuMstDAO tableSampleMenuMstDAO;
 
     public List<GetSampleMenuMstVOListResponseVO> getList() throws CommonException {
-        return this.adminMenuDAO.getList(new TableSampleMenuMstVO(), Collections.EMPTY_SET, "UPD_DT DESC");
+        return this.adminMenuDAO.getList(new TableSampleMenuMstVO(), Collections.EMPTY_SET, "UPDATED DESC");
     }
 
-    public GetSampleMenuMstVOListResponseVO getVO(final Integer menuId, final String menuNm) throws CommonException {
+    public GetSampleMenuMstVOListResponseVO getVO(final Integer menuId, final String menuName) throws CommonException {
         final TableSampleMenuMstVO tableSampleMenuMstVO = new TableSampleMenuMstVO();
-        Set<String> whereKeys = new HashSet<>();
+        final Set<String> whereKeys = new HashSet<>();
         tableSampleMenuMstVO.setMenuId(menuId);
-        tableSampleMenuMstVO.setMenuNm(menuNm);
+        tableSampleMenuMstVO.setMenuName(menuName);
         if (menuId != null) {
             whereKeys.add("menuId");
         }
-        if (menuNm != null) {
-            whereKeys.add("menuNm");
+        if (menuName != null) {
+            whereKeys.add("menuName");
         }
         return this.adminMenuDAO.getVO(tableSampleMenuMstVO, whereKeys);
     }
@@ -52,7 +52,7 @@ public class AdminMenuService {
         this.tableSampleMenuMstDAO.delete(vo, Collections.singleton("menuId"));
     }
 
-    List<GetValueLabeVOListResponseVO> getMenuTypG() throws CommonException {
-        return this.adminMenuDAO.getMenuTypG();
+    List<GetValueLabeVOListResponseVO> getMenuTypeG() throws CommonException {
+        return this.adminMenuDAO.getMenuTypeG();
     }
 }

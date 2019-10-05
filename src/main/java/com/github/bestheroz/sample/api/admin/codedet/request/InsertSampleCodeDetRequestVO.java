@@ -8,28 +8,28 @@ import javax.validation.constraints.NotNull;
 public class InsertSampleCodeDetRequestVO {
     @NotEmpty
     @ApiModelProperty(value = "그룹 코드", required = true)
-    private String grcode;
+    private String groupCode;
     @NotEmpty
     @ApiModelProperty(value = "코드", required = true)
     private String code;
     @NotEmpty
     @ApiModelProperty(value = "코드 명", required = true)
-    private String codeNm;
+    private String codeName;
     @NotEmpty
     @ApiModelProperty(value = "사용 여부", required = true)
-    private String useYn;
+    private Boolean useTf;
     @NotNull
     @ApiModelProperty(value = "출력 순서", required = true)
-    private Integer dispSeq;
+    private Integer displayOrder;
     @ApiModelProperty(value = "비고")
     private String remark1;
 
-    public String getGrcode() {
-        return this.grcode;
+    public String getGroupCode() {
+        return this.groupCode;
     }
 
-    public void setGrcode(final String grcode) {
-        this.grcode = grcode;
+    public void setGroupCode(final String groupCode) {
+        this.groupCode = groupCode;
     }
 
     public String getCode() {
@@ -40,28 +40,28 @@ public class InsertSampleCodeDetRequestVO {
         this.code = code;
     }
 
-    public String getCodeNm() {
-        return this.codeNm;
+    public String getCodeName() {
+        return this.codeName;
     }
 
-    public void setCodeNm(final String codeNm) {
-        this.codeNm = codeNm;
+    public void setCodeName(final String codeName) {
+        this.codeName = codeName;
     }
 
-    public String getUseYn() {
-        return this.useYn;
+    public Boolean getUseTf() {
+        return this.useTf;
     }
 
-    public void setUseYn(final String useYn) {
-        this.useYn = useYn;
+    public void setUseTf(final Boolean useTf) {
+        this.useTf = useTf;
     }
 
-    public Integer getDispSeq() {
-        return this.dispSeq;
+    public Integer getDisplayOrder() {
+        return this.displayOrder;
     }
 
-    public void setDispSeq(final Integer dispSeq) {
-        this.dispSeq = dispSeq;
+    public void setDispSeq(final Integer displayOrder) {
+        this.displayOrder = displayOrder;
     }
 
     public String getRemark1() {

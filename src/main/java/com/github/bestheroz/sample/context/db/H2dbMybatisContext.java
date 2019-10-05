@@ -25,8 +25,8 @@ import java.io.Serializable;
 @EnableTransactionManagement
 @MapperScan(basePackages = "com.github.bestheroz", annotationClass = Mapper.class)
 public class H2dbMybatisContext {
+    private static final EmbeddedDatabase EMBEDDED_DATABASE = new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2).addScript("/removabledb/sample.sql").build();
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-    private static final EmbeddedDatabase EMBEDDED_DATABASE = new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2).addScript("/sample/DB/MySqlNH2/mysql-h2-db.sql").build();
 
     @Bean(name = "dataSource")
     public DataSource getDataSource() {
@@ -43,7 +43,6 @@ public class H2dbMybatisContext {
     }
 
     @Bean(name = "transactionManager")
-    @Autowired
     @Primary
     public PlatformTransactionManager getPlatformTransactionManager() {
         return new DataSourceTransactionManager(this.getDataSource());

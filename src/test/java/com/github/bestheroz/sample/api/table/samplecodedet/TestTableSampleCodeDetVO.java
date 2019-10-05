@@ -6,23 +6,23 @@ import java.io.Serializable;
 
 @SuppressWarnings("serial")
 public class TestTableSampleCodeDetVO implements Serializable {
-    private String grcode;
+    private String groupCode;
     private String code;
-    private String codeNm;
-    private String useYn;
-    private Integer dispSeq;
+    private String codeName;
+    private Boolean useTf;
+    private Integer displayOrder;
     private String remark1;
-    private String regMemberId;
-    private DateTime regDt;
-    private String updMemberId;
-    private DateTime updDt;
+    private String createdBy;
+    private DateTime created;
+    private String updatedBy;
+    private DateTime updated;
 
-    public String getGrcode() {
-        return this.grcode;
+    public String getGroupCode() {
+        return this.groupCode;
     }
 
-    public void setGrcode(final String grcode) {
-        this.grcode = grcode;
+    public void setGroupCode(final String groupCode) {
+        this.groupCode = groupCode;
     }
 
     public String getCode() {
@@ -33,28 +33,28 @@ public class TestTableSampleCodeDetVO implements Serializable {
         this.code = code;
     }
 
-    public String getCodeNm() {
-        return this.codeNm;
+    public String getCodeName() {
+        return this.codeName;
     }
 
-    public void setCodeNm(final String codeNm) {
-        this.codeNm = codeNm;
+    public void setCodeName(final String codeName) {
+        this.codeName = codeName;
     }
 
-    public String getUseYn() {
-        return this.useYn;
+    public Boolean getUseTf() {
+        return this.useTf;
     }
 
-    public void setUseYn(final String useYn) {
-        this.useYn = useYn;
+    public void setUseTf(final Boolean useTf) {
+        this.useTf = useTf;
     }
 
-    public Integer getDispSeq() {
-        return this.dispSeq;
+    public Integer getDisplayOrder() {
+        return this.displayOrder;
     }
 
-    public void setDispSeq(final Integer dispSeq) {
-        this.dispSeq = dispSeq;
+    public void setDispSeq(final Integer displayOrder) {
+        this.displayOrder = displayOrder;
     }
 
     public String getRemark1() {
@@ -65,36 +65,36 @@ public class TestTableSampleCodeDetVO implements Serializable {
         this.remark1 = remark1;
     }
 
-    public String getRegMemberId() {
-        return this.regMemberId;
+    public String getCreatedBy() {
+        return this.createdBy;
     }
 
-    public void setRegMemberId(final String regMemberId) {
-        this.regMemberId = regMemberId;
+    public void setCreatedBy(final String createdBy) {
+        this.createdBy = createdBy;
     }
 
-    public DateTime getRegDt() {
-        return this.regDt;
+    public DateTime getCreated() {
+        return this.created;
     }
 
-    public void setRegDt(final DateTime regDt) {
-        this.regDt = regDt;
+    public void setCreated(final DateTime created) {
+        this.created = created;
     }
 
-    public String getUpdMemberId() {
-        return this.updMemberId;
+    public String getUpdatedBy() {
+        return this.updatedBy;
     }
 
-    public void setUpdMemberId(final String updMemberId) {
-        this.updMemberId = updMemberId;
+    public void setUpdatedBy(final String updatedBy) {
+        this.updatedBy = updatedBy;
     }
 
-    public DateTime getUpdDt() {
-        return this.updDt;
+    public DateTime getUpdated() {
+        return this.updated;
     }
 
-    public void setUpdDt(final DateTime updDt) {
-        this.updDt = updDt;
+    public void setUpdated(final DateTime updated) {
+        this.updated = updated;
     }
 
 }

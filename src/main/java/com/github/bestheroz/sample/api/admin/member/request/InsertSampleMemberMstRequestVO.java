@@ -14,16 +14,16 @@ public class InsertSampleMemberMstRequestVO {
     private String memberPw;
     @NotEmpty
     @ApiModelProperty(value = "회원 명", required = true)
-    private String memberNm;
+    private String memberName;
     @NotEmpty
     @ApiModelProperty(value = "회원 타입", required = true)
-    private String memberTyp;
+    private String memberType;
     @ApiModelProperty(value = "로그인 실패 건수")
     private Integer loginFailCnt;
     @ApiModelProperty(value = "계정 잠김 여부")
-    private Boolean isClosed;
+    private Boolean closeTf;
     @ApiModelProperty(value = "계정 만료 일시")
-    private LocalDateTime expireDt;
+    private LocalDateTime expired;
 
     public String getMemberId() {
         return this.memberId;
@@ -41,20 +41,20 @@ public class InsertSampleMemberMstRequestVO {
         this.memberPw = memberPw;
     }
 
-    public String getMemberNm() {
-        return this.memberNm;
+    public String getMemberName() {
+        return this.memberName;
     }
 
-    public void setMemberNm(final String memberNm) {
-        this.memberNm = memberNm;
+    public void setMemberName(final String memberName) {
+        this.memberName = memberName;
     }
 
-    public String getMemberTyp() {
-        return this.memberTyp;
+    public String getMemberType() {
+        return this.memberType;
     }
 
-    public void setMemberTyp(final String memberTyp) {
-        this.memberTyp = memberTyp;
+    public void setMemberType(final String memberType) {
+        this.memberType = memberType;
     }
 
     public Integer getLoginFailCnt() {
@@ -65,20 +65,20 @@ public class InsertSampleMemberMstRequestVO {
         this.loginFailCnt = loginFailCnt;
     }
 
-    public Boolean getCloseYn() {
-        return this.isClosed;
+    public Boolean getCloseTf() {
+        return this.closeTf;
     }
 
-    public void setCloseYn(final Boolean isClosed) {
-        this.isClosed = isClosed;
+    public void setCloseTf(final Boolean closeTf) {
+        this.closeTf = closeTf;
     }
 
-    public LocalDateTime getExpireDt() {
-        return this.expireDt;
+    public LocalDateTime getExpired() {
+        return this.expired;
     }
 
-    public void setExpireDt(final LocalDateTime expireDt) {
-        this.expireDt = expireDt;
+    public void setExpired(final LocalDateTime expired) {
+        this.expired = expired;
     }
 
 }

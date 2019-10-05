@@ -30,17 +30,17 @@ public class AdminCodeDetController {
 
     @ApiOperation(value = "상세 코드 데이터 취득")
     @ApiResponses(value = {@ApiResponse(response = GetSampleCodeDetVOListResponseVO.class, responseContainer = "List", code = 200, message = CommonCode.SWAGGER_COMMON_200_MESSAGE)})
-    @GetMapping(value = "{grcode}")
-    public CommonResponseVO getList(@ApiParam("그룹 코드") @PathVariable(value = "grcode") final String grcode) throws CommonException {
-        return MyResponseUtils.getSuccessCommonResponseVO(this.adminCodeDetService.getList(grcode));
+    @GetMapping(value = "{groupCode}")
+    public CommonResponseVO getList(@ApiParam("그룹 코드") @PathVariable(value = "groupCode") final String groupCode) throws CommonException {
+        return MyResponseUtils.getSuccessCommonResponseVO(this.adminCodeDetService.getList(groupCode));
     }
 
     @ApiOperation(value = "상세 코드 데이터 취득")
     @ApiResponses(value = {@ApiResponse(code = 200, message = CommonCode.SWAGGER_COMMON_200_MESSAGE)})
-    @GetMapping(value = "{grcode}/{code}")
-    public CommonResponseVO getVO(@ApiParam("그룹 코드") @PathVariable(value = "grcode") final String grcode,
+    @GetMapping(value = "{groupCode}/{code}")
+    public CommonResponseVO getVO(@ApiParam("그룹 코드") @PathVariable(value = "groupCode") final String groupCode,
                                   @ApiParam("상세 코드") @PathVariable(value = "code", required = false) final String code) throws CommonException {
-        return MyResponseUtils.getSuccessCommonResponseVO(this.adminCodeDetService.getVO(grcode, code));
+        return MyResponseUtils.getSuccessCommonResponseVO(this.adminCodeDetService.getVO(groupCode, code));
     }
 
     @ApiOperation(value = "상세 코드 데이터 추가")
@@ -51,35 +51,35 @@ public class AdminCodeDetController {
             this.logger.warn(new CommonException(CommonExceptionCode.FAIL_INVALID_PARAMETER, fieldError.getDefaultMessage()).getJsonObject().toString());
         }
         final TableSampleCodeDetVO tableSampleCodeDetVO = MyMapperUtils.writeObjectAsObject(vo, TableSampleCodeDetVO.class);
-        tableSampleCodeDetVO.setRegMemberId("insert");
-        tableSampleCodeDetVO.setUpdMemberId("insert");
+        tableSampleCodeDetVO.setCreatedBy("insert");
+        tableSampleCodeDetVO.setUpdatedBy("insert");
         this.adminCodeDetService.insert(tableSampleCodeDetVO);
         return MyResponseUtils.SUCCESS_NORMAL;
     }
 
     @ApiOperation(value = "상세 코드 데이터 수정")
     @ApiResponses({@ApiResponse(code = 200, message = CommonCode.SWAGGER_COMMON_200_MESSAGE)})
-    @PatchMapping(value = "{grcode}/{code}")
-    public CommonResponseVO update(@ApiParam("그룹 코드") @PathVariable(value = "grcode") final String grcode,
+    @PatchMapping(value = "{groupCode}/{code}")
+    public CommonResponseVO update(@ApiParam("그룹 코드") @PathVariable(value = "groupCode") final String groupCode,
                                    @ApiParam("상세 코드") @PathVariable(value = "code") final String code, @RequestBody final UpdateSampleCodeDetRequestVO vo, final BindingResult bindingResult)
             throws CommonException {
         for (final FieldError fieldError : bindingResult.getFieldErrors()) {
             this.logger.warn(new CommonException(CommonExceptionCode.FAIL_INVALID_PARAMETER, fieldError.getDefaultMessage()).getJsonObject().toString());
         }
         final TableSampleCodeDetVO tableSampleCodeDetVO = MyMapperUtils.writeObjectAsObject(vo, TableSampleCodeDetVO.class);
-        tableSampleCodeDetVO.setGrcode(grcode);
+        tableSampleCodeDetVO.setGroupCode(groupCode);
         tableSampleCodeDetVO.setCode(code);
-        tableSampleCodeDetVO.setUpdMemberId("update");
+        tableSampleCodeDetVO.setUpdatedBy("update");
         this.adminCodeDetService.update(tableSampleCodeDetVO);
         return MyResponseUtils.SUCCESS_NORMAL;
     }
 
     @ApiOperation(value = "상세 코드 데이터 삭제")
     @ApiResponses({@ApiResponse(code = 200, message = CommonCode.SWAGGER_COMMON_200_MESSAGE)})
-    @DeleteMapping(value = "{grcode}/{code}")
-    public CommonResponseVO delete(@ApiParam("그룹 코드") @PathVariable(value = "grcode") final String grcode,
+    @DeleteMapping(value = "{groupCode}/{code}")
+    public CommonResponseVO delete(@ApiParam("그룹 코드") @PathVariable(value = "groupCode") final String groupCode,
                                    @ApiParam("상세 코드") @PathVariable(value = "code") final String code) throws CommonException {
-        this.adminCodeDetService.delete(grcode, code);
+        this.adminCodeDetService.delete(groupCode, code);
         return MyResponseUtils.SUCCESS_NORMAL;
     }
 }

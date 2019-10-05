@@ -1,13 +1,14 @@
 export interface Member {
   memberId?: string;
   memberPw?: string;
-  memberNm?: string;
-  memberTyp?: string;
+  memberName?: string;
+  memberType?: string;
   loginFailCnt?: number;
-  isClosed?: boolean;
-  expireDt?: Date;
-  regMemberId?: string;
-  regDt?: Date;
-  updMemberId?: string;
-  updDt?: Date;
+  token?: string;
+  closeTf?: boolean;
+  expired?: Date;
+  createdBy?: string;
+  created?: Date;
+  updatedBy?: string;
+  updated?: Date;
 }

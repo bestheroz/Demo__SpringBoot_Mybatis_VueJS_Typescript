@@ -18,7 +18,7 @@ public interface AdminMenuDAO {
     @SelectProvider(type = SqlForTableVO.class, method = SqlForTableVO.SELECT_ONE)
     GetSampleMenuMstVOListResponseVO getVO(final TableSampleMenuMstVO vo, final Set<String> whereKeys) throws CommonException;
 
-    @Select("SELECT SMM.MENU_ID, SMM.MENU_NM FROM SAMPLE_MENU_MST SMM WHERE SMM.MENU_TYP = 'G' ORDER BY SMM.MENU_ID ASC")
-    @Results(value = {@Result(column = "MENU_ID", property = "value"), @Result(column = "MENU_NM", property = "label")})
-    List<GetValueLabeVOListResponseVO> getMenuTypG() throws CommonException;
+    @Select("SELECT SMM.MENU_ID, SMM.MENU_NAME FROM SAMPLE_MENU_MST SMM WHERE SMM.MENU_TYPE = 'G' ORDER BY SMM.MENU_ID ASC")
+    @Results(value = {@Result(column = "MENU_ID", property = "value"), @Result(column = "MENU_NAME", property = "label")})
+    List<GetValueLabeVOListResponseVO> getMenuTypeG() throws CommonException;
 }

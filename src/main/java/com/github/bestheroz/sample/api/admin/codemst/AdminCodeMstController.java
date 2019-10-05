@@ -37,9 +37,9 @@ public class AdminCodeMstController {
 
     @ApiOperation(value = "그룹 코드 데이터 취득")
     @ApiResponses({@ApiResponse(response = TableSampleCodeMstVO.class, code = 200, message = CommonCode.SWAGGER_COMMON_200_MESSAGE)})
-    @GetMapping(value = "{grcode}")
-    public CommonResponseVO get(@ApiParam("그룹 코드") @PathVariable(value = "grcode", required = false) final String grcode) throws CommonException {
-        return MyResponseUtils.getSuccessCommonResponseVO(this.adminCodeMstService.getVO(grcode));
+    @GetMapping(value = "{groupCode}")
+    public CommonResponseVO get(@ApiParam("그룹 코드") @PathVariable(value = "groupCode", required = false) final String groupCode) throws CommonException {
+        return MyResponseUtils.getSuccessCommonResponseVO(this.adminCodeMstService.getVO(groupCode));
     }
 
     @ApiOperation(value = "그룹 코드 데이터 추가")
@@ -50,32 +50,32 @@ public class AdminCodeMstController {
             this.logger.warn(new CommonException(CommonExceptionCode.FAIL_INVALID_PARAMETER, fieldError.getDefaultMessage()).getJsonObject().toString());
         }
         final TableSampleCodeMstVO tableSampleCodeMstVO = MyMapperUtils.writeObjectAsObject(vo, TableSampleCodeMstVO.class);
-        tableSampleCodeMstVO.setRegMemberId("insert");
-        tableSampleCodeMstVO.setUpdMemberId("insert");
+        tableSampleCodeMstVO.setCreatedBy("insert");
+        tableSampleCodeMstVO.setUpdatedBy("insert");
         this.adminCodeMstService.insert(tableSampleCodeMstVO);
         return MyResponseUtils.SUCCESS_NORMAL;
     }
 
     @ApiOperation(value = "그룹 코드 데이터 수정")
     @ApiResponses({@ApiResponse(code = 200, message = CommonCode.SWAGGER_COMMON_200_MESSAGE)})
-    @PatchMapping(value = "{grcode}")
-    public CommonResponseVO patch(@ApiParam("그룹 코드") @PathVariable(value = "grcode") final String grcode, @RequestBody final UpdateSampleCodeMstRequestVO vo, final BindingResult bindingResult)
+    @PatchMapping(value = "{groupCode}")
+    public CommonResponseVO patch(@ApiParam("그룹 코드") @PathVariable(value = "groupCode") final String groupCode, @RequestBody final UpdateSampleCodeMstRequestVO vo, final BindingResult bindingResult)
             throws CommonException {
         for (final FieldError fieldError : bindingResult.getFieldErrors()) {
             this.logger.warn(new CommonException(CommonExceptionCode.FAIL_INVALID_PARAMETER, fieldError.getDefaultMessage()).getJsonObject().toString());
         }
         final TableSampleCodeMstVO tableSampleCodeMstVO = MyMapperUtils.writeObjectAsObject(vo, TableSampleCodeMstVO.class);
-        tableSampleCodeMstVO.setGrcode(grcode);
-        tableSampleCodeMstVO.setUpdMemberId("update");
+        tableSampleCodeMstVO.setGroupCode(groupCode);
+        tableSampleCodeMstVO.setUpdatedBy("update");
         this.adminCodeMstService.update(tableSampleCodeMstVO);
         return MyResponseUtils.SUCCESS_NORMAL;
     }
 
     @ApiOperation(value = "그룹 코드 데이터 삭제")
     @ApiResponses({@ApiResponse(code = 200, message = CommonCode.SWAGGER_COMMON_200_MESSAGE)})
-    @DeleteMapping(value = "{grcode}")
-    public CommonResponseVO delete(@ApiParam("그룹 코드") @PathVariable(value = "grcode") final String grcode) throws CommonException {
-        this.adminCodeMstService.delete(grcode);
+    @DeleteMapping(value = "{groupCode}")
+    public CommonResponseVO delete(@ApiParam("그룹 코드") @PathVariable(value = "groupCode") final String groupCode) throws CommonException {
+        this.adminCodeMstService.delete(groupCode);
         return MyResponseUtils.SUCCESS_NORMAL;
     }
 

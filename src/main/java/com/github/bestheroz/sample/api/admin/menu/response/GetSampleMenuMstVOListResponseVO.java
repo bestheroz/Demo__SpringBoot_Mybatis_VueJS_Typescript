@@ -9,17 +9,17 @@ public class GetSampleMenuMstVOListResponseVO implements Serializable {
     @ApiModelProperty(value = "메뉴 아이디")
     private Integer menuId;
     @ApiModelProperty(value = "메뉴 명")
-    private String menuNm;
+    private String menuName;
     @ApiModelProperty(value = "부모 메뉴 아이디")
     private Integer parMenuId;
     @ApiModelProperty(value = "메뉴 타입")
-    private String menuTyp;
+    private String menuType;
     @ApiModelProperty(value = "사용 여부")
-    private String useYn;
+    private Boolean useTf;
     @ApiModelProperty(value = "메뉴 권한")
     private Integer power;
     @ApiModelProperty(value = "출력 순서")
-    private Integer dispSeq;
+    private Integer displayOrder;
     @ApiModelProperty(value = "링크 URL")
     private String url;
     @ApiModelProperty(value = "비고")
@@ -33,12 +33,12 @@ public class GetSampleMenuMstVOListResponseVO implements Serializable {
         this.menuId = menuId;
     }
 
-    public String getMenuNm() {
-        return this.menuNm;
+    public String getMenuName() {
+        return this.menuName;
     }
 
-    public void setMenuNm(final String menuNm) {
-        this.menuNm = menuNm;
+    public void setMenuName(final String menuName) {
+        this.menuName = menuName;
     }
 
     public Integer getParMenuId() {
@@ -49,20 +49,20 @@ public class GetSampleMenuMstVOListResponseVO implements Serializable {
         this.parMenuId = parMenuId;
     }
 
-    public String getMenuTyp() {
-        return this.menuTyp;
+    public String getMenuType() {
+        return this.menuType;
     }
 
-    public void setMenuTyp(final String menuTyp) {
-        this.menuTyp = menuTyp;
+    public void setMenuType(final String menuType) {
+        this.menuType = menuType;
     }
 
-    public String getUseYn() {
-        return this.useYn;
+    public Boolean getUseTf() {
+        return this.useTf;
     }
 
-    public void setUseYn(final String useYn) {
-        this.useYn = useYn;
+    public void setUseTf(final Boolean useTf) {
+        this.useTf = useTf;
     }
 
     public Integer getPower() {
@@ -73,12 +73,12 @@ public class GetSampleMenuMstVOListResponseVO implements Serializable {
         this.power = power;
     }
 
-    public Integer getDispSeq() {
-        return this.dispSeq;
+    public Integer getDisplayOrder() {
+        return this.displayOrder;
     }
 
-    public void setDispSeq(final Integer dispSeq) {
-        this.dispSeq = dispSeq;
+    public void setDispSeq(final Integer displayOrder) {
+        this.displayOrder = displayOrder;
     }
 
     public String getUrl() {

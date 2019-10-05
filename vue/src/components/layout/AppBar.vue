@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-app-bar color="deep-purple accent-4" dark app>
+    <v-app-bar app color="deep-purple accent-4" dark>
       <v-btn icon to="/">
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
@@ -12,7 +12,8 @@
         </v-tooltip>
       </v-btn>
       <v-toolbar-title
-        >My Spring + Mybatis + Swggaer API + Vue + Vuetify {{ appVersions }}
+        >My Spring + Mybatis + Swggaer API + Vue + Vuetify
+        {{ $store.state.appVersions }}
       </v-toolbar-title>
 
       <div class="flex-grow-1" />
@@ -35,9 +36,7 @@
 import { Component, Vue } from 'vue-property-decorator';
 
 @Component({})
-export default class AppBar extends Vue {
-  appVersions: string = process.env.VUE_APP_VERSIONS;
-}
+export default class AppBar extends Vue {}
 </script>
 
 <style scoped></style>
