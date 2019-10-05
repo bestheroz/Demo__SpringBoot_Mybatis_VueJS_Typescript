@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.jdbc.SQL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.lang.NonNull;
 
 import java.lang.reflect.Field;
 import java.text.MessageFormat;
@@ -46,7 +47,7 @@ public class SqlForTableVO {
     private static final String WHERE_BIND_ENCRYPTED_STRING = "{0} = XX1.ENC_VARCHAR2_INS (#'{'param1.{1}{2}'}', 11, ''SSN'', ''{3}'', ''{0}'')";
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public <T extends Object> String countTableVO(final T vo, final Set<String> whereKeys) {
+    public <T extends Object> String countTableVO(@NonNull final T vo, final Set<String> whereKeys) {
         final SQL sql = new SQL();
         final String tableName = getTableName(vo);
         sql.SELECT("COUNT(1) AS CNT").FROM(tableName);
@@ -58,7 +59,7 @@ public class SqlForTableVO {
         return sql.toString();
     }
 
-    private <T extends Object> void getSelectSql(final T vo, final SQL sql, final String tableName, final Field[] fields) {
+    private <T extends Object> void getSelectSql(@NonNull final T vo, final SQL sql, final String tableName, final Field[] fields) {
         final Set<String> encryptedColumnList = this.getEncryptedColumnList(vo);
         for (final Field field : fields) {
             final String camelFieldName = field.getName();
@@ -87,7 +88,7 @@ public class SqlForTableVO {
         }
     }
 
-    private <T extends Object> void getWhereSql(final T vo, final Set<String> whereKeys, final SQL sql, final String tableName) {
+    private <T extends Object> void getWhereSql(@NonNull final T vo, final Set<String> whereKeys, final SQL sql, final String tableName) {
         final Map<String, Object> param = MyMapperUtils.writeObjectAsHashMap(vo);
         try {
             validWhereKey(whereKeys, param);
@@ -110,7 +111,7 @@ public class SqlForTableVO {
     }
 
     @SuppressWarnings("unchecked")
-    private <T extends Object> Set<String> getEncryptedColumnList(final T vo) {
+    private <T extends Object> Set<String> getEncryptedColumnList(@NonNull final T vo) {
         try {
             return (Set<String>) vo.getClass().getField(ENCRYPTED_FIELD_LIST).get(new HashSet<>());
         } catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
@@ -119,7 +120,7 @@ public class SqlForTableVO {
     }
 
     @SuppressWarnings("unused")
-    public <T extends Object> String selectTableVO(final T vo, final Set<String> whereKeys, final String orderByColumns) {
+    public <T extends Object> String selectTableVO(@NonNull final T vo, final Set<String> whereKeys, final String orderByColumns) {
         final SQL sql = new SQL();
         final String tableName = getTableName(vo);
         final Field[] fields = vo.getClass().getDeclaredFields();
@@ -137,11 +138,11 @@ public class SqlForTableVO {
         return sql.toString();
     }
 
-    private <T extends Object> String getTableName(final T vo) {
+    private <T extends Object> String getTableName(@NonNull final T vo) {
         return CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, StringUtils.substringBetween(vo.getClass().getSimpleName(), "Table", "VO"));
     }
 
-    public <T extends Object> String selectOneTableVO(final T vo, final Set<String> whereKeys) {
+    public <T extends Object> String selectOneTableVO(@NonNull final T vo, final Set<String> whereKeys) {
         validWhereKey(whereKeys, MyMapperUtils.writeObjectAsHashMap(vo));
 
         final SQL sql = new SQL();
@@ -154,7 +155,7 @@ public class SqlForTableVO {
         return sql.toString();
     }
 
-    public <T extends Object> String insertTableVO(final T vo) {
+    public <T extends Object> String insertTableVO(@NonNull final T vo) {
         final Map<String, Object> param = MyMapperUtils.writeObjectAsHashMap(vo);
         final SQL sql = new SQL();
         final String tableName = getTableName(vo);
@@ -191,7 +192,7 @@ public class SqlForTableVO {
         return sql.toString();
     }
 
-    public <T extends Object> String updateTableVO(final T vo, final Set<String> whereKeys, final Set<String> forcedUpdateKey) {
+    public <T extends Object> String updateTableVO(@NonNull final T vo, final Set<String> whereKeys, final Set<String> forcedUpdateKey) {
         final Map<String, Object> param = MyMapperUtils.writeObjectAsHashMap(vo);
         validWhereKey(whereKeys, param);
 
@@ -249,7 +250,7 @@ public class SqlForTableVO {
         return sql.toString();
     }
 
-    public <T extends Object> String deleteTableVO(final T vo, final Set<String> whereKeys) {
+    public <T extends Object> String deleteTableVO(@NonNull final T vo, final Set<String> whereKeys) {
         if (MyNullUtils.size(whereKeys) < 1) {
             this.logger.warn(CommonExceptionCode.FAIL_NO_DATA_SUCCESS.toString());
             throw CommonException.EXCEPTION_ERROR_NO_DATA_SUCCESS;
