@@ -8,10 +8,10 @@ import javax.validation.constraints.NotNull;
 public class UpdateSampleMenuMstRequestVO {
     @NotEmpty
     @ApiModelProperty(value = "메뉴 명", required = true)
-    private String menuNm;
+    private String menuName;
     @NotEmpty
     @ApiModelProperty(value = "메뉴 타입", required = true)
-    private String menuTyp;
+    private String menuType;
     @NotNull
     @ApiModelProperty(value = "부모 메뉴 아이디", required = true)
     private Integer parMenuId;
@@ -29,20 +29,20 @@ public class UpdateSampleMenuMstRequestVO {
     @ApiModelProperty(value = "비고")
     private String remark1;
 
-    public String getMenuNm() {
-        return this.menuNm;
+    public String getMenuName() {
+        return this.menuName;
     }
 
-    public void setMenuNm(final String menuNm) {
-        this.menuNm = menuNm;
+    public void setMenuName(final String menuName) {
+        this.menuName = menuName;
     }
 
-    public String getMenuTyp() {
-        return this.menuTyp;
+    public String getMenuType() {
+        return this.menuType;
     }
 
-    public void setMenuTyp(final String menuTyp) {
-        this.menuTyp = menuTyp;
+    public void setMenuType(final String menuType) {
+        this.menuType = menuType;
     }
 
     public Integer getParMenuId() {

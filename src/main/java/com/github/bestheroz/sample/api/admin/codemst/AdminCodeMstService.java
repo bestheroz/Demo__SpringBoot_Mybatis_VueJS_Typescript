@@ -34,36 +34,36 @@ public class AdminCodeMstService {
     private TableSampleCodeDetDAO tableSampleCodeDetDAO;
 
     public List<GetSampleCodeMstVOListResponseVO> getList() throws CommonException {
-        return MyMapperUtils.writeObjectAsArrayList(this.tableSampleCodeMstDAO.getList(new TableSampleCodeMstVO(), Collections.EMPTY_SET, "UPD_DT DESC"), GetSampleCodeMstVOListResponseVO.class);
+        return MyMapperUtils.writeObjectAsArrayList(this.tableSampleCodeMstDAO.getList(new TableSampleCodeMstVO(), Collections.EMPTY_SET, "UPDATED DESC"), GetSampleCodeMstVOListResponseVO.class);
     }
 
-    public TableSampleCodeMstVO getVO(final String grcode) throws CommonException {
+    public TableSampleCodeMstVO getVO(final String groupCode) throws CommonException {
         final TableSampleCodeMstVO tableSampleCodeMstVO = new TableSampleCodeMstVO();
-        tableSampleCodeMstVO.setGrcode(grcode);
-        return MyMapperUtils.writeObjectAsObject(this.tableSampleCodeMstDAO.getVO(tableSampleCodeMstVO, Collections.singleton("grcode")), TableSampleCodeMstVO.class);
+        tableSampleCodeMstVO.setGroupCode(groupCode);
+        return MyMapperUtils.writeObjectAsObject(this.tableSampleCodeMstDAO.getVO(tableSampleCodeMstVO, Collections.singleton("groupCode")), TableSampleCodeMstVO.class);
     }
 
     public void insert(final TableSampleCodeMstVO vo) throws CommonException {
         this.tableSampleCodeMstDAO.insert(vo);
-        this.session.removeAttribute("ValueLabel." + vo.getGrcode());
+        this.session.removeAttribute("ValueLabel." + vo.getGroupCode());
     }
 
     public void update(final TableSampleCodeMstVO vo) throws CommonException {
-        this.tableSampleCodeMstDAO.update(vo, Collections.singleton("grcode"), null);
-        this.session.removeAttribute("ValueLabel." + vo.getGrcode());
+        this.tableSampleCodeMstDAO.update(vo, Collections.singleton("groupCode"), null);
+        this.session.removeAttribute("ValueLabel." + vo.getGroupCode());
     }
 
     // @Transactional
-    public void delete(final String grcode) throws CommonException {
+    public void delete(final String groupCode) throws CommonException {
         final DefaultTransactionDefinition defaultTransactionDefinition = new DefaultTransactionDefinition();
         defaultTransactionDefinition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
         final TransactionStatus status = this.platformTransactionManager.getTransaction(defaultTransactionDefinition);
 
         try {
             final TableSampleCodeDetVO tableSampleCodeDetVO = new TableSampleCodeDetVO();
-            tableSampleCodeDetVO.setGrcode(grcode);
+            tableSampleCodeDetVO.setGroupCode(groupCode);
             try {
-                this.tableSampleCodeDetDAO.delete(tableSampleCodeDetVO, Collections.singleton("grcode"));
+                this.tableSampleCodeDetDAO.delete(tableSampleCodeDetVO, Collections.singleton("groupCode"));
             } catch (final CommonException e) {
                 if (!e.isExceptionNoDataSuccesss()) {
                     this.logger.warn(ExceptionUtils.getStackTrace(e));
@@ -71,9 +71,9 @@ public class AdminCodeMstService {
                 }
             }
             final TableSampleCodeMstVO tableSampleCodeMstVO = new TableSampleCodeMstVO();
-            tableSampleCodeMstVO.setGrcode(grcode);
-            this.tableSampleCodeMstDAO.delete(tableSampleCodeMstVO, Collections.singleton("grcode"));
-            this.session.removeAttribute("ValueLabel." + tableSampleCodeMstVO.getGrcode());
+            tableSampleCodeMstVO.setGroupCode(groupCode);
+            this.tableSampleCodeMstDAO.delete(tableSampleCodeMstVO, Collections.singleton("groupCode"));
+            this.session.removeAttribute("ValueLabel." + tableSampleCodeMstVO.getGroupCode());
             this.platformTransactionManager.commit(status);
         } catch (final CommonException e) {
             if (!status.isCompleted()) {

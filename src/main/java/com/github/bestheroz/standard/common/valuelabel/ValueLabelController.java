@@ -6,7 +6,10 @@ import com.github.bestheroz.standard.common.protocol.CommonResponseVO;
 import com.github.bestheroz.standard.common.util.MyResponseUtils;
 import com.github.bestheroz.standard.common.valuelabel.response.GetValueLabeVOListResponseVO;
 import io.swagger.annotations.*;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 
@@ -19,8 +22,8 @@ public class ValueLabelController {
 
     @ApiOperation(value = "<value, label> 데이터 취득")
     @ApiResponses(value = {@ApiResponse(response = GetValueLabeVOListResponseVO.class, responseContainer = "List", code = 200, message = CommonCode.SWAGGER_COMMON_200_MESSAGE)})
-    @GetMapping(value = "{grcode}")
-    public CommonResponseVO get(@ApiParam(value = "그룹 코드") @PathVariable(value = "grcode") final String grcode) throws CommonException {
-        return MyResponseUtils.getSuccessCommonResponseVO(this.valueLabelService.getList(grcode));
+    @GetMapping(value = "{groupCode}")
+    public CommonResponseVO get(@ApiParam(value = "그룹 코드") @PathVariable(value = "groupCode") final String groupCode) throws CommonException {
+        return MyResponseUtils.getSuccessCommonResponseVO(this.valueLabelService.getList(groupCode));
     }
 }

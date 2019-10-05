@@ -9,11 +9,11 @@ public class GetSampleMenuMstVOListResponseVO implements Serializable {
     @ApiModelProperty(value = "메뉴 아이디")
     private Integer menuId;
     @ApiModelProperty(value = "메뉴 명")
-    private String menuNm;
+    private String menuName;
     @ApiModelProperty(value = "부모 메뉴 아이디")
     private Integer parMenuId;
     @ApiModelProperty(value = "메뉴 타입")
-    private String menuTyp;
+    private String menuType;
     @ApiModelProperty(value = "사용 여부")
     private Boolean useTf;
     @ApiModelProperty(value = "메뉴 권한")
@@ -33,12 +33,12 @@ public class GetSampleMenuMstVOListResponseVO implements Serializable {
         this.menuId = menuId;
     }
 
-    public String getMenuNm() {
-        return this.menuNm;
+    public String getMenuName() {
+        return this.menuName;
     }
 
-    public void setMenuNm(final String menuNm) {
-        this.menuNm = menuNm;
+    public void setMenuName(final String menuName) {
+        this.menuName = menuName;
     }
 
     public Integer getParMenuId() {
@@ -49,12 +49,12 @@ public class GetSampleMenuMstVOListResponseVO implements Serializable {
         this.parMenuId = parMenuId;
     }
 
-    public String getMenuTyp() {
-        return this.menuTyp;
+    public String getMenuType() {
+        return this.menuType;
     }
 
-    public void setMenuTyp(final String menuTyp) {
-        this.menuTyp = menuTyp;
+    public void setMenuType(final String menuType) {
+        this.menuType = menuType;
     }
 
     public Boolean getUseTf() {

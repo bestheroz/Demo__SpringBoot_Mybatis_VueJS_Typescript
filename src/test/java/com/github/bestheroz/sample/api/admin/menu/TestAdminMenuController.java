@@ -28,16 +28,16 @@ public class TestAdminMenuController extends DefaultTestClass {
     @Test
     public void 메뉴데이터_추가() throws Exception {
         final TableSampleMenuMstVO vo = new TableSampleMenuMstVO();
-        vo.setMenuNm("메뉴데이터_추가");
+        vo.setMenuName("메뉴데이터_추가");
         vo.setDispSeq(999);
-        vo.setMenuTyp("P");
+        vo.setMenuType("P");
         vo.setPower(999);
         vo.setParMenuId(1000000000);
-        vo.setUseYn("Y");
+        vo.setUseTf(true);
         final MvcResult mvcResult = MyTestUtils.performPost("/sample/admin/menu/insertSampleMenuMst", vo).andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON)).andReturn();
         Assertions.assertEquals(MyMapperUtils.writeObjectAsJsonObject(mvcResult.getResponse().getContentAsString()), CommonException.EXCEPTION_SUCCESS_NORMAL.getJsonObject());
-        Assertions.assertEquals(MyAccessBeanUtils.getBean(TableSampleMenuMstDAO.class).getVO(vo, Collections.singleton("menuNm")).getMenuNm(), "메뉴데이터_추가");
+        Assertions.assertEquals(MyAccessBeanUtils.getBean(TableSampleMenuMstDAO.class).getVO(vo, Collections.singleton("menuName")).getMenuName(), "메뉴데이터_추가");
     }
 
     @Test

@@ -50,8 +50,8 @@ public class AdminMemberController {
             this.logger.warn(new CommonException(CommonExceptionCode.FAIL_INVALID_PARAMETER, fieldError.getDefaultMessage()).getJsonObject().toString());
         }
         final TableSampleMemberMstVO tableSampleMemberMstVO = MyMapperUtils.writeObjectAsObject(vo, TableSampleMemberMstVO.class);
-        tableSampleMemberMstVO.setRegMemberId("insert");
-        tableSampleMemberMstVO.setUpdMemberId("insert");
+        tableSampleMemberMstVO.setCreatedBy("insert");
+        tableSampleMemberMstVO.setUpdatedBy("insert");
         this.adminMemberService.insert(tableSampleMemberMstVO);
         return MyResponseUtils.SUCCESS_NORMAL;
     }
@@ -66,7 +66,7 @@ public class AdminMemberController {
         }
         final TableSampleMemberMstVO tableSampleMemberMstVO = MyMapperUtils.writeObjectAsObject(vo, TableSampleMemberMstVO.class);
         tableSampleMemberMstVO.setMemberId(memberId);
-        tableSampleMemberMstVO.setUpdMemberId("update");
+        tableSampleMemberMstVO.setUpdatedBy("update");
         this.adminMemberService.update(tableSampleMemberMstVO);
         return MyResponseUtils.SUCCESS_NORMAL;
     }

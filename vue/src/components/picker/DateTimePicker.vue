@@ -2,50 +2,50 @@
   <v-row>
     <v-col>
       <v-dialog
-        ref="dayDialog"
-        v-model="localDayDialog"
+        :disabled="disabled"
         :return-value.sync="localDay"
         persistent
+        ref="dayDialog"
+        v-model="localDayDialog"
         width="290px"
-        :disabled="disabled"
       >
         <template v-slot:activator="{ on }">
           <v-text-field
-            v-model="localDay"
-            :label="localDayLabel"
             :hint="dayHint"
+            :label="localDayLabel"
             :persistent-hint="dayHint !== undefined"
             prepend-icon="event"
             readonly
+            v-model="localDay"
             v-on="on"
           ></v-text-field>
         </template>
-        <v-date-picker v-model="localDay" :locale="APP_LANGUAGE" scrollable>
+        <v-date-picker :locale="APP_LANGUAGE" scrollable v-model="localDay">
           <div class="flex-grow-1"></div>
           <v-btn
-            text
-            color="primary"
             @click="
               () => {
                 localDay = formatNowTZ('YYYY-MM-DD');
                 $refs.dayDialog.save(localDay);
-                updateDt();
+                updated();
               }
             "
+            color="primary"
+            text
             >{{ $t('today') }}
           </v-btn>
-          <v-btn text color="primary" @click="localDayDialog = false"
+          <v-btn @click="localDayDialog = false" color="primary" text
             >{{ $t('cancel') }}
           </v-btn>
           <v-btn
-            text
-            color="primary"
             @click="
               () => {
                 $refs.dayDialog.save(localDay);
-                updateDt();
+                updated();
               }
             "
+            color="primary"
+            text
             >{{ $t('ok') }}
           </v-btn>
         </v-date-picker>
@@ -53,55 +53,55 @@
     </v-col>
     <v-col>
       <v-dialog
-        ref="timeDialog"
-        v-model="localTimeDialog"
+        :disabled="disabled"
         :return-value.sync="localTime"
         persistent
+        ref="timeDialog"
+        v-model="localTimeDialog"
         width="290px"
-        :disabled="disabled"
       >
         <template v-slot:activator="{ on }">
           <v-text-field
-            v-model="localTime"
-            :label="localTimeLabel"
             :hint="timeHint"
+            :label="localTimeLabel"
             :persistent-hint="timeHint !== undefined"
             prepend-icon="access_time"
             readonly
+            v-model="localTime"
             v-on="on"
           ></v-text-field>
         </template>
         <v-time-picker
+          format="24hr"
+          full-width
           v-if="localTimeDialog"
           v-model="localTime"
-          full-width
-          format="24hr"
         >
           <div class="flex-grow-1"></div>
           <v-btn
-            text
-            color="primary"
             @click="
               () => {
                 localTime = formatNowTZ('HH:mm');
                 $refs.timeDialog.save(localTime);
-                updateDt();
+                updated();
               }
             "
+            color="primary"
+            text
             >{{ $t('now') }}
           </v-btn>
-          <v-btn text color="primary" @click="localTimeDialog = false"
+          <v-btn @click="localTimeDialog = false" color="primary" text
             >{{ $t('cancel') }}
           </v-btn>
           <v-btn
-            text
-            color="primary"
             @click="
               () => {
                 $refs.timeDialog.save(localTime);
-                updateDt();
+                updated();
               }
             "
+            color="primary"
+            text
             >{{ $t('ok') }}
           </v-btn>
         </v-time-picker>
@@ -149,7 +149,7 @@ export default class DatetimePicker extends Vue {
   }
 
   @Emit()
-  updateDt(): string {
+  update(): string {
     return `${this.localDay}T${this.localTime}:00${process.env.VUE_APP_TIMEZONE_OFFSET_STRING}`;
   }
 }

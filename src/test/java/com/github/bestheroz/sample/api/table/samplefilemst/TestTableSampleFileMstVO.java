@@ -12,10 +12,10 @@ public class TestTableSampleFileMstVO implements Serializable {
     private String fileNmExt;
     private String mimeTyp;
     private Byte[] fileData; // Arrays.copyOf(value, value.length)
-    private String regMemberId;
-    private DateTime regDt;
-    private String updMemberId;
-    private DateTime updDt;
+    private String createdBy;
+    private DateTime created;
+    private String updatedBy;
+    private DateTime updated;
 
     public Integer getFileSeq() {
         return this.fileSeq;
@@ -57,36 +57,36 @@ public class TestTableSampleFileMstVO implements Serializable {
         this.fileData = Arrays.copyOf(fileData, fileData.length);
     }
 
-    public String getRegMemberId() {
-        return this.regMemberId;
+    public String getCreatedBy() {
+        return this.createdBy;
     }
 
-    public void setRegMemberId(final String regMemberId) {
-        this.regMemberId = regMemberId;
+    public void setCreatedBy(final String createdBy) {
+        this.createdBy = createdBy;
     }
 
-    public DateTime getRegDt() {
-        return this.regDt;
+    public DateTime getCreated() {
+        return this.created;
     }
 
-    public void setRegDt(final DateTime regDt) {
-        this.regDt = regDt;
+    public void setCreated(final DateTime created) {
+        this.created = created;
     }
 
-    public String getUpdMemberId() {
-        return this.updMemberId;
+    public String getUpdatedBy() {
+        return this.updatedBy;
     }
 
-    public void setUpdMemberId(final String updMemberId) {
-        this.updMemberId = updMemberId;
+    public void setUpdatedBy(final String updatedBy) {
+        this.updatedBy = updatedBy;
     }
 
-    public DateTime getUpdDt() {
-        return this.updDt;
+    public DateTime getUpdated() {
+        return this.updated;
     }
 
-    public void setUpdDt(final DateTime updDt) {
-        this.updDt = updDt;
+    public void setUpdated(final DateTime updated) {
+        this.updated = updated;
     }
 
 }

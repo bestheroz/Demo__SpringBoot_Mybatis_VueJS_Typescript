@@ -7,12 +7,12 @@ import java.io.Serializable;
 @SuppressWarnings("serial")
 public class TestTableSampleCodeMstVO implements Serializable {
     private String groupCode;
-    private String grcodeNm;
+    private String groupCodeNm;
     private String remark1;
-    private String regMemberId;
-    private DateTime regDt;
-    private String updMemberId;
-    private DateTime updDt;
+    private String createdBy;
+    private DateTime created;
+    private String updatedBy;
+    private DateTime updated;
 
     public String getGroupCode() {
         return this.groupCode;
@@ -22,12 +22,12 @@ public class TestTableSampleCodeMstVO implements Serializable {
         this.groupCode = groupCode;
     }
 
-    public String getGrcodeNm() {
-        return this.grcodeNm;
+    public String getGroupCodeNm() {
+        return this.groupCodeNm;
     }
 
-    public void setGrcodeNm(final String grcodeNm) {
-        this.grcodeNm = grcodeNm;
+    public void setGroupCodeNm(final String groupCodeNm) {
+        this.groupCodeNm = groupCodeNm;
     }
 
     public String getRemark1() {
@@ -38,36 +38,36 @@ public class TestTableSampleCodeMstVO implements Serializable {
         this.remark1 = remark1;
     }
 
-    public String getRegMemberId() {
-        return this.regMemberId;
+    public String getCreatedBy() {
+        return this.createdBy;
     }
 
-    public void setRegMemberId(final String regMemberId) {
-        this.regMemberId = regMemberId;
+    public void setCreatedBy(final String createdBy) {
+        this.createdBy = createdBy;
     }
 
-    public DateTime getRegDt() {
-        return this.regDt;
+    public DateTime getCreated() {
+        return this.created;
     }
 
-    public void setRegDt(final DateTime regDt) {
-        this.regDt = regDt;
+    public void setCreated(final DateTime created) {
+        this.created = created;
     }
 
-    public String getUpdMemberId() {
-        return this.updMemberId;
+    public String getUpdatedBy() {
+        return this.updatedBy;
     }
 
-    public void setUpdMemberId(final String updMemberId) {
-        this.updMemberId = updMemberId;
+    public void setUpdatedBy(final String updatedBy) {
+        this.updatedBy = updatedBy;
     }
 
-    public DateTime getUpdDt() {
-        return this.updDt;
+    public DateTime getUpdated() {
+        return this.updated;
     }
 
-    public void setUpdDt(final DateTime updDt) {
-        this.updDt = updDt;
+    public void setUpdated(final DateTime updated) {
+        this.updated = updated;
     }
 
 }

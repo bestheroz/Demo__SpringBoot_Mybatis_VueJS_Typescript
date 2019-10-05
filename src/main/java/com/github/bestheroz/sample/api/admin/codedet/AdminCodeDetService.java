@@ -31,35 +31,36 @@ public class AdminCodeDetService {
     private TableSampleCodeDetDAO tableSampleCodeDetDAO;
 
     // DETAIL PART
-    public List<GetSampleCodeDetVOListResponseVO> getList(final String grcode) throws CommonException {
+    public List<GetSampleCodeDetVOListResponseVO> getList(final String groupCode) throws CommonException {
         final TableSampleCodeDetVO tableSampleCodeDetVO = new TableSampleCodeDetVO();
-        tableSampleCodeDetVO.setGrcode(grcode);
-        return MyMapperUtils.writeObjectAsArrayList(this.tableSampleCodeDetDAO.getList(tableSampleCodeDetVO, Collections.singleton("grcode"), "UPD_DT DESC"), GetSampleCodeDetVOListResponseVO.class);
+        tableSampleCodeDetVO.setGroupCode(groupCode);
+        return MyMapperUtils
+                .writeObjectAsArrayList(this.tableSampleCodeDetDAO.getList(tableSampleCodeDetVO, Collections.singleton("groupCode"), "UPDATED DESC"), GetSampleCodeDetVOListResponseVO.class);
     }
 
-    public GetSampleCodeDetVOResponseVO getVO(final String grcode, final String code) throws CommonException {
+    public GetSampleCodeDetVOResponseVO getVO(final String groupCode, final String code) throws CommonException {
         final TableSampleCodeDetVO tableSampleCodeDetVO = new TableSampleCodeDetVO();
-        tableSampleCodeDetVO.setGrcode(grcode);
+        tableSampleCodeDetVO.setGroupCode(groupCode);
         tableSampleCodeDetVO.setCode(code);
-        return MyMapperUtils.writeObjectAsObject(this.tableSampleCodeDetDAO.getVO(tableSampleCodeDetVO, Sets.newHashSet("grcode", "code")), GetSampleCodeDetVOResponseVO.class);
+        return MyMapperUtils.writeObjectAsObject(this.tableSampleCodeDetDAO.getVO(tableSampleCodeDetVO, Sets.newHashSet("groupCode", "code")), GetSampleCodeDetVOResponseVO.class);
     }
 
     public void insert(final TableSampleCodeDetVO vo) throws CommonException {
         this.tableSampleCodeDetDAO.insert(vo);
-        this.session.removeAttribute("ValueLabel." + vo.getGrcode());
+        this.session.removeAttribute("ValueLabel." + vo.getGroupCode());
     }
 
     public void update(final TableSampleCodeDetVO vo) throws CommonException {
-        this.tableSampleCodeDetDAO.update(vo, Sets.newHashSet("grcode", "code"), null);
-        this.session.removeAttribute("ValueLabel." + vo.getGrcode());
+        this.tableSampleCodeDetDAO.update(vo, Sets.newHashSet("groupCode", "code"), null);
+        this.session.removeAttribute("ValueLabel." + vo.getGroupCode());
     }
 
-    public void delete(final String grcode, final String code) throws CommonException {
+    public void delete(final String groupCode, final String code) throws CommonException {
         final TableSampleCodeDetVO tableSampleCodeDetVO = new TableSampleCodeDetVO();
-        tableSampleCodeDetVO.setGrcode(grcode);
+        tableSampleCodeDetVO.setGroupCode(groupCode);
         tableSampleCodeDetVO.setCode(code);
-        this.tableSampleCodeDetDAO.delete(tableSampleCodeDetVO, Sets.newHashSet("grcode", "code"));
-        this.session.removeAttribute("ValueLabel." + tableSampleCodeDetVO.getGrcode());
+        this.tableSampleCodeDetDAO.delete(tableSampleCodeDetVO, Sets.newHashSet("groupCode", "code"));
+        this.session.removeAttribute("ValueLabel." + tableSampleCodeDetVO.getGroupCode());
     }
 
 }

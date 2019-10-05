@@ -18,7 +18,7 @@ public class AdminMemberService {
     private TableSampleMemberMstDAO tableMemberMstDAO;
 
     public List<GetSampleMemberMstVOResponseVO> getList() throws CommonException {
-        return MyMapperUtils.writeObjectAsArrayList(this.tableMemberMstDAO.getList(new TableSampleMemberMstVO(), Collections.EMPTY_SET, "UPD_DT DESC"), GetSampleMemberMstVOResponseVO.class);
+        return MyMapperUtils.writeObjectAsArrayList(this.tableMemberMstDAO.getList(new TableSampleMemberMstVO(), Collections.EMPTY_SET, "UPDATED DESC"), GetSampleMemberMstVOResponseVO.class);
     }
 
     public GetSampleMemberMstVOResponseVO getVO(final String memberId) throws CommonException {
@@ -28,8 +28,8 @@ public class AdminMemberService {
     }
 
     public void insert(final TableSampleMemberMstVO vo) throws CommonException {
-        if (StringUtils.isEmpty(vo.getUpdMemberId())) {
-            vo.setUpdMemberId(vo.getRegMemberId());
+        if (StringUtils.isEmpty(vo.getUpdatedBy())) {
+            vo.setUpdatedBy(vo.getCreatedBy());
         }
         this.tableMemberMstDAO.insert(vo);
     }

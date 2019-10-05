@@ -12,10 +12,10 @@ public class TableSampleCodeDetVO implements Serializable {
     private Boolean useTf;
     private Integer displayOrder;
     private String remark1;
-    private String regMemberId;
-    private LocalDateTime regDt;
-    private String updMemberId;
-    private LocalDateTime updDt;
+    private String createdBy;
+    private LocalDateTime created;
+    private String updatedBy;
+    private LocalDateTime updated;
 
     public String getGroupCode() {
         return this.groupCode;
@@ -66,36 +66,36 @@ public class TableSampleCodeDetVO implements Serializable {
         this.remark1 = remark1;
     }
 
-    public String getRegMemberId() {
-        return this.regMemberId;
+    public String getCreatedBy() {
+        return this.createdBy;
     }
 
-    public void setRegMemberId(final String regMemberId) {
-        this.regMemberId = regMemberId;
+    public void setCreatedBy(final String createdBy) {
+        this.createdBy = createdBy;
     }
 
-    public LocalDateTime getRegDt() {
-        return this.regDt;
+    public LocalDateTime getCreated() {
+        return this.created;
     }
 
-    public void setRegDt(final LocalDateTime regDt) {
-        this.regDt = regDt;
+    public void setCreated(final LocalDateTime created) {
+        this.created = created;
     }
 
-    public String getUpdMemberId() {
-        return this.updMemberId;
+    public String getUpdatedBy() {
+        return this.updatedBy;
     }
 
-    public void setUpdMemberId(final String updMemberId) {
-        this.updMemberId = updMemberId;
+    public void setUpdatedBy(final String updatedBy) {
+        this.updatedBy = updatedBy;
     }
 
-    public LocalDateTime getUpdDt() {
-        return this.updDt;
+    public LocalDateTime getUpdated() {
+        return this.updated;
     }
 
-    public void setUpdDt(final LocalDateTime updDt) {
-        this.updDt = updDt;
+    public void setUpdated(final LocalDateTime updated) {
+        this.updated = updated;
     }
 
 }

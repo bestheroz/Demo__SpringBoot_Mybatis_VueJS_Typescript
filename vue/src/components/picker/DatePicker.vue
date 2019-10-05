@@ -2,52 +2,52 @@
   <v-row>
     <v-col>
       <v-dialog
-        ref="dayDialog"
-        v-model="localDayDialog"
+        :disabled="disabled"
         :return-value.sync="localDay"
         persistent
+        ref="dayDialog"
+        v-model="localDayDialog"
         width="290px"
-        :disabled="disabled"
       >
         <template v-slot:activator="{ on }">
           <v-text-field
-            v-model="localDay"
-            :label="localDayLabel"
             :hint="dayHint"
+            :label="localDayLabel"
             :persistent-hint="dayHint !== undefined"
             prepend-icon="event"
             readonly
+            v-model="localDay"
             v-on="on"
           ></v-text-field>
         </template>
-        <v-date-picker v-model="localDay" :locale="APP_LANGUAGE" scrollable>
+        <v-date-picker :locale="APP_LANGUAGE" scrollable v-model="localDay">
           <div class="flex-grow-1"></div>
           <v-btn
-            text
-            color="primary"
             @click="
               () => {
                 localDay = formatNowTZ('YYYY-MM-DD');
                 $refs.dayDialog.save(localDay);
-                updateDt();
+                updated();
               }
             "
+            color="primary"
+            text
             >{{ $t('today') }}
           </v-btn>
-          <v-btn text color="primary" @click="localDayDialog = false">{{
-            $t('cancel')
-          }}</v-btn>
+          <v-btn @click="localDayDialog = false" color="primary" text
+            >{{ $t('cancel') }}
+          </v-btn>
           <v-btn
-            text
-            color="primary"
             @click="
               () => {
                 $refs.dayDialog.save(localDay);
-                updateDt();
+                updated();
               }
             "
-            >{{ $t('ok') }}</v-btn
-          >
+            color="primary"
+            text
+            >{{ $t('ok') }}
+          </v-btn>
         </v-date-picker>
       </v-dialog>
     </v-col>
@@ -89,7 +89,7 @@ export default class DatetimePicker extends Vue {
   }
 
   @Emit()
-  updateDt(): string {
+  updated(): string {
     this.localDayDialog = false;
     return `${this.localDay}T00:00:00${process.env.VUE_APP_TIMEZONE_OFFSET_STRING}`;
   }
