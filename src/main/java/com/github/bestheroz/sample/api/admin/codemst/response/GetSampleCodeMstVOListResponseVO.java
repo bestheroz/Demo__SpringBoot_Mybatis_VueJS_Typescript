@@ -6,7 +6,7 @@ public class GetSampleCodeMstVOListResponseVO {
     @ApiModelProperty(value = "그룹 코드")
     private String groupCode;
     @ApiModelProperty(value = "그룹 코드 명")
-    private String groupCodeNm;
+    private String groupCodeName;
     @ApiModelProperty(value = "비고")
     private String remark1;
 
@@ -18,12 +18,12 @@ public class GetSampleCodeMstVOListResponseVO {
         this.groupCode = groupCode;
     }
 
-    public String getGroupCodeNm() {
-        return this.groupCodeNm;
+    public String getGroupCodeName() {
+        return this.groupCodeName;
     }
 
-    public void setGroupCodeNm(final String groupCodeNm) {
-        this.groupCodeNm = groupCodeNm;
+    public void setGroupCodeName(final String groupCodeName) {
+        this.groupCodeName = groupCodeName;
     }
 
     public String getRemark1() {

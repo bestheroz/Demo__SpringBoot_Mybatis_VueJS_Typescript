@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
 public class UpdateSampleCodeDetRequestVO {
     @NotEmpty
     @ApiModelProperty(value = "코드 명", required = true)
-    private String codeNm;
+    private String codeName;
     @NotEmpty
     @ApiModelProperty(value = "사용 여부", required = true)
     private Boolean useTf;
@@ -18,12 +18,12 @@ public class UpdateSampleCodeDetRequestVO {
     @ApiModelProperty(value = "비고")
     private String remark1;
 
-    public String getCodeNm() {
-        return this.codeNm;
+    public String getCodeName() {
+        return this.codeName;
     }
 
-    public void setCodeNm(final String codeNm) {
-        this.codeNm = codeNm;
+    public void setCodeName(final String codeName) {
+        this.codeName = codeName;
     }
 
     public Boolean getUseTf() {

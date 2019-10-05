@@ -1,6 +1,6 @@
-import axios, { AxiosError } from 'axios';
+import { AxiosError } from 'axios';
 import { axiosInstance } from '@/main';
-import { AlertOptions } from '@/components/alert/common/types';
+import _ from 'lodash';
 
 export interface ApiDataResult<T> {
   responseCode: string;
@@ -66,14 +66,12 @@ export async function getDataApi<T>(
 export async function createDataApi<T>(
   url: String,
   data: T,
-  alertOptions?: AlertOptions,
+  vueForAutoToast: any = undefined,
 ): Promise<ApiResult<T>> {
   try {
     const response = await axiosInstance.post<ApiDataResult<T>>(`${url}`, data);
     // response.status === 201
-    if (alertOptions) {
-      alertOptions.result = Object.assign({}, response.data);
-    }
+    vueForAutoToast && toastResponseMessage(vueForAutoToast, response.data);
     return {
       status: response.status,
       code: response.data.responseCode,
@@ -89,7 +87,7 @@ export async function updateDataApi<T>(
   url: String,
   data: T,
   key: String | Number,
-  alertOptions?: AlertOptions,
+  vueForAutoToast: any = undefined,
 ): Promise<ApiResult<T>> {
   try {
     const response = await axiosInstance.put<ApiDataResult<T>>(
@@ -97,9 +95,7 @@ export async function updateDataApi<T>(
       data,
     );
     // response.status === 200
-    if (alertOptions) {
-      alertOptions.result = Object.assign({}, response.data);
-    }
+    vueForAutoToast && toastResponseMessage(vueForAutoToast, response.data);
     return {
       status: response.status,
       code: response.data.responseCode,
@@ -115,7 +111,7 @@ export async function patchDataApi<T>(
   url: String,
   data: T,
   key: String | Number,
-  alertOptions?: AlertOptions,
+  vueForAutoToast: any = undefined,
 ): Promise<ApiResult<T>> {
   try {
     const response = await axiosInstance.patch<ApiDataResult<T>>(
@@ -123,9 +119,7 @@ export async function patchDataApi<T>(
       data,
     );
     // response.status === 200
-    if (alertOptions) {
-      alertOptions.result = Object.assign({}, response.data);
-    }
+    vueForAutoToast && toastResponseMessage(vueForAutoToast, response.data);
     return {
       status: response.status,
       code: response.data.responseCode,
@@ -141,14 +135,12 @@ export async function deleteDataApi<T>(
   url: String,
   data: T,
   key: String | Number,
-  alertOptions?: AlertOptions,
+  vueForAutoToast: any = undefined,
 ): Promise<ApiResult<T>> {
   try {
     const response = await axiosInstance.delete(`${url}${key}/`);
     // response.status === 204
-    if (alertOptions) {
-      alertOptions.result = Object.assign({}, response.data);
-    }
+    vueForAutoToast && toastResponseMessage(vueForAutoToast, response.data);
     return {
       status: response.status,
       code: response.data.responseCode,
@@ -201,5 +193,16 @@ export async function getCodeListDataApi<SelectItem>(
   } catch (error) {
     console.warn(getErrorResult(error).message);
     return [];
+  }
+}
+
+function toastResponseMessage(
+  vue: any,
+  responseData: ApiDataResult<any>,
+): void {
+  if (_.startsWith(responseData.responseCode, `S`)) {
+    vue.$toast.success(responseData.responseMessage!);
+  } else {
+    vue.$toast.warning(responseData.responseMessage!);
   }
 }

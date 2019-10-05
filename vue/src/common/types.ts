@@ -12,5 +12,5 @@ export interface DataTableHeader {
 
 export interface SelectItem {
   code: string;
-  codeNm: string | number;
+  codeName: string | number;
 }

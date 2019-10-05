@@ -32,11 +32,11 @@ VALUES ('developer',
         '999',
         0,
         FALSE,
-        NOW() + 365,
+        SYSDATE + 365,
         'bestheroz',
-        NOW(),
+        SYSDATE,
         'bestheroz',
-        NOW());
+        SYSDATE);
 
 INSERT
 INTO SAMPLE_MEMBER_MST
@@ -57,11 +57,11 @@ VALUES ('1',
         '999',
         0,
         FALSE,
-        NOW() + 365,
+        SYSDATE + 365,
         'bestheroz',
-        NOW(),
+        SYSDATE,
         'bestheroz',
-        NOW());
+        SYSDATE);
 
 INSERT
 INTO SAMPLE_MEMBER_MST
@@ -82,11 +82,11 @@ VALUES ('bestheroz',
         '999',
         0,
         FALSE,
-        NOW() + 365,
+        SYSDATE + 365,
         'bestheroz',
-        NOW(),
+        SYSDATE,
         'bestheroz',
-        NOW());
+        SYSDATE);
 
 INSERT
 INTO SAMPLE_MEMBER_MST
@@ -107,28 +107,28 @@ VALUES ('guest',
         '300',
         0,
         FALSE,
-        NOW() + 365,
+        SYSDATE + 365,
         'bestheroz',
-        NOW(),
+        SYSDATE,
         'bestheroz',
-        NOW());
+        SYSDATE);
 
 COMMIT;
 CREATE TABLE SAMPLE_MENU_MST
 (
-    MENU_ID       INT(10) PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    MENU_NAME     VARCHAR(1000)       NOT NULL,
-    MENU_TYPE     CHAR(1)             NOT NULL,
-    PAR_MENU_ID   INT(10)             NOT NULL,
-    USE_TF        BOOLEAN             NOT NULL,
-    POWER         INT(10)             NOT NULL,
-    DISPLAY_ORDER INT(10)             NOT NULL,
+    MENU_ID       INT(10) PRIMARY KEY AUTO_INCREMENT,
+    MENU_NAME     VARCHAR(1000) NOT NULL,
+    MENU_TYPE     CHAR(1)       NOT NULL,
+    PAR_MENU_ID   INT(10)       NOT NULL,
+    USE_TF        BOOLEAN       NOT NULL,
+    POWER         INT(10)       NOT NULL,
+    DISPLAY_ORDER INT(10)       NOT NULL,
     URL           VARCHAR(4000),
     REMARK1       VARCHAR(4000),
-    CREATED_BY    VARCHAR(100)        NOT NULL,
-    CREATED       DATETIME            NOT NULL,
-    UPDATED_BY    VARCHAR(100)        NOT NULL,
-    UPDATED       DATETIME            NOT NULL
+    CREATED_BY    VARCHAR(100)  NOT NULL,
+    CREATED       DATETIME      NOT NULL,
+    UPDATED_BY    VARCHAR(100)  NOT NULL,
+    UPDATED       DATETIME      NOT NULL
 );
 
 INSERT
@@ -154,9 +154,9 @@ VALUES ('Root',
         '/',
         'MYSPRING 최상위',
         'bestheroz',
-        NOW(),
+        SYSDATE,
         'bestheroz',
-        NOW());
+        SYSDATE);
 
 INSERT
 INTO SAMPLE_MENU_MST
@@ -177,11 +177,12 @@ SELECT 'JS 가이드',
        300,
        10,
        'bestheroz',
-       NOW(),
+       SYSDATE,
        'bestheroz',
-       NOW()
+       SYSDATE
 FROM SAMPLE_MENU_MST
 WHERE MENU_NAME = 'Root';
+
 
 INSERT
 INTO SAMPLE_MENU_MST
@@ -202,9 +203,9 @@ SELECT 'JSP 가이드',
        300,
        20,
        'bestheroz',
-       NOW(),
+       SYSDATE,
        'bestheroz',
-       NOW()
+       SYSDATE
 FROM SAMPLE_MENU_MST
 WHERE MENU_NAME = 'Root';
 
@@ -227,9 +228,9 @@ SELECT 'Github',
        300,
        70,
        'bestheroz',
-       NOW(),
+       SYSDATE,
        'bestheroz',
-       NOW()
+       SYSDATE
 FROM SAMPLE_MENU_MST
 WHERE MENU_NAME = 'Root';
 
@@ -252,9 +253,9 @@ SELECT '관리자',
        700,
        110,
        'bestheroz',
-       NOW(),
+       SYSDATE,
        'bestheroz',
-       NOW()
+       SYSDATE
 FROM SAMPLE_MENU_MST
 WHERE MENU_NAME = 'Root';
 
@@ -279,9 +280,9 @@ SELECT '메뉴관리',
        1,
        '/sample/admin/menu/adminMenu.view',
        'bestheroz',
-       NOW(),
+       SYSDATE,
        'bestheroz',
-       NOW()
+       SYSDATE
 FROM SAMPLE_MENU_MST
 WHERE MENU_NAME = '관리자';
 
@@ -306,9 +307,9 @@ SELECT '코드관리',
        3,
        '/sample/admin/valuelabel/adminValueLabel.view',
        'bestheroz',
-       NOW(),
+       SYSDATE,
        'bestheroz',
-       NOW()
+       SYSDATE
 FROM SAMPLE_MENU_MST
 WHERE MENU_NAME = '관리자';
 
@@ -333,9 +334,9 @@ SELECT '우편번호검색API',
        30,
        '/sample/guide/postcode/sampleGuidePostcode.view',
        'bestheroz',
-       NOW(),
+       SYSDATE,
        'bestheroz',
-       NOW()
+       SYSDATE
 FROM SAMPLE_MENU_MST
 WHERE MENU_NAME = 'JS 가이드';
 
@@ -360,9 +361,9 @@ SELECT '회원관리',
        5,
        '/sample/admin/member/adminMember.view',
        'bestheroz',
-       NOW(),
+       SYSDATE,
        'bestheroz',
-       NOW()
+       SYSDATE
 FROM SAMPLE_MENU_MST
 WHERE MENU_NAME = '관리자';
 
@@ -387,9 +388,9 @@ SELECT '모든 프로젝트 보기',
        1,
        'http://10.125.251.12/explore/projects',
        'bestheroz',
-       NOW(),
+       SYSDATE,
        'bestheroz',
-       NOW()
+       SYSDATE
 FROM SAMPLE_MENU_MST
 WHERE MENU_NAME = 'Github';
 
@@ -414,9 +415,9 @@ SELECT '개발환경구축가이드',
        10,
        NULL,
        'bestheroz',
-       NOW(),
+       SYSDATE,
        'bestheroz',
-       NOW()
+       SYSDATE
 FROM SAMPLE_MENU_MST
 WHERE MENU_NAME = 'Github';
 
@@ -441,11 +442,12 @@ SELECT '표준 웹 프로젝트',
        20,
        NULL,
        'bestheroz',
-       NOW(),
+       SYSDATE,
        'bestheroz',
-       NOW()
+       SYSDATE
 FROM SAMPLE_MENU_MST
 WHERE MENU_NAME = 'Github';
+
 
 INSERT
 INTO SAMPLE_MENU_MST
@@ -468,9 +470,9 @@ SELECT '모달(modal) 띄우기',
        10,
        '/sample/guide/modal/sampleGuideModal.view',
        'bestheroz',
-       NOW(),
+       SYSDATE,
        'bestheroz',
-       NOW()
+       SYSDATE
 FROM SAMPLE_MENU_MST
 WHERE MENU_NAME = 'JS 가이드';
 
@@ -495,9 +497,9 @@ SELECT 'ajax 요청하기',
        1,
        '/sample/guide/ajax/sampleGuideAjax.view',
        'bestheroz',
-       NOW(),
+       SYSDATE,
        'bestheroz',
-       NOW()
+       SYSDATE
 FROM SAMPLE_MENU_MST
 WHERE MENU_NAME = 'JS 가이드';
 
@@ -522,9 +524,9 @@ SELECT '팝업(popup)창 띄우기',
        11,
        '/sample/guide/popup/sampleGuidePopup.view',
        'bestheroz',
-       NOW(),
+       SYSDATE,
        'bestheroz',
-       NOW()
+       SYSDATE
 FROM SAMPLE_MENU_MST
 WHERE MENU_NAME = 'JS 가이드';
 
@@ -549,9 +551,9 @@ SELECT '달력 및 시간: datetimepicker',
        40,
        '/sample/guide/datetimepicker/sampleGuideDatetimepicker.view',
        'bestheroz',
-       NOW(),
+       SYSDATE,
        'bestheroz',
-       NOW()
+       SYSDATE
 FROM SAMPLE_MENU_MST
 WHERE MENU_NAME = 'JS 가이드';
 
@@ -576,9 +578,9 @@ SELECT 'ajax - 파일다운로드',
        6,
        '/sample/guide/ajax/sampleGuideAjax.view?#list4',
        'bestheroz',
-       NOW(),
+       SYSDATE,
        'bestheroz',
-       NOW()
+       SYSDATE
 FROM SAMPLE_MENU_MST
 WHERE MENU_NAME = 'JS 가이드';
 
@@ -603,9 +605,9 @@ SELECT '날짜 처리',
        20,
        '/sample/guide/format/sampleGuideFormat.view?#list1',
        'bestheroz',
-       NOW(),
+       SYSDATE,
        'bestheroz',
-       NOW()
+       SYSDATE
 FROM SAMPLE_MENU_MST
 WHERE MENU_NAME = 'JS 가이드';
 
@@ -630,9 +632,9 @@ SELECT '필드 검증하기(필수값 등)',
        15,
        '/sample/guide/validate/field/sampleGuideValidateField.view',
        'bestheroz',
-       NOW(),
+       SYSDATE,
        'bestheroz',
-       NOW()
+       SYSDATE
 FROM SAMPLE_MENU_MST
 WHERE MENU_NAME = 'JS 가이드';
 
@@ -657,9 +659,9 @@ SELECT '값 검증하기',
        16,
        '/sample/guide/validate/value/sampleGuideValidateValue.view',
        'bestheroz',
-       NOW(),
+       SYSDATE,
        'bestheroz',
-       NOW()
+       SYSDATE
 FROM SAMPLE_MENU_MST
 WHERE MENU_NAME = 'JS 가이드';
 
@@ -682,9 +684,9 @@ SELECT '페이징 처리',
        300,
        90,
        'bestheroz',
-       NOW(),
+       SYSDATE,
        'bestheroz',
-       NOW()
+       SYSDATE
 FROM SAMPLE_MENU_MST
 WHERE MENU_NAME = 'JS 가이드';
 
@@ -709,9 +711,9 @@ SELECT 'ajax - 파일업로드',
        5,
        '/sample/guide/ajax/sampleGuideAjax.view?#list2',
        'bestheroz',
-       NOW(),
+       SYSDATE,
        'bestheroz',
-       NOW()
+       SYSDATE
 FROM SAMPLE_MENU_MST
 WHERE MENU_NAME = 'JS 가이드';
 
@@ -736,9 +738,9 @@ SELECT '텍스트 에디터',
        60,
        '/sample/guide/texteditor/sampleGuideTexteditor.view',
        'bestheroz',
-       NOW(),
+       SYSDATE,
        'bestheroz',
-       NOW()
+       SYSDATE
 FROM SAMPLE_MENU_MST
 WHERE MENU_NAME = 'JS 가이드';
 
@@ -763,9 +765,9 @@ SELECT 'HTML템플릿 - 핸들바JS',
        70,
        '/sample/guide/handlebarsjs/sampleGuideHandlebarsjs.view',
        'bestheroz',
-       NOW(),
+       SYSDATE,
        'bestheroz',
-       NOW()
+       SYSDATE
 FROM SAMPLE_MENU_MST
 WHERE MENU_NAME = 'JS 가이드';
 
@@ -790,9 +792,9 @@ SELECT '숫자 포맷&#40;콤마찍기 등&#41;',
        25,
        '/sample/guide/format/sampleGuideFormat.view?#list2',
        'bestheroz',
-       NOW(),
+       SYSDATE,
        'bestheroz',
-       NOW()
+       SYSDATE
 FROM SAMPLE_MENU_MST
 WHERE MENU_NAME = 'JS 가이드';
 
@@ -817,9 +819,9 @@ SELECT 'my:html',
        10,
        '/sample/guide/html/sampleGuideHtml.view',
        'bestheroz',
-       NOW(),
+       SYSDATE,
        'bestheroz',
-       NOW()
+       SYSDATE
 FROM SAMPLE_MENU_MST
 WHERE MENU_NAME = 'JSP 가이드';
 
@@ -844,9 +846,9 @@ SELECT '표준 API 프로젝트',
        30,
        NULL,
        'bestheroz',
-       NOW(),
+       SYSDATE,
        'bestheroz',
-       NOW()
+       SYSDATE
 FROM SAMPLE_MENU_MST
 WHERE MENU_NAME = 'JSP 가이드';
 
@@ -872,13 +874,12 @@ SELECT '파일관리',
        40,
        '/sample/admin/file/adminFile.view',
        'bestheroz',
-       NOW(),
+       SYSDATE,
        'bestheroz',
-       NOW()
+       SYSDATE
 FROM SAMPLE_MENU_MST
 WHERE MENU_NAME = '관리자';
 
-COMMIT;
 
 CREATE TABLE SAMPLE_CODE_MST
 (
@@ -902,9 +903,9 @@ INTO SAMPLE_CODE_MST
 VALUES ('MENU_TYPE',
         '메뉴타입',
         'bestheroz',
-        NOW(),
+        SYSDATE,
         'bestheroz',
-        NOW());
+        SYSDATE);
 
 INSERT
 INTO SAMPLE_CODE_MST
@@ -917,9 +918,9 @@ INTO SAMPLE_CODE_MST
 VALUES ('USE_TF',
         '사용여부',
         'bestheroz',
-        NOW(),
+        SYSDATE,
         'bestheroz',
-        NOW());
+        SYSDATE);
 
 INSERT
 INTO SAMPLE_CODE_MST
@@ -932,9 +933,9 @@ INTO SAMPLE_CODE_MST
 VALUES ('MEMBER_TYPE',
         '회원구분',
         'bestheroz',
-        NOW(),
+        SYSDATE,
         'bestheroz',
-        NOW());
+        SYSDATE);
 
 INSERT
 INTO SAMPLE_CODE_MST
@@ -947,18 +948,17 @@ INTO SAMPLE_CODE_MST
 VALUES ('USE_TF_REVERSE',
         '사용여부(아니오부터 출력)',
         'bestheroz',
-        NOW(),
+        SYSDATE,
         'bestheroz',
-        NOW());
+        SYSDATE);
 
-COMMIT;
 
 CREATE TABLE SAMPLE_CODE_DET
 (
     GROUP_CODE    VARCHAR(100)  NOT NULL,
     CODE          VARCHAR(100)  NOT NULL,
     CODE_NAME     VARCHAR(1000) NOT NULL,
-    USE_TF        VARCHAR(1)    NOT NULL,
+    USE_TF        BOOLEAN       NOT NULL,
     DISPLAY_ORDER INT(10)       NOT NULL,
     REMARK1       VARCHAR(4000),
     CREATED_BY    VARCHAR(100)  NOT NULL,
@@ -966,16 +966,6 @@ CREATE TABLE SAMPLE_CODE_DET
     UPDATED_BY    VARCHAR(100)  NOT NULL,
     UPDATED       DATETIME      NOT NULL
 );
-
-CREATE INDEX IDX_SAMPLE_CODE_DET
-    ON SAMPLE_CODE_DET
-        (
-         GROUP_CODE,
-         DISPLAY_ORDER
-            );
-
-ALTER TABLE SAMPLE_CODE_DET
-    ADD PRIMARY KEY (GROUP_CODE, CODE);
 
 INSERT
 INTO SAMPLE_CODE_DET
@@ -994,9 +984,9 @@ VALUES ('USE_TF',
         TRUE,
         1,
         'bestheroz',
-        NOW(),
+        SYSDATE,
         'bestheroz',
-        NOW());
+        SYSDATE);
 
 INSERT
 INTO SAMPLE_CODE_DET
@@ -1015,9 +1005,9 @@ VALUES ('USE_TF',
         TRUE,
         2,
         'bestheroz',
-        NOW(),
+        SYSDATE,
         'bestheroz',
-        NOW());
+        SYSDATE);
 
 INSERT
 INTO SAMPLE_CODE_DET
@@ -1036,9 +1026,9 @@ VALUES ('MENU_TYPE',
         TRUE,
         1,
         'bestheroz',
-        NOW(),
+        SYSDATE,
         'bestheroz',
-        NOW());
+        SYSDATE);
 
 INSERT
 INTO SAMPLE_CODE_DET
@@ -1057,9 +1047,9 @@ VALUES ('MENU_TYPE',
         TRUE,
         2,
         'bestheroz',
-        NOW(),
+        SYSDATE,
         'bestheroz',
-        NOW());
+        SYSDATE);
 
 INSERT
 INTO SAMPLE_CODE_DET
@@ -1078,9 +1068,9 @@ VALUES ('USE_TF_REVERSE',
         TRUE,
         1,
         'bestheroz',
-        NOW(),
+        SYSDATE,
         'bestheroz',
-        NOW());
+        SYSDATE);
 
 INSERT
 INTO SAMPLE_CODE_DET
@@ -1099,9 +1089,9 @@ VALUES ('USE_TF_REVERSE',
         TRUE,
         2,
         'bestheroz',
-        NOW(),
+        SYSDATE,
         'bestheroz',
-        NOW());
+        SYSDATE);
 
 INSERT
 INTO SAMPLE_CODE_DET
@@ -1120,9 +1110,9 @@ VALUES ('MEMBER_TYPE',
         TRUE,
         3,
         'bestheroz',
-        NOW(),
+        SYSDATE,
         'bestheroz',
-        NOW());
+        SYSDATE);
 
 INSERT
 INTO SAMPLE_CODE_DET
@@ -1141,9 +1131,9 @@ VALUES ('MEMBER_TYPE',
         TRUE,
         5,
         'bestheroz',
-        NOW(),
+        SYSDATE,
         'developer',
-        NOW());
+        SYSDATE);
 
 INSERT
 INTO SAMPLE_CODE_DET
@@ -1162,9 +1152,9 @@ VALUES ('MEMBER_TYPE',
         TRUE,
         7,
         'bestheroz',
-        NOW(),
+        SYSDATE,
         'bestheroz',
-        NOW());
+        SYSDATE);
 
 INSERT
 INTO SAMPLE_CODE_DET
@@ -1183,9 +1173,9 @@ VALUES ('MEMBER_TYPE',
         TRUE,
         8,
         'bestheroz',
-        NOW(),
+        SYSDATE,
         'bestheroz',
-        NOW());
+        SYSDATE);
 
 INSERT
 INTO SAMPLE_CODE_DET
@@ -1204,28 +1194,19 @@ VALUES ('MEMBER_TYPE',
         TRUE,
         10,
         'bestheroz',
-        NOW(),
+        SYSDATE,
         'bestheroz',
-        NOW());
-
-COMMIT;
+        SYSDATE);
 
 CREATE TABLE SAMPLE_FILE_MST
 (
-    FILE_SEQ      INT(10) PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    FILE_NAME     VARCHAR(4000)       NOT NULL,
-    FILE_NAME_EXT VARCHAR(100)        NOT NULL,
-    MIME_TYPE     VARCHAR(100)        NOT NULL,
-    FILE_DATA     BLOB                NOT NULL,
-    CREATED_BY    VARCHAR(100)        NOT NULL,
-    CREATED       DATETIME            NOT NULL,
-    UPDATED_BY    VARCHAR(100)        NOT NULL,
-    UPDATED       DATETIME            NOT NULL
+    FILE_SEQ      INT(10) PRIMARY KEY AUTO_INCREMENT,
+    FILE_NAME     VARCHAR(4000) NOT NULL,
+    FILE_NAME_EXT VARCHAR(100)  NOT NULL,
+    MIME_TYPE     VARCHAR(100)  NOT NULL,
+    FILE_DATA     BLOB          NOT NULL,
+    CREATED_BY    VARCHAR(100)  NOT NULL,
+    CREATED       DATETIME      NOT NULL,
+    UPDATED_BY    VARCHAR(100)  NOT NULL,
+    UPDATED       DATETIME      NOT NULL
 );
-
-CREATE INDEX SAMPLE_FILE_MST_IDX1
-    ON SAMPLE_FILE_MST
-        (
-         FILE_SEQ,
-         FILE_NAME
-            );

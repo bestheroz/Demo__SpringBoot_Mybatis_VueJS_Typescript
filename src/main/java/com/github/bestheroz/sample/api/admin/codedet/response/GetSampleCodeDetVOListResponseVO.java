@@ -8,7 +8,7 @@ public class GetSampleCodeDetVOListResponseVO {
     @ApiModelProperty(value = "코드")
     private String code;
     @ApiModelProperty(value = "코드 명")
-    private String codeNm;
+    private String codeName;
     @ApiModelProperty(value = "사용 여부")
     private Boolean useTf;
     @ApiModelProperty(value = "출력 순서")
@@ -32,12 +32,12 @@ public class GetSampleCodeDetVOListResponseVO {
         this.code = code;
     }
 
-    public String getCodeNm() {
-        return this.codeNm;
+    public String getCodeName() {
+        return this.codeName;
     }
 
-    public void setCodeNm(final String codeNm) {
-        this.codeNm = codeNm;
+    public void setCodeName(final String codeName) {
+        this.codeName = codeName;
     }
 
     public Boolean getUseTf() {

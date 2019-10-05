@@ -4,6 +4,7 @@ export interface Member {
   memberName?: string;
   memberType?: string;
   loginFailCnt?: number;
+  token?: string;
   closeTf?: boolean;
   expired?: Date;
   createdBy?: string;

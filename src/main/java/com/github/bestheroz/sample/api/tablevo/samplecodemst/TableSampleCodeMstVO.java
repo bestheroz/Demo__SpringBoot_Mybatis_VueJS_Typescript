@@ -7,7 +7,7 @@ import java.io.Serializable;
 @SuppressWarnings("ALL")
 public class TableSampleCodeMstVO implements Serializable {
     private String groupCode;
-    private String groupCodeNm;
+    private String groupCodeName;
     private String remark1;
     private String createdBy;
     private LocalDateTime created;
@@ -22,12 +22,12 @@ public class TableSampleCodeMstVO implements Serializable {
         this.groupCode = groupCode;
     }
 
-    public String getGroupCodeNm() {
-        return this.groupCodeNm;
+    public String getGroupCodeName() {
+        return this.groupCodeName;
     }
 
-    public void setGroupCodeNm(final String groupCodeNm) {
-        this.groupCodeNm = groupCodeNm;
+    public void setGroupCodeName(final String groupCodeName) {
+        this.groupCodeName = groupCodeName;
     }
 
     public String getRemark1() {

@@ -8,7 +8,7 @@ import java.io.Serializable;
 public class TestTableSampleCodeDetVO implements Serializable {
     private String groupCode;
     private String code;
-    private String codeNm;
+    private String codeName;
     private Boolean useTf;
     private Integer displayOrder;
     private String remark1;
@@ -33,12 +33,12 @@ public class TestTableSampleCodeDetVO implements Serializable {
         this.code = code;
     }
 
-    public String getCodeNm() {
-        return this.codeNm;
+    public String getCodeName() {
+        return this.codeName;
     }
 
-    public void setCodeNm(final String codeNm) {
-        this.codeNm = codeNm;
+    public void setCodeName(final String codeName) {
+        this.codeName = codeName;
     }
 
     public Boolean getUseTf() {

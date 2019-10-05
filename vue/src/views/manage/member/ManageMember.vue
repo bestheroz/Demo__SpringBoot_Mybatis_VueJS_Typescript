@@ -77,7 +77,7 @@
                       >
                         <v-radio
                           :key="object.code"
-                          :label="object.codeNm"
+                          :label="object.codeName"
                           :mandatory="true"
                           :value="object.code"
                           v-for="object in Object.values(MEMBER_TYPE)"
@@ -134,7 +134,7 @@
         </v-icon>
       </template>
       <template v-slot:item.closeTf="{ item }">
-        <v-checkbox :readonly="true" :value="item.closeTf"></v-checkbox>
+        <v-checkbox :readonly="true" v-model="item.closeTf"></v-checkbox>
       </template>
       <template v-slot:item.expired="{ item }">
         {{ $moment(item.expired).format('YYYY-MM-DD HH:mm:ss') }}
@@ -145,8 +145,6 @@
         </v-btn>
       </template>
     </v-data-table>
-
-    <Alert :options="alertOptions" @update-alert="updateAlert" />
   </div>
 </template>
 
@@ -169,12 +167,10 @@ import {
   maxLength,
   required,
 } from '@/utils/validation-helper';
-import Alert from '@/components/alert/Alert.vue';
-import { AlertOptions } from '@/components/alert/common/types';
 import _ from 'lodash';
 
 @Component({
-  components: { DatetimePicker, Alert },
+  components: { DatetimePicker },
   validations: {
     item: {
       memberId: {
@@ -246,14 +242,6 @@ export default class ManageMember extends Vue {
       .toDate(),
   };
   memberPwCheck: string = ``;
-  alertOptions: AlertOptions = {
-    color: undefined, // watch 때문에 option 값들 있어야함
-    position: undefined,
-    result: undefined,
-    snackbar: false,
-    timeout: undefined,
-    text: undefined,
-  };
 
   created() {
     this.headers = [
@@ -316,7 +304,7 @@ export default class ManageMember extends Vue {
       `/sample/admin/member/`,
       this.item,
       this.item.memberId!,
-      this.alertOptions,
+      this,
     );
     if (_.startsWith(result.code, `S`)) {
       this.getList();
@@ -333,11 +321,7 @@ export default class ManageMember extends Vue {
     $vForm.$touch();
     const valid = !$vForm.$pending && !$vForm.$error;
     if (!valid) {
-      [
-        this.alertOptions.color,
-        this.alertOptions.text,
-        this.alertOptions.snackbar,
-      ] = [`error`, `입력 검증 후 다시 시도해주세요.`, true];
+      this.$toast.warning('입력 검증 후 다시 시도해주세요.');
       return;
     }
     this.isUpdate ? this.patch() : this.create();
@@ -347,7 +331,7 @@ export default class ManageMember extends Vue {
     const result = await createDataApi<Member>(
       `/sample/admin/member/`,
       this.item,
-      this.alertOptions,
+      this,
     );
     if (_.startsWith(result.code, `S`)) {
       this.getList();
@@ -360,7 +344,7 @@ export default class ManageMember extends Vue {
       `/sample/admin/member/`,
       this.item,
       this.item.memberId!,
-      this.alertOptions,
+      this,
     );
     if (_.startsWith(result.code, `S`)) {
       this.getList();
@@ -370,10 +354,6 @@ export default class ManageMember extends Vue {
 
   updateExpired(date: string) {
     this.item.expired = this.$moment(date).toDate();
-  }
-
-  updateAlert(snackbar: boolean) {
-    this.alertOptions.snackbar = snackbar;
   }
 }
 </script>

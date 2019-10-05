@@ -5,9 +5,8 @@ import router from './router';
 import store from './store';
 import './registerServiceWorker';
 // eslint-disable-next-line import/no-duplicates
-import axios from 'axios';
 // eslint-disable-next-line import/no-duplicates
-import { AxiosInstance } from 'axios';
+import axios, { AxiosInstance } from 'axios';
 import i18n from './plugins/vue-i18n';
 
 import { Component } from 'vue-property-decorator';
