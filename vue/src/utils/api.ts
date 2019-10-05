@@ -133,7 +133,6 @@ export async function patchDataApi<T>(
 
 export async function deleteDataApi<T>(
   url: String,
-  data: T,
   key: String | Number,
   vueForAutoToast: any = undefined,
 ): Promise<ApiResult<T>> {

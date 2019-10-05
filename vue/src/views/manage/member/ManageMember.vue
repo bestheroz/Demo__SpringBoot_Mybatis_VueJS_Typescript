@@ -302,8 +302,7 @@ export default class ManageMember extends Vue {
 
     const result = await deleteDataApi<Member>(
       `/sample/admin/member/`,
-      this.item,
-      this.item.memberId!,
+      item.memberId!,
       this,
     );
     if (_.startsWith(result.code, `S`)) {
