@@ -224,7 +224,7 @@ function toastResponseMessage(
 
 async function logoutCheck(responseData: ApiDataResult<any>) {
   if (responseData.responseCode === 'F004') {
-    await router.push(`/login?need=${responseData.responseMessage}`);
+    await router.push(`/login?need=login`);
     return false;
   }
 }

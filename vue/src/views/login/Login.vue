@@ -78,17 +78,13 @@ export default class Login extends Vue {
   memberPw: string = '';
 
   mounted() {
-    if (
-      this.$route.query.need !== undefined &&
-      this.$route.query.need !== '' &&
-      typeof this.$route.query.need === 'string'
-    ) {
-      this.$toast.warning(this.$route.query.need);
+    if (this.$route.query.need === 'login') {
+      this.$toast.warning('로그인이 필요합니다.');
     }
   }
 
   async login() {
-    const $vForm: Validation = this.$v.item as Validation;
+    const $vForm: Validation = this.$v as Validation;
     $vForm.$touch();
     const valid = !$vForm.$pending && !$vForm.$error;
     if (!valid) {
