@@ -1,6 +1,5 @@
 import Vue from 'vue';
 import VueI18n from 'vue-i18n';
-
 import en from 'vuetify/src/locale/en';
 import ko from 'vuetify/src/locale/ko';
 

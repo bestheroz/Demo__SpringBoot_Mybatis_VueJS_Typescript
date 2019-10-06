@@ -8,7 +8,6 @@ import './registerServiceWorker';
 // eslint-disable-next-line import/no-duplicates
 import axios, { AxiosInstance } from 'axios';
 import i18n from './plugins/vue-i18n';
-
 import { Component } from 'vue-property-decorator';
 import Vuelidate from 'vuelidate';
 
@@ -24,6 +23,7 @@ export const axiosInstance: AxiosInstance = axios.create({
   },
 });
 
+Vue.use(Vuelidate);
 Vue.use(require(`vue-moment`) as any);
 
 new Vue({
@@ -36,6 +36,5 @@ new Vue({
 }).$mount(`#app`);
 
 require(`dotenv`).config();
-Vue.use(Vuelidate);
 
 Component.registerHooks([`validations`]);

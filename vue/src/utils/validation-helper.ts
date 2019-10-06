@@ -34,6 +34,7 @@ export import maxLength = v.maxLength;
 export import numeric = v.numeric;
 export import between = v.between;
 export import email = v.email;
+
 export const phone = (value: string = '') => {
   return value.length === 0 || /^([0-9\\+\\-]*)$/.test(value);
 };
