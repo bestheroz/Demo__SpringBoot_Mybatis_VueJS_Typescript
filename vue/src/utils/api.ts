@@ -1,6 +1,7 @@
 import { AxiosError } from 'axios';
 import { axiosInstance } from '@/main';
 import _ from 'lodash';
+import router from '@/router';
 
 export interface ApiDataResult<T> {
   responseCode: string;
@@ -52,6 +53,7 @@ export async function getDataApi<T>(
 ): Promise<ApiResult<T>> {
   try {
     const response = await axiosInstance.get<ApiDataResult<T>>(`${url}${id}/`);
+    await logoutCheck(response.data);
     return {
       status: response.status,
       code: response.data.responseCode,
@@ -70,6 +72,7 @@ export async function createDataApi<T>(
 ): Promise<ApiResult<T>> {
   try {
     const response = await axiosInstance.post<ApiDataResult<T>>(`${url}`, data);
+    await logoutCheck(response.data);
     // response.status === 201
     vueForAutoToast && toastResponseMessage(vueForAutoToast, response.data);
     return {
@@ -102,6 +105,7 @@ export async function updateDataApi<T>(
       `${url}${key}/`,
       data,
     );
+    await logoutCheck(response.data);
     // response.status === 200
     vueForAutoToast && toastResponseMessage(vueForAutoToast, response.data);
     return {
@@ -126,6 +130,7 @@ export async function patchDataApi<T>(
       `${url}${key}/`,
       data,
     );
+    await logoutCheck(response.data);
     // response.status === 200
     vueForAutoToast && toastResponseMessage(vueForAutoToast, response.data);
     return {
@@ -146,6 +151,7 @@ export async function deleteDataApi<T>(
 ): Promise<ApiResult<T>> {
   try {
     const response = await axiosInstance.delete(`${url}${key}/`);
+    await logoutCheck(response.data);
     // response.status === 204
     vueForAutoToast && toastResponseMessage(vueForAutoToast, response.data);
     return {
@@ -178,6 +184,7 @@ export async function getOnlyListDataApi<T>(
 ): Promise<ApiResult<T>> {
   try {
     const response = await axiosInstance.get<ApiDataResult<T>>(`${url}`);
+    await logoutCheck(response.data);
     return {
       status: response.status,
       code: response.data.responseCode,
@@ -196,6 +203,7 @@ export async function getCodeListDataApi<SelectItem>(
     const response = await axiosInstance.get<ApiDataResult<SelectItem[]>>(
       `/sample/admin/codedet/${key}`,
     );
+    await logoutCheck(response.data);
     return response.data.responseData || [];
   } catch (error) {
     console.warn(getErrorResult(error).message);
@@ -211,5 +219,12 @@ function toastResponseMessage(
     vue.$toast.success(responseData.responseMessage!);
   } else {
     vue.$toast.warning(responseData.responseMessage!);
+  }
+}
+
+async function logoutCheck(responseData: ApiDataResult<any>) {
+  if (responseData.responseCode === 'F004') {
+    await router.push(`/login?need=${responseData.responseMessage}`);
+    return false;
   }
 }

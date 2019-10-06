@@ -63,12 +63,12 @@ public class AuthService {
         return one;
     }
 
-    void verify(final String token) {
+    public void verify(final String token) throws CommonException {
         try {
             final Algorithm algorithm = Algorithm.HMAC256("secret");
             final JWTVerifier verifier = JWT.require(algorithm).withIssuer("auth0").build(); //Reusable verifier instance
             final DecodedJWT jwt = verifier.verify(token);
-        } catch (final JWTVerificationException e) {
+        } catch (final JWTVerificationException | NullPointerException e) {
             this.logger.warn(new CommonException(CommonExceptionCode.FAIL_NOT_ALLOWED_MEMBER).getJsonObject().toString());
             throw new CommonException(CommonExceptionCode.FAIL_NOT_ALLOWED_MEMBER);
         }

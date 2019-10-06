@@ -7,7 +7,8 @@ import { Component, Vue } from 'vue-property-decorator';
 
 @Component
 export default class Index extends Vue {
-  created() {
+  async created() {
+    await this.$store.commit('loginCheck');
     if (this.$store.state.accessToken === null) {
       this.$router.push('/login');
     } else {

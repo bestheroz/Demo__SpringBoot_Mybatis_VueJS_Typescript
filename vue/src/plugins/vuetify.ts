@@ -35,12 +35,15 @@ Vue.use(VuetifyToast, {
   shorts: {
     success: {
       color: 'success',
+      icon: 'mdi-check-circle-outline',
     },
     warning: {
       color: 'warning',
+      icon: 'mdi-alert-outline',
     },
     error: {
       color: 'error',
+      icon: 'mdi-close-circle-outline',
     },
   },
   property: '$toast', // default

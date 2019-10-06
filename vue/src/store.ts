@@ -8,7 +8,7 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    appVersions: 'ver.191005',
+    appVersions: 'ver.191006',
     accessToken: null,
     host: process.env.VUE_APP_BASE_API_URL,
     language: process.env.VUE_APP_LANGUAGE,
@@ -25,11 +25,9 @@ export default new Vuex.Store({
       delete localStorage.accessToken;
       router.push('/');
     },
-    async loginCheck(state) {
+    async loginCheck(state): Promise<boolean> {
       const response = await postDataApi(`${state.host}sample/auth/verify`, {});
-      if (_.startsWith(response.code, `F`)) {
-        await router.push('/');
-      }
+      return _.startsWith(response.code, `S`);
     },
   },
   actions: {},

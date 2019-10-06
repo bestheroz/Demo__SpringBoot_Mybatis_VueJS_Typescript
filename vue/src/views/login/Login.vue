@@ -51,6 +51,17 @@ export default class Login extends Vue {
   memberId: string = '';
   memberPw: string = '';
 
+  mounted() {
+    console.info(this.$route.query.need);
+    if (
+      this.$route.query.need !== undefined &&
+      this.$route.query.need !== '' &&
+      typeof this.$route.query.need === 'string'
+    ) {
+      this.$toast.warning(this.$route.query.need);
+    }
+  }
+
   async login() {
     const response = await postDataApi<Member>(
       `sample/auth/login`,
