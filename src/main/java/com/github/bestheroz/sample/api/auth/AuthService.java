@@ -25,49 +25,50 @@ public class AuthService {
     @Autowired
     private TableSampleMemberMstDAO tableSampleMemberMstDAO;
 
-    public void login(final String memberId, final String memberPw) throws CommonException {
+    public TableSampleMemberMstVO login(final String memberId, final String memberPw) throws CommonException {
         final TableSampleMemberMstVO tableSampleMemberMstVO = new TableSampleMemberMstVO();
         tableSampleMemberMstVO.setMemberId(memberId);
         tableSampleMemberMstVO.setMemberPw(memberPw);
-        final TableSampleMemberMstVO vo = this.tableSampleMemberMstDAO.getOne(tableSampleMemberMstVO, Collections.singleton("memberId"));
+        final TableSampleMemberMstVO one = this.tableSampleMemberMstDAO.getOne(tableSampleMemberMstVO, Collections.singleton("memberId"));
 
         // 로그인 관문
         // 1. 유저가 없으면
-        if (vo == null) {
+        if (one == null) {
             this.logger.warn(new CommonException(CommonExceptionCode.FAIL_NOT_ALLOWED_MEMBER).getJsonObject().toString());
             throw new CommonException(CommonExceptionCode.FAIL_NOT_ALLOWED_MEMBER);
         }
 
         // 2. LOGIN_FAIL_CNT가 5회 이상 인가
-        if (vo.getLoginFailCnt().intValue() >= 5) {
+        if (one.getLoginFailCnt().intValue() >= 5) {
             this.logger.warn(new CommonException(CommonExceptionCode.FAIL_LOGIN_FAIL_CNT, null, "고객센터로 문의하시기 바랍니다.").getJsonObject().toString());
             throw new CommonException(CommonExceptionCode.FAIL_LOGIN_FAIL_CNT, null, "고객센터로 문의하시기 바랍니다.");
         }
 
         // 3. 패스워드가 틀리면
-        if (!StringUtils.equals(memberPw, vo.getMemberPw())) {
+        if (!StringUtils.equals(memberPw, one.getMemberPw())) {
             this.authDAO.updatePlusLoginFailCnt(memberId);
             this.logger.warn(new CommonException(CommonExceptionCode.FAIL_NOT_ALLOWED_MEMBER).getJsonObject().toString());
             throw new CommonException(CommonExceptionCode.FAIL_NOT_ALLOWED_MEMBER);
         }
 
         // 4. 아래는 성공
-        if (vo.getLoginFailCnt().intValue() != 0) {
+        if (one.getLoginFailCnt().intValue() != 0) {
             this.authDAO.updateZeroLoginFailCnt(memberId);
         }
         // MySessionUtil.printAttributeList(session);
         final Algorithm algorithm = Algorithm.HMAC256("secret");
         final String token = JWT.create().withIssuer("auth0").sign(algorithm);
-        vo.setToken(token);
-        this.tableSampleMemberMstDAO.update(vo, Collections.singleton("id"), null);
+        one.setToken(token);
+        this.tableSampleMemberMstDAO.update(one, Collections.singleton("memberId"), null);
+        return one;
     }
 
-    void verify(final String token) {
+    public void verify(final String token) throws CommonException {
         try {
             final Algorithm algorithm = Algorithm.HMAC256("secret");
             final JWTVerifier verifier = JWT.require(algorithm).withIssuer("auth0").build(); //Reusable verifier instance
             final DecodedJWT jwt = verifier.verify(token);
-        } catch (final JWTVerificationException e) {
+        } catch (final JWTVerificationException | NullPointerException e) {
             this.logger.warn(new CommonException(CommonExceptionCode.FAIL_NOT_ALLOWED_MEMBER).getJsonObject().toString());
             throw new CommonException(CommonExceptionCode.FAIL_NOT_ALLOWED_MEMBER);
         }

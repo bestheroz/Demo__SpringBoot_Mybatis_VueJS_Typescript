@@ -18,7 +18,7 @@
 
       <div class="flex-grow-1" />
 
-      <v-btn icon>
+      <v-btn @click="$store.commit('logout')" icon>
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-icon dark v-on="on">

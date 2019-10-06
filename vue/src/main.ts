@@ -16,7 +16,12 @@ Vue.config.productionTip = false;
 
 export const axiosInstance: AxiosInstance = axios.create({
   baseURL: process.env.VUE_APP_BASE_API_URL,
-  headers: { 'X-Requested-With': `XMLHttpRequest` },
+  headers: {
+    'Access-Control-Allow-Origin': '*',
+    'Content-Type': 'application/json',
+    'X-Requested-With': `XMLHttpRequest`,
+    'x-access-token': localStorage.accessToken,
+  },
 });
 
 Vue.use(require(`vue-moment`) as any);

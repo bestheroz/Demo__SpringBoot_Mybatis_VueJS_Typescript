@@ -1,8 +1,13 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import HelloWorld from '@/views/HelloWorld.vue';
 
 Vue.use(Router);
+
+const requireAuth = () => (from: any, to: any, next: any) => {
+  const isAuthenticated = false;
+  if (isAuthenticated) return next();
+  next('/login?returnPath=me');
+};
 
 export default new Router({
   // mode: "history",
@@ -10,14 +15,18 @@ export default new Router({
   routes: [
     {
       path: `/`,
-      name: `HelloWorld`,
-      component: HelloWorld,
+      name: `Index`,
+      component: () => import('@/views/Index.vue'),
+    },
+    {
+      path: `/login`,
+      name: `Login`,
+      component: () => import('@/views/login/Login.vue'),
     },
     {
       path: `/manage/member`,
       name: `ManageMember`,
-      component: () =>
-        import(/* webpackChunkName: "about" */ `@/views/manage/member/ManageMember.vue`),
+      component: () => import(`@/views/manage/member/ManageMember.vue`),
     },
   ],
   scrollBehavior(to, from, savedPoisition) {
