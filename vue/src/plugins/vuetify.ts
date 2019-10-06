@@ -29,7 +29,7 @@ Vue.use(VuetifyToast, {
   queueable: true, // default
   showClose: true, // default
   closeText: '', // default
-  closeIcon: 'mdi-close-circle', // default
+  closeIcon: '', // default
   closeColor: '', // default
   slot: [], // default
   shorts: {

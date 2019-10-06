@@ -266,8 +266,8 @@ export default class ManageMember extends Vue {
   }
 
   async getList() {
-    const result = await getOnlyListDataApi<Member[]>(`/sample/admin/member/`);
-    this.items = result.data || [];
+    const response = await getOnlyListDataApi<Member[]>(`sample/admin/member/`);
+    this.items = response.data || [];
   }
 
   async getMemberType() {
@@ -300,12 +300,12 @@ export default class ManageMember extends Vue {
       return;
     }
 
-    const result = await deleteDataApi<Member>(
-      `/sample/admin/member/`,
+    const response = await deleteDataApi<Member>(
+      `sample/admin/member/`,
       item.memberId!,
       this,
     );
-    if (_.startsWith(result.code, `S`)) {
+    if (_.startsWith(response.code, `S`)) {
       this.getList();
       this.closeModal();
     }
@@ -327,25 +327,25 @@ export default class ManageMember extends Vue {
   }
 
   async create() {
-    const result = await createDataApi<Member>(
-      `/sample/admin/member/`,
+    const response = await createDataApi<Member>(
+      `sample/admin/member/`,
       this.item,
       this,
     );
-    if (_.startsWith(result.code, `S`)) {
+    if (_.startsWith(response.code, `S`)) {
       this.getList();
       this.closeModal();
     }
   }
 
   async patch() {
-    const result = await patchDataApi<Member>(
-      `/sample/admin/member/`,
+    const response = await patchDataApi<Member>(
+      `sample/admin/member/`,
       this.item,
       this.item.memberId!,
       this,
     );
-    if (_.startsWith(result.code, `S`)) {
+    if (_.startsWith(response.code, `S`)) {
       this.getList();
       this.closeModal();
     }

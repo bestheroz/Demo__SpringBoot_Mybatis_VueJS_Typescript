@@ -83,6 +83,14 @@ export async function createDataApi<T>(
   }
 }
 
+export async function postDataApi<T>(
+  url: String,
+  data: T,
+  vueForAutoToast: any = undefined,
+): Promise<ApiResult<T>> {
+  return createDataApi<T>(url, data, vueForAutoToast);
+}
+
 export async function updateDataApi<T>(
   url: String,
   data: T,
