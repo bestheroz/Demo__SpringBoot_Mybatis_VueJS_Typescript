@@ -3,12 +3,6 @@ import Router from 'vue-router';
 
 Vue.use(Router);
 
-const requireAuth = () => (from: any, to: any, next: any) => {
-  const isAuthenticated = false;
-  if (isAuthenticated) return next();
-  next('/login?returnPath=me');
-};
-
 export default new Router({
   // mode: "history",
   base: process.env.BASE_URL,
