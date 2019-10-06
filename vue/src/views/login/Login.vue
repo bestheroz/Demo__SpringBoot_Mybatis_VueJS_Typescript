@@ -10,19 +10,34 @@
             </v-toolbar>
             <v-card-text>
               <v-form>
-                <v-text-field
-                  label="Login"
-                  prepend-icon="person"
-                  type="text"
-                  v-model="memberId"
-                ></v-text-field>
-
-                <v-text-field
-                  label="Password"
-                  prepend-icon="lock"
-                  type="password"
-                  v-model="memberPw"
-                ></v-text-field>
+                <ValidationObserver ref="form" v-slot="{ validate }">
+                  <ValidationProvider
+                    name="ID"
+                    rules="required"
+                    v-slot="{ errors }"
+                  >
+                    <v-text-field
+                      color="secondary"
+                      label="ID..."
+                      prepend-icon="mdi-identifier"
+                      v-model="memberId"
+                    />
+                    <div class="error--text">{{ errors[0] }}</div>
+                  </ValidationProvider>
+                  <ValidationProvider
+                    name="password"
+                    rules="required"
+                    v-slot="{ errors }"
+                  >
+                    <v-text-field
+                      color="secondary"
+                      label="Password..."
+                      prepend-icon="mdi-lock-outline"
+                      v-model="memberPw"
+                    />
+                    <div class="error--text">{{ errors[0] }}</div>
+                  </ValidationProvider>
+                </ValidationObserver>
               </v-form>
             </v-card-text>
             <v-card-actions>
@@ -43,10 +58,11 @@ import { Component, Vue } from 'vue-property-decorator';
 import { postDataApi } from '@/utils/api';
 import _ from 'lodash';
 import { Member } from '@/views/manage/member/common/types';
+import { ValidationObserver, ValidationProvider } from 'vee-validate';
 
 const SHA512 = require('crypto-js/sha512');
 
-@Component
+@Component({ components: { ValidationProvider, ValidationObserver } })
 export default class Login extends Vue {
   memberId: string = '';
   memberPw: string = '';
@@ -63,6 +79,7 @@ export default class Login extends Vue {
   }
 
   async login() {
+    this.$refs.form.validate();
     const response = await postDataApi<Member>(
       `sample/auth/login`,
       {

@@ -8,9 +8,8 @@ import './registerServiceWorker';
 // eslint-disable-next-line import/no-duplicates
 import axios, { AxiosInstance } from 'axios';
 import i18n from './plugins/vue-i18n';
-
 import { Component } from 'vue-property-decorator';
-import Vuelidate from 'vuelidate';
+import '@/plugins/vee-validate';
 
 Vue.config.productionTip = false;
 
@@ -36,6 +35,5 @@ new Vue({
 }).$mount(`#app`);
 
 require(`dotenv`).config();
-Vue.use(Vuelidate);
 
 Component.registerHooks([`validations`]);
