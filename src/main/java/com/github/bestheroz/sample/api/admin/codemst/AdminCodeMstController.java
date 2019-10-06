@@ -39,7 +39,7 @@ public class AdminCodeMstController {
     @ApiResponses({@ApiResponse(response = TableSampleCodeMstVO.class, code = 200, message = CommonCode.SWAGGER_COMMON_200_MESSAGE)})
     @GetMapping(value = "{groupCode}")
     public CommonResponseVO get(@ApiParam("그룹 코드") @PathVariable(value = "groupCode", required = false) final String groupCode) throws CommonException {
-        return MyResponseUtils.getSuccessCommonResponseVO(this.adminCodeMstService.getVO(groupCode));
+        return MyResponseUtils.getSuccessCommonResponseVO(this.adminCodeMstService.getOne(groupCode));
     }
 
     @ApiOperation(value = "그룹 코드 데이터 추가")

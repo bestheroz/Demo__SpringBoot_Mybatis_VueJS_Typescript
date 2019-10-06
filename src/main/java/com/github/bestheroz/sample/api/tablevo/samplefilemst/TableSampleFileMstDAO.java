@@ -17,7 +17,7 @@ public interface TableSampleFileMstDAO extends SqlForTableDAO {
     List<TableSampleFileMstVO> getList(final TableSampleFileMstVO vo, final Set<String> whereKeys, final String orderByColumns) throws CommonException;
 
     @SelectProvider(type = SqlForTableVO.class, method = SqlForTableVO.SELECT_ONE)
-    TableSampleFileMstVO getVO(final TableSampleFileMstVO vo, final Set<String> whereKeys) throws CommonException;
+    TableSampleFileMstVO getOne(final TableSampleFileMstVO vo, final Set<String> whereKeys) throws CommonException;
 
     @Override
     @InsertProvider(type = SqlForTableVO.class, method = SqlForTableVO.INSERT)

@@ -24,7 +24,7 @@ public class AdminMenuService {
         return this.adminMenuDAO.getList(new TableSampleMenuMstVO(), Collections.EMPTY_SET, "UPDATED DESC");
     }
 
-    public GetSampleMenuMstVOListResponseVO getVO(final Integer menuId, final String menuName) throws CommonException {
+    public GetSampleMenuMstVOListResponseVO getOne(final Integer menuId, final String menuName) throws CommonException {
         final TableSampleMenuMstVO tableSampleMenuMstVO = new TableSampleMenuMstVO();
         final Set<String> whereKeys = new HashSet<>();
         tableSampleMenuMstVO.setMenuId(menuId);
@@ -35,7 +35,7 @@ public class AdminMenuService {
         if (menuName != null) {
             whereKeys.add("menuName");
         }
-        return this.adminMenuDAO.getVO(tableSampleMenuMstVO, whereKeys);
+        return this.adminMenuDAO.getOne(tableSampleMenuMstVO, whereKeys);
     }
 
     public void insert(final TableSampleMenuMstVO vo) throws CommonException {

@@ -37,10 +37,10 @@ public class AdminCodeMstService {
         return MyMapperUtils.writeObjectAsArrayList(this.tableSampleCodeMstDAO.getList(new TableSampleCodeMstVO(), Collections.EMPTY_SET, "UPDATED DESC"), GetSampleCodeMstVOListResponseVO.class);
     }
 
-    public TableSampleCodeMstVO getVO(final String groupCode) throws CommonException {
+    public TableSampleCodeMstVO getOne(final String groupCode) throws CommonException {
         final TableSampleCodeMstVO tableSampleCodeMstVO = new TableSampleCodeMstVO();
         tableSampleCodeMstVO.setGroupCode(groupCode);
-        return MyMapperUtils.writeObjectAsObject(this.tableSampleCodeMstDAO.getVO(tableSampleCodeMstVO, Collections.singleton("groupCode")), TableSampleCodeMstVO.class);
+        return MyMapperUtils.writeObjectAsObject(this.tableSampleCodeMstDAO.getOne(tableSampleCodeMstVO, Collections.singleton("groupCode")), TableSampleCodeMstVO.class);
     }
 
     public void insert(final TableSampleCodeMstVO vo) throws CommonException {

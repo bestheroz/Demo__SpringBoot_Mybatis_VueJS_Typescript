@@ -31,15 +31,15 @@ public class AdminMenuController {
     @ApiOperation(value = "메뉴 데이터 취득")
     @ApiResponses(value = {@ApiResponse(code = 200, message = CommonCode.SWAGGER_COMMON_200_MESSAGE)})
     @GetMapping(value = "menuId/{menuId}")
-    public CommonResponseVO getVO(@ApiParam("메뉴 아이디") @PathVariable(value = "menuId", required = false) final Integer menuId) throws CommonException {
-        return MyResponseUtils.getSuccessCommonResponseVO(this.adminMenuService.getVO(menuId, null));
+    public CommonResponseVO getOne(@ApiParam("메뉴 아이디") @PathVariable(value = "menuId", required = false) final Integer menuId) throws CommonException {
+        return MyResponseUtils.getSuccessCommonResponseVO(this.adminMenuService.getOne(menuId, null));
     }
 
     @ApiOperation(value = "메뉴 데이터 취득")
     @ApiResponses(value = {@ApiResponse(code = 200, message = CommonCode.SWAGGER_COMMON_200_MESSAGE)})
     @GetMapping(value = "menuName/{menuName}")
-    public CommonResponseVO getVO(@ApiParam("메뉴 명") @PathVariable(value = "menuName", required = false) final String menuName) throws CommonException {
-        return MyResponseUtils.getSuccessCommonResponseVO(this.adminMenuService.getVO(null, menuName));
+    public CommonResponseVO getOne(@ApiParam("메뉴 명") @PathVariable(value = "menuName", required = false) final String menuName) throws CommonException {
+        return MyResponseUtils.getSuccessCommonResponseVO(this.adminMenuService.getOne(null, menuName));
     }
 
     @ApiOperation(value = "메뉴 데이터 추가")

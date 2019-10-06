@@ -16,5 +16,5 @@ public interface TableSampleMemberMstDAO extends SqlForTableDAO {
     List<TableSampleMemberMstVO> getList(final TableSampleMemberMstVO vo, final Set<String> whereKeys, final String orderByColumns) throws CommonException;
 
     @SelectProvider(type = SqlForTableVO.class, method = SqlForTableVO.SELECT_ONE)
-    TableSampleMemberMstVO getVO(final TableSampleMemberMstVO vo, final Set<String> whereKeys) throws CommonException;
+    TableSampleMemberMstVO getOne(final TableSampleMemberMstVO vo, final Set<String> whereKeys) throws CommonException;
 }

@@ -21,10 +21,10 @@ public class AdminMemberService {
         return MyMapperUtils.writeObjectAsArrayList(this.tableMemberMstDAO.getList(new TableSampleMemberMstVO(), Collections.EMPTY_SET, "UPDATED DESC"), GetSampleMemberMstVOResponseVO.class);
     }
 
-    public GetSampleMemberMstVOResponseVO getVO(final String memberId) throws CommonException {
+    public GetSampleMemberMstVOResponseVO getOne(final String memberId) throws CommonException {
         final TableSampleMemberMstVO tableSampleMemberMstVO = new TableSampleMemberMstVO();
         tableSampleMemberMstVO.setMemberId(memberId);
-        return MyMapperUtils.writeObjectAsObject(this.tableMemberMstDAO.getVO(tableSampleMemberMstVO, Collections.singleton("memberId")), GetSampleMemberMstVOResponseVO.class);
+        return MyMapperUtils.writeObjectAsObject(this.tableMemberMstDAO.getOne(tableSampleMemberMstVO, Collections.singleton("memberId")), GetSampleMemberMstVOResponseVO.class);
     }
 
     public void insert(final TableSampleMemberMstVO vo) throws CommonException {

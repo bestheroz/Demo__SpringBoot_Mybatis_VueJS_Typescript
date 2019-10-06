@@ -38,11 +38,11 @@ public class AdminCodeDetService {
                 .writeObjectAsArrayList(this.tableSampleCodeDetDAO.getList(tableSampleCodeDetVO, Collections.singleton("groupCode"), "UPDATED DESC"), GetSampleCodeDetVOListResponseVO.class);
     }
 
-    public GetSampleCodeDetVOResponseVO getVO(final String groupCode, final String code) throws CommonException {
+    public GetSampleCodeDetVOResponseVO getOne(final String groupCode, final String code) throws CommonException {
         final TableSampleCodeDetVO tableSampleCodeDetVO = new TableSampleCodeDetVO();
         tableSampleCodeDetVO.setGroupCode(groupCode);
         tableSampleCodeDetVO.setCode(code);
-        return MyMapperUtils.writeObjectAsObject(this.tableSampleCodeDetDAO.getVO(tableSampleCodeDetVO, Sets.newHashSet("groupCode", "code")), GetSampleCodeDetVOResponseVO.class);
+        return MyMapperUtils.writeObjectAsObject(this.tableSampleCodeDetDAO.getOne(tableSampleCodeDetVO, Sets.newHashSet("groupCode", "code")), GetSampleCodeDetVOResponseVO.class);
     }
 
     public void insert(final TableSampleCodeDetVO vo) throws CommonException {

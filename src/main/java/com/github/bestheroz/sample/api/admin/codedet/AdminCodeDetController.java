@@ -38,9 +38,9 @@ public class AdminCodeDetController {
     @ApiOperation(value = "상세 코드 데이터 취득")
     @ApiResponses(value = {@ApiResponse(code = 200, message = CommonCode.SWAGGER_COMMON_200_MESSAGE)})
     @GetMapping(value = "{groupCode}/{code}")
-    public CommonResponseVO getVO(@ApiParam("그룹 코드") @PathVariable(value = "groupCode") final String groupCode,
-                                  @ApiParam("상세 코드") @PathVariable(value = "code", required = false) final String code) throws CommonException {
-        return MyResponseUtils.getSuccessCommonResponseVO(this.adminCodeDetService.getVO(groupCode, code));
+    public CommonResponseVO getOne(@ApiParam("그룹 코드") @PathVariable(value = "groupCode") final String groupCode,
+                                   @ApiParam("상세 코드") @PathVariable(value = "code", required = false) final String code) throws CommonException {
+        return MyResponseUtils.getSuccessCommonResponseVO(this.adminCodeDetService.getOne(groupCode, code));
     }
 
     @ApiOperation(value = "상세 코드 데이터 추가")

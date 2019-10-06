@@ -38,8 +38,8 @@ public class AdminMemberController {
     @ApiOperation(value = "회원 데이터 취득")
     @ApiResponses({@ApiResponse(response = GetSampleMemberMstVOResponseVO.class, code = 200, message = CommonCode.SWAGGER_COMMON_200_MESSAGE)})
     @GetMapping(value = "{memberId}")
-    public CommonResponseVO getVO(@ApiParam(value = "회원 아이디") @PathVariable(value = "memberId") final String memberId) throws CommonException {
-        return MyResponseUtils.getSuccessCommonResponseVO(this.adminMemberService.getVO(memberId));
+    public CommonResponseVO getOne(@ApiParam(value = "회원 아이디") @PathVariable(value = "memberId") final String memberId) throws CommonException {
+        return MyResponseUtils.getSuccessCommonResponseVO(this.adminMemberService.getOne(memberId));
     }
 
     @ApiOperation(value = "회원 데이터 추가")
