@@ -9,7 +9,7 @@ public class LoginRequestVO {
     @ApiModelProperty(value = "회원 아이디", required = true)
     private String memberId;
     @NotEmpty
-    @ApiModelProperty(value = "회원 비밀번호", required = true)
+    @ApiModelProperty(value = "회원 비밀번호(SHA512)", required = true)
     private String memberPw;
 
     public String getMemberId() {
