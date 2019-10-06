@@ -8,7 +8,9 @@ import { Component, Vue } from 'vue-property-decorator';
 @Component
 export default class Index extends Vue {
   async created() {
-    await this.$store.commit('loginCheck');
+    if (this.$router.currentRoute.fullPath !== '/') {
+      await this.$store.commit('loginCheck');
+    }
     if (this.$store.state.accessToken === null) {
       this.$router.push('/login');
     } else {

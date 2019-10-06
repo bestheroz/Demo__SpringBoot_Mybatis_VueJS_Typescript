@@ -36,6 +36,17 @@
         <interceptor>
             <mapping path="/**"/>
             <exclude-mapping path="/"/>
+            <exclude-mapping path="/fonts/**"/>
+            <exclude-mapping path="/index.html"/>
+            <exclude-mapping path="/img/**"/>
+            <exclude-mapping path="/js/**"/>
+            <exclude-mapping path="/**/*.css"/>
+            <exclude-mapping path="/**/*.ico"/>
+            <exclude-mapping path="/**/*.js"/>
+            <exclude-mapping path="/**/*.json"/>
+            <exclude-mapping path="/**/*.html"/>
+            <exclude-mapping path="/**/*.map"/>
+            <exclude-mapping path="/**/*.txt"/>
             <exclude-mapping path="/sample/auth/**"/>
             <beans:bean class="com.github.bestheroz.standard.common.interceptor.Interceptor"/>
         </interceptor>

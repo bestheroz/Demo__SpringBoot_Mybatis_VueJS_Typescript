@@ -25,7 +25,7 @@ public class Interceptor extends HandlerInterceptorAdapter {
     @Override
     // preHandle : controller 이벤트 호출전
     public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response, final Object handler) throws CommonException {
-        LOGGER.debug("1");
+        LOGGER.debug(new UrlPathHelper().getPathWithinApplication(request));
         try {
             MyAccessBeanUtils.getBean(AuthService.class).verify(request.getHeader("x-access-token"));
         } catch (final CommonException e) {
@@ -38,7 +38,6 @@ public class Interceptor extends HandlerInterceptorAdapter {
             }
             return false;
         }
-        LOGGER.debug("2");
         final StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         request.setAttribute(STR_STOP_WATCH, stopWatch);

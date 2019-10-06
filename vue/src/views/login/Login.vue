@@ -78,7 +78,6 @@ export default class Login extends Vue {
   memberPw: string = '';
 
   mounted() {
-    console.info(this.$route.query.need);
     if (
       this.$route.query.need !== undefined &&
       this.$route.query.need !== '' &&
