@@ -1,14 +1,13 @@
 package com.github.bestheroz.sample.api.auth;
 
 import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.auth0.jwt.interfaces.DecodedJWT;
 import com.github.bestheroz.sample.api.tablevo.samplemembermst.TableSampleMemberMstDAO;
 import com.github.bestheroz.sample.api.tablevo.samplemembermst.TableSampleMemberMstVO;
 import com.github.bestheroz.standard.common.exception.CommonException;
 import com.github.bestheroz.standard.common.exception.CommonExceptionCode;
+import com.github.bestheroz.standard.common.util.MyDateUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +18,7 @@ import java.util.Collections;
 
 @Service
 public class AuthService {
+    private static final Algorithm ALGORITHM = Algorithm.HMAC512("secret");
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     @Autowired
     private AuthDAO authDAO;
@@ -56,25 +56,24 @@ public class AuthService {
             this.authDAO.updateZeroLoginFailCnt(memberId);
         }
         // MySessionUtil.printAttributeList(session);
-        final Algorithm algorithm = Algorithm.HMAC256("secret");
-        final String token = JWT.create().withIssuer("auth0").sign(algorithm);
-        one.setToken(token);
+        final String issuer = one.getMemberName().concat(String.valueOf(one.getMemberId())).concat(MyDateUtils.getStringNow("YYYYMMDD"));
+        one.setToken(JWT.create().withIssuer(issuer).sign(ALGORITHM));
         this.tableSampleMemberMstDAO.update(one, Collections.singleton("memberId"), null);
         return one;
     }
 
     public void verify(final String token) throws CommonException {
+        final TableSampleMemberMstVO tableSampleMemberMstVO = new TableSampleMemberMstVO();
+        tableSampleMemberMstVO.setToken(token);
+        final TableSampleMemberMstVO one = this.tableSampleMemberMstDAO.getOne(tableSampleMemberMstVO, Collections.singleton("token"));
         try {
-            final Algorithm algorithm = Algorithm.HMAC256("secret");
-            final JWTVerifier verifier = JWT.require(algorithm).withIssuer("auth0").build(); //Reusable verifier instance
-            final DecodedJWT jwt = verifier.verify(token);
+            final String issuer = one.getMemberName().concat(String.valueOf(one.getMemberId())).concat(MyDateUtils.getStringNow("YYYYMMDD"));
+            JWT.require(ALGORITHM).withIssuer(issuer).build().verify(token);
         } catch (final JWTVerificationException | NullPointerException e) {
             this.logger.warn(new CommonException(CommonExceptionCode.FAIL_NOT_ALLOWED_MEMBER).getJsonObject().toString());
             throw new CommonException(CommonExceptionCode.FAIL_NOT_ALLOWED_MEMBER);
         }
-        final TableSampleMemberMstVO tableSampleMemberMstVO = new TableSampleMemberMstVO();
-        tableSampleMemberMstVO.setToken(token);
-        if (this.tableSampleMemberMstDAO.getOne(tableSampleMemberMstVO, Collections.singleton("token")) == null) {
+        if (one == null) {
             this.logger.warn(new CommonException(CommonExceptionCode.FAIL_NOT_ALLOWED_MEMBER).getJsonObject().toString());
             throw new CommonException(CommonExceptionCode.FAIL_NOT_ALLOWED_MEMBER);
         }
