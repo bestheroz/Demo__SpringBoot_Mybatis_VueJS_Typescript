@@ -9,7 +9,7 @@ import './registerServiceWorker';
 import axios, { AxiosInstance } from 'axios';
 import i18n from './plugins/vue-i18n';
 import { Component } from 'vue-property-decorator';
-import '@/plugins/vee-validate';
+import Vuelidate from 'vuelidate';
 
 Vue.config.productionTip = false;
 
@@ -23,6 +23,7 @@ export const axiosInstance: AxiosInstance = axios.create({
   },
 });
 
+Vue.use(Vuelidate);
 Vue.use(require(`vue-moment`) as any);
 
 new Vue({

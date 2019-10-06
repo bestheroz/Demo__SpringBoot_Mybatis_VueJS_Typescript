@@ -10,34 +10,24 @@
             </v-toolbar>
             <v-card-text>
               <v-form>
-                <ValidationObserver ref="form" v-slot="{ validate }">
-                  <ValidationProvider
-                    name="ID"
-                    rules="required"
-                    v-slot="{ errors }"
-                  >
-                    <v-text-field
-                      color="secondary"
-                      label="ID..."
-                      prepend-icon="mdi-identifier"
-                      v-model="memberId"
-                    />
-                    <div class="error--text">{{ errors[0] }}</div>
-                  </ValidationProvider>
-                  <ValidationProvider
-                    name="password"
-                    rules="required"
-                    v-slot="{ errors }"
-                  >
-                    <v-text-field
-                      color="secondary"
-                      label="Password..."
-                      prepend-icon="mdi-lock-outline"
-                      v-model="memberPw"
-                    />
-                    <div class="error--text">{{ errors[0] }}</div>
-                  </ValidationProvider>
-                </ValidationObserver>
+                <v-text-field
+                  :error-messages="getVErrors($v.memberId)"
+                  @blur="delayTouch($v.memberId)"
+                  @input="delayTouch($v.memberId)"
+                  color="secondary"
+                  label="ID..."
+                  prepend-icon="mdi-identifier"
+                  v-model="memberId"
+                />
+                <v-text-field
+                  :error-messages="getVErrors($v.memberPw)"
+                  @blur="delayTouch($v.memberPw)"
+                  @input="delayTouch($v.memberPw)"
+                  color="secondary"
+                  label="Password..."
+                  prepend-icon="mdi-lock-outline"
+                  v-model="memberPw"
+                />
               </v-form>
             </v-card-text>
             <v-card-actions>
@@ -58,12 +48,32 @@ import { Component, Vue } from 'vue-property-decorator';
 import { postDataApi } from '@/utils/api';
 import _ from 'lodash';
 import { Member } from '@/views/manage/member/common/types';
-import { ValidationObserver, ValidationProvider } from 'vee-validate';
+import {
+  delayTouch,
+  getVErrors,
+  maxLength,
+  required,
+} from '@/utils/validation-helper';
+import { Validation } from 'vuelidate';
 
 const SHA512 = require('crypto-js/sha512');
 
-@Component({ components: { ValidationProvider, ValidationObserver } })
+@Component({
+  components: {},
+  validations: {
+    memberId: {
+      required,
+      maxLength: maxLength(20),
+    },
+    memberPw: {
+      required,
+      maxLength: maxLength(20),
+    },
+  },
+})
 export default class Login extends Vue {
+  readonly delayTouch: typeof delayTouch = delayTouch;
+  readonly getVErrors: typeof getVErrors = getVErrors;
   memberId: string = '';
   memberPw: string = '';
 
@@ -79,7 +89,14 @@ export default class Login extends Vue {
   }
 
   async login() {
-    this.$refs.form.validate();
+    const $vForm: Validation = this.$v.item as Validation;
+    $vForm.$touch();
+    const valid = !$vForm.$pending && !$vForm.$error;
+    if (!valid) {
+      this.$toast.warning('입력 검증 후 다시 시도해주세요.');
+      return;
+    }
+
     const response = await postDataApi<Member>(
       `sample/auth/login`,
       {

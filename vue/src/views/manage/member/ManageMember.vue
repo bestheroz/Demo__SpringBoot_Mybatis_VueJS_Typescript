@@ -160,13 +160,76 @@ import {
 } from '@/utils/api';
 import { DataTableHeader, SelectItem } from '@/common/types';
 import DatetimePicker from '@/components/picker/DateTimePicker.vue';
+import { Validation } from 'vuelidate';
+import {
+  delayTouch,
+  getVErrors,
+  maxLength,
+  required,
+} from '@/utils/validation-helper';
 import _ from 'lodash';
 
 @Component({
   components: { DatetimePicker },
+  validations: {
+    item: {
+      memberId: {
+        required,
+        maxLength: maxLength(20),
+      },
+      memberPw: {
+        required(value: string) {
+          if (
+            !this.$data.isUpdate ||
+            (this.$data.memberPwCheck !== `` &&
+              this.$data.memberPwCheck !== undefined)
+          ) {
+            if (value === undefined || value === ``) {
+              return false;
+            } else {
+              return true;
+            }
+          } else {
+            return true;
+          }
+        },
+        maxLength: maxLength(20),
+      },
+      memberName: {
+        required,
+        maxLength: maxLength(20),
+      },
+      loginFailCnt: {
+        required,
+      },
+      expired: {
+        required,
+      },
+    },
+    memberPwCheck: {
+      required(value: string) {
+        if (
+          !this.$data.isUpdate ||
+          (this.$data.item.memberPw !== `` &&
+            this.$data.item.memberPw !== undefined)
+        ) {
+          if (value === undefined || value === ``) {
+            return false;
+          } else {
+            return true;
+          }
+        } else {
+          return true;
+        }
+      },
+      maxLength: maxLength(20),
+    },
+  },
 })
 export default class ManageMember extends Vue {
   readonly $moment: any;
+  readonly delayTouch: typeof delayTouch = delayTouch;
+  readonly getVErrors: typeof getVErrors = getVErrors;
   MEMBER_TYPE?: SelectItem[] = [];
   dialog: boolean = false;
   isUpdate: boolean = true;
@@ -212,7 +275,7 @@ export default class ManageMember extends Vue {
   }
 
   editItem(item: Member) {
-    // (this.$v.item as Validation).$reset();
+    (this.$v.item as Validation).$reset();
     this.isUpdate = item !== undefined;
     if (item === undefined) {
       this.item = Object.assign(
@@ -253,13 +316,13 @@ export default class ManageMember extends Vue {
   }
 
   async save() {
-    // const $vForm: Validation = this.$v.item as Validation;
-    // $vForm.$touch();
-    // const valid = !$vForm.$pending && !$vForm.$error;
-    // if (!valid) {
-    //   this.$toast.warning('입력 검증 후 다시 시도해주세요.');
-    //   return;
-    // }
+    const $vForm: Validation = this.$v.item as Validation;
+    $vForm.$touch();
+    const valid = !$vForm.$pending && !$vForm.$error;
+    if (!valid) {
+      this.$toast.warning('입력 검증 후 다시 시도해주세요.');
+      return;
+    }
     this.isUpdate ? this.patch() : this.create();
   }
 
