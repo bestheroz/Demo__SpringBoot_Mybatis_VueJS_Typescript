@@ -15,6 +15,11 @@ export default new Router({
   routes: [
     {
       path: `/`,
+      name: `Index`,
+      component: () => import('@/views/Index.vue'),
+    },
+    {
+      path: `/login`,
       name: `Login`,
       component: () => import('@/views/login/Login.vue'),
     },

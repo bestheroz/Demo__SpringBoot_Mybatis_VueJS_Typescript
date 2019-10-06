@@ -28,6 +28,7 @@ import { Component, Vue } from 'vue-property-decorator';
 import NavigationDrawers from '@/components/layout/NavigationDrawers.vue';
 import AppBar from '@/components/layout/AppBar.vue';
 import Footer from '@/components/layout/Footer.vue';
+
 @Component({
   components: {
     NavigationDrawers,
@@ -46,6 +47,7 @@ export default class App extends Vue {}
   text-align: center;
   color: #2c3e50;
 }
+
 #nav {
   padding: 30px;
 }

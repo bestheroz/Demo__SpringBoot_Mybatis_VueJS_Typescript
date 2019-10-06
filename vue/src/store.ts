@@ -23,6 +23,7 @@ export default new Vuex.Store({
       state.accessToken = null;
       // 토큰을 로컬 스토리지에서 제거
       delete localStorage.accessToken;
+      router.push('/');
     },
     async loginCheck(state) {
       const response = await postDataApi(`${state.host}sample/auth/verify`, {});
