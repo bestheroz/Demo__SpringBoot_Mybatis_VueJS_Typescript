@@ -3,6 +3,7 @@ import Vuex from 'vuex';
 import { postDataApi } from '@/utils/api';
 import _ from 'lodash';
 import router from '@/router';
+import axios from 'axios';
 
 Vue.use(Vuex);
 
@@ -12,17 +13,27 @@ export default new Vuex.Store({
     accessToken: null,
     host: process.env.VUE_APP_BASE_API_URL,
     language: process.env.VUE_APP_LANGUAGE,
+    axiosInstance: axios.create({
+      baseURL: process.env.VUE_APP_BASE_API_URL,
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Requested-With': `XMLHttpRequest`,
+        'x-access-token': localStorage.accessToken,
+      },
+    }),
   },
   mutations: {
-    loginToken(state, { accessToken }) {
+    loginToken(state, accessToken) {
       state.accessToken = accessToken;
       // 토큰을 로컬 스토리지에 저장
       localStorage.accessToken = accessToken;
+      state.axiosInstance.defaults.headers['x-access-token'] = accessToken;
     },
     logout(state) {
       state.accessToken = null;
       // 토큰을 로컬 스토리지에서 제거
       delete localStorage.accessToken;
+      delete state.axiosInstance.defaults.headers['x-access-token'];
       router.push('/');
     },
     async loginCheck(state): Promise<boolean> {

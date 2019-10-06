@@ -1,7 +1,7 @@
 import { AxiosError } from 'axios';
-import { axiosInstance } from '@/main';
 import _ from 'lodash';
 import router from '@/router';
+import store from '@/store';
 
 export interface ApiDataResult<T> {
   responseCode: string;
@@ -18,6 +18,7 @@ export interface ApiResult<T> {
 }
 
 function getErrorResult<T>(error: AxiosError): ApiResult<T> {
+  console.error(error);
   console.error(error.config);
 
   if (error.response) {
@@ -52,7 +53,9 @@ export async function getDataApi<T>(
   id: number = 0,
 ): Promise<ApiResult<T>> {
   try {
-    const response = await axiosInstance.get<ApiDataResult<T>>(`${url}${id}/`);
+    const response = await store.state.axiosInstance.get<ApiDataResult<T>>(
+      `${url}${id}/`,
+    );
     await logoutCheck(response.data);
     return {
       status: response.status,
@@ -71,7 +74,10 @@ export async function createDataApi<T>(
   vueForAutoToast: any = undefined,
 ): Promise<ApiResult<T>> {
   try {
-    const response = await axiosInstance.post<ApiDataResult<T>>(`${url}`, data);
+    const response = await store.state.axiosInstance.post<ApiDataResult<T>>(
+      `${url}`,
+      data,
+    );
     await logoutCheck(response.data);
     // response.status === 201
     vueForAutoToast && toastResponseMessage(vueForAutoToast, response.data);
@@ -101,7 +107,7 @@ export async function updateDataApi<T>(
   vueForAutoToast: any = undefined,
 ): Promise<ApiResult<T>> {
   try {
-    const response = await axiosInstance.put<ApiDataResult<T>>(
+    const response = await store.state.axiosInstance.put<ApiDataResult<T>>(
       `${url}${key}/`,
       data,
     );
@@ -126,7 +132,7 @@ export async function patchDataApi<T>(
   vueForAutoToast: any = undefined,
 ): Promise<ApiResult<T>> {
   try {
-    const response = await axiosInstance.patch<ApiDataResult<T>>(
+    const response = await store.state.axiosInstance.patch<ApiDataResult<T>>(
       `${url}${key}/`,
       data,
     );
@@ -150,7 +156,7 @@ export async function deleteDataApi<T>(
   vueForAutoToast: any = undefined,
 ): Promise<ApiResult<T>> {
   try {
-    const response = await axiosInstance.delete(`${url}${key}/`);
+    const response = await store.state.axiosInstance.delete(`${url}${key}/`);
     await logoutCheck(response.data);
     // response.status === 204
     vueForAutoToast && toastResponseMessage(vueForAutoToast, response.data);
@@ -183,7 +189,9 @@ export async function getOnlyListDataApi<T>(
   url: String,
 ): Promise<ApiResult<T>> {
   try {
-    const response = await axiosInstance.get<ApiDataResult<T>>(`${url}`);
+    const response = await store.state.axiosInstance.get<ApiDataResult<T>>(
+      `${url}`,
+    );
     await logoutCheck(response.data);
     return {
       status: response.status,
@@ -200,9 +208,9 @@ export async function getCodeListDataApi<SelectItem>(
   key: String,
 ): Promise<SelectItem[]> {
   try {
-    const response = await axiosInstance.get<ApiDataResult<SelectItem[]>>(
-      `/sample/admin/codedet/${key}`,
-    );
+    const response = await store.state.axiosInstance.get<
+      ApiDataResult<SelectItem[]>
+    >(`sample/admin/codedet/${key}`);
     await logoutCheck(response.data);
     return response.data.responseData || [];
   } catch (error) {

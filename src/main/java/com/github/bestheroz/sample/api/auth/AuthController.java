@@ -30,7 +30,7 @@ public class AuthController {
     @ApiOperation(value = "토큰 검증")
     @ApiResponses({@ApiResponse(code = 200, message = CommonCode.SWAGGER_COMMON_200_MESSAGE)})
     @PostMapping(value = "/verify")
-    public CommonResponseVO verify(@ApiParam("토큰") @RequestHeader(value = "x-access-token") final String token) throws CommonException {
+    public CommonResponseVO verify(@ApiParam("토큰") @RequestHeader(value = "x-access-token", required = false) final String token) throws CommonException {
         this.logger.debug(token);
         this.authService.verify(token);
         return MyResponseUtils.SUCCESS_NORMAL;

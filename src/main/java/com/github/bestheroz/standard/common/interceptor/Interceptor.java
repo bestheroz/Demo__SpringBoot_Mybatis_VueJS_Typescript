@@ -16,6 +16,7 @@ import org.springframework.web.util.UrlPathHelper;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.text.MessageFormat;
 
 public class Interceptor extends HandlerInterceptorAdapter {
     private static final Logger LOGGER = LoggerFactory.getLogger(Interceptor.class);
@@ -25,18 +26,20 @@ public class Interceptor extends HandlerInterceptorAdapter {
     @Override
     // preHandle : controller 이벤트 호출전
     public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response, final Object handler) throws CommonException {
-        LOGGER.debug(new UrlPathHelper().getPathWithinApplication(request));
-        try {
-            MyAccessBeanUtils.getBean(AuthService.class).verify(request.getHeader("x-access-token"));
-        } catch (final CommonException e) {
-            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-            response.setStatus(HttpServletResponse.SC_OK);
+        LOGGER.debug(MessageFormat.format("[{0}]{1}", request.getMethod(), new UrlPathHelper().getPathWithinApplication(request)));
+        if (!request.getMethod().equalsIgnoreCase("OPTION")) {
             try {
-                response.getWriter().write(MyMapperUtils.writeObjectAsString(e.getJsonObject()));
-            } catch (final IOException ex) {
-                LOGGER.warn(ExceptionUtils.getStackTrace(ex));
+                MyAccessBeanUtils.getBean(AuthService.class).verify(request.getHeader("x-access-token"));
+            } catch (final CommonException e) {
+                response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                response.setStatus(HttpServletResponse.SC_OK);
+                try {
+                    response.getWriter().write(MyMapperUtils.writeObjectAsString(e.getJsonObject()));
+                } catch (final IOException ex) {
+                    LOGGER.warn(ExceptionUtils.getStackTrace(ex));
+                }
+                return false;
             }
-            return false;
         }
         final StopWatch stopWatch = new StopWatch();
         stopWatch.start();

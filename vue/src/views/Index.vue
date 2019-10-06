@@ -11,10 +11,10 @@ export default class Index extends Vue {
     if (this.$router.currentRoute.fullPath !== '/') {
       await this.$store.commit('loginCheck');
     }
-    if (this.$store.state.accessToken === null) {
-      this.$router.push('/login');
-    } else {
+    if (this.$store.state.accessToken || localStorage.accessToken) {
       this.$router.push('/manage/member');
+    } else {
+      this.$router.push('/login');
     }
   }
 }

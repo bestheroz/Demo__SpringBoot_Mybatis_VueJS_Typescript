@@ -6,22 +6,11 @@ import store from './store';
 import './registerServiceWorker';
 // eslint-disable-next-line import/no-duplicates
 // eslint-disable-next-line import/no-duplicates
-import axios, { AxiosInstance } from 'axios';
 import i18n from './plugins/vue-i18n';
 import { Component } from 'vue-property-decorator';
 import Vuelidate from 'vuelidate';
 
 Vue.config.productionTip = false;
-
-export const axiosInstance: AxiosInstance = axios.create({
-  baseURL: process.env.VUE_APP_BASE_API_URL,
-  headers: {
-    'Access-Control-Allow-Origin': '*',
-    'Content-Type': 'application/json',
-    'X-Requested-With': `XMLHttpRequest`,
-    'x-access-token': localStorage.accessToken,
-  },
-});
 
 Vue.use(Vuelidate);
 Vue.use(require(`vue-moment`) as any);
