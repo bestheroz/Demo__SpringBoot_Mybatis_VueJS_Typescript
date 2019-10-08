@@ -3,34 +3,32 @@
     <v-row>
       <v-col cols="3">
         <v-dialog
-          ref="startDayDialog"
-          v-model="localStartDayMenu"
+          :disabled="disabled"
           :return-value.sync="localStartDay"
           persistent
+          ref="startDayDialog"
+          v-model="localStartDayMenu"
           width="290px"
-          :disabled="disabled"
         >
           <template v-slot:activator="{ on }">
             <v-text-field
-              v-model="localStartDay"
-              :label="localStartDayLabel"
               :hint="startDayHint"
+              :label="localStartDayLabel"
               :persistent-hint="startDayHint !== undefined"
               prepend-icon="event"
               readonly
+              v-model="localStartDay"
               v-on="on"
             ></v-text-field>
           </template>
           <v-date-picker
-            v-model="localStartDay"
             :locale="APP_LANGUAGE"
             :max="localEndDay"
             scrollable
+            v-model="localStartDay"
           >
             <div class="flex-grow-1"></div>
             <v-btn
-              text
-              color="primary"
               @click="
                 () => {
                   localStartDay = formatNowTZ('YYYY-MM-DD');
@@ -38,56 +36,56 @@
                   updateStartDt();
                 }
               "
+              color="primary"
+              text
               >{{ $t('today') }}
             </v-btn>
-            <v-btn text color="primary" @click="localStartDayMenu = false">{{
-              $t('cancel')
-            }}</v-btn>
+            <v-btn @click="localStartDayMenu = false" color="primary" text
+              >{{ $t('cancel') }}
+            </v-btn>
             <v-btn
-              text
-              color="primary"
               @click="
                 () => {
                   $refs.startDayDialog.save(localStartDay);
                   updateStartDt();
                 }
               "
-              >{{ $t('ok') }}</v-btn
-            >
+              color="primary"
+              text
+              >{{ $t('ok') }}
+            </v-btn>
           </v-date-picker>
         </v-dialog>
       </v-col>
       <v-col cols="2">
         <v-dialog
-          ref="startTimeDialog"
-          v-model="localStartTimeMenu"
+          :disabled="disabled"
           :return-value.sync="localStartTime"
           persistent
+          ref="startTimeDialog"
+          v-model="localStartTimeMenu"
           width="290px"
-          :disabled="disabled"
         >
           <template v-slot:activator="{ on }">
             <v-text-field
-              v-model="localStartTime"
-              :label="localStartTimeLabel"
               :hint="startTimeHint"
+              :label="localStartTimeLabel"
               :persistent-hint="startTimeHint !== undefined"
               prepend-icon="access_time"
               readonly
+              v-model="localStartTime"
               v-on="on"
             ></v-text-field>
           </template>
           <v-time-picker
+            :max="localStartDay === localEndDay ? localEndTime : ''"
+            format="24hr"
+            full-width
             v-if="localStartTimeMenu"
             v-model="localStartTime"
-            :max="localStartDay === localEndDay ? localEndDay : ''"
-            full-width
-            format="24hr"
           >
             <div class="flex-grow-1"></div>
             <v-btn
-              text
-              color="primary"
               @click="
                 () => {
                   localStartTime = formatNowTZ('HH:mm');
@@ -95,58 +93,58 @@
                   updateStartDt();
                 }
               "
+              color="primary"
+              text
               >{{ $t('now') }}
             </v-btn>
-            <v-btn text color="primary" @click="localStartTimeMenu = false">{{
-              $t('cancel')
-            }}</v-btn>
+            <v-btn @click="localStartTimeMenu = false" color="primary" text
+              >{{ $t('cancel') }}
+            </v-btn>
             <v-btn
-              text
-              color="primary"
               @click="
                 () => {
                   $refs.startTimeDialog.save(localStartTime);
                   updateStartDt();
                 }
               "
+              color="primary"
+              text
               >{{ $t('ok') }}
             </v-btn>
           </v-time-picker>
         </v-dialog>
       </v-col>
-      <v-col cols="1" class="my-auto mx-0 text-center">
+      <v-col class="my-auto mx-0 text-center" cols="1">
         <v-icon>mdi-tilde</v-icon>
       </v-col>
       <v-col cols="3">
         <v-dialog
-          ref="endDayDialog"
-          v-model="localEndDayMenu"
+          :disabled="disabled"
           :return-value.sync="localEndDay"
           persistent
+          ref="endDayDialog"
+          v-model="localEndDayMenu"
           width="290px"
-          :disabled="disabled"
         >
           <template v-slot:activator="{ on }">
             <v-text-field
-              v-model="localEndDay"
-              :label="localEndDayLabel"
               :hint="endDayHint"
+              :label="localEndDayLabel"
               :persistent-hint="endDayHint !== undefined"
               prepend-icon="access_time"
               readonly
+              v-model="localEndDay"
               v-on="on"
             ></v-text-field>
           </template>
           <v-date-picker
-            v-model="localEndDay"
             :locale="APP_LANGUAGE"
             :min="localStartDay"
             scrollable
+            v-model="localEndDay"
           >
             <div class="flex-grow-1"></div>
             <v-btn
-              text
-              color="primary"
               @click="
                 () => {
                   localEndDay = formatNowTZ('YYYY-MM-DD');
@@ -154,20 +152,22 @@
                   updateEndDt();
                 }
               "
+              color="primary"
+              text
               >{{ $t('today') }}
             </v-btn>
-            <v-btn text color="primary" @click="localEndDayMenu = false">{{
-              $t('cancel')
-            }}</v-btn>
+            <v-btn @click="localEndDayMenu = false" color="primary" text
+              >{{ $t('cancel') }}
+            </v-btn>
             <v-btn
-              text
-              color="primary"
               @click="
                 () => {
                   $refs.endDayDialog.save(localEndDay);
                   updateEndDt();
                 }
               "
+              color="primary"
+              text
               >OK
             </v-btn>
           </v-date-picker>
@@ -175,35 +175,33 @@
       </v-col>
       <v-col cols="2">
         <v-dialog
-          ref="endTimeDialog"
-          v-model="localEndTimeMenu"
+          :disabled="disabled"
           :return-value.sync="localEndTime"
           persistent
+          ref="endTimeDialog"
+          v-model="localEndTimeMenu"
           width="290px"
-          :disabled="disabled"
         >
           <template v-slot:activator="{ on }">
             <v-text-field
-              v-model="localEndTime"
-              :label="localEndTimeLabel"
               :hint="endTimeHint"
+              :label="localEndTimeLabel"
               :persistent-hint="endTimeHint !== undefined"
               prepend-icon="access_time"
               readonly
+              v-model="localEndTime"
               v-on="on"
             ></v-text-field>
           </template>
           <v-time-picker
+            :min="localStartDay === localEndDay ? localStartTime : ''"
+            format="24hr"
+            full-width
             v-if="localEndTimeMenu"
             v-model="localEndTime"
-            :min="localStartDay === localEndDay ? localStartTime : ''"
-            full-width
-            format="24hr"
           >
             <div class="flex-grow-1"></div>
             <v-btn
-              text
-              color="primary"
               @click="
                 () => {
                   localEndTime = formatNowTZ('HH:mm');
@@ -211,20 +209,22 @@
                   updateEndDt();
                 }
               "
+              color="primary"
+              text
               >{{ $t('now') }}
             </v-btn>
-            <v-btn text color="primary" @click="localEndTimeMenu = false">{{
-              $t('cancel')
-            }}</v-btn>
+            <v-btn @click="localEndTimeMenu = false" color="primary" text
+              >{{ $t('cancel') }}
+            </v-btn>
             <v-btn
-              text
-              color="primary"
               @click="
                 () => {
                   $refs.endTimeDialog.save(localEndTime);
                   updateEndDt();
                 }
               "
+              color="primary"
+              text
               >{{ $t('ok') }}
             </v-btn>
           </v-time-picker>
@@ -276,25 +276,10 @@ export default class DatetimeStartEndPicker extends Vue {
   localStartTime: string = '';
   localEndDay: string = '';
   localEndTime: string = '';
-  localStartDayLabel?: string = undefined;
-  localEndDayLabel?: string = undefined;
-  localStartTimeLabel?: string = undefined;
-  localEndTimeLabel?: string = undefined;
   localStartDayMenu: boolean = false;
   localStartTimeMenu: boolean = false;
   localEndDayMenu: boolean = false;
   localEndTimeMenu: boolean = false;
-
-  created(): void {
-    this.localStartDayLabel =
-      this.startDayLabel || this.$t('startDayPicker').toString();
-    this.localEndDayLabel =
-      this.endDayLabel || this.$t('endDayPicker').toString();
-    this.localStartTimeLabel =
-      this.endTimeLabel || this.$t('startTimePicker').toString();
-    this.localEndTimeLabel =
-      this.endTimeLabel || this.$t('endTimePicker').toString();
-  }
 
   @Watch('startDt', { immediate: true })
   watchStartDtHandler(value: string | number | Date): void {
@@ -328,6 +313,22 @@ export default class DatetimeStartEndPicker extends Vue {
       this.snackbarError();
     }
     return `${this.localEndDay}T${this.localEndTime}:59.999999${process.env.VUE_APP_TIMEZONE_OFFSET_STRING}`;
+  }
+
+  get localStartDayLabel(): string {
+    return this.startDayLabel || this.$t('startDayPicker').toString();
+  }
+
+  get localEndDayLabel(): string {
+    return this.endDayLabel || this.$t('endDayPicker').toString();
+  }
+
+  get localStartTimeLabel(): string {
+    return this.endTimeLabel || this.$t('startTimePicker').toString();
+  }
+
+  get localEndTimeLabel(): string {
+    return this.endTimeLabel || this.$t('endTimePicker').toString();
   }
 
   snackbarError() {

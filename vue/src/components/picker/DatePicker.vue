@@ -75,13 +75,8 @@ export default class DatetimePicker extends Vue {
   readonly $moment: any;
   readonly APP_LANGUAGE: string | undefined = process.env.VUE_APP_LANGUAGE;
 
-  localDayLabel: string = '';
   localDay: string = '';
   localDayDialog: boolean = false;
-
-  created(): void {
-    this.localDayLabel = this.dayLabel || this.$t('dayPicker').toString();
-  }
 
   @Watch('date', { immediate: true })
   watchStartDtHandler(value: string | number | Date): void {
@@ -92,6 +87,10 @@ export default class DatetimePicker extends Vue {
   updated(): string {
     this.localDayDialog = false;
     return `${this.localDay}T00:00:00${process.env.VUE_APP_TIMEZONE_OFFSET_STRING}`;
+  }
+
+  get localDayLabel(): string {
+    return this.dayLabel || this.$t('dayPicker').toString();
   }
 }
 </script>
