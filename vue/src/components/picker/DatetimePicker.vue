@@ -25,7 +25,7 @@
           <v-btn
             @click="
               () => {
-                localDay = formatNowTZ('YYYY-MM-DD');
+                localDay = $moment.format('YYYY-MM-DD');
                 $refs.dayDialog.save(localDay);
                 update();
               }
@@ -81,7 +81,7 @@
           <v-btn
             @click="
               () => {
-                localTime = formatNowTZ('HH:mm');
+                localTime = $moment.format('HH:mm');
                 $refs.timeDialog.save(localTime);
                 update();
               }

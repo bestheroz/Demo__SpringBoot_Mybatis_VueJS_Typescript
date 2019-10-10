@@ -31,7 +31,7 @@
             <v-btn
               @click="
                 () => {
-                  localStartDay = formatNowTZ('YYYY-MM-DD');
+                  localStartDay = $moment.format('YYYY-MM-DD');
                   $refs.startDayDialog.save(localStartDay);
                   updateStartDt();
                 }
@@ -88,7 +88,7 @@
             <v-btn
               @click="
                 () => {
-                  localStartTime = formatNowTZ('HH:mm');
+                  localStartTime = $moment.format('HH:mm');
                   $refs.startTimeDialog.save(localStartTime);
                   updateStartDt();
                 }
@@ -147,7 +147,7 @@
             <v-btn
               @click="
                 () => {
-                  localEndDay = formatNowTZ('YYYY-MM-DD');
+                  localEndDay = $moment.format('YYYY-MM-DD');
                   $refs.endDayDialog.save(localEndDay);
                   updateEndDt();
                 }
@@ -204,7 +204,7 @@
             <v-btn
               @click="
                 () => {
-                  localEndTime = formatNowTZ('HH:mm');
+                  localEndTime = $moment.format('HH:mm');
                   $refs.endTimeDialog.save(localEndTime);
                   updateEndDt();
                 }
