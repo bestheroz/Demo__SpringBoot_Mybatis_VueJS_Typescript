@@ -27,7 +27,7 @@
               () => {
                 localDay = formatNowTZ('YYYY-MM-DD');
                 $refs.dayDialog.save(localDay);
-                updated();
+                update();
               }
             "
             color="primary"
@@ -41,7 +41,7 @@
             @click="
               () => {
                 $refs.dayDialog.save(localDay);
-                updated();
+                update();
               }
             "
             color="primary"
@@ -83,7 +83,7 @@
               () => {
                 localTime = formatNowTZ('HH:mm');
                 $refs.timeDialog.save(localTime);
-                updated();
+                update();
               }
             "
             color="primary"
@@ -97,7 +97,7 @@
             @click="
               () => {
                 $refs.timeDialog.save(localTime);
-                updated();
+                update();
               }
             "
             color="primary"
@@ -148,7 +148,7 @@ export default class DatetimePicker extends Vue {
   @Emit('update:date')
   update(): Date {
     return this.$moment(
-      `${this.localDay}T${this.localTime}:00${process.env.VUE_APP_TIMEZONE_OFFSET_STRING}`,
+      `${this.localDay}T${this.localTime}:00${this.$store.state.timezone}`,
     ).toDate();
   }
 

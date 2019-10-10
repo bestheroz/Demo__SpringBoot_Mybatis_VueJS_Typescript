@@ -2,7 +2,7 @@
   <div>
     <v-data-table
       :headers="headers"
-      :items="items"
+      :items="members"
       class="elevation-1"
       sort-by="calories"
     >
@@ -32,20 +32,20 @@
                   <v-row>
                     <v-col cols="12">
                       <v-text-field
-                        :error-messages="getVErrors($v.item.memberId)"
-                        @blur="delayTouch($v.item.memberId)"
-                        @input="delayTouch($v.item.memberId)"
+                        :error-messages="getVErrors($v.member.memberId)"
+                        @blur="delayTouch($v.member.memberId)"
+                        @input="delayTouch($v.member.memberId)"
                         label="회원 아이디"
-                        v-model.trim="item.memberId"
+                        v-model.trim="member.memberId"
                       />
                     </v-col>
                     <v-col cols="12" md="6">
                       <v-text-field
-                        :error-messages="getVErrors($v.item.memberPw)"
-                        @blur="delayTouch($v.item.memberPw)"
-                        @input="delayTouch($v.item.memberPw)"
+                        :error-messages="getVErrors($v.member.memberPw)"
+                        @blur="delayTouch($v.member.memberPw)"
+                        @input="delayTouch($v.member.memberPw)"
                         label="비밀번호"
-                        v-model.trim="item.memberPw"
+                        v-model.trim="member.memberPw"
                       />
                     </v-col>
                     <v-col cols="12" md="6">
@@ -59,11 +59,11 @@
                     </v-col>
                     <v-col cols="12">
                       <v-text-field
-                        :error-messages="getVErrors($v.item.memberName)"
-                        @blur="delayTouch($v.item.memberName)"
-                        @input="delayTouch($v.item.memberName)"
+                        :error-messages="getVErrors($v.member.memberName)"
+                        @blur="delayTouch($v.member.memberName)"
+                        @input="delayTouch($v.member.memberName)"
                         label="회원 명"
-                        v-model.trim="item.memberName"
+                        v-model.trim="member.memberName"
                       />
                     </v-col>
                     <v-col cols="12">
@@ -73,7 +73,7 @@
                         mandatory
                         persistent-hint
                         row
-                        v-model="item.memberType"
+                        v-model="member.memberType"
                       >
                         <v-radio
                           :key="object.code"
@@ -86,23 +86,23 @@
                     </v-col>
                     <v-col cols="12" md="4">
                       <v-text-field
-                        :error-messages="getVErrors($v.item.loginFailCnt)"
-                        @blur="delayTouch($v.item.loginFailCnt)"
-                        @input="delayTouch($v.item.loginFailCnt)"
+                        :error-messages="getVErrors($v.member.loginFailCnt)"
+                        @blur="delayTouch($v.member.loginFailCnt)"
+                        @input="delayTouch($v.member.loginFailCnt)"
                         label="로그인 실패 건수"
                         type="number"
-                        v-model.number="item.loginFailCnt"
+                        v-model.number="member.loginFailCnt"
                       />
                     </v-col>
                     <v-col cols="12" md="4">
                       <v-checkbox
                         label="계정 잠김 여부"
-                        v-model="item.closeTf"
+                        v-model="member.closeTf"
                       ></v-checkbox>
                     </v-col>
                     <v-col cols="12">
                       <DatetimePicker
-                        :date.sync="item.expired"
+                        :date.sync="member.expired"
                         day-label="계정 만료 날짜"
                         time-label="계정 만료 시간"
                       ></DatetimePicker>
@@ -171,7 +171,7 @@ import _ from 'lodash';
 @Component({
   components: { DatetimePicker },
   validations: {
-    item: {
+    member: {
       memberId: {
         required,
         maxLength: maxLength(20),
@@ -209,8 +209,8 @@ import _ from 'lodash';
       required(value: string) {
         if (
           !this.$data.isUpdate ||
-          (this.$data.item.memberPw !== `` &&
-            this.$data.item.memberPw !== undefined)
+          (this.$data.member.memberPw !== `` &&
+            this.$data.member.memberPw !== undefined)
         ) {
           if (value === undefined || value === ``) {
             return false;
@@ -233,11 +233,11 @@ export default class ManageMember extends Vue {
   dialog: boolean = false;
   isUpdate: boolean = true;
   headers: DataTableHeader[] = [];
-  items: Member[] = [];
-  item: Member = {
+  members: Member[] = [];
+  member: Member = {
     expired: this.$moment()
-      .add(1, `months`)
-      .endOf(`days`)
+      .add(1, 'months')
+      .endOf(`day`)
       .toDate(),
   };
   memberPwCheck: string = ``;
@@ -266,42 +266,42 @@ export default class ManageMember extends Vue {
 
   async getList() {
     const response = await getOnlyListDataApi<Member[]>(`sample/admin/member/`);
-    this.items = response.data || [];
+    this.members = response.data || [];
   }
 
   async getMemberType() {
     this.MEMBER_TYPE = await getCodeListDataApi(`MEMBER_TYPE`);
   }
 
-  editItem(item: Member) {
-    (this.$v.item as Validation).$reset();
-    this.isUpdate = item !== undefined;
-    if (item === undefined) {
-      this.item = Object.assign(
+  editItem(member: Member) {
+    (this.$v.member as Validation).$reset();
+    this.isUpdate = member !== undefined;
+    if (member === undefined) {
+      this.member = Object.assign(
         {},
         {
           closeTf: false,
           expired: this.$moment()
-            .add(1, `months`)
-            .endOf(`days`)
+            .add(1, 'months')
+            .endOf(`day`)
             .toDate(),
         },
       );
       this.memberPwCheck = ``;
     } else {
-      this.item = item;
+      this.member = Object.assign({}, member);
     }
     this.dialog = true;
   }
 
-  async deleteItem(item: Member) {
-    if (!confirm(`Are you sure you want to delete this item?`)) {
+  async deleteItem(member: Member) {
+    if (!confirm(`Are you sure you want to delete this member?`)) {
       return;
     }
 
     const response = await deleteDataApi<Member>(
       `sample/admin/member/`,
-      item.memberId!,
+      member.memberId!,
       this,
     );
     if (_.startsWith(response.code, `S`)) {
@@ -315,7 +315,7 @@ export default class ManageMember extends Vue {
   }
 
   async save() {
-    const $vForm: Validation = this.$v.item as Validation;
+    const $vForm: Validation = this.$v.member as Validation;
     $vForm.$touch();
     const valid = !$vForm.$pending && !$vForm.$error;
     if (!valid) {
@@ -328,7 +328,7 @@ export default class ManageMember extends Vue {
   async create() {
     const response = await createDataApi<Member>(
       `sample/admin/member/`,
-      this.item,
+      this.member,
       this,
     );
     if (_.startsWith(response.code, `S`)) {
@@ -340,8 +340,8 @@ export default class ManageMember extends Vue {
   async patch() {
     const response = await patchDataApi<Member>(
       `sample/admin/member/`,
-      this.item,
-      this.item.memberId!,
+      this.member,
+      this.member.memberId!,
       this,
     );
     if (_.startsWith(response.code, `S`)) {

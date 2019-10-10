@@ -27,7 +27,7 @@
               () => {
                 localDay = formatNowTZ('YYYY-MM-DD');
                 $refs.dayDialog.save(localDay);
-                updated();
+                update();
               }
             "
             color="primary"
@@ -41,7 +41,7 @@
             @click="
               () => {
                 $refs.dayDialog.save(localDay);
-                updated();
+                update();
               }
             "
             color="primary"
@@ -79,7 +79,7 @@ export default class DatePicker extends Vue {
   localDayDialog: boolean = false;
 
   created() {
-    this.updated();
+    this.update();
   }
 
   @Watch('date', { immediate: true })
@@ -88,10 +88,10 @@ export default class DatePicker extends Vue {
   }
 
   @Emit('update:date')
-  updated(): Date {
+  update(): Date {
     this.localDayDialog = false;
     return this.$moment(
-      `${this.localDay}T00:00:00${process.env.VUE_APP_TIMEZONE_OFFSET_STRING}`,
+      `${this.localDay}T00:00:00${this.$store.state.timezone}`,
     );
   }
 

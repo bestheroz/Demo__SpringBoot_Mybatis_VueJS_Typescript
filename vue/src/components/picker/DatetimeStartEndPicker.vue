@@ -168,7 +168,7 @@
               "
               color="primary"
               text
-              >OK
+              >{{ $t('ok') }}
             </v-btn>
           </v-date-picker>
         </v-dialog>
@@ -308,7 +308,7 @@ export default class DatetimeStartEndPicker extends Vue {
       this.snackbarError();
     }
     return this.$moment(
-      `${this.localStartDay}T${this.localStartTime}:00${process.env.VUE_APP_TIMEZONE_OFFSET_STRING}`,
+      `${this.localStartDay}T${this.localStartTime}:00${this.$store.state.timezone}`,
     ).toDate();
   }
 
@@ -321,7 +321,7 @@ export default class DatetimeStartEndPicker extends Vue {
       this.snackbarError();
     }
     return this.$moment(
-      `${this.localEndDay}T${this.localEndTime}:59.999999${process.env.VUE_APP_TIMEZONE_OFFSET_STRING}`,
+      `${this.localEndDay}T${this.localEndTime}:59.999999${this.$store.state.timezone}`,
     ).toDate();
   }
 

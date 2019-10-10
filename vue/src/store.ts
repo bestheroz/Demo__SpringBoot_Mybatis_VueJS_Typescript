@@ -13,6 +13,7 @@ export default new Vuex.Store({
     accessToken: null,
     host: process.env.VUE_APP_BASE_API_URL,
     language: process.env.VUE_APP_LANGUAGE,
+    timezone: process.env.VUE_APP_TIMEZONE,
     axiosInstance: axios.create({
       baseURL: process.env.VUE_APP_BASE_API_URL,
       headers: {

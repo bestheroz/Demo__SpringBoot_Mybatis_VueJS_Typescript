@@ -5,7 +5,9 @@
         <v-col cols="5">
           <v-card class="elevation-12">
             <v-toolbar color="deep-purple accent-4" dark flat>
-              <v-toolbar-title>Login form</v-toolbar-title>
+              <v-toolbar-title>
+                Login form ( Tester Account 1 / 1 )
+              </v-toolbar-title>
               <div class="flex-grow-1"></div>
             </v-toolbar>
             <v-card-text>
