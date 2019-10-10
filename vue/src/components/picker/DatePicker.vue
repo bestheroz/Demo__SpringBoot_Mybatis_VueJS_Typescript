@@ -58,8 +58,8 @@
 import { Component, Emit, Prop, Vue, Watch } from 'vue-property-decorator';
 
 @Component
-export default class DatetimePicker extends Vue {
-  @Prop({ type: [String, Number, Date], default: new Date() })
+export default class DatePicker extends Vue {
+  @Prop({ type: [String, Number, Date], default: () => new Date() })
   readonly date!: string | number | Date;
   @Prop({ type: String, default: undefined })
   readonly dayLabel!: string;
@@ -78,15 +78,21 @@ export default class DatetimePicker extends Vue {
   localDay: string = '';
   localDayDialog: boolean = false;
 
+  created() {
+    this.updated();
+  }
+
   @Watch('date', { immediate: true })
   watchStartDtHandler(value: string | number | Date): void {
     this.localDay = this.$moment(value).format(`YYYY-MM-DD`);
   }
 
-  @Emit()
-  updated(): string {
+  @Emit('update:date')
+  updated(): Date {
     this.localDayDialog = false;
-    return `${this.localDay}T00:00:00${process.env.VUE_APP_TIMEZONE_OFFSET_STRING}`;
+    return this.$moment(
+      `${this.localDay}T00:00:00${process.env.VUE_APP_TIMEZONE_OFFSET_STRING}`,
+    );
   }
 
   get localDayLabel(): string {

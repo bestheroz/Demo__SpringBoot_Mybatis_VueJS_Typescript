@@ -102,10 +102,9 @@
                     </v-col>
                     <v-col cols="12">
                       <DatetimePicker
-                        :date="item.expired"
-                        @update="updateExpired"
-                        dayLabel="계정 만료 날짜"
-                        timeLabel="계정 만료 시간"
+                        :date.sync="item.expired"
+                        day-label="계정 만료 날짜"
+                        time-label="계정 만료 시간"
                       ></DatetimePicker>
                     </v-col>
                   </v-row>
@@ -159,7 +158,7 @@ import {
   patchDataApi,
 } from '@/utils/api';
 import { DataTableHeader, SelectItem } from '@/common/types';
-import DatetimePicker from '@/components/picker/DateTimePicker.vue';
+import DatetimePicker from '@/components/picker/DatetimePicker.vue';
 import { Validation } from 'vuelidate';
 import {
   delayTouch,
@@ -349,10 +348,6 @@ export default class ManageMember extends Vue {
       this.getList();
       this.closeModal();
     }
-  }
-
-  updateExpired(date: string) {
-    this.item.expired = this.$moment(date).toDate();
   }
 }
 </script>

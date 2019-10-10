@@ -239,15 +239,16 @@ import { Component, Emit, Prop, Vue, Watch } from 'vue-property-decorator';
 
 @Component
 export default class DatetimeStartEndPicker extends Vue {
-  @Prop({ type: [String, Number, Date], default: new Date() })
+  @Prop({ type: [String, Number, Date], default: () => new Date() })
   readonly startDt!: string | number | Date;
   @Prop({
     type: [String, Number, Date],
-    default: new Date(
-      new Date().getFullYear(),
-      new Date().getMonth() + 1,
-      new Date().getDate(),
-    ),
+    default: () =>
+      new Date(
+        new Date().getFullYear(),
+        new Date().getMonth() + 1,
+        new Date().getDate(),
+      ),
   })
   readonly endDt!: string | number | Date;
   @Prop({ type: String, default: undefined })
@@ -281,6 +282,11 @@ export default class DatetimeStartEndPicker extends Vue {
   localEndDayMenu: boolean = false;
   localEndTimeMenu: boolean = false;
 
+  created() {
+    this.updateStartDt();
+    this.updateEndDt();
+  }
+
   @Watch('startDt', { immediate: true })
   watchStartDtHandler(value: string | number | Date): void {
     this.localStartDay = this.$moment(value).format('YYYY-MM-DD');
@@ -293,26 +299,30 @@ export default class DatetimeStartEndPicker extends Vue {
     this.localEndTime = this.$moment(value).format('HH:mm');
   }
 
-  @Emit()
-  updateStartDt(): string {
+  @Emit('update:startDt')
+  updateStartDt(): Date {
     if (
       `${this.localStartDay}${this.localStartTime}` >
       `${this.localEndDay}${this.localEndTime}`
     ) {
       this.snackbarError();
     }
-    return `${this.localStartDay}T${this.localStartTime}:00${process.env.VUE_APP_TIMEZONE_OFFSET_STRING}`;
+    return this.$moment(
+      `${this.localStartDay}T${this.localStartTime}:00${process.env.VUE_APP_TIMEZONE_OFFSET_STRING}`,
+    ).toDate();
   }
 
-  @Emit()
-  updateEndDt(): string {
+  @Emit('update:endDt')
+  updateEndDt(): Date {
     if (
       `${this.localEndDay}${this.localEndTime}` <
       `${this.localStartDay}${this.localStartTime}`
     ) {
       this.snackbarError();
     }
-    return `${this.localEndDay}T${this.localEndTime}:59.999999${process.env.VUE_APP_TIMEZONE_OFFSET_STRING}`;
+    return this.$moment(
+      `${this.localEndDay}T${this.localEndTime}:59.999999${process.env.VUE_APP_TIMEZONE_OFFSET_STRING}`,
+    ).toDate();
   }
 
   get localStartDayLabel(): string {

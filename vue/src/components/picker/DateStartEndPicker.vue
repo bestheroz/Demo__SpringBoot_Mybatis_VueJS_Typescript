@@ -125,15 +125,16 @@ import { Component, Emit, Prop, Vue, Watch } from 'vue-property-decorator';
 
 @Component
 export default class DateStartEndPicker extends Vue {
-  @Prop({ type: [String, Number, Date], default: new Date() })
+  @Prop({ type: [String, Number, Date], default: () => new Date() })
   readonly startDay!: string | number | Date;
   @Prop({
     type: [String, Number, Date],
-    default: new Date(
-      new Date().getFullYear(),
-      new Date().getMonth() + 1,
-      new Date().getDate(),
-    ),
+    default: () =>
+      new Date(
+        new Date().getFullYear(),
+        new Date().getMonth() + 1,
+        new Date().getDate(),
+      ),
   })
   readonly endDay!: string | number | Date;
   @Prop({ type: String, default: undefined })
@@ -155,6 +156,11 @@ export default class DateStartEndPicker extends Vue {
   localStartDayMenu: boolean = false;
   localEndDayMenu: boolean = false;
 
+  created() {
+    this.updateStartDay();
+    this.updateEndDay();
+  }
+
   @Watch('startDay', { immediate: true })
   watchStartDayHandler(value: string | number | Date): void {
     this.localStartDay = this.$moment(value).format('YYYY-MM-DD');
@@ -165,20 +171,24 @@ export default class DateStartEndPicker extends Vue {
     this.localEndDay = this.$moment(value).format('YYYY-MM-DD');
   }
 
-  @Emit()
-  updateStartDay(): string {
+  @Emit('update:start-day')
+  updateStartDay(): Date {
     if (this.localStartDay > this.localEndDay) {
       this.snackbarError();
     }
-    return `${this.localStartDay}T00:00:00${process.env.VUE_APP_TIMEZONE_OFFSET_STRING}`;
+    return this.$moment(
+      `${this.localStartDay}T00:00:00${process.env.VUE_APP_TIMEZONE_OFFSET_STRING}`,
+    ).toDate();
   }
 
-  @Emit()
-  updateEndDay(): string {
+  @Emit('update:end-day')
+  updateEndDay(): Date {
     if (this.localEndDay < this.localStartDay) {
       this.snackbarError();
     }
-    return `${this.localEndDay}T23:59:59.999999${process.env.VUE_APP_TIMEZONE_OFFSET_STRING}`;
+    return this.$moment(
+      `${this.localEndDay}T23:59:59.999999${process.env.VUE_APP_TIMEZONE_OFFSET_STRING}`,
+    ).toDate();
   }
 
   get localStartDayLabel(): string {
