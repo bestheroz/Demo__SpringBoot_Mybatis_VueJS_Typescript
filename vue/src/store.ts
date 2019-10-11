@@ -19,7 +19,7 @@ export default new Vuex.Store({
       headers: {
         'Content-Type': 'application/json',
         'X-Requested-With': `XMLHttpRequest`,
-        'x-access-token': localStorage.accessToken,
+        Authorization: localStorage.accessToken,
       },
     }),
   },
@@ -28,13 +28,14 @@ export default new Vuex.Store({
       state.accessToken = accessToken;
       // 토큰을 로컬 스토리지에 저장
       localStorage.accessToken = accessToken;
-      state.axiosInstance.defaults.headers['x-access-token'] = accessToken;
+      console.info(accessToken);
+      state.axiosInstance.defaults.headers['Authorization'] = accessToken;
     },
     logout(state) {
       state.accessToken = null;
       // 토큰을 로컬 스토리지에서 제거
       delete localStorage.accessToken;
-      delete state.axiosInstance.defaults.headers['x-access-token'];
+      delete state.axiosInstance.defaults.headers['Authorization'];
       router.push('/');
     },
     async loginCheck(state): Promise<boolean> {
