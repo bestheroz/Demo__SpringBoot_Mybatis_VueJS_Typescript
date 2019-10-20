@@ -4,16 +4,12 @@ import App from './App.vue';
 import router from './router';
 import store from './store';
 import './registerServiceWorker';
-// eslint-disable-next-line import/no-duplicates
-// eslint-disable-next-line import/no-duplicates
+import './plugins/vue-toasted';
+import './plugins/vue-moment';
+import './plugins/vee-validate';
 import i18n from './plugins/vue-i18n';
-import { Component } from 'vue-property-decorator';
-import Vuelidate from 'vuelidate';
 
 Vue.config.productionTip = false;
-
-Vue.use(Vuelidate);
-Vue.use(require(`vue-moment`) as any);
 
 new Vue({
   router,
@@ -26,4 +22,4 @@ new Vue({
 
 require(`dotenv`).config();
 
-Component.registerHooks([`validations`]);
+// Component.registerHooks([`validations`]);

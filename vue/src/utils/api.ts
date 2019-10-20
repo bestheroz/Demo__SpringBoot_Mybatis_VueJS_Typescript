@@ -68,7 +68,7 @@ export async function getDataApi<T>(
   }
 }
 
-export async function createDataApi<T>(
+export async function postDataApi<T>(
   url: String,
   data: T,
   vueForAutoToast: any = undefined,
@@ -92,15 +92,7 @@ export async function createDataApi<T>(
   }
 }
 
-export async function postDataApi<T>(
-  url: String,
-  data: T,
-  vueForAutoToast: any = undefined,
-): Promise<ApiResult<T>> {
-  return createDataApi<T>(url, data, vueForAutoToast);
-}
-
-export async function updateDataApi<T>(
+export async function putDataApi<T>(
   url: String,
   data: T,
   key: String | Number,
@@ -223,16 +215,18 @@ function toastResponseMessage(
   vue: any,
   responseData: ApiDataResult<any>,
 ): void {
+  console.info(responseData);
   if (_.startsWith(responseData.responseCode, `S`)) {
-    vue.$toast.success(responseData.responseMessage!);
+    vue.$toasted.success(responseData.responseMessage!);
   } else {
-    vue.$toast.warning(responseData.responseMessage!);
+    vue.$toasted.error(responseData.responseMessage!);
   }
 }
 
 async function logoutCheck(responseData: ApiDataResult<any>) {
   if (responseData.responseCode === 'F004') {
+    console.info(router.currentRoute);
     await router.push(`/login?need=login`);
-    return false;
   }
+  return false;
 }

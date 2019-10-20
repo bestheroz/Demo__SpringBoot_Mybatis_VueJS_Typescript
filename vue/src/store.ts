@@ -31,12 +31,12 @@ export default new Vuex.Store({
       console.info(accessToken);
       state.axiosInstance.defaults.headers['Authorization'] = accessToken;
     },
-    logout(state) {
+    async logout(state) {
       state.accessToken = null;
       // 토큰을 로컬 스토리지에서 제거
       delete localStorage.accessToken;
       delete state.axiosInstance.defaults.headers['Authorization'];
-      router.push('/');
+      await router.push('/');
     },
     async loginCheck(state): Promise<boolean> {
       const response = await postDataApi(`${state.host}sample/auth/verify`, {});

@@ -30,83 +30,94 @@
               <v-card-text>
                 <v-container>
                   <v-row>
-                    <v-col cols="12">
-                      <v-text-field
-                        :error-messages="getVErrors($v.member.memberId)"
-                        @blur="delayTouch($v.member.memberId)"
-                        @input="delayTouch($v.member.memberId)"
-                        label="회원 아이디"
-                        v-model.trim="member.memberId"
-                      />
-                    </v-col>
-                    <v-col cols="12" md="6">
-                      <v-text-field
-                        :error-messages="getVErrors($v.member.memberPw)"
-                        @blur="delayTouch($v.member.memberPw)"
-                        @input="delayTouch($v.member.memberPw)"
-                        label="비밀번호"
-                        v-model.trim="member.memberPw"
-                      />
-                    </v-col>
-                    <v-col cols="12" md="6">
-                      <v-text-field
-                        :error-messages="getVErrors($v.memberPwCheck)"
-                        @blur="delayTouch($v.memberPwCheck)"
-                        @input="delayTouch($v.memberPwCheck)"
-                        label="비밀번호 확인"
-                        v-model.trim="memberPwCheck"
-                      />
-                    </v-col>
-                    <v-col cols="12">
-                      <v-text-field
-                        :error-messages="getVErrors($v.member.memberName)"
-                        @blur="delayTouch($v.member.memberName)"
-                        @input="delayTouch($v.member.memberName)"
-                        label="회원 명"
-                        v-model.trim="member.memberName"
-                      />
-                    </v-col>
-                    <v-col cols="12">
-                      <v-radio-group
-                        class="mt-0"
-                        label="회원 타입"
-                        mandatory
-                        persistent-hint
-                        row
-                        v-model="member.memberType"
-                      >
-                        <v-radio
-                          :key="object.code"
-                          :label="object.codeName"
-                          :mandatory="true"
-                          :value="object.code"
-                          v-for="object in Object.values(MEMBER_TYPE)"
-                        ></v-radio>
-                      </v-radio-group>
-                    </v-col>
-                    <v-col cols="12" md="4">
-                      <v-text-field
-                        :error-messages="getVErrors($v.member.loginFailCnt)"
-                        @blur="delayTouch($v.member.loginFailCnt)"
-                        @input="delayTouch($v.member.loginFailCnt)"
-                        label="로그인 실패 건수"
-                        type="number"
-                        v-model.number="member.loginFailCnt"
-                      />
-                    </v-col>
-                    <v-col cols="12" md="4">
-                      <v-checkbox
-                        label="계정 잠김 여부"
-                        v-model="member.closeTf"
-                      ></v-checkbox>
-                    </v-col>
-                    <v-col cols="12">
-                      <DatetimePicker
-                        :date.sync="member.expired"
-                        day-label="계정 만료 날짜"
-                        time-label="계정 만료 시간"
-                      ></DatetimePicker>
-                    </v-col>
+                    <ValidationObserver ref="observer">
+                      <v-col cols="12">
+                        <ValidationProvider
+                          name="회원 아이디"
+                          ref="memberId"
+                          rules="required"
+                          v-slot="{ errors }"
+                        >
+                          <v-text-field
+                            label="회원 아이디"
+                            v-model.trim="member.memberId"
+                          />
+                          <span class="red--text">{{ errors[0] }}</span>
+                        </ValidationProvider>
+                      </v-col>
+                      <v-col cols="12" md="6">
+                        <v-text-field
+                          label="비밀번호"
+                          v-model.trim="member.memberPw"
+                        />
+                      </v-col>
+                      <v-col cols="12" md="6">
+                        <v-text-field
+                          label="비밀번호 확인"
+                          v-model.trim="memberPwCheck"
+                        />
+                      </v-col>
+                      <v-col cols="12">
+                        <ValidationProvider
+                          name="회원 명"
+                          ref="memberName"
+                          rules="required"
+                          v-slot="{ errors }"
+                        >
+                          <v-text-field
+                            label="회원 명"
+                            v-model.trim="member.memberName"
+                          />
+                          <span class="red--text">{{ errors[0] }}</span>
+                        </ValidationProvider>
+                      </v-col>
+                      <v-col cols="12">
+                        <ValidationProvider
+                          name="회원 타입"
+                          ref="memberType"
+                          rules="required"
+                          v-slot="{ errors }"
+                        >
+                          <v-radio-group
+                            class="mt-0"
+                            label="회원 타입"
+                            mandatory
+                            persistent-hint
+                            row
+                            v-model="member.memberType"
+                          >
+                            <v-radio
+                              :key="object.code"
+                              :label="object.codeName"
+                              :mandatory="true"
+                              :value="object.code"
+                              v-for="object in Object.values(MEMBER_TYPE)"
+                            ></v-radio>
+                          </v-radio-group>
+                          <span class="red--text">{{ errors[0] }}</span>
+                        </ValidationProvider>
+                      </v-col>
+                      <v-col cols="12" md="4">
+                        <v-text-field
+                          label="로그인 실패 건수"
+                          type="number"
+                          v-model.number="member.loginFailCnt"
+                        />
+                      </v-col>
+                      <v-col cols="12" md="4">
+                        <v-checkbox
+                          label="계정 잠김 여부"
+                          v-model="member.closeTf"
+                        ></v-checkbox>
+                      </v-col>
+                      <v-col cols="12">
+                        <DatetimePicker
+                          :date.sync="member.expired"
+                          day-label="계정 만료 날짜"
+                          time-label="계정 만료 시간"
+                        ></DatetimePicker>
+                      </v-col>
+                    </ValidationObserver>
                   </v-row>
                 </v-container>
               </v-card-text>
@@ -151,84 +162,22 @@
 import { Component, Vue } from 'vue-property-decorator';
 import { Member } from '@/views/manage/member/common/types';
 import {
-  createDataApi,
   deleteDataApi,
   getCodeListDataApi,
   getOnlyListDataApi,
   patchDataApi,
+  postDataApi,
 } from '@/utils/api';
 import { DataTableHeader, SelectItem } from '@/common/types';
 import DatetimePicker from '@/components/picker/DatetimePicker.vue';
-import { Validation } from 'vuelidate';
-import {
-  delayTouch,
-  getVErrors,
-  maxLength,
-  required,
-} from '@/utils/validation-helper';
 import _ from 'lodash';
 
 @Component({
   components: { DatetimePicker },
-  validations: {
-    member: {
-      memberId: {
-        required,
-        maxLength: maxLength(20),
-      },
-      memberPw: {
-        required(value: string) {
-          if (
-            !this.$data.isUpdate ||
-            (this.$data.memberPwCheck !== `` &&
-              this.$data.memberPwCheck !== undefined)
-          ) {
-            if (value === undefined || value === ``) {
-              return false;
-            } else {
-              return true;
-            }
-          } else {
-            return true;
-          }
-        },
-        maxLength: maxLength(20),
-      },
-      memberName: {
-        required,
-        maxLength: maxLength(20),
-      },
-      loginFailCnt: {
-        required,
-      },
-      expired: {
-        required,
-      },
-    },
-    memberPwCheck: {
-      required(value: string) {
-        if (
-          !this.$data.isUpdate ||
-          (this.$data.member.memberPw !== `` &&
-            this.$data.member.memberPw !== undefined)
-        ) {
-          if (value === undefined || value === ``) {
-            return false;
-          } else {
-            return true;
-          }
-        } else {
-          return true;
-        }
-      },
-      maxLength: maxLength(20),
-    },
-  },
 })
 export default class ManageMember extends Vue {
   readonly $moment: any;
-  readonly delayTouch: typeof delayTouch = delayTouch;
-  readonly getVErrors: typeof getVErrors = getVErrors;
+  readonly $toasted: any;
   MEMBER_TYPE?: SelectItem[] = [];
   dialog: boolean = false;
   isUpdate: boolean = true;
@@ -274,7 +223,6 @@ export default class ManageMember extends Vue {
   }
 
   editItem(member: Member) {
-    (this.$v.member as Validation).$reset();
     this.isUpdate = member !== undefined;
     if (member === undefined) {
       this.member = Object.assign(
@@ -315,18 +263,17 @@ export default class ManageMember extends Vue {
   }
 
   async save() {
-    const $vForm: Validation = this.$v.member as Validation;
-    $vForm.$touch();
-    const valid = !$vForm.$pending && !$vForm.$error;
-    if (!valid) {
-      this.$toast.warning('입력 검증 후 다시 시도해주세요.');
+    // @ts-ignore
+    const isValid = await this.$refs.observer.validate();
+    if (!isValid) {
+      this.$toasted.error('입력 검증 후 다시 시도해주세요.');
       return;
     }
     this.isUpdate ? this.patch() : this.create();
   }
 
   async create() {
-    const response = await createDataApi<Member>(
+    const response = await postDataApi<Member>(
       `sample/admin/member/`,
       this.member,
       this,

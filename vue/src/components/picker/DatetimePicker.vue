@@ -111,12 +111,19 @@
 </template>
 
 <script lang="ts">
-import { Component, Emit, Prop, Vue, Watch } from 'vue-property-decorator';
+import {
+  Component,
+  Emit,
+  Prop,
+  PropSync,
+  Vue,
+  Watch,
+} from 'vue-property-decorator';
 
 @Component
 export default class DatetimePicker extends Vue {
-  @Prop({ type: [String, Number, Date], default: () => new Date() })
-  readonly date!: string | number | Date;
+  @PropSync('date', { type: [String, Number, Date] })
+  readonly syncedDate!: string | number | Date;
   @Prop({ type: String, default: undefined })
   readonly dayLabel!: string;
   @Prop({ type: String, default: undefined })
@@ -135,18 +142,17 @@ export default class DatetimePicker extends Vue {
   localTime: string = '';
   localTimeDialog: boolean = false;
 
-  created() {
-    this.update();
-  }
-
-  @Watch('date', { immediate: true })
-  watchStartDtHandler(value: string | number | Date): void {
+  @Watch('syncedDate', { immediate: true })
+  watchSyncedDateHandler(value: string | number | Date): void {
     this.localDay = this.$moment(value).format(`YYYY-MM-DD`);
     this.localTime = this.$moment(value).format(`HH:mm`);
   }
 
   @Emit('update:date')
   update(): Date {
+    console.info(
+      `${this.localDay}T${this.localTime}:00${this.$store.state.timezone}`,
+    );
     return this.$moment(
       `${this.localDay}T${this.localTime}:00${this.$store.state.timezone}`,
     ).toDate();

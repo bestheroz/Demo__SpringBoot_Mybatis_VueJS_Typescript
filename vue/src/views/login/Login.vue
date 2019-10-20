@@ -12,24 +12,36 @@
             </v-toolbar>
             <v-card-text>
               <v-form>
-                <v-text-field
-                  :error-messages="getVErrors($v.memberId)"
-                  @blur="delayTouch($v.memberId)"
-                  @input="delayTouch($v.memberId)"
-                  color="secondary"
-                  label="ID..."
-                  prepend-icon="mdi-identifier"
-                  v-model="memberId"
-                />
-                <v-text-field
-                  :error-messages="getVErrors($v.memberPw)"
-                  @blur="delayTouch($v.memberPw)"
-                  @input="delayTouch($v.memberPw)"
-                  color="secondary"
-                  label="Password..."
-                  prepend-icon="mdi-lock-outline"
-                  v-model="memberPw"
-                />
+                <ValidationObserver ref="observer">
+                  <ValidationProvider
+                    name="ID"
+                    ref="memberId"
+                    rules="required"
+                    v-slot="{ errors }"
+                  >
+                    <v-text-field
+                      color="secondary"
+                      label="ID..."
+                      prepend-icon="mdi-identifier"
+                      v-model="memberId"
+                    />
+                    <span class="red--text">{{ errors[0] }}</span>
+                  </ValidationProvider>
+                  <ValidationProvider
+                    name="Password"
+                    ref="memberPw"
+                    rules="required"
+                    v-slot="{ errors }"
+                  >
+                    <v-text-field
+                      color="secondary"
+                      label="Password..."
+                      prepend-icon="mdi-lock-outline"
+                      v-model="memberPw"
+                    />
+                    <span class="red--text">{{ errors[0] }}</span>
+                  </ValidationProvider>
+                </ValidationObserver>
               </v-form>
             </v-card-text>
             <v-card-actions>
@@ -47,64 +59,47 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { postDataApi } from '@/utils/api';
+import { ApiDataResult } from '@/utils/api';
 import _ from 'lodash';
 import { Member } from '@/views/manage/member/common/types';
-import {
-  delayTouch,
-  getVErrors,
-  maxLength,
-  required,
-} from '@/utils/validation-helper';
-import { Validation } from 'vuelidate';
+import axios from 'axios';
 
 const SHA512 = require('crypto-js/sha512');
 
 @Component({
   components: {},
-  validations: {
-    memberId: {
-      required,
-      maxLength: maxLength(20),
-    },
-    memberPw: {
-      required,
-      maxLength: maxLength(20),
-    },
-  },
 })
 export default class Login extends Vue {
-  readonly delayTouch: typeof delayTouch = delayTouch;
-  readonly getVErrors: typeof getVErrors = getVErrors;
+  $toasted: any;
   memberId: string = '';
   memberPw: string = '';
 
   mounted() {
     if (this.$route.query.need === 'login') {
-      this.$toast.warning('로그인이 필요합니다.');
+      this.$toasted.error('로그인이 필요합니다.');
     }
   }
 
   async login() {
-    const $vForm: Validation = this.$v as Validation;
-    $vForm.$touch();
-    const valid = !$vForm.$pending && !$vForm.$error;
-    if (!valid) {
-      this.$toast.warning('입력 검증 후 다시 시도해주세요.');
+    // @ts-ignore
+    const inValid = await this.$refs.observer.validate();
+    if (!inValid) {
+      this.$toasted.error('입력 검증 후 다시 시도해주세요.');
       return;
     }
 
-    const response = await postDataApi<Member>(
-      `sample/auth/login`,
+    const response = await axios.post<ApiDataResult<Member>>(
+      `${process.env.VUE_APP_BASE_API_URL}sample/auth/login`,
       {
         memberId: this.memberId,
         memberPw: SHA512(this.memberPw).toString(),
       },
-      this,
     );
-    if (_.startsWith(response.code, `S`)) {
-      this.$store.commit('loginToken', response.data!.token);
+    if (_.startsWith(response.data.responseCode, `S`)) {
+      this.$store.commit('loginToken', response.data.responseData!.token);
       await this.$router.push('/');
+    } else {
+      this.$toasted.error(response.data.responseMessage);
     }
   }
 }
