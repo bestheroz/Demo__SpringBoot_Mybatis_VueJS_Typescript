@@ -150,9 +150,6 @@ export default class DatetimePicker extends Vue {
 
   @Emit('update:date')
   update(): Date {
-    console.info(
-      `${this.localDay}T${this.localTime}:00${this.$store.state.timezone}`,
-    );
     return this.$moment(
       `${this.localDay}T${this.localTime}:00${this.$store.state.timezone}`,
     ).toDate();

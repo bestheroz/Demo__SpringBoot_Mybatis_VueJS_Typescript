@@ -215,7 +215,6 @@ function toastResponseMessage(
   vue: any,
   responseData: ApiDataResult<any>,
 ): void {
-  console.info(responseData);
   if (_.startsWith(responseData.responseCode, `S`)) {
     vue.$toasted.success(responseData.responseMessage!);
   } else {
@@ -225,7 +224,6 @@ function toastResponseMessage(
 
 async function logoutCheck(responseData: ApiDataResult<any>) {
   if (responseData.responseCode === 'F004') {
-    console.info(router.currentRoute);
     await router.push(`/login?need=login`);
   }
   return false;
