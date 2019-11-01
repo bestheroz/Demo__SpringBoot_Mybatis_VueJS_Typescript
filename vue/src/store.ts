@@ -11,11 +11,11 @@ export default new Vuex.Store({
   state: {
     appVersions: 'ver.191024',
     accessToken: null,
-    host: process.env.VUE_APP_BASE_API_URL,
+    host: process.env.VUE_APP_BASE_API_URL || 'http://localhost:8080/',
     language: process.env.VUE_APP_LANGUAGE,
     timezone: process.env.VUE_APP_TIMEZONE,
     axiosInstance: axios.create({
-      baseURL: process.env.VUE_APP_BASE_API_URL,
+      baseURL: process.env.VUE_APP_BASE_API_URL || 'http://localhost:8080/',
       headers: {
         'Content-Type': 'application/json',
         'X-Requested-With': `XMLHttpRequest`,

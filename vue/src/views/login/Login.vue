@@ -89,7 +89,7 @@ export default class Login extends Vue {
     }
 
     const response = await axios.post<ApiDataResult<Member>>(
-      `${process.env.VUE_APP_BASE_API_URL}sample/auth/login`,
+      `${this.$store.state.host}sample/auth/login`,
       {
         memberId: this.memberId,
         memberPw: SHA512(this.memberPw).toString(),
