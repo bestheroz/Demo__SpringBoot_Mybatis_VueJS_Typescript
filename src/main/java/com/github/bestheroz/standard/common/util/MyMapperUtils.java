@@ -17,16 +17,15 @@ import java.util.*;
 
 public class MyMapperUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(MyMapperUtils.class);
-
-    protected MyMapperUtils() {
-        throw new UnsupportedOperationException();
-    }
-
     private static final Gson GSON_INSTANCE = new GsonBuilder().registerTypeAdapter(Date.class, new DateDeserializerTypeAdapter()).registerTypeAdapter(Date.class, new DateSerializerTypeAdapter())
             .registerTypeAdapter(DateTime.class, new DateTimeDeserializerTypeAdapter()).registerTypeAdapter(DateTime.class, new DateTimeSerializerTypeAdapter())
             .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeDeserializerTypeAdapter()).registerTypeAdapter(LocalDateTime.class, new LocalDateTimeSerializerTypeAdapter())
             .registerTypeAdapter(Map.class, new MapDeserializerTypeAdapter()).registerTypeAdapter(HashMap.class, new MapDeserializerTypeAdapter())
             .registerTypeAdapter(LinkedTreeMap.class, new MapDeserializerTypeAdapter()).registerTypeAdapter(Json.class, new JsonSerializerTypeAdapter()).disableHtmlEscaping().create();
+
+    protected MyMapperUtils() {
+        throw new UnsupportedOperationException();
+    }
 
     public static <T> T writeObjectAsObject(final Object content, final Class<T> returnType) throws CommonException {
         return GSON_INSTANCE.fromJson(writeObjectAsJsonElement(content), returnType);
@@ -56,7 +55,7 @@ public class MyMapperUtils {
     public static JsonElement writeObjectAsJsonElement(final Object content) throws CommonException {
         if (content instanceof String) {
             try {
-                return new JsonParser().parse((String) content);
+                return JsonParser.parseString((String) content);
             } catch (final Throwable e) {
                 // ignored
                 return GSON_INSTANCE.toJsonTree(content);

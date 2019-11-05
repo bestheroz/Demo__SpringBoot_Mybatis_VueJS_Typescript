@@ -11,6 +11,6 @@ import java.lang.reflect.Type;
 public class JsonSerializerTypeAdapter implements JsonSerializer<Json> {
     @Override
     public JsonElement serialize(final Json json, final Type type, final JsonSerializationContext context) {
-        return new JsonParser().parse(json.value());
+        return JsonParser.parseString(json.value());
     }
 }
