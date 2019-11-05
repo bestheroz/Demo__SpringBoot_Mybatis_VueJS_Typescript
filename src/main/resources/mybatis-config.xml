@@ -3,14 +3,13 @@
 
 <configuration>
     <settings>
-        <setting name="cacheEnabled" value="true"/>
         <setting name="mapUnderscoreToCamelCase" value="true"/>
         <setting name="logImpl" value="SLF4J"/>
     </settings>
 
     <typeAliases>
-        <typeAlias alias="JsonObject" type="com.google.gson.JsonObject"></typeAlias>
         <typeAlias alias="DateTime" type="org.joda.time.DateTime"></typeAlias>
+        <typeAlias alias="LocalDateTime" type="org.joda.time.LocalDateTime"></typeAlias>
     </typeAliases>
 
     <typeHandlers>

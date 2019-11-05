@@ -5,15 +5,14 @@ import com.nhncorp.lucy.security.xss.XssSaxFilter;
 import org.apache.commons.lang3.StringUtils;
 
 public class MyEscapeUtils {
+    // private static final Logger LOGGER = LoggerFactory.getLogger(MyFilterUtil.class);
+    private static final XssSaxFilter XSS_SAX_FILTER = XssSaxFilter.getInstance("my-lucy-xss-sax.xml", true);
+    private static final String[] REMOVE_KEYWORD = {"ftp:", "ftp!:", "javascript:", "javascript!:", "script:", "script!:", "vbscript:", "vbscript!:", "alert(", "alert!(", "expression(",
+            "expression!(", "url(", "url!(", "document.cookie", "confirm(", "confirm!(", "<feff>"};
+
     protected MyEscapeUtils() {
         throw new UnsupportedOperationException();
     }
-
-    // private static final Logger LOGGER = LoggerFactory.getLogger(MyFilterUtil.class);
-    private static final XssSaxFilter XSS_SAX_FILTER = XssSaxFilter.getInstance("my-lucy-xss-sax.xml", true);
-
-    private static final String[] REMOVE_KEYWORD = {"ftp:", "ftp!:", "javascript:", "javascript!:", "script:", "script!:", "vbscript:", "vbscript!:", "alert(", "alert!(", "expression(",
-            "expression!(", "url(", "url!(", "document.cookie", "confirm(", "confirm!(", "<feff>"};
 
     public static String escapeAll(final String dirty) {
         return StringUtils.isNotEmpty(dirty) ? escapeForSecurity(escapeXss(unescapeAll(dirty))) : dirty;
@@ -24,8 +23,7 @@ public class MyEscapeUtils {
         return XssPreventer.escape(XssPreventer.unescape(XSS_SAX_FILTER.doFilter(dirty)));
     }
 
-    // xss필터에서 추가로 필요한 문자 (, ), #, \ 때문에 재구현 하였다. 171117 by bestheroz
-    // SKMNS 개발보안 가이드라인_(2016년) v2.4.1 버전 참조.
+    // xss필터에서 추가로 필요한 문자 (, ), #, \ 때문에 재구현 하였다. 171117 by com.github.bestheroz
     private static String escapeForSecurity(final String dirty) {
         String clean = dirty;
         if (StringUtils.isNotEmpty(clean)) {

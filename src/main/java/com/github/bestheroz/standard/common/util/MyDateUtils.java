@@ -24,7 +24,6 @@ public class MyDateUtils {
     public static final String HHMMSS = "HHmmss";
     public static final String YYYYMM = "yyyyMM";
     public static final String YYYYMMDD = "yyyyMMdd";
-    public static final String YYYYMMDDHHMM = "yyyyMMddHHmm";
     public static final String YYYYMMDDHHMMSS = "yyyyMMddHHmmss";
 
     public static String getStringNow(final String pattern) {

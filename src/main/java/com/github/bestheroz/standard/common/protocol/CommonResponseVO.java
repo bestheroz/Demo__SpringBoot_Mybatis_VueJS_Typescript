@@ -51,18 +51,20 @@ public class CommonResponseVO implements Serializable {
         return this.responseData;
     }
 
-    public <T> T getResponseData(final Class<T> valueType) {
-        return MyMapperUtils.writeObjectAsObject(this.responseData, valueType);
-    }
-
     public void setResponseData(final Object responseData) {
         this.responseData = MyMapperUtils.writeObjectAsJsonElement(responseData);
     }
 
+    public <T> T getResponseData(final Class<T> valueType) {
+        return MyMapperUtils.writeObjectAsObject(this.responseData, valueType);
+    }
+
+    @ApiModelProperty(hidden = true)
     public boolean isSuccess() {
         return StringUtils.startsWith(this.responseCode, "S");
     }
 
+    @ApiModelProperty(hidden = true)
     public boolean isFail() {
         return StringUtils.startsWith(this.responseCode, "F");
     }

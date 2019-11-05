@@ -9,7 +9,7 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    appVersions: 'ver.191024',
+    appVersions: 'ver.191105',
     accessToken: null,
     host: process.env.VUE_APP_BASE_API_URL || 'http://localhost:8080/',
     language: process.env.VUE_APP_LANGUAGE,
@@ -28,7 +28,6 @@ export default new Vuex.Store({
       state.accessToken = accessToken;
       // 토큰을 로컬 스토리지에 저장
       localStorage.accessToken = accessToken;
-      console.info(accessToken);
       state.axiosInstance.defaults.headers['Authorization'] = accessToken;
     },
     async logout(state) {

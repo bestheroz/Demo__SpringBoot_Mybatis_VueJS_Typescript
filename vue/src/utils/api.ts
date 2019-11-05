@@ -18,13 +18,13 @@ export interface ApiResult<T> {
 }
 
 function getErrorResult<T>(error: AxiosError): ApiResult<T> {
-  console.error(error);
-  console.error(error.config);
+  // console.error(error);
+  // console.error(error.config);
 
   if (error.response) {
     // The request was made and the server responded with a status code
     // that falls out of the range of 2xx
-    console.error(error);
+    // console.error(error);
     return {
       status: error.response.status,
       errorMessage: error.response.data.errorMessage,
@@ -33,14 +33,14 @@ function getErrorResult<T>(error: AxiosError): ApiResult<T> {
     // The request was made but no response was received
     // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
     // http.ClientRequest in node.js
-    console.error(error.request);
+    // console.error(error.request);
     return {
       status: 400,
       errorMessage: `The request was made but no response was received!`,
     };
   } else {
     // Something happened in setting up the request that triggered an Error
-    console.error(`Error`, error.message);
+    // console.error(`Error`, error.message);
     return {
       status: 400,
       errorMessage: error.message,
@@ -206,7 +206,7 @@ export async function getCodeListDataApi<SelectItem>(
     await logoutCheck(response.data);
     return response.data.responseData || [];
   } catch (error) {
-    console.warn(getErrorResult(error).message);
+    // console.warn(getErrorResult(error).message);
     return [];
   }
 }

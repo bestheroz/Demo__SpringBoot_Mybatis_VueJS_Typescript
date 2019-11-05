@@ -1,66 +1,26 @@
 package com.github.bestheroz.standard.context.db;
 
 import com.github.bestheroz.standard.override.SqlSessionTemplateOverride;
-import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import org.apache.ibatis.annotations.Mapper;
 import org.mybatis.spring.SqlSessionFactoryBean;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.io.Serializable;
 
-//@Configuration
-//@EnableTransactionManagement
-//@MapperScan(basePackages = "com.github.bestheroz", annotationClass = Mapper.class)
+@Configuration
+@EnableTransactionManagement
+@MapperScan(basePackages = "com.github.bestheroz", annotationClass = Mapper.class)
 public class DbMybatisContext {
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
-    @Value("#{jdbcProperties['jdbc.first.driverClassName']}")
-    private String driverClassName;
-    @Value("#{jdbcProperties['jdbc.first.url']}")
-    private String url;
-    @Value("#{jdbcProperties['jdbc.first.username']}")
-    private String username;
-    @Value("#{jdbcProperties['jdbc.first.password']}")
-    private String password;
-    @Value("#{jdbcProperties['jdbc.first.autoCommit']}")
-    private Boolean autoCommit;
-    @Value("#{jdbcProperties['jdbc.first.connectionTimeoutMs']}")
-    private Long connectionTimeoutMs;
-    @Value("#{jdbcProperties['jdbc.first.idleTimeoutMs']}")
-    private Long idleTimeoutMs;
-    @Value("#{jdbcProperties['jdbc.first.maxLifetimeMs']}")
-    private Long maxLifetimeMs;
-    @Value("#{jdbcProperties['jdbc.first.minIdle']}")
-    private Integer minIdle;
-    @Value("#{jdbcProperties['jdbc.first.maxPoolSize']}")
-    private Integer maxPoolSize;
-
-    @Bean(name = "dataSource")
-    public HikariDataSource getHikariDataSource() {
-        this.logger.info("dataSource :: init");
-        final HikariConfig hikariConfig = new HikariConfig();
-        hikariConfig.setDriverClassName(this.driverClassName);
-        hikariConfig.setJdbcUrl(this.url);
-        // hikariConfig.setUsername(AES.decrypt128(this.username));
-        hikariConfig.setUsername(this.username);
-        // hikariConfig.setPassword(AES.decrypt128(this.password));
-        hikariConfig.setPassword(this.password);
-        hikariConfig.setAutoCommit(this.autoCommit);
-        hikariConfig.setConnectionTimeout(this.connectionTimeoutMs);
-        hikariConfig.setIdleTimeout(this.idleTimeoutMs);
-        hikariConfig.setMaxLifetime(this.maxLifetimeMs);
-        hikariConfig.setMinimumIdle(this.minIdle);
-        hikariConfig.setMaximumPoolSize(this.maxPoolSize);
-
-        return new HikariDataSource(hikariConfig);
-    }
+//    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * 마이바티스 {@link org.apache.ibatis.session.SqlSession} 빈을 등록한다.
@@ -70,19 +30,20 @@ public class DbMybatisContext {
     @Bean(name = "sqlSession", destroyMethod = "clearCache")
     @Autowired
     @Primary
-    public SqlSessionTemplateOverride getMySqlSessionTemplate(final ApplicationContext applicationContext) throws Exception {
-        return new SqlSessionTemplateOverride(this.getSqlSessionFactoryBean(applicationContext).getObject());
+    public SqlSessionTemplateOverride getMySqlSessionTemplate(final ApplicationContext applicationContext, final HikariDataSource hikariDataSource) throws Exception {
+        return new SqlSessionTemplateOverride(this.getSqlSessionFactoryBean(applicationContext, hikariDataSource).getObject());
     }
 
     @Bean(name = "transactionManager")
     @Primary
-    public PlatformTransactionManager getPlatformTransactionManager() throws Exception {
-        return new DataSourceTransactionManager(this.getHikariDataSource());
+    @Autowired
+    public PlatformTransactionManager getPlatformTransactionManager(final HikariDataSource hikariDataSource) throws Exception {
+        return new DataSourceTransactionManager(hikariDataSource);
     }
 
-    private SqlSessionFactoryBean getSqlSessionFactoryBean(final ApplicationContext applicationContext) throws Exception {
+    private SqlSessionFactoryBean getSqlSessionFactoryBean(final ApplicationContext applicationContext, final HikariDataSource hikariDataSource) throws Exception {
         final SqlSessionFactoryBean sqlSessionFactory = new SqlSessionFactoryBean();
-        sqlSessionFactory.setDataSource(this.getHikariDataSource());
+        sqlSessionFactory.setDataSource(hikariDataSource);
         sqlSessionFactory.setConfigLocation(applicationContext.getResource("classpath:mybatis-config.xml"));
         sqlSessionFactory.setTypeAliasesPackage("com.github.bestheroz");
         sqlSessionFactory.setTypeAliasesSuperType(Serializable.class);

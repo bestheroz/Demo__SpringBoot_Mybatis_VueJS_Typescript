@@ -11,7 +11,9 @@ import org.apache.ibatis.jdbc.SQL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 
+import javax.validation.constraints.NotNull;
 import java.lang.reflect.Field;
 import java.text.MessageFormat;
 import java.util.HashSet;
@@ -151,6 +153,7 @@ public class SqlForTableVO {
     }
 
     public <T extends Object> String selectOneTableVO(@NonNull final T vo, @NonNull final Set<String> whereKeys) {
+        System.out.println(MyMapperUtils.writeObjectAsHashMap(vo));
         validWhereKey(whereKeys, MyMapperUtils.writeObjectAsHashMap(vo));
 
         final SQL sql = new SQL();
@@ -200,7 +203,7 @@ public class SqlForTableVO {
         return sql.toString();
     }
 
-    public <T extends Object> String updateTableVO(@NonNull final T vo, final Set<String> whereKeys, final Set<String> forcedUpdateKey) {
+    public <T extends Object> String updateTableVO(@NonNull final T vo, @NotNull final Set<String> whereKeys, @Nullable final Set<String> forcedUpdateKeys) {
         final Map<String, Object> param = MyMapperUtils.writeObjectAsHashMap(vo);
         validWhereKey(whereKeys, param);
 
@@ -218,7 +221,7 @@ public class SqlForTableVO {
                 continue;
             }
             final String columnTypeName = field.getType().getSimpleName();
-            if (forcedUpdateKey != null && !whereKeys.contains(camelFieldName) && (forcedUpdateKey.contains("**") || forcedUpdateKey.contains(camelFieldName))
+            if (forcedUpdateKeys != null && !whereKeys.contains(camelFieldName) && (forcedUpdateKeys.contains("**") || forcedUpdateKeys.contains(camelFieldName))
                     && !StringUtils.equalsAny(camelFieldName, TABLE_COLUMN_NAME_CREATED_BY, TABLE_COLUMN_NAME_CREATED)) {
                 if (encryptedColumnList.contains(camelFieldName)) {
                     sql.SET(MessageFormat.format(SET_BIND_ENCRYPTED_STRING, fieldName, camelFieldName, this.getJdbcType(columnTypeName), tableName));

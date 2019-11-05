@@ -34,6 +34,7 @@
                     v-slot="{ errors }"
                   >
                     <v-text-field
+                      type="password"
                       color="secondary"
                       label="Password..."
                       prepend-icon="mdi-lock-outline"

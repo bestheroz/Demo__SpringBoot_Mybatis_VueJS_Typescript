@@ -14,17 +14,17 @@ public class ValueLabelService {
     @Autowired
     private ValueLabelDAO valueLabelDAO;
 
-    public List<GetValueLabeVOListResponseVO> getList(final String groupCode) throws CommonException {
-        return this.valueLabelDAO.getList(groupCode);
+    public List<GetValueLabeVOListResponseVO> getList(final String grcode) throws CommonException {
+        return this.valueLabelDAO.getList(grcode);
     }
 
     public String getLabelByValue(final Map<String, Object> params) throws CommonException {
         return this.valueLabelDAO.getLabelByValue(params);
     }
 
-    public JsonObject getValueLabelVoListToJsonObject(final String groupCode) throws CommonException {
+    public JsonObject getValueLabelVoListToJsonObject(final String grcode) throws CommonException {
         final JsonObject result = new JsonObject();
-        for (final GetValueLabeVOListResponseVO vo : this.getList(groupCode)) {
+        for (final GetValueLabeVOListResponseVO vo : this.getList(grcode)) {
             result.addProperty(vo.getValue(), vo.getLabel());
         }
         return result;
