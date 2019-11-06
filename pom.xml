@@ -39,11 +39,6 @@
             <version>${springframework.starter-version}</version>
         </dependency>
         <dependency>
-            <groupId>org.mybatis.spring.boot</groupId>
-            <artifactId>mybatis-spring-boot-starter</artifactId>
-            <version>2.1.1</version>
-        </dependency>
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aop</artifactId>
             <version>${springframework.starter-version}</version>
@@ -115,6 +110,18 @@
             <groupId>studio.raptor</groupId>
             <artifactId>ddal-sqlparser</artifactId>
             <version>${ddal-sqlparser-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mybatis.spring.boot</groupId>
+            <artifactId>mybatis-spring-boot-starter</artifactId>
+            <version>2.1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mybatis.spring.boot</groupId>
+            <artifactId>mybatis-spring-boot-starter-test</artifactId>
+            <version>2.1.1</version>
+            <scope>test</scope>
         </dependency>
 
         <!-- XSS Filter -->
