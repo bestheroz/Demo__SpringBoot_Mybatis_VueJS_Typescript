@@ -9,7 +9,7 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    appVersions: 'ver.191105',
+    appVersions: 'ver.191108',
     accessToken: null,
     host: process.env.VUE_APP_BASE_API_URL || 'http://localhost:8080/',
     language: process.env.VUE_APP_LANGUAGE,
