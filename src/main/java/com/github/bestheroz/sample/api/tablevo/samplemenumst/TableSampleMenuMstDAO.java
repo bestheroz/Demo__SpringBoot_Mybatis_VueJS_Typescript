@@ -7,12 +7,13 @@ import org.apache.ibatis.annotations.InsertProvider;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.SelectKey;
 import org.apache.ibatis.annotations.SelectProvider;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Set;
 
-@SuppressWarnings("ALL")
 @Mapper
+@Repository
 public interface TableSampleMenuMstDAO extends SqlForTableDAO {
 
     @SuppressWarnings("unused")

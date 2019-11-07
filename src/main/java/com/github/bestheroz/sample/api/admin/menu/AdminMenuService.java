@@ -26,9 +26,9 @@ public class AdminMenuService {
 
     public GetSampleMenuMstVOListResponseVO getOne(final Integer menuId, final String menuName) throws CommonException {
         final TableSampleMenuMstVO tableSampleMenuMstVO = new TableSampleMenuMstVO();
-        final Set<String> whereKeys = new HashSet<>();
         tableSampleMenuMstVO.setMenuId(menuId);
         tableSampleMenuMstVO.setMenuName(menuName);
+        final Set<String> whereKeys = new HashSet<>();
         if (menuId != null) {
             whereKeys.add("menuId");
         }

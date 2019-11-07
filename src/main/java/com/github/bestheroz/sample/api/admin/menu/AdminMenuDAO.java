@@ -6,11 +6,13 @@ import com.github.bestheroz.standard.common.exception.CommonException;
 import com.github.bestheroz.standard.common.tablevo.SqlForTableVO;
 import com.github.bestheroz.standard.common.valuelabel.response.GetValueLabeVOListResponseVO;
 import org.apache.ibatis.annotations.*;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Set;
 
 @Mapper
+@Repository
 public interface AdminMenuDAO {
     @SelectProvider(type = SqlForTableVO.class, method = SqlForTableVO.SELECT)
     List<GetSampleMenuMstVOListResponseVO> getList(final TableSampleMenuMstVO vo, final Set<String> whereKeys, final String orderByColumns) throws CommonException;

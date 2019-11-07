@@ -37,7 +37,7 @@ public class DbMybatisContext {
     @Bean(name = "transactionManager")
     @Primary
     @Autowired
-    public PlatformTransactionManager getPlatformTransactionManager(final HikariDataSource hikariDataSource) throws Exception {
+    public PlatformTransactionManager getPlatformTransactionManager(final HikariDataSource hikariDataSource) {
         return new DataSourceTransactionManager(hikariDataSource);
     }
 
