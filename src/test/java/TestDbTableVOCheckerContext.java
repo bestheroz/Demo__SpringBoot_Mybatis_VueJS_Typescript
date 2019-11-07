@@ -42,7 +42,7 @@ public class TestDbTableVOCheckerContext {
             final Set<Class<?>> targetClassList = this.findMyTypes();
             final Set<String> filedList = new HashSet<>();
             for (final Class<?> class1 : targetClassList) {
-                this.logger.debug("{}", class1.getSimpleName());
+                this.logger.debug("check {}", class1.getSimpleName());
                 filedList.clear();
                 for (final Field field : class1.getDeclaredFields()) {
                     filedList.add(field.getName());
@@ -54,8 +54,12 @@ public class TestDbTableVOCheckerContext {
 
                     boolean isInvalid = false;
                     // 1. VO변수 개수 == 테이블 컬럼 개수 체크
-                    if (metaInfo.getColumnCount() != filedList.size()) {
-                        this.logger.warn("{} 변수 개수({}) != ({}){} 컬럼 개수", className, filedList.size(), tableName, metaInfo.getColumnCount());
+                    int fieldSize = filedList.size();
+                    if (filedList.contains("serialVersionUID")) {
+                        fieldSize--;
+                    }
+                    if (metaInfo.getColumnCount() != fieldSize) {
+                        this.logger.warn("{} VO 필드 개수({}) != ({}){} 테이블 컬럼 개수", className, fieldSize, tableName, metaInfo.getColumnCount());
                         isInvalid = true;
                     }
                     if (!isInvalid) {
@@ -90,7 +94,7 @@ public class TestDbTableVOCheckerContext {
                             final String camelColumnName = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, columnName);
                             if (DbTableVOCheckerContext.STRING_JDBC_TYPE_SET.contains(columnTypeName)) {
                                 fieldType = "String";
-                            } else if (StringUtils.equals(columnTypeName, "NUMBER")) {
+                            } else if (StringUtils.equalsAny(columnTypeName, "NUMBER", "DECIMAL")) {
                                 if (metaInfo.getScale(i + 1) > 0) { // 소수점이 있으면
                                     fieldType = "Double";
                                 } else {

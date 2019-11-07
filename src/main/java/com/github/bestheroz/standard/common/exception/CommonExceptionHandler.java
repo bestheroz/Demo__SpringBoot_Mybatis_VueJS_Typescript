@@ -28,7 +28,7 @@ public class CommonExceptionHandler {
     @ResponseBody
     public Json exception(final Throwable e) {
         LOGGER.warn(ExceptionUtils.getStackTrace(e));
-        return new Json(CommonException.EXCEPTION_ERROR_SYSTEM.getJsonObject().toString());
+        return new Json(CommonException.EXCEPTION_FAIL_SYSTEM.getJsonObject().toString());
     }
 
     @ExceptionHandler({CommonException.class})
@@ -42,27 +42,27 @@ public class CommonExceptionHandler {
     @ResponseBody
     public Json bindException(final Throwable e) {
         LOGGER.warn(ExceptionUtils.getStackTrace(e));
-        return new Json(CommonException.EXCEPTION_ERROR_INVALID_PARAMETER.getJsonObject().toString());
+        return new Json(CommonException.EXCEPTION_FAIL_INVALID_PARAMETER.getJsonObject().toString());
     }
 
     @ExceptionHandler(value = {ServletRequestBindingException.class})
     @ResponseBody
     public Json servletRequestBindingException(final ServletRequestBindingException e) {
         LOGGER.warn(ExceptionUtils.getStackTrace(e));
-        return new Json(CommonException.EXCEPTION_ERROR_INVALID_REQUEST.getJsonObject().toString());
+        return new Json(CommonException.EXCEPTION_FAIL_INVALID_REQUEST.getJsonObject().toString());
     }
 
     @ExceptionHandler(value = {HttpMessageNotReadableException.class, MalformedJsonException.class})
     @ResponseBody
     public Json dataConvertException(final Throwable e) {
         LOGGER.warn(ExceptionUtils.getStackTrace(e));
-        return new Json(CommonException.EXCEPTION_ERROR_INVALID_REQUEST.getJsonObject().toString());
+        return new Json(CommonException.EXCEPTION_FAIL_INVALID_REQUEST.getJsonObject().toString());
     }
 
     @ExceptionHandler({HttpMediaTypeNotAcceptableException.class, HttpMediaTypeNotSupportedException.class, HttpRequestMethodNotSupportedException.class, HttpClientErrorException.class})
     @ResponseBody
     public Json httpMediaTypeNotAcceptableException(final Throwable e) {
         LOGGER.warn(ExceptionUtils.getStackTrace(e));
-        return new Json(CommonException.EXCEPTION_ERROR_INVALID_REQUEST.getJsonObject().toString());
+        return new Json(CommonException.EXCEPTION_FAIL_INVALID_REQUEST.getJsonObject().toString());
     }
 }

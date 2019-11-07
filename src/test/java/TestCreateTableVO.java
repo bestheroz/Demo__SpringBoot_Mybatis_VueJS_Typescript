@@ -42,7 +42,7 @@ public class TestCreateTableVO {
                     final String camelColumnName = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, columnName);
                     if (DbTableVOCheckerContext.STRING_JDBC_TYPE_SET.contains(columnTypeName)) {
                         fieldType = "String";
-                    } else if (StringUtils.equals(columnTypeName, "NUMBER")) {
+                    } else if (StringUtils.equalsAny(columnTypeName, "NUMBER", "DECIMAL")) {
                         if (metaInfo.getScale(i + 1) > 0) { // 소수점이 있으면
                             fieldType = "Double";
                         } else {
