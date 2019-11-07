@@ -7,7 +7,7 @@
       sort-by="calories"
     >
       <template v-slot:top>
-        <v-toolbar color="white" flat>
+        <v-toolbar flat>
           <v-toolbar-title>Manage Member</v-toolbar-title>
           <v-divider class="mx-4" inset vertical />
           <div class="flex-grow-1" />
