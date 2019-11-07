@@ -266,7 +266,10 @@ export default class ManageMember extends Vue {
     // @ts-ignore
     const isValid = await this.$refs.observer.validate();
     if (!isValid) {
-      this.$toasted.error('입력 검증 후 다시 시도해주세요.');
+      this.$swal({
+        title: '입력 검증 후 다시 시도해주세요.',
+        type: 'error',
+      });
       return;
     }
     this.isUpdate ? this.patch() : this.create();

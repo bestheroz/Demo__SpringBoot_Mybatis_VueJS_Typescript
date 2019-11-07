@@ -216,9 +216,9 @@ function toastResponseMessage(
   responseData: ApiDataResult<any>,
 ): void {
   if (_.startsWith(responseData.responseCode, `S`)) {
-    vue.$toasted.success(responseData.responseMessage!);
+    vue.$swal({ title: responseData.responseMessage, type: 'success' });
   } else {
-    vue.$toasted.error(responseData.responseMessage!);
+    vue.$swal({ title: responseData.responseMessage, type: 'error' });
   }
 }
 

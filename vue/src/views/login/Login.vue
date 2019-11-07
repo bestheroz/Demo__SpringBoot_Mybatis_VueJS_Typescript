@@ -66,7 +66,7 @@ import { Member } from '@/views/manage/member/common/types';
 import axios from 'axios';
 
 const SHA512 = require('crypto-js/sha512');
-
+let timerInterval;
 @Component({
   components: {},
 })
@@ -85,7 +85,10 @@ export default class Login extends Vue {
     // @ts-ignore
     const inValid = await this.$refs.observer.validate();
     if (!inValid) {
-      this.$toasted.error('입력 검증 후 다시 시도해주세요.');
+      this.$swal({
+        title: '입력 검증 후 다시 시도해주세요.',
+        type: 'error',
+      });
       return;
     }
 
@@ -100,7 +103,7 @@ export default class Login extends Vue {
       this.$store.commit('loginToken', response.data.responseData!.token);
       await this.$router.push('/');
     } else {
-      this.$toasted.error(response.data.responseMessage);
+      this.$swal({ title: response.data.responseMessage, type: 'error' });
     }
   }
 }
