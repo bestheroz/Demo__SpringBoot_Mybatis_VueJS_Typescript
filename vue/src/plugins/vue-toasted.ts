@@ -7,5 +7,4 @@ Vue.use(Toasted, {
   duration: 0,
   theme: 'outline',
   keepOnHover: true,
-  className: 'large--toast',
 });
