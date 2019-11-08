@@ -4,6 +4,7 @@ import App from './App.vue';
 import router from './router';
 import store from './store';
 import './registerServiceWorker';
+import './plugins/vue-sweetalert2';
 import './plugins/vue-toasted';
 import './plugins/vue-moment';
 import './plugins/vee-validate';

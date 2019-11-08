@@ -7,7 +7,7 @@
       sort-by="calories"
     >
       <template v-slot:top>
-        <v-toolbar color="white" flat>
+        <v-toolbar flat>
           <v-toolbar-title>Manage Member</v-toolbar-title>
           <v-divider class="mx-4" inset vertical />
           <div class="flex-grow-1" />
@@ -266,7 +266,10 @@ export default class ManageMember extends Vue {
     // @ts-ignore
     const isValid = await this.$refs.observer.validate();
     if (!isValid) {
-      this.$toasted.error('입력 검증 후 다시 시도해주세요.');
+      this.$swal({
+        title: '입력 검증 후 다시 시도해주세요.',
+        type: 'error',
+      });
       return;
     }
     this.isUpdate ? this.patch() : this.create();

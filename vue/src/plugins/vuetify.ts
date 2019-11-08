@@ -1,7 +1,6 @@
 import '@mdi/font/css/materialdesignicons.css';
 import Vue from 'vue';
 import 'vuetify/dist/vuetify.min.css';
-import VuetifyToast from 'vuetify-toast-snackbar';
 import i18n from '@/plugins/vue-i18n';
 import { VBtn, VIcon, VSnackbar } from 'vuetify/lib';
 
@@ -15,40 +14,6 @@ Vue.use(Vuetify, {
   },
 });
 
-Vue.use(VuetifyToast, {
-  x: 'center', // default
-  y: 'top', // default
-  color: 'info', // default
-  icon: 'mdi-information-outline',
-  iconColor: '', // default
-  classes: ['body-2'],
-  timeout: 5000, // default
-  dismissable: true, // default
-  multiLine: true, // default
-  vertical: false, // default
-  queueable: true, // default
-  showClose: true, // default
-  closeText: '', // default
-  closeIcon: '', // default
-  closeColor: '', // default
-  slot: [], // default
-  shorts: {
-    success: {
-      color: 'success',
-      icon: 'mdi-check-circle-outline',
-    },
-    warning: {
-      color: 'warning',
-      icon: 'mdi-alert-outline',
-    },
-    error: {
-      color: 'error',
-      icon: 'mdi-close-circle-outline',
-    },
-  },
-  property: '$toast', // default
-});
-
 export default new Vuetify({
   icons: {
     iconfont: `mdi`,
@@ -56,5 +21,8 @@ export default new Vuetify({
   },
   lang: {
     t: (key: string, ...params: any) => i18n.t(key, params),
+  },
+  theme: {
+    dark: true,
   },
 });
