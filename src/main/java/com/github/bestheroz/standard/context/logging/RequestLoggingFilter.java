@@ -16,7 +16,7 @@ import java.nio.charset.StandardCharsets;
 @Configuration
 @Slf4j
 public class RequestLoggingFilter extends CommonsRequestLoggingFilter {
-    private static final String REQUEST_PARAMETERS = "<{}>{} {}";
+    private static final String REQUEST_PARAMETERS = "<{}>{}, parameters={}";
 
     @Override
     protected void beforeRequest(final HttpServletRequest request, final String message) {
