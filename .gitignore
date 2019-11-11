@@ -11,6 +11,7 @@
 /.idea/webContexts.xml
 /.idea/workspace.xml
 /.idea/compiler.xml
+/.idea/uiDesigner.xml
 /.classpath
 /*.iml
 /**/*.iml
