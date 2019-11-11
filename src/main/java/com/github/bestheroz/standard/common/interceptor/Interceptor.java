@@ -4,10 +4,9 @@ import com.github.bestheroz.sample.api.auth.AuthService;
 import com.github.bestheroz.standard.common.exception.CommonException;
 import com.github.bestheroz.standard.common.util.MyAccessBeanUtils;
 import com.github.bestheroz.standard.common.util.MyMapperUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.time.StopWatch;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -17,8 +16,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+@Slf4j
 public class Interceptor extends HandlerInterceptorAdapter {
-    private static final Logger LOGGER = LoggerFactory.getLogger(Interceptor.class);
     private static final String REQUEST_COMPLETE_EXECUTE_TIME_INCLUDE_JSP = "{} ....... Request Complete Execute Time ....... : {}";
     private static final String STR_STOP_WATCH = "mi.stopWatch";
 
@@ -34,7 +33,7 @@ public class Interceptor extends HandlerInterceptorAdapter {
                 try {
                     response.getWriter().write(MyMapperUtils.writeObjectAsString(e.getJsonObject()));
                 } catch (final IOException ex) {
-                    LOGGER.warn(ExceptionUtils.getStackTrace(ex));
+                    log.warn(ExceptionUtils.getStackTrace(ex));
                 }
                 return false;
             }
@@ -55,7 +54,7 @@ public class Interceptor extends HandlerInterceptorAdapter {
     public void afterCompletion(final HttpServletRequest request, final HttpServletResponse response, final Object handler, final Exception ex) {
         final StopWatch stopWatch = (StopWatch) request.getAttribute(STR_STOP_WATCH);
         stopWatch.stop();
-        LOGGER.info(REQUEST_COMPLETE_EXECUTE_TIME_INCLUDE_JSP, new UrlPathHelper().getPathWithinApplication(request), stopWatch.toString());
+        log.info(REQUEST_COMPLETE_EXECUTE_TIME_INCLUDE_JSP, new UrlPathHelper().getPathWithinApplication(request), stopWatch.toString());
         request.removeAttribute(STR_STOP_WATCH);
     }
 

@@ -1,12 +1,11 @@
 import com.github.bestheroz.standard.context.db.checker.DbTableVOCheckerContext;
 import com.github.bestheroz.standard.context.web.WebConfig;
 import com.google.common.base.CaseFormat;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.junit.jupiter.api.Test;
 import org.mybatis.spring.boot.test.autoconfigure.AutoConfigureMybatis;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,10 +15,10 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 
+@Slf4j
 @SpringBootTest(classes = {WebConfig.class})
 @AutoConfigureMybatis
 public class TestCreateTableVO {
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
     @Qualifier("dataSource") @Autowired(required = false)
     private DataSource dataSource;
 
@@ -66,10 +65,10 @@ public class TestCreateTableVO {
                         fieldType = "Boolean";
                     } else if (DbTableVOCheckerContext.BYTE_JDBC_TYPE_SET.contains(columnTypeName)) {
                         fieldType = "Byte[];";
-                        this.logger.debug("private Byte[] {}{}", camelColumnName, "; // XXX: spotbugs 피하기 : Arrays.copyOf(value, value.length)");
+                        log.debug("private Byte[] {}{}", camelColumnName, "; // XXX: spotbugs 피하기 : Arrays.copyOf(value, value.length)");
                     } else {
                         fieldType = "Unknown";
-                        this.logger.warn("케이스 빠짐 {} : {}", columnName, columnTypeName);
+                        log.warn("케이스 빠짐 {} : {}", columnName, columnTypeName);
                     }
                     voSb.append("private ").append(fieldType).append(" ").append(camelColumnName).append(";\n");
                 }
@@ -77,7 +76,7 @@ public class TestCreateTableVO {
             }
             System.out.println();
         } catch (final Throwable e) {
-            this.logger.warn(ExceptionUtils.getStackTrace(e));
+            log.warn(ExceptionUtils.getStackTrace(e));
         }
     }
 }

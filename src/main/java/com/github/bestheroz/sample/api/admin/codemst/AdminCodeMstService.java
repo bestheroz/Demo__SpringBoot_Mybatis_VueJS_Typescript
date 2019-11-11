@@ -7,9 +7,8 @@ import com.github.bestheroz.sample.api.tablevo.samplecodemst.TableSampleCodeMstD
 import com.github.bestheroz.sample.api.tablevo.samplecodemst.TableSampleCodeMstVO;
 import com.github.bestheroz.standard.common.exception.CommonException;
 import com.github.bestheroz.standard.common.util.MyMapperUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -21,9 +20,9 @@ import javax.servlet.http.HttpSession;
 import java.util.Collections;
 import java.util.List;
 
+@Slf4j
 @Service
 public class AdminCodeMstService {
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
     @Autowired
     private PlatformTransactionManager platformTransactionManager;
     @Autowired
@@ -66,7 +65,7 @@ public class AdminCodeMstService {
                 this.tableSampleCodeDetDAO.delete(tableSampleCodeDetVO, Collections.singleton("groupCode"));
             } catch (final CommonException e) {
                 if (!e.isExceptionNoDataSuccesss()) {
-                    this.logger.warn(ExceptionUtils.getStackTrace(e));
+                    log.warn(ExceptionUtils.getStackTrace(e));
                     throw e;
                 }
             }
@@ -79,7 +78,7 @@ public class AdminCodeMstService {
             if (!status.isCompleted()) {
                 this.platformTransactionManager.rollback(status);
             }
-            this.logger.warn(ExceptionUtils.getStackTrace(e));
+            log.warn(ExceptionUtils.getStackTrace(e));
             throw e;
         }
     }

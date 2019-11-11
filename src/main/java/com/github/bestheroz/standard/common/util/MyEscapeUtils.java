@@ -5,7 +5,6 @@ import com.nhncorp.lucy.security.xss.XssSaxFilter;
 import org.apache.commons.lang3.StringUtils;
 
 public class MyEscapeUtils {
-    // private static final Logger LOGGER = LoggerFactory.getLogger(MyFilterUtil.class);
     private static final XssSaxFilter XSS_SAX_FILTER = XssSaxFilter.getInstance("my-lucy-xss-sax.xml", true);
     private static final String[] REMOVE_KEYWORD = {"ftp:", "ftp!:", "javascript:", "javascript!:", "script:", "script!:", "vbscript:", "vbscript!:", "alert(", "alert!(", "expression(",
             "expression!(", "url(", "url!(", "document.cookie", "confirm(", "confirm!(", "<feff>"};

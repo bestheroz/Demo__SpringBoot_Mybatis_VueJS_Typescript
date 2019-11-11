@@ -8,9 +8,8 @@ import com.github.bestheroz.sample.api.tablevo.samplemembermst.TableSampleMember
 import com.github.bestheroz.standard.common.exception.CommonException;
 import com.github.bestheroz.standard.common.exception.CommonExceptionCode;
 import com.github.bestheroz.standard.common.util.MyDateUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,9 +17,9 @@ import javax.validation.constraints.NotNull;
 import java.util.Collections;
 
 @Service
+@Slf4j
 public class AuthService {
     private static final Algorithm ALGORITHM = Algorithm.HMAC512("secret");
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
     @Autowired
     private AuthDAO authDAO;
     @Autowired
@@ -35,20 +34,20 @@ public class AuthService {
         // 로그인 관문
         // 1. 유저가 없으면
         if (one == null) {
-            this.logger.warn(new CommonException(CommonExceptionCode.FAIL_NOT_ALLOWED_MEMBER).toString());
+            log.warn(new CommonException(CommonExceptionCode.FAIL_NOT_ALLOWED_MEMBER).toString());
             throw new CommonException(CommonExceptionCode.FAIL_NOT_ALLOWED_MEMBER);
         }
 
         // 2. LOGIN_FAIL_CNT가 5회 이상 인가
         if (one.getLoginFailCnt().intValue() >= 5) {
-            this.logger.warn(new CommonException(CommonExceptionCode.FAIL_LOGIN_FAIL_CNT, null, "고객센터로 문의하시기 바랍니다.").toString());
+            log.warn(new CommonException(CommonExceptionCode.FAIL_LOGIN_FAIL_CNT, null, "고객센터로 문의하시기 바랍니다.").toString());
             throw new CommonException(CommonExceptionCode.FAIL_LOGIN_FAIL_CNT, null, "고객센터로 문의하시기 바랍니다.");
         }
 
         // 3. 패스워드가 틀리면
         if (!StringUtils.equals(memberPw, one.getMemberPw())) {
             this.authDAO.updatePlusLoginFailCnt(memberId);
-            this.logger.warn(new CommonException(CommonExceptionCode.FAIL_NOT_ALLOWED_MEMBER).toString());
+            log.warn(new CommonException(CommonExceptionCode.FAIL_NOT_ALLOWED_MEMBER).toString());
             throw new CommonException(CommonExceptionCode.FAIL_NOT_ALLOWED_MEMBER);
         }
 
@@ -65,12 +64,12 @@ public class AuthService {
 
     public void verify(@NotNull final String token) throws CommonException {
         if (StringUtils.equals(token, "freepass*.*")) {
-            this.logger.info("Login via \"freepass\"");
+            log.info("Login via \"freepass\"");
             return;
         }
         final TableSampleMemberMstVO tableSampleMemberMstVO = new TableSampleMemberMstVO();
         if (StringUtils.isEmpty(token)) {
-            this.logger.warn(new CommonException(CommonExceptionCode.FAIL_INVALID_TOKEN).toString());
+            log.warn(new CommonException(CommonExceptionCode.FAIL_INVALID_TOKEN).toString());
             throw new CommonException(CommonExceptionCode.FAIL_INVALID_TOKEN);
         }
         tableSampleMemberMstVO.setToken(token);
@@ -79,11 +78,11 @@ public class AuthService {
             final String issuer = one.getMemberName().concat(String.valueOf(one.getMemberId())).concat(MyDateUtils.getStringNow("YYYYMMDD"));
             JWT.require(ALGORITHM).withIssuer(issuer).build().verify(token);
         } catch (final JWTVerificationException | NullPointerException e) {
-            this.logger.warn(new CommonException(CommonExceptionCode.FAIL_NOT_ALLOWED_MEMBER).toString());
+            log.warn(new CommonException(CommonExceptionCode.FAIL_NOT_ALLOWED_MEMBER).toString());
             throw new CommonException(CommonExceptionCode.FAIL_NOT_ALLOWED_MEMBER);
         }
         if (one == null) {
-            this.logger.warn(new CommonException(CommonExceptionCode.FAIL_NOT_ALLOWED_MEMBER).toString());
+            log.warn(new CommonException(CommonExceptionCode.FAIL_NOT_ALLOWED_MEMBER).toString());
             throw new CommonException(CommonExceptionCode.FAIL_NOT_ALLOWED_MEMBER);
         }
     }

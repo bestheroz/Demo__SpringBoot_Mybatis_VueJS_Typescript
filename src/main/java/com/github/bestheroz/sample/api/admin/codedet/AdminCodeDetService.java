@@ -7,8 +7,6 @@ import com.github.bestheroz.sample.api.tablevo.samplecodedet.TableSampleCodeDetV
 import com.github.bestheroz.standard.common.exception.CommonException;
 import com.github.bestheroz.standard.common.util.MyMapperUtils;
 import com.google.common.collect.ImmutableSet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -19,7 +17,6 @@ import java.util.List;
 
 @Service
 public class AdminCodeDetService {
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
     @Autowired
     private PlatformTransactionManager platformTransactionManager;
     @Autowired

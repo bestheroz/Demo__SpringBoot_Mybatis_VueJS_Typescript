@@ -1,10 +1,16 @@
 package com.github.bestheroz.sample.api.admin.menu.request;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
+@Getter
+@Setter
+@ToString
 public class UpdateSampleMenuMstRequestVO {
     @NotEmpty
     @ApiModelProperty(value = "메뉴 명", required = true)
@@ -28,69 +34,4 @@ public class UpdateSampleMenuMstRequestVO {
     private String url;
     @ApiModelProperty(value = "비고")
     private String remark1;
-
-    public String getMenuName() {
-        return this.menuName;
-    }
-
-    public void setMenuName(final String menuName) {
-        this.menuName = menuName;
-    }
-
-    public String getMenuType() {
-        return this.menuType;
-    }
-
-    public void setMenuType(final String menuType) {
-        this.menuType = menuType;
-    }
-
-    public Integer getParMenuId() {
-        return this.parMenuId;
-    }
-
-    public void setParMenuId(final Integer parMenuId) {
-        this.parMenuId = parMenuId;
-    }
-
-    public Boolean getUseTf() {
-        return this.useTf;
-    }
-
-    public void setUseTf(final Boolean useTf) {
-        this.useTf = useTf;
-    }
-
-    public Integer getPower() {
-        return this.power;
-    }
-
-    public void setPower(final Integer power) {
-        this.power = power;
-    }
-
-    public Integer getDisplayOrder() {
-        return this.displayOrder;
-    }
-
-    public void setDisplayOrder(final Integer displayOrder) {
-        this.displayOrder = displayOrder;
-    }
-
-    public String getUrl() {
-        return this.url;
-    }
-
-    public void setUrl(final String url) {
-        this.url = url;
-    }
-
-    public String getRemark1() {
-        return this.remark1;
-    }
-
-    public void setRemark1(final String remark1) {
-        this.remark1 = remark1;
-    }
-
 }

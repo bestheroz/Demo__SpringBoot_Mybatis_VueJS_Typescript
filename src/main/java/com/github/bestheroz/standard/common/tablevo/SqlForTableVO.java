@@ -6,10 +6,9 @@ import com.github.bestheroz.standard.common.util.MyMapperUtils;
 import com.github.bestheroz.standard.common.util.MyNullUtils;
 import com.google.common.base.CaseFormat;
 import com.google.common.collect.ImmutableSet;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.jdbc.SQL;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
@@ -21,6 +20,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+@Slf4j
 public class SqlForTableVO {
     public static final String COUNT = "countTableVO";
     public static final String SELECT = "selectTableVO";
@@ -55,7 +55,6 @@ public class SqlForTableVO {
     private static final String SET_BIND_ENCRYPTED_STRING = "{0} = XX1.ENC_VARCHAR2_INS (#'{'param1.{1}{2}'}', 11, ''SSN'', ''{3}'', ''{0}'')";
     private static final String WHERE_BIND_STRING = "{0} = #'{'param1.{1}{2}'}'";
     private static final String WHERE_BIND_ENCRYPTED_STRING = "{0} = XX1.ENC_VARCHAR2_INS (#'{'param1.{1}{2}'}', 11, ''SSN'', ''{3}'', ''{0}'')";
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public <T> String countTableVO(@NonNull final T vo, final Set<String> whereKeys) {
         final SQL sql = new SQL();
@@ -65,7 +64,7 @@ public class SqlForTableVO {
             this.getWhereSql(vo, whereKeys, sql, tableName);
         }
 
-        this.logger.debug(sql.toString());
+        log.debug(sql.toString());
         return sql.toString();
     }
 
@@ -86,13 +85,13 @@ public class SqlForTableVO {
 
     private void validWhereKey(final Set<String> whereKeys, final Map<String, Object> param) {
         if (MyNullUtils.size(whereKeys) < 1) {
-            this.logger.warn(CommonExceptionCode.FAIL_INVALID_PARAMETER.toString());
+            log.warn(CommonExceptionCode.FAIL_INVALID_PARAMETER.toString());
             throw CommonException.EXCEPTION_FAIL_INVALID_PARAMETER;
         }
 
         for (final String key : whereKeys) {
             if (!param.containsKey(key) || param.get(key) == null) {
-                this.logger.warn(CommonExceptionCode.FAIL_INVALID_PARAMETER.toString());
+                log.warn(CommonExceptionCode.FAIL_INVALID_PARAMETER.toString());
                 throw CommonException.EXCEPTION_FAIL_INVALID_PARAMETER;
             }
         }
@@ -144,7 +143,7 @@ public class SqlForTableVO {
             sql.ORDER_BY(orderByColumns);
         }
 
-        this.logger.debug(sql.toString());
+        log.debug(sql.toString());
         return sql.toString();
     }
 
@@ -161,7 +160,7 @@ public class SqlForTableVO {
         this.getSelectSql(vo, sql, tableName, fields);
         sql.FROM(tableName);
         this.getWhereSql(vo, whereKeys, sql, tableName);
-        this.logger.debug(sql.toString());
+        log.debug(sql.toString());
         return sql.toString();
     }
 
@@ -198,7 +197,7 @@ public class SqlForTableVO {
             }
         }
 
-        this.logger.debug(sql.toString());
+        log.debug(sql.toString());
         return sql.toString();
     }
 
@@ -256,19 +255,19 @@ public class SqlForTableVO {
                 sql.SET(TABLE_COLUMN_NAME_UPDATED + " = " + SYSDATE);
             }
         }
-        this.logger.debug(sql.toString());
+        log.debug(sql.toString());
         return sql.toString();
     }
 
     public <T> String deleteTableVO(@NonNull final T vo, final Set<String> whereKeys) {
         if (MyNullUtils.size(whereKeys) < 1) {
-            this.logger.warn(CommonExceptionCode.FAIL_NO_DATA_SUCCESS.toString());
+            log.warn(CommonExceptionCode.FAIL_NO_DATA_SUCCESS.toString());
             throw CommonException.EXCEPTION_FAIL_NO_DATA_SUCCESS;
         }
         final Map<String, Object> param = MyMapperUtils.writeObjectAsHashMap(vo);
         for (final String key : whereKeys) {
             if (!param.containsKey(key) || param.get(key) == null) {
-                this.logger.warn("{} not in {}\n{}", key, MyMapperUtils.writeObjectAsString(param), CommonExceptionCode.FAIL_INVALID_PARAMETER.toString());
+                log.warn("{} not in {}\n{}", key, MyMapperUtils.writeObjectAsString(param), CommonExceptionCode.FAIL_INVALID_PARAMETER.toString());
                 throw CommonException.EXCEPTION_FAIL_INVALID_PARAMETER;
             }
         }
@@ -277,7 +276,7 @@ public class SqlForTableVO {
         sql.DELETE_FROM(tableName);
         this.getWhereSql(vo, whereKeys, sql, tableName);
 
-        this.logger.debug(sql.toString());
+        log.debug(sql.toString());
         return sql.toString();
     }
 
@@ -301,7 +300,7 @@ public class SqlForTableVO {
             jdbcType = ", jdbcType=BLOB";
         } else {
             jdbcType = "";
-            this.logger.warn("케이스 빠짐 {}", columnTypeName);
+            log.warn("케이스 빠짐 {}", columnTypeName);
         }
         return jdbcType;
     }

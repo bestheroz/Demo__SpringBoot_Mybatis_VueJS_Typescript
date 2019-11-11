@@ -4,11 +4,10 @@ import com.github.bestheroz.standard.common.util.MyMapperUtils;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 
 import javax.servlet.ReadListener;
@@ -24,9 +23,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 public class ReadableRequestWrapper extends HttpServletRequestWrapper { // 상속
-    private static final Logger LOGGER = LoggerFactory.getLogger(ReadableRequestWrapper.class);
-
     private final Charset encoding;
     private final Map<String, String[]> params = new HashMap<>();
     private byte[] rawData;
@@ -62,7 +60,7 @@ public class ReadableRequestWrapper extends HttpServletRequestWrapper { // 상�
                 }
             }
         } catch (final Exception e) {
-            LOGGER.error(ExceptionUtils.getStackTrace(e));
+            log.error(ExceptionUtils.getStackTrace(e));
         }
     }
 

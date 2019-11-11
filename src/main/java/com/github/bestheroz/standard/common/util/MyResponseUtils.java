@@ -5,20 +5,18 @@ import com.github.bestheroz.standard.common.exception.CommonExceptionCode;
 import com.github.bestheroz.standard.common.protocol.CommonResponseVO;
 
 public class MyResponseUtils {
+    public static final CommonResponseVO SUCCESS_NORMAL = getCommonResponseVO(CommonExceptionCode.SUCCESS_NORMAL, null, null);
+
     protected MyResponseUtils() {
         throw new UnsupportedOperationException();
     }
-
-    // private static final Logger LOGGER = LoggerFactory.getLogger(MyResponseUtil.class);
-    public static final CommonResponseVO SUCCESS_NORMAL = getCommonResponseVO(CommonExceptionCode.SUCCESS_NORMAL, null, null);
 
     public static CommonResponseVO getCommonResponseVO(final CommonExceptionCode commonExceptionCode, final Object responseData, final String additionalMessage) throws CommonException {
         final CommonResponseVO commonResponseVO = new CommonResponseVO();
         commonResponseVO.setResponseCode(commonExceptionCode.getCode());
         commonResponseVO.setResponseMessage(commonExceptionCode.getMessage());
-        commonResponseVO.setResponseData(responseData);
+        commonResponseVO.setResponseData(MyMapperUtils.writeObjectAsJsonElement(responseData));
         commonResponseVO.setAdditionalMessage(additionalMessage);
-        // LOGGER.debug(MyMapperUtil.writeObjectAsJsonObject(commonResponseVO).toString());
         return commonResponseVO;
     }
 

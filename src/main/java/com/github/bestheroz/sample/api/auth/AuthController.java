@@ -7,8 +7,7 @@ import com.github.bestheroz.standard.common.util.MyResponseUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -16,8 +15,8 @@ import javax.annotation.Resource;
 @Api(tags = "권한")
 @RestController
 @RequestMapping(value = "/sample/auth")
+@Slf4j
 public class AuthController {
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
     @Resource
     private AuthService authService;
 
@@ -30,7 +29,7 @@ public class AuthController {
     @ApiOperation(value = "토큰 검증")
     @PostMapping(value = "/verify")
     public CommonResponseVO verify(@ApiParam("Token") @RequestHeader(value = "Authorization", required = false) final String token) throws CommonException {
-        this.logger.debug(token);
+        log.debug(token);
         this.authService.verify(token);
         return MyResponseUtils.SUCCESS_NORMAL;
     }

@@ -4,14 +4,14 @@ import com.github.bestheroz.standard.common.util.MyMapperUtils;
 import com.github.bestheroz.standard.common.util.MyNullUtils;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 
 import java.util.List;
 
+@Slf4j
 @SuppressWarnings("serial")
 public class CommonException extends RuntimeException {
     public static final CommonException EXCEPTION_SUCCESS_NORMAL = new CommonException(CommonExceptionCode.SUCCESS_NORMAL);
@@ -19,39 +19,38 @@ public class CommonException extends RuntimeException {
     public static final CommonException EXCEPTION_FAIL_INVALID_REQUEST = new CommonException(CommonExceptionCode.FAIL_INVALID_REQUEST);
     public static final CommonException EXCEPTION_FAIL_INVALID_PARAMETER = new CommonException(CommonExceptionCode.FAIL_INVALID_PARAMETER);
     public static final CommonException EXCEPTION_FAIL_NO_DATA_SUCCESS = new CommonException(CommonExceptionCode.FAIL_NO_DATA_SUCCESS);
-    private static final Logger LOGGER = LoggerFactory.getLogger(CommonException.class);
     private String responseCode;
     private String responseMessage;
     private JsonElement responseData;
     private String additionalMessage;
 
     public CommonException(final Exception exception) {
-        LOGGER.warn("Received error message: {}", ExceptionUtils.getStackTrace(exception));
+        log.warn("Received error message: {}", ExceptionUtils.getStackTrace(exception));
         this.setReturnValue(this.extractResultCode(exception.getClass().getSimpleName()), exception.getMessage(), null);
     }
 
     public CommonException(final Exception exception, final Object data) {
-        LOGGER.warn("Received error message: {}", ExceptionUtils.getStackTrace(exception));
+        log.warn("Received error message: {}", ExceptionUtils.getStackTrace(exception));
         this.setReturnValue(this.extractResultCode(exception.getClass().getSimpleName()), exception.getMessage(), data);
     }
 
     public CommonException(final DataAccessException dataAccessException) {
-        LOGGER.warn("Received error message: {}", ExceptionUtils.getStackTrace(dataAccessException));
+        log.warn("Received error message: {}", ExceptionUtils.getStackTrace(dataAccessException));
         this.setReturnValue(this.extractResultCode(dataAccessException.getClass().getSimpleName()), dataAccessException.getMessage(), null);
     }
 
     public CommonException(final DataAccessException dataAccessException, final Object data) {
-        LOGGER.warn("Received error message: {}", ExceptionUtils.getStackTrace(dataAccessException));
+        log.warn("Received error message: {}", ExceptionUtils.getStackTrace(dataAccessException));
         this.setReturnValue(this.extractResultCode(dataAccessException.getClass().getSimpleName()), dataAccessException.getMessage(), data);
     }
 
     public CommonException(final Throwable throwable) {
-        LOGGER.warn("Received error message: {}", ExceptionUtils.getStackTrace(throwable));
+        log.warn("Received error message: {}", ExceptionUtils.getStackTrace(throwable));
         this.setReturnValue(this.extractResultCode(throwable.getClass().getSimpleName()), throwable.getMessage(), null);
     }
 
     public CommonException(final Throwable throwable, final Object data) {
-        LOGGER.warn("Received error message: {}", ExceptionUtils.getStackTrace(throwable));
+        log.warn("Received error message: {}", ExceptionUtils.getStackTrace(throwable));
         this.setReturnValue(this.extractResultCode(throwable.getClass().getSimpleName()), throwable.getMessage(), data);
     }
 
@@ -107,7 +106,7 @@ public class CommonException extends RuntimeException {
             default:
                 break;
         }
-        LOGGER.warn("{}: return value => {}", exceptionName, commonExceptionCode.getCode());
+        log.warn("{}: return value => {}", exceptionName, commonExceptionCode.getCode());
         return commonExceptionCode;
     }
 

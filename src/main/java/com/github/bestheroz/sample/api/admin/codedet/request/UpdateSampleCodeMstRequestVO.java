@@ -1,9 +1,15 @@
 package com.github.bestheroz.sample.api.admin.codedet.request;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import javax.validation.constraints.NotEmpty;
 
+@Getter
+@Setter
+@ToString
 public class UpdateSampleCodeMstRequestVO {
     @NotEmpty
     @ApiModelProperty(value = "그룹 코드", required = true)
@@ -13,29 +19,4 @@ public class UpdateSampleCodeMstRequestVO {
     private String groupCodeName;
     @ApiModelProperty(value = "비고")
     private String remark1;
-
-    public String getGroupCode() {
-        return this.groupCode;
-    }
-
-    public void setGroupCode(final String groupCode) {
-        this.groupCode = groupCode;
-    }
-
-    public String getGroupCodeName() {
-        return this.groupCodeName;
-    }
-
-    public void setGroupCodeName(final String groupCodeName) {
-        this.groupCodeName = groupCodeName;
-    }
-
-    public String getRemark1() {
-        return this.remark1;
-    }
-
-    public void setRemark1(final String remark1) {
-        this.remark1 = remark1;
-    }
-
 }
