@@ -14,6 +14,6 @@ public class CommonExceptionController {
     @RequestMapping(value = {"/common/exception/error"})
     public Json errorView(final Throwable e) {
         this.logger.warn(ExceptionUtils.getStackTrace(e));
-        return new Json(new CommonException(e).getJsonObject().toString());
+        return new Json(new CommonException(e).toString());
     }
 }

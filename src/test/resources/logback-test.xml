@@ -4,7 +4,7 @@
 <configuration debug="true">
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
-            <layout class="com.github.bestheroz.standard.context.aop.logging.encoder.LoggingLayout"/>
+            <layout class="com.github.bestheroz.standard.context.logging.LoggingLayout"/>
         </encoder>
     </appender>
 

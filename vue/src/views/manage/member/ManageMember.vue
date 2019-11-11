@@ -12,7 +12,7 @@
           <v-divider class="mx-4" inset vertical />
           <div class="flex-grow-1" />
           <v-dialog max-width="60%" persistent v-model="dialog">
-            <template v-slot:activator="{ on }">
+            <template>
               <v-btn
                 @click="editItem(undefined)"
                 class="mb-2"

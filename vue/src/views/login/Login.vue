@@ -77,7 +77,7 @@ export default class Login extends Vue {
 
   mounted() {
     if (this.$route.query.need === 'login') {
-      this.$toasted.error('로그인이 필요합니다.');
+      this.$toasted.error('로그인이 필요합니다.', { duration: 10000 });
     }
   }
 

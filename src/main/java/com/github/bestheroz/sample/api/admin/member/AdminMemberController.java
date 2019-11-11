@@ -46,7 +46,7 @@ public class AdminMemberController {
     @PostMapping
     public CommonResponseVO insert(@Valid @RequestBody final InsertSampleMemberMstRequestVO vo, final BindingResult bindingResult) throws CommonException {
         for (final FieldError fieldError : bindingResult.getFieldErrors()) {
-            this.logger.warn(new CommonException(CommonExceptionCode.FAIL_INVALID_PARAMETER, fieldError.getDefaultMessage()).getJsonObject().toString());
+            this.logger.warn(new CommonException(CommonExceptionCode.FAIL_INVALID_PARAMETER, fieldError.getDefaultMessage()).toString());
         }
         final TableSampleMemberMstVO tableSampleMemberMstVO = MyMapperUtils.writeObjectAsObject(vo, TableSampleMemberMstVO.class);
         tableSampleMemberMstVO.setCreatedBy("insert");
@@ -60,7 +60,7 @@ public class AdminMemberController {
     public CommonResponseVO update(@ApiParam(value = "회원 아이디", required = true) @PathVariable(value = "memberId") final String memberId, @Valid @RequestBody final UpdateSampleMemberMstRequestVO vo,
                                    final BindingResult bindingResult) throws CommonException {
         for (final FieldError fieldError : bindingResult.getFieldErrors()) {
-            this.logger.warn(new CommonException(CommonExceptionCode.FAIL_INVALID_PARAMETER, fieldError.getDefaultMessage()).getJsonObject().toString());
+            this.logger.warn(new CommonException(CommonExceptionCode.FAIL_INVALID_PARAMETER, fieldError.getDefaultMessage()).toString());
         }
         final TableSampleMemberMstVO tableSampleMemberMstVO = MyMapperUtils.writeObjectAsObject(vo, TableSampleMemberMstVO.class);
         tableSampleMemberMstVO.setMemberId(memberId);

@@ -138,6 +138,14 @@
             <version>2.6</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.10</version>
+            <scope>provided</scope>
+        </dependency>
+
+
         <!-- 여기까지 표준프레임워크에서 정의한 library -->
         <!-- 여기까지 표준프레임워크에서 정의한 library -->
         <!-- 여기까지 표준프레임워크에서 정의한 library -->

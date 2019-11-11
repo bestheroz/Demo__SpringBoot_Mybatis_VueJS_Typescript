@@ -1,4 +1,4 @@
-package com.github.bestheroz.standard.context.aop.logging;
+package com.github.bestheroz.standard.context.logging;
 
 import com.github.bestheroz.standard.common.util.MyMapperUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -10,12 +10,18 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.stereotype.Component;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+@Configuration
+@EnableAspectJAutoProxy
 @Aspect
+@Component
 public class TraceLoggingInAOP {
     private static final Logger LOGGER = LoggerFactory.getLogger(TraceLoggingInAOP.class);
     private static final String STR_CLASS_METHOD = "{0}.{1}({2})";
@@ -24,7 +30,7 @@ public class TraceLoggingInAOP {
 
     @Around("execution(* com.github.bestheroz..*Controller.*(..)) || execution(* com.github.bestheroz..*Service.*(..)) || execution(* com.github.bestheroz..*DAO.*(..))")
     public Object doLoggingAround(final ProceedingJoinPoint pjp) throws Throwable {
-        Object retVal;
+        final Object retVal;
 
         final Class<?> targetClass = pjp.getTarget().getClass();
         final String formatClassMethod = MessageFormat.format(STR_CLASS_METHOD,

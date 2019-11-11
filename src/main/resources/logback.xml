@@ -4,7 +4,7 @@
 <configuration debug="true">
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
-            <layout class="com.github.bestheroz.standard.context.aop.logging.encoder.LoggingLayout"/>
+            <layout class="com.github.bestheroz.standard.context.logging.LoggingLayout"/>
         </encoder>
     </appender>
 
@@ -29,8 +29,6 @@
     <logger name="io.swagger.models.parameters.AbstractSerializableParameter" level="ERROR"/>
     <logger name="springfox.documentation.spring.web" level="INFO"/>
     <logger name="springfox.documentation.swagger.readers.operation" level="INFO"/>
-
-    <logger name="com.github.ziplet.filter.compression" level="INFO"/>
 
     <root level="DEBUG">
         <appender-ref ref="STDOUT"/>

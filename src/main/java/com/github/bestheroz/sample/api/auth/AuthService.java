@@ -35,20 +35,20 @@ public class AuthService {
         // 로그인 관문
         // 1. 유저가 없으면
         if (one == null) {
-            this.logger.warn(new CommonException(CommonExceptionCode.FAIL_NOT_ALLOWED_MEMBER).getJsonObject().toString());
+            this.logger.warn(new CommonException(CommonExceptionCode.FAIL_NOT_ALLOWED_MEMBER).toString());
             throw new CommonException(CommonExceptionCode.FAIL_NOT_ALLOWED_MEMBER);
         }
 
         // 2. LOGIN_FAIL_CNT가 5회 이상 인가
         if (one.getLoginFailCnt().intValue() >= 5) {
-            this.logger.warn(new CommonException(CommonExceptionCode.FAIL_LOGIN_FAIL_CNT, null, "고객센터로 문의하시기 바랍니다.").getJsonObject().toString());
+            this.logger.warn(new CommonException(CommonExceptionCode.FAIL_LOGIN_FAIL_CNT, null, "고객센터로 문의하시기 바랍니다.").toString());
             throw new CommonException(CommonExceptionCode.FAIL_LOGIN_FAIL_CNT, null, "고객센터로 문의하시기 바랍니다.");
         }
 
         // 3. 패스워드가 틀리면
         if (!StringUtils.equals(memberPw, one.getMemberPw())) {
             this.authDAO.updatePlusLoginFailCnt(memberId);
-            this.logger.warn(new CommonException(CommonExceptionCode.FAIL_NOT_ALLOWED_MEMBER).getJsonObject().toString());
+            this.logger.warn(new CommonException(CommonExceptionCode.FAIL_NOT_ALLOWED_MEMBER).toString());
             throw new CommonException(CommonExceptionCode.FAIL_NOT_ALLOWED_MEMBER);
         }
 
@@ -70,7 +70,7 @@ public class AuthService {
         }
         final TableSampleMemberMstVO tableSampleMemberMstVO = new TableSampleMemberMstVO();
         if (StringUtils.isEmpty(token)) {
-            this.logger.warn(new CommonException(CommonExceptionCode.FAIL_INVALID_TOKEN).getJsonObject().toString());
+            this.logger.warn(new CommonException(CommonExceptionCode.FAIL_INVALID_TOKEN).toString());
             throw new CommonException(CommonExceptionCode.FAIL_INVALID_TOKEN);
         }
         tableSampleMemberMstVO.setToken(token);
@@ -79,11 +79,11 @@ public class AuthService {
             final String issuer = one.getMemberName().concat(String.valueOf(one.getMemberId())).concat(MyDateUtils.getStringNow("YYYYMMDD"));
             JWT.require(ALGORITHM).withIssuer(issuer).build().verify(token);
         } catch (final JWTVerificationException | NullPointerException e) {
-            this.logger.warn(new CommonException(CommonExceptionCode.FAIL_NOT_ALLOWED_MEMBER).getJsonObject().toString());
+            this.logger.warn(new CommonException(CommonExceptionCode.FAIL_NOT_ALLOWED_MEMBER).toString());
             throw new CommonException(CommonExceptionCode.FAIL_NOT_ALLOWED_MEMBER);
         }
         if (one == null) {
-            this.logger.warn(new CommonException(CommonExceptionCode.FAIL_NOT_ALLOWED_MEMBER).getJsonObject().toString());
+            this.logger.warn(new CommonException(CommonExceptionCode.FAIL_NOT_ALLOWED_MEMBER).toString());
             throw new CommonException(CommonExceptionCode.FAIL_NOT_ALLOWED_MEMBER);
         }
     }

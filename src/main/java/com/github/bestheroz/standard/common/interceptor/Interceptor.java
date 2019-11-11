@@ -16,7 +16,6 @@ import org.springframework.web.util.UrlPathHelper;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.text.MessageFormat;
 
 public class Interceptor extends HandlerInterceptorAdapter {
     private static final Logger LOGGER = LoggerFactory.getLogger(Interceptor.class);
@@ -26,7 +25,6 @@ public class Interceptor extends HandlerInterceptorAdapter {
     @Override
     // preHandle : controller 이벤트 호출전
     public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response, final Object handler) throws CommonException {
-        LOGGER.debug(MessageFormat.format("[{0}]{1}", request.getMethod(), new UrlPathHelper().getPathWithinApplication(request)));
         if (!request.getMethod().equalsIgnoreCase("OPTIONS")) {
             try {
                 MyAccessBeanUtils.getBean(AuthService.class).verify(request.getHeader("Authorization"));

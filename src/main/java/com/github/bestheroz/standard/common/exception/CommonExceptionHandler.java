@@ -28,41 +28,41 @@ public class CommonExceptionHandler {
     @ResponseBody
     public Json exception(final Throwable e) {
         LOGGER.warn(ExceptionUtils.getStackTrace(e));
-        return new Json(CommonException.EXCEPTION_FAIL_SYSTEM.getJsonObject().toString());
+        return new Json(CommonException.EXCEPTION_FAIL_SYSTEM.toString());
     }
 
     @ExceptionHandler({CommonException.class})
     @ResponseBody
     public Json commonResponseException(final CommonException e) {
-        LOGGER.warn(e.getJsonObject().toString());
-        return new Json(e.getJsonObject().toString());
+        LOGGER.warn(e.toString());
+        return new Json(e.toString());
     }
 
     @ExceptionHandler({BindException.class, MethodArgumentTypeMismatchException.class, MissingServletRequestParameterException.class})
     @ResponseBody
     public Json bindException(final Throwable e) {
         LOGGER.warn(ExceptionUtils.getStackTrace(e));
-        return new Json(CommonException.EXCEPTION_FAIL_INVALID_PARAMETER.getJsonObject().toString());
+        return new Json(CommonException.EXCEPTION_FAIL_INVALID_PARAMETER.toString());
     }
 
     @ExceptionHandler(value = {ServletRequestBindingException.class})
     @ResponseBody
     public Json servletRequestBindingException(final ServletRequestBindingException e) {
         LOGGER.warn(ExceptionUtils.getStackTrace(e));
-        return new Json(CommonException.EXCEPTION_FAIL_INVALID_REQUEST.getJsonObject().toString());
+        return new Json(CommonException.EXCEPTION_FAIL_INVALID_REQUEST.toString());
     }
 
     @ExceptionHandler(value = {HttpMessageNotReadableException.class, MalformedJsonException.class})
     @ResponseBody
     public Json dataConvertException(final Throwable e) {
         LOGGER.warn(ExceptionUtils.getStackTrace(e));
-        return new Json(CommonException.EXCEPTION_FAIL_INVALID_REQUEST.getJsonObject().toString());
+        return new Json(CommonException.EXCEPTION_FAIL_INVALID_REQUEST.toString());
     }
 
     @ExceptionHandler({HttpMediaTypeNotAcceptableException.class, HttpMediaTypeNotSupportedException.class, HttpRequestMethodNotSupportedException.class, HttpClientErrorException.class})
     @ResponseBody
     public Json httpMediaTypeNotAcceptableException(final Throwable e) {
         LOGGER.warn(ExceptionUtils.getStackTrace(e));
-        return new Json(CommonException.EXCEPTION_FAIL_INVALID_REQUEST.getJsonObject().toString());
+        return new Json(CommonException.EXCEPTION_FAIL_INVALID_REQUEST.toString());
     }
 }

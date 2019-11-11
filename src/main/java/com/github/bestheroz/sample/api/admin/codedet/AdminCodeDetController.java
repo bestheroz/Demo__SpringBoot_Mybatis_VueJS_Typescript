@@ -47,7 +47,7 @@ public class AdminCodeDetController {
     @PostMapping
     public CommonResponseVO insert(@RequestBody final InsertSampleCodeDetRequestVO vo, final BindingResult bindingResult) throws CommonException {
         for (final FieldError fieldError : bindingResult.getFieldErrors()) {
-            this.logger.warn(new CommonException(CommonExceptionCode.FAIL_INVALID_PARAMETER, fieldError.getDefaultMessage()).getJsonObject().toString());
+            this.logger.warn(new CommonException(CommonExceptionCode.FAIL_INVALID_PARAMETER, fieldError.getDefaultMessage()).toString());
         }
         final TableSampleCodeDetVO tableSampleCodeDetVO = MyMapperUtils.writeObjectAsObject(vo, TableSampleCodeDetVO.class);
         tableSampleCodeDetVO.setCreatedBy("insert");
@@ -62,7 +62,7 @@ public class AdminCodeDetController {
                                    @ApiParam("상세 코드") @PathVariable(value = "code") final String code, @RequestBody final UpdateSampleCodeDetRequestVO vo, final BindingResult bindingResult)
             throws CommonException {
         for (final FieldError fieldError : bindingResult.getFieldErrors()) {
-            this.logger.warn(new CommonException(CommonExceptionCode.FAIL_INVALID_PARAMETER, fieldError.getDefaultMessage()).getJsonObject().toString());
+            this.logger.warn(new CommonException(CommonExceptionCode.FAIL_INVALID_PARAMETER, fieldError.getDefaultMessage()).toString());
         }
         final TableSampleCodeDetVO tableSampleCodeDetVO = MyMapperUtils.writeObjectAsObject(vo, TableSampleCodeDetVO.class);
         tableSampleCodeDetVO.setGroupCode(groupCode);

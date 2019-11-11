@@ -1,6 +1,5 @@
 package com.github.bestheroz.standard.common.exception;
 
-import com.github.bestheroz.standard.common.protocol.CommonResponseVO;
 import com.github.bestheroz.standard.common.util.MyMapperUtils;
 import com.github.bestheroz.standard.common.util.MyNullUtils;
 import com.google.gson.JsonElement;
@@ -88,21 +87,6 @@ public class CommonException extends RuntimeException {
         } else {
             return EXCEPTION_FAIL_SYSTEM.getJsonObject();
         }
-    }
-
-    public CommonResponseVO getCommonResponseVO() {
-        final CommonResponseVO commonResponseVO = new CommonResponseVO();
-        commonResponseVO.setResponseCode(this.responseCode);
-        commonResponseVO.setResponseMessage(this.responseMessage);
-        commonResponseVO.setResponseData(MyMapperUtils.writeObjectAsJsonElement(this.responseData));
-        commonResponseVO.setAdditionalMessage(this.additionalMessage);
-        // LOGGER.debug(MyMapperUtil.writeObjectAsJsonObject(commonResponseVO).toString());
-        return commonResponseVO;
-    }
-
-    public JsonObject getJsonObject(final RuntimeException runtimeException) {
-        this.setReturnValue(this.extractResultCode(runtimeException.getClass().getSimpleName()), runtimeException.getMessage(), null);
-        return this.getJsonObject();
     }
 
     private CommonExceptionCode extractResultCode(final String exceptionName) {
