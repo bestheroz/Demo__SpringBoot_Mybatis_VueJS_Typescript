@@ -122,8 +122,8 @@ public class LoggingLayout extends LayoutBase<ILoggingEvent> {
                     logString = StringUtils.replace(logString, str, STR_SKIP_TOO_LONG_TEXT);
                 }
             }
-            if (logString.length() > 4096) {
-                logString = StringUtils.abbreviate(logString, STR_SKIP_TOO_LONG_TEXT, 4000).concat(TOTAL_LENGTH).concat(String.valueOf(logString.length()));
+            if (logString.length() > 10000) {
+                logString = StringUtils.abbreviate(logString, STR_SKIP_TOO_LONG_TEXT, 10000).concat(TOTAL_LENGTH).concat(String.valueOf(logString.length()));
             }
         }
         return logString;

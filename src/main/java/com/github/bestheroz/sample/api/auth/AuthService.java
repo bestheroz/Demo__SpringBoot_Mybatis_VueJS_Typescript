@@ -74,6 +74,10 @@ public class AuthService {
         }
         tableSampleMemberMstVO.setToken(token);
         final TableSampleMemberMstVO one = this.tableSampleMemberMstDAO.getOne(tableSampleMemberMstVO, Collections.singleton("token"));
+        if (one == null) {
+            log.warn(new CommonException(CommonExceptionCode.FAIL_NOT_ALLOWED_MEMBER).toString());
+            throw new CommonException(CommonExceptionCode.FAIL_NOT_ALLOWED_MEMBER);
+        }
         try {
             final String issuer = one.getMemberName().concat(String.valueOf(one.getMemberId())).concat(MyDateUtils.getStringNow("YYYYMMDD"));
             JWT.require(ALGORITHM).withIssuer(issuer).build().verify(token);
@@ -81,9 +85,6 @@ public class AuthService {
             log.warn(new CommonException(CommonExceptionCode.FAIL_NOT_ALLOWED_MEMBER).toString());
             throw new CommonException(CommonExceptionCode.FAIL_NOT_ALLOWED_MEMBER);
         }
-        if (one == null) {
-            log.warn(new CommonException(CommonExceptionCode.FAIL_NOT_ALLOWED_MEMBER).toString());
-            throw new CommonException(CommonExceptionCode.FAIL_NOT_ALLOWED_MEMBER);
-        }
+
     }
 }

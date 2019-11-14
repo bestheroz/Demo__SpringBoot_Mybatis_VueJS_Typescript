@@ -10,15 +10,20 @@ import Swal from 'sweetalert2/dist/sweetalert2.js';
 let timerInterval: any;
 
 Vue.use(VueSweetalert2, {
-  timer: 5000,
-  html: '<b>5</b> 초 후에 자동으로 닫힙니다.',
+  timer: 3100,
+  html: '<b>3</b> 초 후에 자동으로 닫힙니다.',
   onBeforeOpen: () => {
     if (Swal.getTimerLeft()) {
       timerInterval = setInterval(() => {
         // @ts-ignore
-        Swal.getContent().querySelector('b').textContent = (
-          +(Swal.getTimerLeft() || 0) / 1000
-        ).toFixed(0);
+        try {
+          Swal.getContent().querySelector('b')!.textContent = (
+            +(Swal.getTimerLeft() || 0) / 1000
+          ).toFixed(0);
+        } catch (e) {
+          timerInterval && clearInterval(timerInterval);
+          timerInterval = undefined;
+        }
       }, 1002);
     } else if (Swal.getContent().querySelector('#swal2-content')) {
       Swal.getContent().querySelector('#swal2-content')!.innerHTML = '';

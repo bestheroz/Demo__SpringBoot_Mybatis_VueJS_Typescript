@@ -15,7 +15,6 @@ Vue.config.productionTip = false;
 new Vue({
   router,
   store,
-  // @ts-ignore
   i18n,
   vuetify,
   render: h => h(App),
