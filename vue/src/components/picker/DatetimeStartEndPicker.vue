@@ -36,11 +36,11 @@
                   updateStartDt();
                 }
               "
-              color="primary"
+              color="success"
               text
               >{{ $t('today') }}
             </v-btn>
-            <v-btn @click="localStartDayMenu = false" color="primary" text
+            <v-btn @click="localStartDayMenu = false" color="success" text
               >{{ $t('cancel') }}
             </v-btn>
             <v-btn
@@ -50,7 +50,7 @@
                   updateStartDt();
                 }
               "
-              color="primary"
+              color="success"
               text
               >{{ $t('ok') }}
             </v-btn>
@@ -93,11 +93,11 @@
                   updateStartDt();
                 }
               "
-              color="primary"
+              color="success"
               text
               >{{ $t('now') }}
             </v-btn>
-            <v-btn @click="localStartTimeMenu = false" color="primary" text
+            <v-btn @click="localStartTimeMenu = false" color="success" text
               >{{ $t('cancel') }}
             </v-btn>
             <v-btn
@@ -107,7 +107,7 @@
                   updateStartDt();
                 }
               "
-              color="primary"
+              color="success"
               text
               >{{ $t('ok') }}
             </v-btn>
@@ -152,11 +152,11 @@
                   updateEndDt();
                 }
               "
-              color="primary"
+              color="success"
               text
               >{{ $t('today') }}
             </v-btn>
-            <v-btn @click="localEndDayMenu = false" color="primary" text
+            <v-btn @click="localEndDayMenu = false" color="success" text
               >{{ $t('cancel') }}
             </v-btn>
             <v-btn
@@ -166,7 +166,7 @@
                   updateEndDt();
                 }
               "
-              color="primary"
+              color="success"
               text
               >{{ $t('ok') }}
             </v-btn>
@@ -209,11 +209,11 @@
                   updateEndDt();
                 }
               "
-              color="primary"
+              color="success"
               text
               >{{ $t('now') }}
             </v-btn>
-            <v-btn @click="localEndTimeMenu = false" color="primary" text
+            <v-btn @click="localEndTimeMenu = false" color="success" text
               >{{ $t('cancel') }}
             </v-btn>
             <v-btn
@@ -223,7 +223,7 @@
                   updateEndDt();
                 }
               "
-              color="primary"
+              color="success"
               text
               >{{ $t('ok') }}
             </v-btn>

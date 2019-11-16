@@ -14,6 +14,13 @@ Vue.use(Vuetify, {
   },
 });
 
+const theme = {
+  primary: '#E91E63',
+  secondary: '#9C27b0',
+  accent: '#E91E63',
+  info: '#00CAE3',
+};
+
 export default new Vuetify({
   icons: {
     iconfont: `mdi`,
@@ -24,5 +31,8 @@ export default new Vuetify({
   },
   theme: {
     dark: true,
+    themes: {
+      dark: theme,
+    },
   },
 });

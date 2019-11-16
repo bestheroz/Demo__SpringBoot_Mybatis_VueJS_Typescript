@@ -9,14 +9,14 @@
       <template v-slot:top>
         <v-toolbar flat>
           <v-toolbar-title>Manage Member</v-toolbar-title>
-          <v-divider class="mx-4" inset vertical />
-          <div class="flex-grow-1" />
+          <v-spacer></v-spacer>
           <v-dialog max-width="60%" persistent v-model="dialog">
-            <template>
+            <template v-slot:activator="{ on }">
               <v-btn
+                v-on="on"
                 @click="editItem(undefined)"
                 class="mb-2"
-                color="primary"
+                color="success"
                 dark
               >
                 New Item
@@ -29,8 +29,8 @@
 
               <v-card-text>
                 <v-container>
-                  <v-row>
-                    <ValidationObserver ref="observer">
+                  <ValidationObserver ref="observer">
+                    <v-row>
                       <v-col cols="12">
                         <ValidationProvider
                           name="회원 아이디"
@@ -45,13 +45,13 @@
                           <span class="red--text">{{ errors[0] }}</span>
                         </ValidationProvider>
                       </v-col>
-                      <v-col cols="12" md="6">
+                      <v-col md="6" sm="12">
                         <v-text-field
                           label="비밀번호"
                           v-model.trim="member.memberPw"
                         />
                       </v-col>
-                      <v-col cols="12" md="6">
+                      <v-col md="6" sm="12">
                         <v-text-field
                           label="비밀번호 확인"
                           v-model.trim="memberPwCheck"
@@ -82,7 +82,6 @@
                             class="mt-0"
                             label="회원 타입"
                             mandatory
-                            persistent-hint
                             row
                             v-model="member.memberType"
                           >
@@ -97,14 +96,14 @@
                           <span class="red--text">{{ errors[0] }}</span>
                         </ValidationProvider>
                       </v-col>
-                      <v-col cols="12" md="4">
+                      <v-col md="4">
                         <v-text-field
                           label="로그인 실패 건수"
                           type="number"
                           v-model.number="member.loginFailCnt"
                         />
                       </v-col>
-                      <v-col cols="12" md="4">
+                      <v-col md="4">
                         <v-checkbox
                           label="계정 잠김 여부"
                           v-model="member.closeTf"
@@ -117,17 +116,17 @@
                           time-label="계정 만료 시간"
                         ></DatetimePicker>
                       </v-col>
-                    </ValidationObserver>
-                  </v-row>
+                    </v-row>
+                  </ValidationObserver>
                 </v-container>
               </v-card-text>
 
               <v-card-actions>
                 <div class="flex-grow-1" />
-                <v-btn @click="closeModal" color="blue darken-1" text>
+                <v-btn @click="closeModal" color="success" text>
                   Cancel
                 </v-btn>
-                <v-btn @click="save" color="blue darken-1" text>
+                <v-btn @click="save" color="success" text>
                   Save
                 </v-btn>
               </v-card-actions>

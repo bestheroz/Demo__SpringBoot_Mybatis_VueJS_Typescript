@@ -30,11 +30,11 @@
                 update();
               }
             "
-            color="primary"
+            color="success"
             text
             >{{ $t('today') }}
           </v-btn>
-          <v-btn @click="localDayDialog = false" color="primary" text
+          <v-btn @click="localDayDialog = false" color="success" text
             >{{ $t('cancel') }}
           </v-btn>
           <v-btn
@@ -44,7 +44,7 @@
                 update();
               }
             "
-            color="primary"
+            color="success"
             text
             >{{ $t('ok') }}
           </v-btn>
@@ -86,11 +86,11 @@
                 update();
               }
             "
-            color="primary"
+            color="success"
             text
             >{{ $t('now') }}
           </v-btn>
-          <v-btn @click="localTimeDialog = false" color="primary" text
+          <v-btn @click="localTimeDialog = false" color="success" text
             >{{ $t('cancel') }}
           </v-btn>
           <v-btn
@@ -100,7 +100,7 @@
                 update();
               }
             "
-            color="primary"
+            color="success"
             text
             >{{ $t('ok') }}
           </v-btn>

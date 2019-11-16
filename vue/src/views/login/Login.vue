@@ -4,7 +4,7 @@
       <v-row align="center" justify="center">
         <v-col cols="5">
           <v-card class="elevation-12">
-            <v-toolbar color="deep-purple accent-4" dark flat>
+            <v-toolbar color="success" dark flat>
               <v-toolbar-title>
                 Login form ( Tester Account 1 / 1 )
               </v-toolbar-title>
@@ -20,7 +20,6 @@
                     v-slot="{ errors }"
                   >
                     <v-text-field
-                      color="secondary"
                       label="ID..."
                       prepend-icon="mdi-identifier"
                       v-model="memberId"
@@ -35,7 +34,6 @@
                   >
                     <v-text-field
                       type="password"
-                      color="secondary"
                       label="Password..."
                       prepend-icon="mdi-lock-outline"
                       v-model="memberPw"
@@ -47,9 +45,7 @@
             </v-card-text>
             <v-card-actions>
               <div class="flex-grow-1"></div>
-              <v-btn @click="login" color="deep-purple accent-4" dark
-                >Login
-              </v-btn>
+              <v-btn @click="login" color="success" dark>Login </v-btn>
             </v-card-actions>
           </v-card>
         </v-col>

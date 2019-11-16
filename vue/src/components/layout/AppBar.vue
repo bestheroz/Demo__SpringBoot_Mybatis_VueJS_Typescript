@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-app-bar app color="deep-purple accent-4" dark>
+    <v-app-bar app dark>
       <v-btn icon to="/">
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
