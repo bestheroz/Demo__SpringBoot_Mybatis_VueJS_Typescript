@@ -8,6 +8,7 @@ import './plugins/vue-sweetalert2';
 import './plugins/vue-toasted';
 import './plugins/vue-moment';
 import './plugins/vee-validate';
+import './plugins/vue-echarts';
 import i18n from './plugins/vue-i18n';
 
 Vue.config.productionTip = false;
