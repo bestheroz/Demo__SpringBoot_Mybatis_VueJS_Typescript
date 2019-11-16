@@ -23,7 +23,7 @@ export default new Router({
       component: () => import(`@/views/manage/member/ManageMember.vue`),
     },
   ],
-  scrollBehavior(to, from, savedPoisition) {
-    return savedPoisition || { x: 0, y: 0 };
+  scrollBehavior(to, from, savedPosition) {
+    return savedPosition || { x: 0, y: 0 };
   },
 });
