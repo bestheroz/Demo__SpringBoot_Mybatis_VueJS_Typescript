@@ -66,7 +66,6 @@ import { Member } from '@/views/manage/member/common/types';
 import axios from 'axios';
 
 const SHA512 = require('crypto-js/sha512');
-let timerInterval;
 @Component({
   components: {},
 })
