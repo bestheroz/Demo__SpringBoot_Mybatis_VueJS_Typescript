@@ -11,9 +11,8 @@
           <span>Home</span>
         </v-tooltip>
       </v-btn>
-      <v-toolbar-title
-        >My Spring + Mybatis + Swggaer API + Vue + Vuetify
-        {{ $store.state.appVersions }}
+      <v-toolbar-title>
+        {{ `${envs.APP_NAME} ver.${envs.APP_VERSIONS}` }}
       </v-toolbar-title>
 
       <div class="flex-grow-1" />
@@ -34,9 +33,12 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
+import envs from '@/constants/envs';
 
 @Component({})
-export default class AppBar extends Vue {}
+export default class AppBar extends Vue {
+  readonly envs: typeof envs = envs;
+}
 </script>
 
 <style scoped></style>

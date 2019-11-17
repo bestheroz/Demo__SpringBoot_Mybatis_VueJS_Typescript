@@ -56,10 +56,11 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { ApiDataResult } from '@/utils/api';
+import { ApiDataResult } from '@/utils/apis';
 import _ from 'lodash';
 import { Member } from '@/views/manage/member/common/types';
 import axios from 'axios';
+import envs from '@/constants/envs';
 
 const SHA512 = require('crypto-js/sha512');
 @Component({
@@ -88,7 +89,7 @@ export default class Login extends Vue {
     }
 
     const response = await axios.post<ApiDataResult<Member>>(
-      `${this.$store.state.host}sample/auth/login`,
+      `${envs.HOST}sample/auth/login`,
       {
         memberId: this.memberId,
         memberPw: SHA512(this.memberPw).toString(),

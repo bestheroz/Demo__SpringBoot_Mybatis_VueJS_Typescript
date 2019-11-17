@@ -22,7 +22,7 @@
             ></v-text-field>
           </template>
           <v-date-picker
-            :locale="APP_LANGUAGE"
+            :locale="envs.LANGUAGE"
             :max="localEndDay"
             scrollable
             v-model="localStartDay"
@@ -31,7 +31,7 @@
             <v-btn
               @click="
                 () => {
-                  localStartDay = $moment.format('YYYY-MM-DD');
+                  localStartDay = $moment().format(envs.DATE_FORMAT_STRING);
                   $refs.startDialog.save(localStartDay);
                   updateStartDay();
                 }
@@ -90,7 +90,7 @@
             <v-btn
               @click="
                 () => {
-                  localEndDay = $moment.format('YYYY-MM-DD');
+                  localEndDay = $moment().format(envs.DATE_FORMAT_STRING);
                   $refs.endDialog.save(localEndDay);
                   updateEndDay();
                 }
@@ -122,9 +122,11 @@
 
 <script lang="ts">
 import { Component, Emit, Prop, Vue, Watch } from 'vue-property-decorator';
+import envs from '@/constants/envs';
 
 @Component
 export default class DateStartEndPicker extends Vue {
+  readonly envs: typeof envs = envs;
   @Prop({ type: [String, Number, Date], default: () => new Date() })
   readonly startDay!: string | number | Date;
   @Prop({
@@ -163,12 +165,14 @@ export default class DateStartEndPicker extends Vue {
 
   @Watch('startDay', { immediate: true })
   watchStartDayHandler(value: string | number | Date): void {
-    this.localStartDay = this.$moment(value).format('YYYY-MM-DD');
+    this.localStartDay = this.$moment(value).format(
+      this.envs.DATE_FORMAT_STRING,
+    );
   }
 
   @Watch(`endDay`, { immediate: true })
   watchEndDayHandler(value: string | number | Date): void {
-    this.localEndDay = this.$moment(value).format('YYYY-MM-DD');
+    this.localEndDay = this.$moment(value).format(this.envs.DATE_FORMAT_STRING);
   }
 
   @Emit('update:start-day')
@@ -176,9 +180,7 @@ export default class DateStartEndPicker extends Vue {
     if (this.localStartDay > this.localEndDay) {
       this.snackbarError();
     }
-    return this.$moment(
-      `${this.localStartDay}T00:00:00${this.$store.state.timezone}`,
-    ).toDate();
+    return this.$moment(`${this.localStartDay}`).toDate();
   }
 
   @Emit('update:end-day')
@@ -186,9 +188,7 @@ export default class DateStartEndPicker extends Vue {
     if (this.localEndDay < this.localStartDay) {
       this.snackbarError();
     }
-    return this.$moment(
-      `${this.localEndDay}T23:59:59.999999${this.$store.state.timezone}`,
-    ).toDate();
+    return this.$moment(`${this.localEndDay}T23:59:59.999999`).toDate();
   }
 
   get localStartDayLabel(): string {

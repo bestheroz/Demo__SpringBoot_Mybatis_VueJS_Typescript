@@ -22,7 +22,7 @@
             ></v-text-field>
           </template>
           <v-date-picker
-            :locale="APP_LANGUAGE"
+            :locale="envs.LANGUAGE"
             :max="localEndDay"
             scrollable
             v-model="localStartDay"
@@ -31,7 +31,7 @@
             <v-btn
               @click="
                 () => {
-                  localStartDay = $moment.format('YYYY-MM-DD');
+                  localStartDay = $moment().format(envs.DATE_FORMAT_STRING);
                   $refs.startDayDialog.save(localStartDay);
                   updateStartDt();
                 }
@@ -88,7 +88,7 @@
             <v-btn
               @click="
                 () => {
-                  localStartTime = $moment.format('HH:mm');
+                  localStartTime = $moment().format(envs.TIME_FORMAT_STRING);
                   $refs.startTimeDialog.save(localStartTime);
                   updateStartDt();
                 }
@@ -138,7 +138,7 @@
             ></v-text-field>
           </template>
           <v-date-picker
-            :locale="APP_LANGUAGE"
+            :locale="envs.LANGUAGE"
             :min="localStartDay"
             scrollable
             v-model="localEndDay"
@@ -147,7 +147,7 @@
             <v-btn
               @click="
                 () => {
-                  localEndDay = $moment.format('YYYY-MM-DD');
+                  localEndDay = $moment().format(envs.DATE_FORMAT_STRING);
                   $refs.endDayDialog.save(localEndDay);
                   updateEndDt();
                 }
@@ -204,7 +204,7 @@
             <v-btn
               @click="
                 () => {
-                  localEndTime = $moment.format('HH:mm');
+                  localEndTime = $moment().format(envs.TIME_FORMAT_STRING);
                   $refs.endTimeDialog.save(localEndTime);
                   updateEndDt();
                 }
@@ -236,9 +236,11 @@
 
 <script lang="ts">
 import { Component, Emit, Prop, Vue, Watch } from 'vue-property-decorator';
+import envs from '@/constants/envs';
 
 @Component
 export default class DatetimeStartEndPicker extends Vue {
+  readonly envs: typeof envs = envs;
   @Prop({ type: [String, Number, Date], default: () => new Date() })
   readonly startDt!: string | number | Date;
   @Prop({
@@ -289,14 +291,20 @@ export default class DatetimeStartEndPicker extends Vue {
 
   @Watch('startDt', { immediate: true })
   watchStartDtHandler(value: string | number | Date): void {
-    this.localStartDay = this.$moment(value).format('YYYY-MM-DD');
-    this.localStartTime = this.$moment(value).format('HH:mm');
+    this.localStartDay = this.$moment(value).format(
+      this.envs.DATE_FORMAT_STRING,
+    );
+    this.localStartTime = this.$moment(value).format(
+      this.envs.TIME_FORMAT_STRING,
+    );
   }
 
   @Watch('endDt', { immediate: true })
   watchEndDtHandler(value: string | number | Date): void {
-    this.localEndDay = this.$moment(value).format('YYYY-MM-DD');
-    this.localEndTime = this.$moment(value).format('HH:mm');
+    this.localEndDay = this.$moment(value).format(this.envs.DATE_FORMAT_STRING);
+    this.localEndTime = this.$moment(value).format(
+      this.envs.TIME_FORMAT_STRING,
+    );
   }
 
   @Emit('update:startDt')
@@ -308,7 +316,7 @@ export default class DatetimeStartEndPicker extends Vue {
       this.snackbarError();
     }
     return this.$moment(
-      `${this.localStartDay}T${this.localStartTime}:00${this.$store.state.timezone}`,
+      `${this.localStartDay}T${this.localStartTime}:00`,
     ).toDate();
   }
 
@@ -321,7 +329,7 @@ export default class DatetimeStartEndPicker extends Vue {
       this.snackbarError();
     }
     return this.$moment(
-      `${this.localEndDay}T${this.localEndTime}:59.999999${this.$store.state.timezone}`,
+      `${this.localEndDay}T${this.localEndTime}:59.999999`,
     ).toDate();
   }
 

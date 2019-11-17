@@ -1,19 +1,16 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import { postDataApi } from '@/utils/api';
+import { postDataApi } from '@/utils/apis';
 import _ from 'lodash';
 import router from '@/router';
 import axios from 'axios';
+import envs from '@/constants/envs';
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    appVersions: 'ver.191108',
     accessToken: null,
-    host: process.env.VUE_APP_BASE_API_URL || 'http://localhost:8080/',
-    language: process.env.VUE_APP_LANGUAGE,
-    timezone: process.env.VUE_APP_TIMEZONE,
     axiosInstance: axios.create({
       baseURL: process.env.VUE_APP_BASE_API_URL || 'http://localhost:8080/',
       headers: {
@@ -38,8 +35,8 @@ export default new Vuex.Store({
       await router.push('/');
     },
     async loginCheck(state): Promise<boolean> {
-      const response = await postDataApi(`${state.host}sample/auth/verify`, {});
-      return _.startsWith(response.code, `S`);
+      const response = await postDataApi(`${envs.HOST}sample/auth/verify`, {});
+      return _.startsWith(response.responseCode, `S`);
     },
   },
   actions: {},

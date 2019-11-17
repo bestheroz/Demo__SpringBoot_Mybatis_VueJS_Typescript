@@ -2,16 +2,18 @@ import Vue from 'vue';
 import VueI18n from 'vue-i18n';
 import en from 'vuetify/src/locale/en';
 import ko from 'vuetify/src/locale/ko';
+import i18nKo from '@/locales/i18n-ko';
+import i18nEn from '@/locales/i18n-en';
 
 Vue.use(VueI18n);
 
 const messages = {
   ko: {
-    ...require(`@/locales/en.json`),
+    ...i18nKo,
     $vuetify: ko,
   },
   en: {
-    ...require(`@/locales/en.json`),
+    ...i18nEn,
     $vuetify: en,
   },
 };

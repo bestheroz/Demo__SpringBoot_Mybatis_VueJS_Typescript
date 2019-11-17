@@ -20,12 +20,12 @@
             v-on="on"
           ></v-text-field>
         </template>
-        <v-date-picker :locale="APP_LANGUAGE" scrollable v-model="localDay">
+        <v-date-picker :locale="envs.LANGUAGE" scrollable v-model="localDay">
           <div class="flex-grow-1"></div>
           <v-btn
             @click="
               () => {
-                localDay = $moment.format('YYYY-MM-DD');
+                localDay = $moment().format(envs.DATE_FORMAT_STRING);
                 $refs.dayDialog.save(localDay);
                 update();
               }
@@ -56,6 +56,7 @@
 
 <script lang="ts">
 import { Component, Emit, Prop, Vue, Watch } from 'vue-property-decorator';
+import envs from '@/constants/envs';
 
 @Component
 export default class DatePicker extends Vue {
@@ -84,15 +85,13 @@ export default class DatePicker extends Vue {
 
   @Watch('date', { immediate: true })
   watchStartDtHandler(value: string | number | Date): void {
-    this.localDay = this.$moment(value).format(`YYYY-MM-DD`);
+    this.localDay = this.$moment(value).format(envs.DATE_FORMAT_STRING);
   }
 
   @Emit('update:date')
   update(): Date {
     this.localDayDialog = false;
-    return this.$moment(
-      `${this.localDay}T00:00:00${this.$store.state.timezone}`,
-    );
+    return this.$moment(`${this.localDay}`);
   }
 
   get localDayLabel(): string {

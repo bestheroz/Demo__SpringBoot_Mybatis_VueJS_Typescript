@@ -124,15 +124,22 @@
               <v-card-actions>
                 <div class="flex-grow-1" />
                 <v-btn @click="closeModal" color="success" text>
-                  Cancel
+                  {{ $t('$vuetify.close') }}
                 </v-btn>
                 <v-btn @click="save" color="success" text>
-                  Save
+                  {{ $t('save') }}
                 </v-btn>
               </v-card-actions>
             </v-card>
           </v-dialog>
         </v-toolbar>
+      </template>
+      <template v-slot:item.memberType="{ item }">
+        {{
+          MEMBER_TYPE.filter(value => {
+            return item.memberType === value.code;
+          })[0].codeName
+        }}
       </template>
       <template v-slot:item.action="{ item }">
         <v-icon @click="editItem(item)" class="mr-2" small>
@@ -146,12 +153,7 @@
         <v-checkbox :readonly="true" v-model="item.closeTf"></v-checkbox>
       </template>
       <template v-slot:item.expired="{ item }">
-        {{ $moment(item.expired).format('YYYY-MM-DD HH:mm:ss') }}
-      </template>
-      <template v-slot:no-data>
-        <v-btn @click="getList" color="primary">
-          Reset
-        </v-btn>
+        {{ $moment(item.expired).format(envs.DATE_TIME_FORMAT_STRING) }}
       </template>
     </v-data-table>
   </div>
@@ -166,15 +168,17 @@ import {
   getOnlyListDataApi,
   patchDataApi,
   postDataApi,
-} from '@/utils/api';
+} from '@/utils/apis';
 import { DataTableHeader, SelectItem } from '@/common/types';
 import DatetimePicker from '@/components/picker/DatetimePicker.vue';
 import _ from 'lodash';
+import envs from '@/constants/envs';
 
 @Component({
   components: { DatetimePicker },
 })
 export default class ManageMember extends Vue {
+  readonly envs: typeof envs = envs;
   readonly $moment: any;
   readonly $toasted: any;
   MEMBER_TYPE?: SelectItem[] = [];
@@ -214,7 +218,7 @@ export default class ManageMember extends Vue {
 
   async getList() {
     const response = await getOnlyListDataApi<Member[]>(`sample/admin/member/`);
-    this.members = response.data || [];
+    this.members = response.responseData || [];
   }
 
   async getMemberType() {
@@ -251,7 +255,7 @@ export default class ManageMember extends Vue {
       member.memberId!,
       this,
     );
-    if (_.startsWith(response.code, `S`)) {
+    if (_.startsWith(response.responseCode, `S`)) {
       this.getList();
       this.closeModal();
     }
@@ -280,7 +284,7 @@ export default class ManageMember extends Vue {
       this.member,
       this,
     );
-    if (_.startsWith(response.code, `S`)) {
+    if (_.startsWith(response.responseCode, `S`)) {
       this.getList();
       this.closeModal();
     }
@@ -293,7 +297,7 @@ export default class ManageMember extends Vue {
       this.member.memberId!,
       this,
     );
-    if (_.startsWith(response.code, `S`)) {
+    if (_.startsWith(response.responseCode, `S`)) {
       this.getList();
       this.closeModal();
     }
