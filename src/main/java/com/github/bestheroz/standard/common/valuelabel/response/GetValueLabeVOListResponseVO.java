@@ -1,15 +1,11 @@
 package com.github.bestheroz.standard.common.valuelabel.response;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
 
 import java.io.Serializable;
 
-@Getter
-@Setter
-@ToString
+@Data
 public class GetValueLabeVOListResponseVO implements Serializable {
     private static final long serialVersionUID = -3371549792545400090L;
     @ApiModelProperty(value = "코드 명")

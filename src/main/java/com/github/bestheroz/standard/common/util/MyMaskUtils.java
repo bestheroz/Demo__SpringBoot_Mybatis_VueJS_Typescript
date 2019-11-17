@@ -1,12 +1,11 @@
 package com.github.bestheroz.standard.common.util;
 
+import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 
+@UtilityClass
 public class MyMaskUtils {
-    protected MyMaskUtils() {
-        throw new UnsupportedOperationException();
-    }
 
     public static String getEmail(final String email) {
         if (StringUtils.isEmpty(email)) {

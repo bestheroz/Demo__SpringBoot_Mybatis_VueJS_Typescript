@@ -1,16 +1,12 @@
 package com.github.bestheroz.sample.api.admin.member.request;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
 import org.joda.time.LocalDateTime;
 
 import javax.validation.constraints.NotEmpty;
 
-@Getter
-@Setter
-@ToString
+@Data
 public class UpdateSampleMemberMstRequestVO {
     @NotEmpty
     @ApiModelProperty(value = "회원 비밀번호", required = true)

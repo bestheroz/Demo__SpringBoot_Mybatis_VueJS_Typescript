@@ -1,15 +1,11 @@
 package com.github.bestheroz.sample.api.tablevo.samplemembermst;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
 import org.joda.time.LocalDateTime;
 
 import java.io.Serializable;
 
-@Getter
-@Setter
-@ToString
+@Data
 public class TableSampleMemberMstVO implements Serializable {
     private static final long serialVersionUID = 7280716056600887400L;
     private String memberId;

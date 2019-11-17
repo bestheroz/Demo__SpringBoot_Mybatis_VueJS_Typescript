@@ -1,13 +1,9 @@
 package com.github.bestheroz.sample.api.admin.codemst.response;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
 
-@Getter
-@Setter
-@ToString
+@Data
 public class GetSampleCodeMstVOListResponseVO {
     @ApiModelProperty(value = "그룹 코드")
     private String groupCode;

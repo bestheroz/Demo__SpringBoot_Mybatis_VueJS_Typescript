@@ -1,15 +1,11 @@
 package com.github.bestheroz.sample.api.tablevo.samplecodedet;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
 import org.joda.time.LocalDateTime;
 
 import java.io.Serializable;
 
-@Getter
-@Setter
-@ToString
+@Data
 public class TableSampleCodeDetVO implements Serializable {
     private static final long serialVersionUID = -6076508411557466173L;
     private String groupCode;

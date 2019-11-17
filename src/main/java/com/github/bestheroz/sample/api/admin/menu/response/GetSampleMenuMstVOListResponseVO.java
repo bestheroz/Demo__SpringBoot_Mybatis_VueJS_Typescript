@@ -1,15 +1,11 @@
 package com.github.bestheroz.sample.api.admin.menu.response;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
 
 import java.io.Serializable;
 
-@Getter
-@Setter
-@ToString
+@Data
 public class GetSampleMenuMstVOListResponseVO implements Serializable {
     private static final long serialVersionUID = -3103351411677040021L;
     @ApiModelProperty(value = "메뉴 아이디")

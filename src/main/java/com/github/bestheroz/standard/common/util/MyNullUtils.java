@@ -3,6 +3,7 @@ package com.github.bestheroz.standard.common.util;
 import com.github.bestheroz.standard.common.exception.CommonException;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,10 +15,8 @@ import java.util.Map;
 import java.util.Set;
 
 @Slf4j
+@UtilityClass
 public class MyNullUtils {
-    protected MyNullUtils() {
-        throw new UnsupportedOperationException();
-    }
 
     // int 도 함께 커버됨
     public static boolean equals(final Integer n1, final Integer n2) throws CommonException {

@@ -3,13 +3,11 @@ package com.github.bestheroz.standard.common.util;
 import com.github.bestheroz.standard.common.exception.CommonException;
 import com.github.bestheroz.standard.common.exception.CommonExceptionCode;
 import com.github.bestheroz.standard.common.protocol.CommonResponseVO;
+import lombok.experimental.UtilityClass;
 
+@UtilityClass
 public class MyResponseUtils {
     public static final CommonResponseVO SUCCESS_NORMAL = getCommonResponseVO(CommonExceptionCode.SUCCESS_NORMAL, null, null);
-
-    protected MyResponseUtils() {
-        throw new UnsupportedOperationException();
-    }
 
     public static CommonResponseVO getCommonResponseVO(final CommonExceptionCode commonExceptionCode, final Object responseData, final String additionalMessage) throws CommonException {
         final CommonResponseVO commonResponseVO = new CommonResponseVO();

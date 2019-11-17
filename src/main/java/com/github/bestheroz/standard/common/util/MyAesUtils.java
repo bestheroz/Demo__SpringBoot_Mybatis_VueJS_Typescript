@@ -2,6 +2,7 @@ package com.github.bestheroz.standard.common.util;
 
 import com.github.bestheroz.standard.common.exception.CommonException;
 import com.github.bestheroz.standard.common.exception.CommonExceptionCode;
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -20,16 +21,13 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 @Slf4j
+@UtilityClass
 public class MyAesUtils {
     private static final String ALGORITHM = "AES";
     private static final String TRANSFORMATION = "AES/CBC/PKCS5Padding";
     private static final String DEFAULT_SECRET_KEY = "MY";
     private static final String DEFAULT_IV = "MY";
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
-
-    protected MyAesUtils() {
-        throw new UnsupportedOperationException();
-    }
 
     public static String encrypt128(final String text) throws CommonException {
         return encrypt128(text, DEFAULT_SECRET_KEY, DEFAULT_IV);

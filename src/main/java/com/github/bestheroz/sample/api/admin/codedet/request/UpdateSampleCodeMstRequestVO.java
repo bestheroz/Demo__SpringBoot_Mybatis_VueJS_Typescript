@@ -1,15 +1,11 @@
 package com.github.bestheroz.sample.api.admin.codedet.request;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
 
-@Getter
-@Setter
-@ToString
+@Data
 public class UpdateSampleCodeMstRequestVO {
     @NotEmpty
     @ApiModelProperty(value = "그룹 코드", required = true)

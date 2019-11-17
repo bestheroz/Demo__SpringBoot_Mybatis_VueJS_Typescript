@@ -2,16 +2,12 @@ package com.github.bestheroz.standard.common.protocol;
 
 import com.google.gson.JsonElement;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 
-@Getter
-@Setter
-@ToString
+@Data
 public class CommonResponseVO implements Serializable {
     private transient static final long serialVersionUID = 646012808993720354L;
     @ApiModelProperty(value = "responseCode", position = 1, example = "S000", required = true)

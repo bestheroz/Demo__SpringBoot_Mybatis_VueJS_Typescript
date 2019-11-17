@@ -1,5 +1,6 @@
 package com.github.bestheroz.standard.common.util;
 
+import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -8,10 +9,8 @@ import org.joda.time.format.DateTimeFormat;
 
 import java.util.*;
 
+@UtilityClass
 public class MyDateUtils {
-    protected MyDateUtils() {
-        throw new UnsupportedOperationException();
-    }
 
     public static final DateTimeZone TIME_ZONE_ASIA_SEOUL = DateTimeZone.forID("Asia/Seoul");
     public static final Locale LOCALE_KOREAN = Locale.KOREAN;
@@ -154,12 +153,12 @@ public class MyDateUtils {
         return res;
     }
 
-    public static LocalDateTime getLocalDateTimeIgnoreException(String arg0) {
+    public static LocalDateTime getLocalDateTimeIgnoreException(final String arg0) {
         final DateTime dateTimeIgnoreException = getDateTimeIgnoreException(arg0);
         return dateTimeIgnoreException == null ? null : dateTimeIgnoreException.toLocalDateTime();
     }
 
-    public static DateTime getDateTimeIgnoreException(String arg0) {
+    public static DateTime getDateTimeIgnoreException(final String arg0) {
         if (StringUtils.isNotEmpty(arg0)) {
             try {
                 // 1. long값(timestamp)

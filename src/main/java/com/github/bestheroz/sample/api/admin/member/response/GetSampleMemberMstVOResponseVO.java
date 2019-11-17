@@ -1,14 +1,10 @@
 package com.github.bestheroz.sample.api.admin.member.response;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
 import org.joda.time.LocalDateTime;
 
-@Getter
-@Setter
-@ToString
+@Data
 public class GetSampleMemberMstVOResponseVO {
     @ApiModelProperty(value = "회원 아이디")
     private String memberId;
