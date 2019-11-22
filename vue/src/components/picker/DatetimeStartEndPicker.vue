@@ -243,6 +243,7 @@ export default class DatetimeStartEndPicker extends Vue {
   readonly envs: typeof envs = envs;
   @Prop({ type: [String, Number, Date], default: () => new Date() })
   readonly startDt!: string | number | Date;
+
   @Prop({
     type: [String, Number, Date],
     default: () =>
@@ -253,22 +254,31 @@ export default class DatetimeStartEndPicker extends Vue {
       ),
   })
   readonly endDt!: string | number | Date;
+
   @Prop({ type: String, default: undefined })
   readonly startDayLabel!: string;
+
   @Prop({ type: String, default: undefined })
   readonly startDayHint!: string;
+
   @Prop({ type: String, default: undefined })
   readonly endDayLabel!: string;
+
   @Prop({ type: String, default: undefined })
   readonly endDayHint!: string;
+
   @Prop({ type: String, default: undefined })
   readonly startTimeLabel!: string;
+
   @Prop({ type: String, default: undefined })
   readonly startTimeHint!: string;
+
   @Prop({ type: String, default: undefined })
   readonly endTimeLabel!: string;
+
   @Prop({ type: String, default: undefined })
   readonly endTimeHint!: string;
+
   @Prop({ type: Boolean, default: false })
   readonly disabled!: boolean;
 

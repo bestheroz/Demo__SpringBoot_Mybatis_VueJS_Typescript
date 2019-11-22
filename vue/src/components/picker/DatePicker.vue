@@ -62,14 +62,19 @@ import envs from '@/constants/envs';
 export default class DatePicker extends Vue {
   @Prop({ type: [String, Number, Date], default: () => new Date() })
   readonly date!: string | number | Date;
+
   @Prop({ type: String, default: undefined })
   readonly dayLabel!: string;
+
   @Prop({ type: String, default: undefined })
   readonly dayHint!: string;
+
   @Prop({ type: String, default: undefined })
   readonly timeLabel!: string;
+
   @Prop({ type: String, default: undefined })
   readonly timeHint!: string;
+
   @Prop({ type: Boolean, default: false })
   readonly disabled!: boolean;
 

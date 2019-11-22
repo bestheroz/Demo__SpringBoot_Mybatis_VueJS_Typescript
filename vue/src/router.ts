@@ -18,6 +18,11 @@ export default new Router({
       component: () => import('@/views/login/Login.vue'),
     },
     {
+      path: `/todos`,
+      name: `TodoList`,
+      component: () => import(`@/views/todos/TodoList.vue`),
+    },
+    {
       path: `/manage/member`,
       name: `ManageMember`,
       component: () => import(`@/views/manage/member/ManageMember.vue`),

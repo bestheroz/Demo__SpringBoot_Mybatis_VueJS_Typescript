@@ -125,14 +125,19 @@ import envs from '@/constants/envs';
 export default class DatetimePicker extends Vue {
   @PropSync('date', { type: [String, Number, Date] })
   readonly syncedDate!: string | number | Date;
+
   @Prop({ type: String, default: undefined })
   readonly dayLabel!: string;
+
   @Prop({ type: String, default: undefined })
   readonly dayHint!: string;
+
   @Prop({ type: String, default: undefined })
   readonly timeLabel!: string;
+
   @Prop({ type: String, default: undefined })
   readonly timeHint!: string;
+
   @Prop({ type: Boolean, default: false })
   readonly disabled!: boolean;
 

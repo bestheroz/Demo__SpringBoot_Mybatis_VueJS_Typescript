@@ -8,6 +8,12 @@
           </v-list-item-icon>
           <v-list-item-title>My Files</v-list-item-title>
         </v-list-item>
+        <v-list-item link to="/todos">
+          <v-list-item-icon>
+            <v-icon>mdi-check</v-icon>
+          </v-list-item-icon>
+          <v-list-item-title>Todo-list</v-list-item-title>
+        </v-list-item>
         <v-list-item link to="/manage/member">
           <v-list-item-icon>
             <v-icon>mdi-account-multiple</v-icon>

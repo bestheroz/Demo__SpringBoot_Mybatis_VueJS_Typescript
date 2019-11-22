@@ -129,6 +129,7 @@ export default class DateStartEndPicker extends Vue {
   readonly envs: typeof envs = envs;
   @Prop({ type: [String, Number, Date], default: () => new Date() })
   readonly startDay!: string | number | Date;
+
   @Prop({
     type: [String, Number, Date],
     default: () =>
@@ -139,14 +140,19 @@ export default class DateStartEndPicker extends Vue {
       ),
   })
   readonly endDay!: string | number | Date;
+
   @Prop({ type: String, default: undefined })
   readonly startDayLabel!: string;
+
   @Prop({ type: String, default: undefined })
   readonly startDayHint!: string;
+
   @Prop({ type: String, default: undefined })
   readonly endDayLabel!: string;
+
   @Prop({ type: Boolean, default: false })
   readonly endDayHint!: string;
+
   @Prop({ type: Boolean, default: false })
   readonly disabled!: boolean;
 

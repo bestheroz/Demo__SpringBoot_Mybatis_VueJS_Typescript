@@ -192,6 +192,7 @@ export default class ManageMember extends Vue {
       .endOf(`day`)
       .toDate(),
   };
+
   memberPwCheck: string = ``;
 
   created() {

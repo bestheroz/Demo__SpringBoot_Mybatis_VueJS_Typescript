@@ -25,13 +25,13 @@ export default new Vuex.Store({
       state.accessToken = accessToken;
       // 토큰을 로컬 스토리지에 저장
       localStorage.accessToken = accessToken;
-      state.axiosInstance.defaults.headers['Authorization'] = accessToken;
+      state.axiosInstance.defaults.headers.Authorization = accessToken;
     },
     async logout(state) {
       state.accessToken = null;
       // 토큰을 로컬 스토리지에서 제거
       delete localStorage.accessToken;
-      delete state.axiosInstance.defaults.headers['Authorization'];
+      delete state.axiosInstance.defaults.headers.Authorization;
       await router.push('/');
     },
     async loginCheck(state): Promise<boolean> {

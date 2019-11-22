@@ -5,7 +5,7 @@ import * as rules from 'vee-validate/dist/rules';
 import ko from 'vee-validate/dist/locale/ko';
 
 // loop over all rules
-for (let rule in rules) {
+for (const rule in rules) {
   extend(rule, {
     // @ts-ignore
     ...rules[rule], // add the rule
