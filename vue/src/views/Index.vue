@@ -12,7 +12,7 @@ export default class Index extends Vue {
       await this.$store.commit('loginCheck');
     }
     if (this.$store.state.accessToken || localStorage.accessToken) {
-      await this.$router.push('/manage/member');
+      await this.$router.push('/todos');
     } else {
       await this.$router.push('/login');
     }
