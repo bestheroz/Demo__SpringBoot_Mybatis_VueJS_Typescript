@@ -5,15 +5,13 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.2.1.RELEASE</version>
+        <version>2.2.4.RELEASE</version>
         <relativePath/>
     </parent>
     <groupId>com.github.bestheroz</groupId>
     <artifactId>myapp</artifactId>
     <version>1</version>
-    <name>myapp</name>
     <packaging>jar</packaging>
-    <description>My_Spring_Boot_MyBatis_Swagger_API_Vue_Typescript_Project</description>
 
     <properties>
         <m2eclipse.wtp.contextRoot>/</m2eclipse.wtp.contextRoot>
