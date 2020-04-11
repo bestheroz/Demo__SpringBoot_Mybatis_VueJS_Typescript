@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.2.4.RELEASE</version>
+        <version>2.2.6.RELEASE</version>
         <relativePath/>
     </parent>
     <groupId>com.github.bestheroz</groupId>
@@ -15,24 +15,30 @@
 
     <properties>
         <m2eclipse.wtp.contextRoot>/</m2eclipse.wtp.contextRoot>
+        <maven.test.skip>true</maven.test.skip>
         <java-version>1.8</java-version>
+        <lombok-version>1.18.10</lombok-version>
         <gson-version>2.8.6</gson-version>
         <joda-time-version>2.10.5</joda-time-version>
-        <io.springfox-version>2.9.2</io.springfox-version>
-        <java-jwt-version>3.8.3</java-jwt-version>
+        <java-jwt-version>3.10.2</java-jwt-version>
         <jdbcdslogexp2-version>2.1</jdbcdslogexp2-version>
         <ddal-sqlparser-version>3.0.3</ddal-sqlparser-version>
-        <mybatis-spring-boot-starter-version>2.1.1</mybatis-spring-boot-starter-version>
+        <guava-version>28.2-jre</guava-version>
+        <mybatis-spring-boot-starter-version>2.1.2</mybatis-spring-boot-starter-version>
         <lucy-version>1.6.3</lucy-version>
-        <commons-codec-version>1.13</commons-codec-version>
+        <commons-codec-version>1.14</commons-codec-version>
         <commons-io-version>2.6</commons-io-version>
-        <lombok-version>1.18.10</lombok-version>
+        <tika-version>1.24</tika-version>
+        <poi-version>4.1.2</poi-version>
+        <h2-version>1.4.200</h2-version>
+        <sentry-version>1.7.30</sentry-version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+            <!-- Exclude the default Jackson dependency -->
             <exclusions>
                 <exclusion>
                     <groupId>org.springframework.boot</groupId>
@@ -46,17 +52,29 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-tomcat</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+        </dependency>
+
+        <!-- lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok-version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- gson -->
@@ -70,18 +88,6 @@
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
             <version>${joda-time-version}</version>
-        </dependency>
-
-        <!-- swagger-ui -->
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger2</artifactId>
-            <version>${io.springfox-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger-ui</artifactId>
-            <version>${io.springfox-version}</version>
         </dependency>
 
         <!-- Token -->
@@ -102,6 +108,12 @@
             <groupId>studio.raptor</groupId>
             <artifactId>ddal-sqlparser</artifactId>
             <version>${ddal-sqlparser-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava-version}</version>
         </dependency>
 
         <dependency>
@@ -130,31 +142,48 @@
             <version>${commons-codec-version}</version>
         </dependency>
 
+        <!-- 파일 검증(확장자, MimeType) -->
+        <dependency>
+            <groupId>org.apache.tika</groupId>
+            <artifactId>tika-core</artifactId>
+            <version>${tika-version}</version>
+        </dependency>
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>${commons-io-version}</version>
         </dependency>
 
+        <!-- Create Excel -->
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>${lombok-version}</version>
-            <scope>provided</scope>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>${poi-version}</version>
         </dependency>
-
-
-        <!-- 여기까지 표준프레임워크에서 정의한 library -->
-        <!-- 여기까지 표준프레임워크에서 정의한 library -->
-        <!-- 여기까지 표준프레임워크에서 정의한 library -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>${poi-version}</version>
+        </dependency>
 
         <!-- 임시 DB h2 -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <version>1.4.200</version>
+            <version>${h2-version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>io.sentry</groupId>
+            <artifactId>sentry-spring</artifactId>
+            <version>${sentry-version}</version>
+        </dependency>
+
+        <!-- 여기까지 표준프레임워크에서 정의한 library -->
+        <!-- 여기까지 표준프레임워크에서 정의한 library -->
+        <!-- 여기까지 표준프레임워크에서 정의한 library -->
+
+        <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
     </dependencies>
 
     <build>
