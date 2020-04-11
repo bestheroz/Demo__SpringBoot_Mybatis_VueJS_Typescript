@@ -1,172 +1,147 @@
 <template>
-  <v-row>
-    <v-col>
-      <v-dialog
-        :disabled="disabled"
-        :return-value.sync="localDay"
-        persistent
-        ref="dayDialog"
-        v-model="localDayDialog"
-        width="290px"
-      >
-        <template v-slot:activator="{ on }">
-          <v-text-field
-            :hint="dayHint"
-            :label="localDayLabel"
-            :persistent-hint="dayHint !== undefined"
-            prepend-icon="event"
-            readonly
-            v-model="localDay"
-            v-on="on"
-          ></v-text-field>
-        </template>
-        <v-date-picker :locale="envs.LANGUAGE" scrollable v-model="localDay">
-          <div class="flex-grow-1"></div>
-          <v-btn
-            @click="
-              () => {
-                localDay = $moment().format(envs.DATE_FORMAT_STRING);
-                $refs.dayDialog.save(localDay);
-                update();
-              }
-            "
-            color="success"
-            text
-            >{{ $t('today') }}
-          </v-btn>
-          <v-btn @click="localDayDialog = false" color="success" text
-            >{{ $t('cancel') }}
-          </v-btn>
-          <v-btn
-            @click="
-              () => {
-                $refs.dayDialog.save(localDay);
-                update();
-              }
-            "
-            color="success"
-            text
-            >{{ $t('ok') }}
-          </v-btn>
-        </v-date-picker>
-      </v-dialog>
-    </v-col>
-    <v-col>
-      <v-dialog
-        :disabled="disabled"
-        :return-value.sync="localTime"
-        persistent
-        ref="timeDialog"
-        v-model="localTimeDialog"
-        width="290px"
-      >
-        <template v-slot:activator="{ on }">
-          <v-text-field
-            :hint="timeHint"
-            :label="localTimeLabel"
-            :persistent-hint="timeHint !== undefined"
-            prepend-icon="access_time"
-            readonly
-            v-model="localTime"
-            v-on="on"
-          ></v-text-field>
-        </template>
-        <v-time-picker
-          format="24hr"
-          full-width
-          v-if="localTimeDialog"
-          v-model="localTime"
+  <div>
+    <v-row>
+      <v-col>
+        <v-dialog
+          ref="refDayDialog"
+          v-model="dayDialog"
+          :return-value.sync="day"
+          persistent
+          :width="460"
+          @keydown.esc="dayDialog = false"
+          @keydown.enter="$refs.refDayDialog.save(day)"
         >
-          <div class="flex-grow-1"></div>
-          <v-btn
-            @click="
-              () => {
-                localTime = $moment().format(envs.TIME_FORMAT_STRING);
-                $refs.timeDialog.save(localTime);
-                update();
-              }
-            "
-            color="success"
-            text
-            >{{ $t('now') }}
-          </v-btn>
-          <v-btn @click="localTimeDialog = false" color="success" text
-            >{{ $t('cancel') }}
-          </v-btn>
-          <v-btn
-            @click="
-              () => {
-                $refs.timeDialog.save(localTime);
-                update();
-              }
-            "
-            color="success"
-            text
-            >{{ $t('ok') }}
-          </v-btn>
-        </v-time-picker>
-      </v-dialog>
-    </v-col>
-  </v-row>
+          <template v-slot:activator="{ on }">
+            <v-text-field
+              v-model="day"
+              :label="localDayLabel"
+              :messages="dayHint"
+              prepend-icon="mdi-calendar"
+              readonly
+              :disabled="disabled"
+              :dense="dense"
+              :hide-details="dense"
+              v-on="on"
+              :error-messages="errorMessages"
+            />
+          </template>
+          <v-date-picker
+            v-model="day"
+            :locale="envs.LOCALE"
+            landscape
+            reactive
+            scrollable
+          >
+            <v-btn text color="primary" @click="dayDialog = false">
+              취소
+            </v-btn>
+            <div class="flex-grow-1"></div>
+            <v-btn
+              text
+              color="primary"
+              @click="day = dayjs().format('YYYY-MM-DD')"
+            >
+              오늘
+            </v-btn>
+            <v-btn text color="primary" @click="$refs.refDayDialog.save(day)">
+              확인
+            </v-btn>
+          </v-date-picker>
+        </v-dialog>
+      </v-col>
+      <v-col>
+        <v-dialog
+          ref="refTimeDialog"
+          v-model="timeDialog"
+          :return-value.sync="time"
+          persistent
+          :width="460"
+          @keydown.esc="timeDialog = false"
+          @keydown.enter="$refs.refTimeDialog.save(time)"
+        >
+          <template v-slot:activator="{ on }">
+            <v-text-field
+              v-model="time"
+              :label="localTimeLabel"
+              :messages="timeHint"
+              prepend-icon="mdi-clock-outline"
+              readonly
+              :disabled="disabled"
+              :dense="dense"
+              :hide-details="dense"
+              v-on="on"
+            />
+          </template>
+          <v-time-picker v-model="time" format="24hr" landscape>
+            <v-btn text color="primary" @click="timeDialog = false">
+              취소
+            </v-btn>
+            <div class="flex-grow-1"></div>
+            <v-btn
+              text
+              color="primary"
+              @click="$emit('update:date', new Date())"
+            >
+              지금
+            </v-btn>
+            <v-btn text color="primary" @click="$refs.refTimeDialog.save(time)">
+              확인
+            </v-btn>
+          </v-time-picker>
+        </v-dialog>
+      </v-col>
+    </v-row>
+  </div>
 </template>
 
 <script lang="ts">
-import {
-  Component,
-  Emit,
-  Prop,
-  PropSync,
-  Vue,
-  Watch,
-} from 'vue-property-decorator';
+import { Component, Emit, Prop, Vue, Watch } from 'vue-property-decorator';
 import envs from '@/constants/envs';
+import dayjs from 'dayjs';
 
-@Component
-export default class DatetimePicker extends Vue {
-  @PropSync('date', { type: [String, Number, Date] })
-  readonly syncedDate!: string | number | Date;
+@Component({ name: 'DatetimePicker' })
+export default class extends Vue {
+  @Prop({ required: true }) readonly date!: string | number | Date | null;
+  @Prop({ type: String }) readonly dayLabel!: string | null;
+  @Prop({ type: String }) readonly dayHint!: string | null;
+  @Prop({ type: String }) readonly timeLabel!: string | null;
+  @Prop({ type: String }) readonly timeHint!: string | null;
+  @Prop({ type: Boolean, default: false }) readonly disabled!: boolean;
+  @Prop({ type: Boolean, default: false }) readonly dense!: boolean;
+  @Prop({ required: false }) readonly errorMessages?: string[];
 
-  @Prop({ type: String, default: undefined })
-  readonly dayLabel!: string;
-
-  @Prop({ type: String, default: undefined })
-  readonly dayHint!: string;
-
-  @Prop({ type: String, default: undefined })
-  readonly timeLabel!: string;
-
-  @Prop({ type: String, default: undefined })
-  readonly timeHint!: string;
-
-  @Prop({ type: Boolean, default: false })
-  readonly disabled!: boolean;
-
+  readonly dayjs: typeof dayjs = dayjs;
   readonly envs: typeof envs = envs;
-  readonly $moment: any;
-  localDay: string = '';
-  localDayDialog: boolean = false;
-  localTime: string = '';
-  localTimeDialog: boolean = false;
-
-  @Watch('syncedDate', { immediate: true })
-  watchSyncedDateHandler(value: string | number | Date): void {
-    this.localDay = this.$moment(value).format(envs.DATE_FORMAT_STRING);
-    this.localTime = this.$moment(value).format(envs.TIME_FORMAT_STRING);
-  }
-
-  @Emit('update:date')
-  update(): Date {
-    return this.$moment(`${this.localDay}T${this.localTime}:00`).toDate();
-  }
+  day: string | null = null;
+  dayDialog: boolean = false;
+  time: string | null = null;
+  timeDialog: boolean = false;
 
   get localDayLabel(): string {
-    return this.dayLabel || this.$t('dayPicker').toString();
+    return this.dayLabel || '날짜선택';
   }
 
   get localTimeLabel(): string {
-    return this.timeLabel || this.$t('timePicker').toString();
+    return this.timeLabel || '시간선택';
+  }
+
+  @Watch('date', { immediate: true })
+  watchStartDtHandler(val: string | number | Date): void {
+    if (!val || isNaN(new Date(val).getTime())) {
+      this.$emit('update:day', new Date());
+      return;
+    }
+    this.day = dayjs(val).format(`YYYY-MM-DD`);
+    this.time = dayjs(val).format(`HH:mm`);
+  }
+
+  @Watch('day')
+  @Watch('time')
+  @Emit('update:date')
+  updateDt(): Date {
+    return dayjs(
+      `${this.day}T${this.time}:00${envs.TIMEZONE_OFFSET_STRING}`,
+    ).toDate();
   }
 }
 </script>
-
-<style scoped></style>

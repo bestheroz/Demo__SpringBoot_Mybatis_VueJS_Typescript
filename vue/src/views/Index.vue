@@ -19,5 +19,3 @@ export default class Index extends Vue {
   }
 }
 </script>
-
-<style scoped></style>

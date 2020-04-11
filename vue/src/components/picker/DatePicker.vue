@@ -1,108 +1,95 @@
 <template>
-  <v-row>
-    <v-col>
-      <v-dialog
-        :disabled="disabled"
-        :return-value.sync="localDay"
-        persistent
-        ref="dayDialog"
-        v-model="localDayDialog"
-        width="290px"
-      >
-        <template v-slot:activator="{ on }">
-          <v-text-field
-            :hint="dayHint"
-            :label="localDayLabel"
-            :persistent-hint="dayHint !== undefined"
-            prepend-icon="event"
-            readonly
-            v-model="localDay"
-            v-on="on"
-          ></v-text-field>
-        </template>
-        <v-date-picker :locale="envs.LANGUAGE" scrollable v-model="localDay">
-          <div class="flex-grow-1"></div>
-          <v-btn
-            @click="
-              () => {
-                localDay = $moment().format(envs.DATE_FORMAT_STRING);
-                $refs.dayDialog.save(localDay);
-                update();
-              }
-            "
-            color="primary"
-            text
-            >{{ $t('today') }}
-          </v-btn>
-          <v-btn @click="localDayDialog = false" color="primary" text
-            >{{ $t('cancel') }}
-          </v-btn>
-          <v-btn
-            @click="
-              () => {
-                $refs.dayDialog.save(localDay);
-                update();
-              }
-            "
-            color="primary"
-            text
-            >{{ $t('ok') }}
-          </v-btn>
-        </v-date-picker>
-      </v-dialog>
-    </v-col>
-  </v-row>
+  <div>
+    <v-row>
+      <v-col>
+        <v-dialog
+          ref="refDayDialog"
+          v-model="dayDialog"
+          :return-value.sync="day"
+          persistent
+          :width="460"
+          @keydown.esc="dayDialog = false"
+          @keydown.enter="$refs.refDayDialog.save(day)"
+        >
+          <template v-slot:activator="{ on }">
+            <v-text-field
+              v-model="day"
+              :label="localDayLabel"
+              :messages="dayHint"
+              prepend-icon="mdi-calendar"
+              readonly
+              :disabled="disabled"
+              :dense="dense"
+              :hide-details="dense"
+              v-on="on"
+            />
+          </template>
+          <v-date-picker
+            v-model="day"
+            :locale="envs.LOCALE"
+            landscape
+            reactive
+            scrollable
+          >
+            <v-btn text color="primary" @click="dayDialog = false">
+              취소
+            </v-btn>
+            <div class="flex-grow-1"></div>
+            <v-btn
+              text
+              color="primary"
+              @click="$emit('update:date', dayjs().startOf('day').toDate())"
+            >
+              오늘
+            </v-btn>
+            <v-btn text color="primary" @click="$refs.refDayDialog.save(day)">
+              확인
+            </v-btn>
+          </v-date-picker>
+        </v-dialog>
+      </v-col>
+    </v-row>
+  </div>
 </template>
 
 <script lang="ts">
 import { Component, Emit, Prop, Vue, Watch } from 'vue-property-decorator';
 import envs from '@/constants/envs';
+import dayjs from 'dayjs';
 
-@Component
-export default class DatePicker extends Vue {
-  @Prop({ type: [String, Number, Date], default: () => new Date() })
-  readonly date!: string | number | Date;
+@Component({ name: 'DatePicker' })
+export default class extends Vue {
+  @Prop({ required: true }) readonly date!: string | number | Date | null;
+  @Prop({ type: String }) readonly dayLabel!: string | null;
+  @Prop({ type: String }) readonly dayHint!: string | null;
+  @Prop({ type: String }) readonly timeLabel!: string | null;
+  @Prop({ type: String }) readonly timeHint!: string | null;
+  @Prop({ type: Boolean, default: false }) readonly disabled!: boolean;
+  @Prop({ type: Boolean, default: false }) readonly dense!: boolean;
 
-  @Prop({ type: String, default: undefined })
-  readonly dayLabel!: string;
+  readonly dayjs: typeof dayjs = dayjs;
+  readonly envs: typeof envs = envs;
 
-  @Prop({ type: String, default: undefined })
-  readonly dayHint!: string;
+  day: string | null = null;
+  dayDialog: boolean = false;
 
-  @Prop({ type: String, default: undefined })
-  readonly timeLabel!: string;
-
-  @Prop({ type: String, default: undefined })
-  readonly timeHint!: string;
-
-  @Prop({ type: Boolean, default: false })
-  readonly disabled!: boolean;
-
-  readonly $moment: any;
-  readonly APP_LANGUAGE: string | undefined = process.env.VUE_APP_LANGUAGE;
-
-  localDay: string = '';
-  localDayDialog: boolean = false;
-
-  created() {
-    this.update();
+  get localDayLabel(): string {
+    return this.dayLabel || '날짜선택';
   }
 
   @Watch('date', { immediate: true })
-  watchStartDtHandler(value: string | number | Date): void {
-    this.localDay = this.$moment(value).format(envs.DATE_FORMAT_STRING);
+  watchStartDtHandler(val: string | number | Date): void {
+    if (!val || isNaN(new Date(val).getTime())) {
+      this.$emit('update:day', new Date());
+      return;
+    }
+    this.day = dayjs(val).format(`YYYY-MM-DD`);
   }
 
+  @Watch('day')
   @Emit('update:date')
-  update(): Date {
-    this.localDayDialog = false;
-    return this.$moment(`${this.localDay}`);
-  }
-
-  get localDayLabel(): string {
-    return this.dayLabel || this.$t('dayPicker').toString();
+  update(val: string): Date {
+    return dayjs(val).toDate();
   }
 }
 </script>
-
-<style scoped></style>

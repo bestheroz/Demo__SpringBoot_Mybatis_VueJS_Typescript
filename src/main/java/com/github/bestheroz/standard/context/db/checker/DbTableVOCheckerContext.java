@@ -25,6 +25,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Slf4j
@@ -32,7 +33,7 @@ import java.util.Set;
 public class DbTableVOCheckerContext {
     public static final String DEFAULT_DATE_TYPE = "LocalDateTime";
     public static final Set<String> STRING_JDBC_TYPE_SET = ImmutableSet.of("VARCHAR", "VARCHAR2", "CHAR", "CLOB");
-    public static final Set<String> NUMBER_JDBC_TYPE_SET = ImmutableSet.of("INTEGER", "TINYINT", "INT", "INT UNSIGNED", "NUMBER", "DECIMAL");
+    public static final Set<String> NUMBER_JDBC_TYPE_SET = ImmutableSet.of("INTEGER", "TINYINT", "INT", "INT UNSIGNED", "NUMBER", "DECIMAL", "DECIMAL UNSIGNED", "BIGINT UNSIGNED", "BIGINT");
     public static final Set<String> DATETIME_JDBC_TYPE_SET = ImmutableSet.of("TIMESTAMP", "DATE", "DATETIME");
     public static final Set<String> BOOLEAN_JDBC_TYPE_SET = ImmutableSet.of("BOOLEAN");
     public static final Set<String> BYTE_JDBC_TYPE_SET = ImmutableSet.of("BLOB");
@@ -48,18 +49,17 @@ public class DbTableVOCheckerContext {
                 for (final Field field : class1.getDeclaredFields()) {
                     filedList.add(field.getName());
                 }
-                final String tableName = CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, StringUtils.substringBetween(class1.getSimpleName(), "Table", "VO"));
+                final String tableName = SqlForTableVO.getTableName(class1.getSimpleName());
+                log.debug(tableName);
                 try (final ResultSet rs = stmt.executeQuery("SELECT * FROM " + tableName + " LIMIT 0")) {
                     final ResultSetMetaData metaInfo = rs.getMetaData();
                     final String className = class1.getSimpleName();
 
                     boolean isInvalid = false;
                     // 1. VO변수 개수 == 테이블 컬럼 개수 체크
-                    int fieldSize = filedList.size();
-                    if (filedList.contains("serialVersionUID")) {
-                        fieldSize--;
-                    }
-                    if (metaInfo.getColumnCount() != fieldSize) {
+                    filedList.remove("serialVersionUID");
+                    final int fieldSize = filedList.size();
+                    if (metaInfo.getColumnCount() != fieldSize + 4) {
                         log.warn("{} VO 필드 개수({}) != ({}){} 테이블 컬럼 개수", className, fieldSize, tableName, metaInfo.getColumnCount());
                         isInvalid = true;
                     }
@@ -142,7 +142,7 @@ public class DbTableVOCheckerContext {
         final ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
         final MetadataReaderFactory metadataReaderFactory = new CachingMetadataReaderFactory(resourcePatternResolver);
 
-        final Set<Class<?>> candidates = new HashSet<>();
+        final Set<Class<?>> candidates = new LinkedHashSet<>();
         final String packageSearchPath = ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX + this.resolveBasePackage("com.github.bestheroz") + "/" + "**/Table*VO.class";
         for (final Resource resource : resourcePatternResolver.getResources(packageSearchPath)) {
             if (resource.isReadable()) {

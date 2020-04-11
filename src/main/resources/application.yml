@@ -1,9 +1,6 @@
 spring:
   profiles:
     active: local
-  devtools:
-    livereload:
-      enabled: true
   http:
     encoding:
       charset: UTF-8
@@ -29,21 +26,60 @@ server:
   compression:
     enabled: true
   error:
-    path: /common/exception/error.view
+    path: /common/exception/error
   http2:
     enabled: true
+  servlet:
+    session:
+      cookie:
+        name: JSESSIONID_MYAPP
+management:
+  endpoint:
+    shutdown:
+      enabled: true
+    health:
+      enabled: true
+  endpoints:
+    enabled-by-default: false
+    web:
+      exposure:
+        include: shutdown, health
 ---
 spring:
   profiles: local
   datasource:
     initialization-mode: always
     schema: classpath:/removabledb/h2.sql
+server:
+  port: 8080
+variable:
+  app:
+    title: My_SpringBoot_MyBatis_Vue_Typescript_Project
 ---
 spring:
   profiles: dev
   datasource:
     hikari:
-      username: example
-      password: example123
+      username:
+      password:
       driver-class-name: org.jdbcdslog.DriverLoggingProxy
-      jdbc-url: jdbc:jdbcdslog:mysql://example.com:3306/example?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&&zeroDateTimeBehavior=convertToNull;targetDriver=org.gjt.mm.mysql.Driver
+      jdbc-url: jdbc:jdbcdslog:mysql://127.0.0.1:3306/dbname?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&&zeroDateTimeBehavior=convertToNull;targetDriver=org.gjt.mm.mysql.Driver
+server:
+  port: 3401
+variable:
+  app:
+    title:
+---
+spring:
+  profiles: production
+  datasource:
+    hikari:
+      username:
+      password:
+      driver-class-name: org.jdbcdslog.DriverLoggingProxy
+      jdbc-url: jdbc:jdbcdslog:mysql://127.0.0.1:3306/dbname?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&&zeroDateTimeBehavior=convertToNull;targetDriver=org.gjt.mm.mysql.Driver
+server:
+  port:
+variable:
+  app:
+    title:

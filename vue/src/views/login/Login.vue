@@ -58,9 +58,10 @@
 import { Component, Vue } from 'vue-property-decorator';
 import { ApiDataResult } from '@/utils/apis';
 import _ from 'lodash';
-import { Member } from '@/views/manage/member/common/types';
 import axios from 'axios';
 import envs from '@/constants/envs';
+import { alertError } from '@/utils/alerts';
+import { TableSampleMemberMstVO } from '@/common/types';
 
 const SHA512 = require('crypto-js/sha512');
 @Component({
@@ -81,28 +82,23 @@ export default class Login extends Vue {
     // @ts-ignore
     const inValid = await this.$refs.observer.validate();
     if (!inValid) {
-      this.$swal({
-        title: '입력 검증 후 다시 시도해주세요.',
-        type: 'error',
-      });
+      alertError('입력 검증 후 다시 시도해주세요.');
       return;
     }
 
-    const response = await axios.post<ApiDataResult<Member>>(
-      `${envs.HOST}sample/auth/login`,
+    const response = await axios.post<ApiDataResult<TableSampleMemberMstVO>>(
+      `${envs.API_HOST}/sample/auth/login`,
       {
         memberId: this.memberId,
         memberPw: SHA512(this.memberPw).toString(),
       },
     );
-    if (_.startsWith(response.data.responseCode, `S`)) {
-      this.$store.commit('loginToken', response.data.responseData!.token);
+    if (_.startsWith(response.data.code, `S`)) {
+      this.$store.commit('loginToken', response.data.data);
       await this.$router.push('/');
     } else {
-      this.$swal({ title: response.data.responseMessage, type: 'error' });
+      alertError(response.data.message);
     }
   }
 }
 </script>
-
-<style scoped></style>

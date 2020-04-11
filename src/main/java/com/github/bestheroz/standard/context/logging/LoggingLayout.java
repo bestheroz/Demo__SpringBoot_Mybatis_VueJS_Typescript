@@ -3,7 +3,7 @@ package com.github.bestheroz.standard.context.logging;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.CoreConstants;
 import ch.qos.logback.core.LayoutBase;
-import com.github.bestheroz.standard.common.util.MyDateUtils;
+import com.github.bestheroz.standard.common.util.DateUtils;
 import org.apache.commons.lang3.StringUtils;
 import studio.raptor.sqlparser.SQLUtils;
 
@@ -16,19 +16,21 @@ public class LoggingLayout extends LayoutBase<ILoggingEvent> {
         final StringBuffer sbuf = new StringBuffer(1024);
 
         if (StringUtils.endsWith(event.getLoggerName(), "TraceLoggingInAOP")) {
-            this.getMessageOnylyFormattedMessage(event, sbuf);
+            if (StringUtils.equals(event.getLevel().levelStr, "WARN") && event.getCallerData()[0].getLineNumber() == 49) {
+                this.getExceptionMessage(event, sbuf);
+            } else {
+                this.getMessageOnylyFormattedMessage(event, sbuf);
+            }
         } else if (StringUtils.startsWithAny(event.getLoggerName(), "org.jdbcdslog.StatementLogger", "org.jdbcdslog.ResultSetLogger")) {
             if (StringUtils.startsWithAny(event.getFormattedMessage(), "java.sql.ResultSet.next")) {
                 this.getMessageOnylyFormattedMessage(event, sbuf);
             } else {
                 this.getSql(event, sbuf);
             }
-        } else if (StringUtils.endsWithAny(event.getLoggerName(), "RequestResponseBodyMethodProcessor", "RequestLoggingFilter")) {
+        } else if (StringUtils.endsWithAny(event.getLoggerName(), "RequestResponseBodyMethodProcessor")) {
             this.getMessageStartWithMethod(event, sbuf);
-        } else if (StringUtils.endsWith(event.getLoggerName(), "TraceLoggingInAOP") && StringUtils.equals(event.getLevel().levelStr, "WARN") && event.getCallerData()[0].getLineNumber() == 43) {
-            this.getExceptionMessage(event, sbuf);
         } else if (StringUtils.endsWith(event.getLoggerName(), "SqlForTableVO") && StringUtils.equals(event.getLevel().levelStr, "DEBUG") &&
-                StringUtils.equalsAny(event.getCallerData()[0].getMethodName(), "selectOneTableVO", "selectTableVO", "countTableVO", "insertTableVO", "updateTableVO", "deleteTableVO")) {
+                StringUtils.equalsAny(event.getCallerData()[0].getMethodName(), "selectOne", "select", "count", "insert", "update", "delete")) {
             this.getMessageStartWithMethod(event, sbuf);
         } else if (StringUtils.endsWith(event.getLoggerName(), "SqlSessionTemplateOverride") && StringUtils.equals(event.getLevel().levelStr, "DEBUG") &&
                 StringUtils.equals(event.getCallerData()[0].getMethodName(), "writeLog")) {
@@ -68,7 +70,7 @@ public class LoggingLayout extends LayoutBase<ILoggingEvent> {
         sbuf.append("<");
         sbuf.append("[Throw Exception]");
         sbuf.append("> ");
-        sbuf.append(this.skipLogText(event.getFormattedMessage()));
+        sbuf.append(event.getFormattedMessage());
         sbuf.append(CoreConstants.LINE_SEPARATOR);
     }
 
@@ -84,15 +86,15 @@ public class LoggingLayout extends LayoutBase<ILoggingEvent> {
         formattedMessage = StringUtils.remove(formattedMessage, "java.sql.Statement.execute: ");
         formattedMessage = StringUtils.remove(formattedMessage, "java.sql.PreparedStatement.execute: ");
         if (StringUtils.length(formattedMessage) > 20000) {
-            sbuf.append("\n").append(StringUtils.abbreviate(formattedMessage, 20000)).append("\n");
+            sbuf.append(CoreConstants.LINE_SEPARATOR).append(StringUtils.abbreviate(formattedMessage, 20000)).append(CoreConstants.LINE_SEPARATOR);
         } else {
-            sbuf.append("\n").append(SQLUtils.formatOracle(formattedMessage)).append("\n");
+            sbuf.append(CoreConstants.LINE_SEPARATOR).append(SQLUtils.formatOracle(formattedMessage)).append(CoreConstants.LINE_SEPARATOR);
         }
         sbuf.append(CoreConstants.LINE_SEPARATOR);
     }
 
     private void getMessageHeader(final ILoggingEvent event, final StringBuffer sbuf) {
-        sbuf.append(MyDateUtils.getString(event.getTimeStamp(), "HH:mm:ss.SSS"));
+        sbuf.append(DateUtils.getString(event.getTimeStamp(), "HH:mm:ss.SSS"));
         sbuf.append(" [");
         sbuf.append(StringUtils.rightPad(event.getLevel().levelStr, 5));
         sbuf.append("] ");

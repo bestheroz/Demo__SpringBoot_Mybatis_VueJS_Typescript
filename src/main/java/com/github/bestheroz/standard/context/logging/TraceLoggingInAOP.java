@@ -1,6 +1,6 @@
 package com.github.bestheroz.standard.context.logging;
 
-import com.github.bestheroz.standard.common.util.MyMapperUtils;
+import com.github.bestheroz.standard.common.util.MapperUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -27,14 +27,15 @@ public class TraceLoggingInAOP {
     private static final String STR_START_EXECUTE_TIME = "{} START ....... Execute Time ....... : {}";
     private static final String STR_END_EXECUTE_TIME = "{} E N D ....... Execute Time ....... : {} - return Value({}) : {}";
 
-    @Around("execution(* com.github.bestheroz..*Controller.*(..)) || execution(* com.github.bestheroz..*Service.*(..)) || execution(* com.github.bestheroz..*DAO.*(..))")
+    @Around("execution(* com.github.bestheroz..*Controller.*(..)) || execution(* com.github.bestheroz..*Service.*(..)) || execution(* com.github.bestheroz..*DAO.*(..)) " +
+            "|| execution(* com.github.bestheroz..*Repository.*(..)) || execution(* com.github.bestheroz..*Integercptor.*(..))")
     public Object doLoggingAround(final ProceedingJoinPoint pjp) throws Throwable {
         final Object retVal;
 
         final Class<?> targetClass = pjp.getTarget().getClass();
         final String formatClassMethod = MessageFormat.format(STR_CLASS_METHOD,
                 StringUtils.startsWith(targetClass.getSimpleName(), "$Proxy") ? targetClass.getInterfaces()[0].getSimpleName() : targetClass.getSimpleName(), pjp.getSignature().getName(),
-                this.getAgumentNames(pjp.getArgs()));
+                this.getArgumentNames(pjp.getArgs()));
         try {
             final StopWatch stopWatch = new StopWatch();
             stopWatch.start();
@@ -44,7 +45,7 @@ public class TraceLoggingInAOP {
 
             stopWatch.stop();
             log.info(STR_END_EXECUTE_TIME, formatClassMethod, stopWatch.toString(), ((MethodSignature) pjp.getSignature()).getReturnType().getSimpleName(),
-                    StringUtils.defaultString(MyMapperUtils.writeObjectAsString(retVal), "null"));
+                    StringUtils.defaultString(MapperUtils.toString(retVal), "null"));
         } catch (final Throwable e) {
             log.warn("{} -\n{}", formatClassMethod, ExceptionUtils.getStackTrace(e));
             throw e;
@@ -52,7 +53,7 @@ public class TraceLoggingInAOP {
         return retVal;
     }
 
-    private String getAgumentNames(final Object[] obj) {
+    private String getArgumentNames(final Object[] obj) {
         final List<String> list = new ArrayList<>();
         for (final Object element : obj) {
             if (element != null) {

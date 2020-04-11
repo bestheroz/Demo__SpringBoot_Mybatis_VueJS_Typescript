@@ -1,231 +1,213 @@
 <template>
   <div>
     <v-row>
-      <v-col cols="3">
+      <v-col cols="3" :class="dense ? 'pb-0' : ''">
         <v-dialog
-          :disabled="disabled"
-          :return-value.sync="localStartDay"
+          ref="refStartDayDialog"
+          v-model="startDayDialog"
+          :return-value.sync="startDay"
           persistent
-          ref="startDayDialog"
-          v-model="localStartDayMenu"
-          width="290px"
+          :width="460"
+          @keydown.esc="startDayDialog = false"
+          @keydown.enter="$refs.refStartDayDialog.save(startDay)"
         >
           <template v-slot:activator="{ on }">
             <v-text-field
-              :hint="startDayHint"
+              v-model="startDay"
               :label="localStartDayLabel"
-              :persistent-hint="startDayHint !== undefined"
-              prepend-icon="event"
+              :messages="startDayHint"
+              prepend-icon="mdi-calendar"
               readonly
-              v-model="localStartDay"
+              :disabled="disabled"
+              :dense="dense"
+              :hide-details="dense"
               v-on="on"
-            ></v-text-field>
+            />
           </template>
           <v-date-picker
-            :locale="envs.LANGUAGE"
-            :max="localEndDay"
+            v-model="startDay"
+            :locale="envs.LOCALE"
+            :max="endDay"
+            landscape
+            reactive
             scrollable
-            v-model="localStartDay"
           >
+            <v-btn text color="primary" @click="startDayDialog = false">
+              취소
+            </v-btn>
             <div class="flex-grow-1"></div>
             <v-btn
-              @click="
-                () => {
-                  localStartDay = $moment().format(envs.DATE_FORMAT_STRING);
-                  $refs.startDayDialog.save(localStartDay);
-                  updateStartDt();
-                }
-              "
-              color="success"
               text
-              >{{ $t('today') }}
-            </v-btn>
-            <v-btn @click="localStartDayMenu = false" color="success" text
-              >{{ $t('cancel') }}
+              color="primary"
+              @click="startDay = dayjs().format('YYYY-MM-DD')"
+            >
+              오늘
             </v-btn>
             <v-btn
-              @click="
-                () => {
-                  $refs.startDayDialog.save(localStartDay);
-                  updateStartDt();
-                }
-              "
-              color="success"
               text
-              >{{ $t('ok') }}
+              color="primary"
+              @click="$refs.refStartDayDialog.save(startDay)"
+            >
+              확인
             </v-btn>
           </v-date-picker>
         </v-dialog>
       </v-col>
-      <v-col cols="2">
+      <v-col cols="2" :class="dense ? 'pb-0' : ''">
         <v-dialog
-          :disabled="disabled"
-          :return-value.sync="localStartTime"
+          ref="refStartTimeDialog"
+          v-model="startTimeDialog"
+          :return-value.sync="startTime"
           persistent
-          ref="startTimeDialog"
-          v-model="localStartTimeMenu"
-          width="290px"
+          :width="460"
+          @keydown.esc="startTimeDialog = false"
+          @keydown.enter="$refs.refStartTimeDialog.save(startTime)"
         >
           <template v-slot:activator="{ on }">
             <v-text-field
-              :hint="startTimeHint"
+              v-model="startTime"
               :label="localStartTimeLabel"
-              :persistent-hint="startTimeHint !== undefined"
-              prepend-icon="access_time"
+              :messages="startTimeHint"
+              prepend-icon="mdi-clock-outline"
               readonly
-              v-model="localStartTime"
+              :disabled="disabled"
+              :dense="dense"
+              :hide-details="dense"
               v-on="on"
-            ></v-text-field>
+            />
           </template>
           <v-time-picker
-            :max="localStartDay === localEndDay ? localEndTime : ''"
+            v-model="startTime"
             format="24hr"
-            full-width
-            v-if="localStartTimeMenu"
-            v-model="localStartTime"
+            :max="startDay === endDay ? endTime : ''"
+            landscape
           >
+            <v-btn text color="primary" @click="startTimeDialog = false">
+              취소
+            </v-btn>
             <div class="flex-grow-1"></div>
             <v-btn
-              @click="
-                () => {
-                  localStartTime = $moment().format(envs.TIME_FORMAT_STRING);
-                  $refs.startTimeDialog.save(localStartTime);
-                  updateStartDt();
-                }
-              "
-              color="success"
               text
-              >{{ $t('now') }}
-            </v-btn>
-            <v-btn @click="localStartTimeMenu = false" color="success" text
-              >{{ $t('cancel') }}
+              color="primary"
+              @click="$emit('update:start-dt', new Date())"
+            >
+              지금
             </v-btn>
             <v-btn
-              @click="
-                () => {
-                  $refs.startTimeDialog.save(localStartTime);
-                  updateStartDt();
-                }
-              "
-              color="success"
               text
-              >{{ $t('ok') }}
+              color="primary"
+              @click="$refs.refStartTimeDialog.save(startTime)"
+            >
+              확인
             </v-btn>
           </v-time-picker>
         </v-dialog>
       </v-col>
-      <v-col class="my-auto mx-0 text-center" cols="1">
+      <v-col
+        cols="1"
+        :class="
+          dense ? 'pb-0 my-auto mx-0 text-center' : 'my-auto mx-0 text-center'
+        "
+      >
         <v-icon>mdi-tilde</v-icon>
       </v-col>
-      <v-col cols="3">
+      <v-col cols="3" :class="dense ? 'pb-0' : ''">
         <v-dialog
-          :disabled="disabled"
-          :return-value.sync="localEndDay"
+          ref="refEndDayDialog"
+          v-model="endDayDialog"
+          :return-value.sync="endDay"
           persistent
-          ref="endDayDialog"
-          v-model="localEndDayMenu"
-          width="290px"
+          :width="460"
+          @keydown.esc="endDayDialog = false"
+          @keydown.enter="$refs.refEndDayDialog.save(endDay)"
         >
           <template v-slot:activator="{ on }">
             <v-text-field
-              :hint="endDayHint"
+              v-model="endDay"
               :label="localEndDayLabel"
-              :persistent-hint="endDayHint !== undefined"
-              prepend-icon="access_time"
+              :messages="endDayHint"
+              prepend-icon="mdi-calendar"
               readonly
-              v-model="localEndDay"
+              :disabled="disabled"
+              :dense="dense"
+              :hide-details="dense"
               v-on="on"
-            ></v-text-field>
+            />
           </template>
           <v-date-picker
-            :locale="envs.LANGUAGE"
-            :min="localStartDay"
+            v-model="endDay"
+            :locale="envs.LOCALE"
+            :min="startDay"
+            landscape
+            reactive
             scrollable
-            v-model="localEndDay"
           >
+            <v-btn text color="primary" @click="endDayDialog = false">
+              취소
+            </v-btn>
             <div class="flex-grow-1"></div>
             <v-btn
-              @click="
-                () => {
-                  localEndDay = $moment().format(envs.DATE_FORMAT_STRING);
-                  $refs.endDayDialog.save(localEndDay);
-                  updateEndDt();
-                }
-              "
-              color="success"
               text
-              >{{ $t('today') }}
-            </v-btn>
-            <v-btn @click="localEndDayMenu = false" color="success" text
-              >{{ $t('cancel') }}
+              color="primary"
+              @click="endDay = dayjs().format('YYYY-MM-DD')"
+            >
+              오늘
             </v-btn>
             <v-btn
-              @click="
-                () => {
-                  $refs.endDayDialog.save(localEndDay);
-                  updateEndDt();
-                }
-              "
-              color="success"
               text
-              >{{ $t('ok') }}
+              color="primary"
+              @click="$refs.refEndDayDialog.save(endDay)"
+            >
+              확인
             </v-btn>
           </v-date-picker>
         </v-dialog>
       </v-col>
-      <v-col cols="2">
+      <v-col cols="2" :class="dense ? 'pb-0' : ''">
         <v-dialog
-          :disabled="disabled"
-          :return-value.sync="localEndTime"
+          ref="refEndTimeDialog"
+          v-model="endTimeDialog"
+          :return-value.sync="endTime"
           persistent
-          ref="endTimeDialog"
-          v-model="localEndTimeMenu"
-          width="290px"
+          :width="460"
+          @keydown.esc="endTimeDialog = false"
+          @keydown.enter="$refs.refEndTimeDialog.save(endTime)"
         >
           <template v-slot:activator="{ on }">
             <v-text-field
-              :hint="endTimeHint"
+              v-model="endTime"
               :label="localEndTimeLabel"
-              :persistent-hint="endTimeHint !== undefined"
-              prepend-icon="access_time"
+              :messages="endTimeHint"
+              prepend-icon="mdi-clock-outline"
               readonly
-              v-model="localEndTime"
+              :disabled="disabled"
+              :dense="dense"
+              :hide-details="dense"
               v-on="on"
-            ></v-text-field>
+            />
           </template>
           <v-time-picker
-            :min="localStartDay === localEndDay ? localStartTime : ''"
+            v-model="endTime"
             format="24hr"
-            full-width
-            v-if="localEndTimeMenu"
-            v-model="localEndTime"
+            :min="startDay === endDay ? startTime : ''"
+            landscape
           >
+            <v-btn text color="primary" @click="endTimeDialog = false">
+              취소
+            </v-btn>
             <div class="flex-grow-1"></div>
             <v-btn
-              @click="
-                () => {
-                  localEndTime = $moment().format(envs.TIME_FORMAT_STRING);
-                  $refs.endTimeDialog.save(localEndTime);
-                  updateEndDt();
-                }
-              "
-              color="success"
               text
-              >{{ $t('now') }}
-            </v-btn>
-            <v-btn @click="localEndTimeMenu = false" color="success" text
-              >{{ $t('cancel') }}
+              color="primary"
+              @click="$emit('update:end-dt', new Date())"
+            >
+              지금
             </v-btn>
             <v-btn
-              @click="
-                () => {
-                  $refs.endTimeDialog.save(localEndTime);
-                  updateEndDt();
-                }
-              "
-              color="success"
               text
-              >{{ $t('ok') }}
+              color="primary"
+              @click="$refs.refEndTimeDialog.save(endTime)"
+              >확인
             </v-btn>
           </v-time-picker>
         </v-dialog>
@@ -237,135 +219,87 @@
 <script lang="ts">
 import { Component, Emit, Prop, Vue, Watch } from 'vue-property-decorator';
 import envs from '@/constants/envs';
+import dayjs from 'dayjs';
+import { alertWarning } from '@/utils/alerts';
 
-@Component
-export default class DatetimeStartEndPicker extends Vue {
+@Component({ name: 'DatetimeStartEndPicker' })
+export default class extends Vue {
+  @Prop({ required: true }) readonly startDt!: string | number | Date | null;
+  @Prop({ required: true }) readonly endDt!: string | number | Date | null;
+  @Prop({ type: String }) readonly startDayLabel!: string | null;
+  @Prop({ type: String }) readonly startDayHint!: string | null;
+  @Prop({ type: String }) readonly endDayLabel!: string | null;
+  @Prop({ type: String }) readonly endDayHint!: string | null;
+  @Prop({ type: String }) readonly startTimeLabel!: string | null;
+  @Prop({ type: String }) readonly startTimeHint!: string | null;
+  @Prop({ type: String }) readonly endTimeLabel!: string | null;
+  @Prop({ type: String }) readonly endTimeHint!: string | null;
+  @Prop({ type: Boolean, default: false }) readonly disabled!: boolean;
+  @Prop({ type: Boolean, default: false }) readonly dense!: boolean;
+
+  readonly dayjs: typeof dayjs = dayjs;
   readonly envs: typeof envs = envs;
-  @Prop({ type: [String, Number, Date], default: () => new Date() })
-  readonly startDt!: string | number | Date;
 
-  @Prop({
-    type: [String, Number, Date],
-    default: () =>
-      new Date(
-        new Date().getFullYear(),
-        new Date().getMonth() + 1,
-        new Date().getDate(),
-      ),
-  })
-  readonly endDt!: string | number | Date;
+  startDay: string | null = null;
+  startDayDialog: boolean = false;
+  startTime: string | null = null;
+  startTimeDialog: boolean = false;
+  endDay: string | null = null;
+  endDayDialog: boolean = false;
+  endTime: string | null = null;
+  endTimeDialog: boolean = false;
 
-  @Prop({ type: String, default: undefined })
-  readonly startDayLabel!: string;
-
-  @Prop({ type: String, default: undefined })
-  readonly startDayHint!: string;
-
-  @Prop({ type: String, default: undefined })
-  readonly endDayLabel!: string;
-
-  @Prop({ type: String, default: undefined })
-  readonly endDayHint!: string;
-
-  @Prop({ type: String, default: undefined })
-  readonly startTimeLabel!: string;
-
-  @Prop({ type: String, default: undefined })
-  readonly startTimeHint!: string;
-
-  @Prop({ type: String, default: undefined })
-  readonly endTimeLabel!: string;
-
-  @Prop({ type: String, default: undefined })
-  readonly endTimeHint!: string;
-
-  @Prop({ type: Boolean, default: false })
-  readonly disabled!: boolean;
-
-  readonly $moment: any;
-  readonly APP_LANGUAGE: string | undefined = process.env.VUE_APP_LANGUAGE;
-
-  localStartDay: string = '';
-  localStartTime: string = '';
-  localEndDay: string = '';
-  localEndTime: string = '';
-  localStartDayMenu: boolean = false;
-  localStartTimeMenu: boolean = false;
-  localEndDayMenu: boolean = false;
-  localEndTimeMenu: boolean = false;
-
-  created() {
-    this.updateStartDt();
-    this.updateEndDt();
+  get localStartDayLabel(): string {
+    return this.startDayLabel || '날짜선택(From)';
+  }
+  get localEndDayLabel(): string {
+    return this.endDayLabel || '날짜선택(To)';
+  }
+  get localStartTimeLabel(): string {
+    return this.endTimeLabel || '시간선택(From)';
+  }
+  get localEndTimeLabel(): string {
+    return this.endTimeLabel || '시간선택(To)';
   }
 
   @Watch('startDt', { immediate: true })
-  watchStartDtHandler(value: string | number | Date): void {
-    this.localStartDay = this.$moment(value).format(
-      this.envs.DATE_FORMAT_STRING,
-    );
-    this.localStartTime = this.$moment(value).format(
-      this.envs.TIME_FORMAT_STRING,
-    );
+  watchStartDtHandler(val: string | number | Date): void {
+    if (!val || isNaN(new Date(val).getTime())) {
+      this.$emit('update:start-dt', dayjs().startOf('day').toDate());
+      return;
+    }
+    this.startDay = dayjs(val).format('YYYY-MM-DD');
+    this.startTime = dayjs(val).format('HH:mm');
   }
 
   @Watch('endDt', { immediate: true })
-  watchEndDtHandler(value: string | number | Date): void {
-    this.localEndDay = this.$moment(value).format(this.envs.DATE_FORMAT_STRING);
-    this.localEndTime = this.$moment(value).format(
-      this.envs.TIME_FORMAT_STRING,
-    );
+  watchEndDtHandler(val: string | number | Date): void {
+    if (!val || isNaN(new Date(val).getTime())) {
+      this.$emit('update:end-dt', dayjs().endOf('day').toDate());
+      return;
+    }
+    this.endDay = dayjs(val).format('YYYY-MM-DD');
+    this.endTime = dayjs(val).format('HH:mm');
   }
 
-  @Emit('update:startDt')
+  @Watch('startDay')
+  @Watch('startTime')
+  @Emit('update:start-dt')
   updateStartDt(): Date {
-    if (
-      `${this.localStartDay}${this.localStartTime}` >
-      `${this.localEndDay}${this.localEndTime}`
-    ) {
-      this.snackbarError();
+    if (`${this.startDay}${this.startTime}` > `${this.endDay}${this.endTime}`) {
+      alertWarning('시작/종료 날짜가 유효하지 않습니다.');
     }
-    return this.$moment(
-      `${this.localStartDay}T${this.localStartTime}:00`,
-    ).toDate();
+    return dayjs(`${this.startDay}T${this.startTime}:00`).toDate();
   }
 
-  @Emit('update:endDt')
+  @Watch('endDay')
+  @Watch('endTime')
+  @Emit('update:end-dt')
   updateEndDt(): Date {
-    if (
-      `${this.localEndDay}${this.localEndTime}` <
-      `${this.localStartDay}${this.localStartTime}`
-    ) {
-      this.snackbarError();
+    if (`${this.endDay}${this.endTime}` < `${this.startDay}${this.startTime}`) {
+      alertWarning('시작/종료 날짜가 유효하지 않습니다.');
     }
-    return this.$moment(
-      `${this.localEndDay}T${this.localEndTime}:59.999999`,
-    ).toDate();
-  }
-
-  get localStartDayLabel(): string {
-    return this.startDayLabel || this.$t('startDayPicker').toString();
-  }
-
-  get localEndDayLabel(): string {
-    return this.endDayLabel || this.$t('endDayPicker').toString();
-  }
-
-  get localStartTimeLabel(): string {
-    return this.endTimeLabel || this.$t('startTimePicker').toString();
-  }
-
-  get localEndTimeLabel(): string {
-    return this.endTimeLabel || this.$t('endTimePicker').toString();
-  }
-
-  snackbarError() {
-    this.$store.commit('pushSnack', {
-      color: 'warning',
-      text: this.$t('checkDateFieldValidation').toString(),
-    });
+    return dayjs(`${this.endDay}T${this.endTime}:59.999`).toDate();
   }
 }
 </script>
-
-<style scoped></style>

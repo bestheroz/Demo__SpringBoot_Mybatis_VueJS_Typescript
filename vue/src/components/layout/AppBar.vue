@@ -40,5 +40,3 @@ export default class AppBar extends Vue {
   readonly envs: typeof envs = envs;
 }
 </script>
-
-<style scoped></style>

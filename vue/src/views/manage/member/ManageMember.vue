@@ -136,7 +136,7 @@
       </template>
       <template v-slot:item.memberType="{ item }">
         {{
-          MEMBER_TYPE.filter(value => {
+          MEMBER_TYPE.filter((value) => {
             return item.memberType === value.code;
           })[0].codeName
         }}
@@ -164,15 +164,16 @@ import { Component, Vue } from 'vue-property-decorator';
 import { Member } from '@/views/manage/member/common/types';
 import {
   deleteDataApi,
-  getCodeListDataApi,
-  getOnlyListDataApi,
   patchDataApi,
   postDataApi,
+  getListApi,
+  getCodeListApi,
 } from '@/utils/apis';
 import { DataTableHeader, SelectItem } from '@/common/types';
 import DatetimePicker from '@/components/picker/DatetimePicker.vue';
 import _ from 'lodash';
 import envs from '@/constants/envs';
+import { alertError } from '@/utils/alerts';
 
 @Component({
   components: { DatetimePicker },
@@ -187,10 +188,7 @@ export default class ManageMember extends Vue {
   headers: DataTableHeader[] = [];
   members: Member[] = [];
   member: Member = {
-    expired: this.$moment()
-      .add(1, 'months')
-      .endOf(`day`)
-      .toDate(),
+    expired: this.$moment().add(1, 'months').endOf(`day`).toDate(),
   };
 
   memberPwCheck: string = ``;
@@ -218,12 +216,12 @@ export default class ManageMember extends Vue {
   }
 
   async getList() {
-    const response = await getOnlyListDataApi<Member[]>(`sample/admin/member/`);
-    this.members = response.responseData || [];
+    const response = await getListApi<Member[]>(`sample/admin/member/`);
+    this.members = response.data || [];
   }
 
   async getMemberType() {
-    this.MEMBER_TYPE = await getCodeListDataApi(`MEMBER_TYPE`);
+    this.MEMBER_TYPE = await getCodeListApi(`MEMBER_TYPE`);
   }
 
   editItem(member: Member) {
@@ -233,10 +231,7 @@ export default class ManageMember extends Vue {
         {},
         {
           closeTf: false,
-          expired: this.$moment()
-            .add(1, 'months')
-            .endOf(`day`)
-            .toDate(),
+          expired: this.$moment().add(1, 'months').endOf(`day`).toDate(),
         },
       );
       this.memberPwCheck = ``;
@@ -254,9 +249,8 @@ export default class ManageMember extends Vue {
     const response = await deleteDataApi<Member>(
       `sample/admin/member/`,
       member.memberId!,
-      this,
     );
-    if (_.startsWith(response.responseCode, `S`)) {
+    if (_.startsWith(response.code, `S`)) {
       this.getList();
       this.closeModal();
     }
@@ -270,10 +264,7 @@ export default class ManageMember extends Vue {
     // @ts-ignore
     const isValid = await this.$refs.observer.validate();
     if (!isValid) {
-      this.$swal({
-        title: '입력 검증 후 다시 시도해주세요.',
-        type: 'error',
-      });
+      alertError('입력 검증 후 다시 시도해주세요.');
       return;
     }
     this.isUpdate ? this.patch() : this.create();
@@ -283,9 +274,8 @@ export default class ManageMember extends Vue {
     const response = await postDataApi<Member>(
       `sample/admin/member/`,
       this.member,
-      this,
     );
-    if (_.startsWith(response.responseCode, `S`)) {
+    if (_.startsWith(response.code, `S`)) {
       this.getList();
       this.closeModal();
     }
@@ -296,14 +286,11 @@ export default class ManageMember extends Vue {
       `sample/admin/member/`,
       this.member,
       this.member.memberId!,
-      this,
     );
-    if (_.startsWith(response.responseCode, `S`)) {
+    if (_.startsWith(response.code, `S`)) {
       this.getList();
       this.closeModal();
     }
   }
 }
 </script>
-
-<style scoped></style>
