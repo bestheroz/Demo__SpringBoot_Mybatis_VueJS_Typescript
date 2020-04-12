@@ -32,24 +32,27 @@ public class AuthService {
             log.warn(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER.toString());
             throw new BusinessException(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER);
         }
-        // 2. LOGIN_FAIL_CNT가 5회 이상 인가
+
         final TableSampleMemberMstVO tableSampleMemberMstVO = one.get();
-        if (tableSampleMemberMstVO.getLoginFailCnt() >= 5) {
-            log.warn(ExceptionCode.FAIL_LOGIN_FAIL_CNT.toString());
-            throw new BusinessException(ExceptionCode.FAIL_LOGIN_FAIL_CNT);
-        }
-        // 3. 패스워드가 틀리면
+
+        // 2. 패스워드가 틀리면
         if (!StringUtils.equals(tableSampleMemberMstVO.getMemberPw(), password)) {
+            tableSampleMemberMstVO.setLoginFailCnt(tableSampleMemberMstVO.getLoginFailCnt() + 1);
+            this.tableSampleMemberMstRepository.save(tableSampleMemberMstVO);
             log.warn(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER.toString());
             throw new BusinessException(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER);
         }
 
-        // 4. 아래는 성공
-        if (tableSampleMemberMstVO.getLoginFailCnt() != 0) {
-            this.tableSampleMemberMstRepository.updateLoginFailCntToZero(memberId);
+        // 3. LOGIN_FAIL_CNT가 5회 이상 인가
+        if (tableSampleMemberMstVO.getLoginFailCnt() >= 5) {
+            log.warn(ExceptionCode.FAIL_LOGIN_FAIL_CNT.toString());
+            throw new BusinessException(ExceptionCode.FAIL_LOGIN_FAIL_CNT);
         }
 
-        this.tableSampleMemberMstRepository.updateToken(memberId, JWT.create().withIssuer(memberId).withExpiresAt(LocalDateTime.now().plusDays(1).toDate()).sign(ALGORITHM));
+        tableSampleMemberMstVO.setLoginFailCnt(0L);
+        tableSampleMemberMstVO.setToken(JWT.create().withIssuer(memberId).withExpiresAt(LocalDateTime.now().plusDays(1).toDate()).sign(ALGORITHM));
+
+        this.tableSampleMemberMstRepository.save(tableSampleMemberMstVO);
         SessionUtils.setLoginVO(tableSampleMemberMstVO);
         return tableSampleMemberMstVO;
     }
