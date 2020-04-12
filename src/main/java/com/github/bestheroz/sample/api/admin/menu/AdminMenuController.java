@@ -18,9 +18,9 @@ public class AdminMenuController {
         return ResponseVO.getSuccessResponseVO(this.tableSampleMenuMstRepository.findAll());
     }
 
-    @GetMapping(value = "{menuId}")
-    public ResponseVO getOne(@PathVariable(value = "menuId", required = false) final Integer menuId) {
-        return ResponseVO.getSuccessResponseVO(this.tableSampleMenuMstRepository.findById(menuId));
+    @GetMapping(value = "{id}")
+    public ResponseVO getOne(@PathVariable(value = "id", required = false) final Integer id) {
+        return ResponseVO.getSuccessResponseVO(this.tableSampleMenuMstRepository.findById(id));
     }
 
     @PostMapping
@@ -29,16 +29,16 @@ public class AdminMenuController {
         return ResponseVO.SUCCESS_NORMAL;
     }
 
-    @PatchMapping(value = "{menuId}")
-    public ResponseVO update(@PathVariable(value = "menuId") final Integer menuId, @RequestBody final TableSampleMenuMstVO tableSampleMenuMstVO) {
-        tableSampleMenuMstVO.setMenuId(menuId);
+    @PatchMapping(value = "{id}")
+    public ResponseVO update(@PathVariable(value = "id") final Integer id, @RequestBody final TableSampleMenuMstVO tableSampleMenuMstVO) {
+        tableSampleMenuMstVO.setId(id);
         this.tableSampleMenuMstRepository.save(tableSampleMenuMstVO);
         return ResponseVO.SUCCESS_NORMAL;
     }
 
-    @DeleteMapping(value = "{menuId}")
-    public ResponseVO delete(@PathVariable(value = "menuId") final Integer menuId) {
-        this.tableSampleMenuMstRepository.deleteById(menuId);
+    @DeleteMapping(value = "{id}")
+    public ResponseVO delete(@PathVariable(value = "id") final Integer id) {
+        this.tableSampleMenuMstRepository.deleteById(id);
         return ResponseVO.SUCCESS_NORMAL;
     }
 

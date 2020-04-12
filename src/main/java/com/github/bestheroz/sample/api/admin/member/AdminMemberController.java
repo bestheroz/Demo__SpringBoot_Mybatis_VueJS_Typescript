@@ -20,9 +20,9 @@ public class AdminMemberController {
         return ResponseVO.getSuccessResponseVO(this.tableSampleMemberMstRepository.findAll());
     }
 
-    @GetMapping(value = "{memberId}")
-    public ResponseVO getOne(@PathVariable(value = "memberId") final String memberId) {
-        return ResponseVO.getSuccessResponseVO(this.tableSampleMemberMstRepository.findById(memberId));
+    @GetMapping(value = "{id}")
+    public ResponseVO getOne(@PathVariable(value = "id") final String id) {
+        return ResponseVO.getSuccessResponseVO(this.tableSampleMemberMstRepository.findById(id));
     }
 
     @PostMapping
@@ -31,16 +31,16 @@ public class AdminMemberController {
         return ResponseVO.SUCCESS_NORMAL;
     }
 
-    @PatchMapping(value = "{memberId}")
-    public ResponseVO update(@PathVariable(value = "memberId") final String memberId, @Valid @RequestBody final TableSampleMemberMstVO tableSampleMemberMstVO) {
-        tableSampleMemberMstVO.setMemberId(memberId);
+    @PatchMapping(value = "{id}")
+    public ResponseVO update(@PathVariable(value = "id") final String id, @Valid @RequestBody final TableSampleMemberMstVO tableSampleMemberMstVO) {
+        tableSampleMemberMstVO.setId(id);
         this.tableSampleMemberMstRepository.save(tableSampleMemberMstVO);
         return ResponseVO.SUCCESS_NORMAL;
     }
 
-    @DeleteMapping(value = "{memberId}")
-    public ResponseVO delete(@PathVariable(value = "memberId") final String memberId) {
-        this.tableSampleMemberMstRepository.deleteById(memberId);
+    @DeleteMapping(value = "{id}")
+    public ResponseVO delete(@PathVariable(value = "id") final String id) {
+        this.tableSampleMemberMstRepository.deleteById(id);
         return ResponseVO.SUCCESS_NORMAL;
     }
 }

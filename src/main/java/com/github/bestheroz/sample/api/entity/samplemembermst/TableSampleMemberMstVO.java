@@ -16,12 +16,12 @@ import java.io.Serializable;
 public class TableSampleMemberMstVO extends AbstractCreatedUpdateVO implements Serializable {
     private static final long serialVersionUID = 7280716056600887400L;
     @Id
-    private String memberId;
-    private String memberPw;
-    private String memberName;
+    private String id;
+    private String password;
+    private String name;
     private String memberType;
     private Integer loginFailCnt;
     private LocalDateTime expired;
-    private Boolean closeTf;
+    private Boolean isClosed;
     private String token;
 }

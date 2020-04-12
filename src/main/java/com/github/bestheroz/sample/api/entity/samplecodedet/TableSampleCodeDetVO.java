@@ -20,8 +20,8 @@ public class TableSampleCodeDetVO extends AbstractCreatedUpdateVO implements Ser
     private String groupCode;
     @Id
     private String code;
-    private String codeName;
-    private Boolean useTf;
+    private String name;
+    private Boolean isUsing;
     private Integer displayOrder;
     private String remark1;
 }

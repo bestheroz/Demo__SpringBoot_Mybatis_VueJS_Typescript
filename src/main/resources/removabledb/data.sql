@@ -1,26 +1,11 @@
-CREATE TABLE SAMPLE_MEMBER_MST
-(
-    MEMBER_ID      VARCHAR(100) PRIMARY KEY NOT NULL,
-    MEMBER_PW      CHAR(128)                NOT NULL,
-    MEMBER_NAME    VARCHAR(100)             NOT NULL,
-    MEMBER_TYPE    VARCHAR(100)             NOT NULL,
-    LOGIN_FAIL_CNT INT(1) DEFAULT 0         NOT NULL,
-    CLOSE_TF       BOOLEAN                  NOT NULL,
-    TOKEN          VARCHAR(200)             NULL,
-    EXPIRED        DATETIME                 NOT NULL,
-    CREATED_BY     VARCHAR(100)             NOT NULL,
-    CREATED        DATETIME                 NOT NULL,
-    UPDATED_BY     VARCHAR(100)             NOT NULL,
-    UPDATED        DATETIME                 NOT NULL
-);
 INSERT
 INTO SAMPLE_MEMBER_MST
-(MEMBER_ID,
- MEMBER_PW,
- MEMBER_NAME,
+(ID,
+ PASSWORD,
+ name,
  MEMBER_TYPE,
  LOGIN_FAIL_CNT,
- CLOSE_TF,
+ IS_CLOSED,
  EXPIRED,
  CREATED_BY,
  CREATED,
@@ -40,12 +25,12 @@ VALUES ('developer',
 
 INSERT
 INTO SAMPLE_MEMBER_MST
-(MEMBER_ID,
- MEMBER_PW,
- MEMBER_NAME,
+(ID,
+ PASSWORD,
+ name,
  MEMBER_TYPE,
  LOGIN_FAIL_CNT,
- CLOSE_TF,
+ IS_CLOSED,
  TOKEN,
  EXPIRED,
  CREATED_BY,
@@ -67,12 +52,12 @@ VALUES ('1',
 
 INSERT
 INTO SAMPLE_MEMBER_MST
-(MEMBER_ID,
- MEMBER_PW,
- MEMBER_NAME,
+(ID,
+ PASSWORD,
+ name,
  MEMBER_TYPE,
  LOGIN_FAIL_CNT,
- CLOSE_TF,
+ IS_CLOSED,
  EXPIRED,
  CREATED_BY,
  CREATED,
@@ -92,12 +77,12 @@ VALUES ('bestheroz',
 
 INSERT
 INTO SAMPLE_MEMBER_MST
-(MEMBER_ID,
- MEMBER_PW,
- MEMBER_NAME,
+(ID,
+ PASSWORD,
+ name,
  MEMBER_TYPE,
  LOGIN_FAIL_CNT,
- CLOSE_TF,
+ IS_CLOSED,
  EXPIRED,
  CREATED_BY,
  CREATED,
@@ -115,30 +100,12 @@ VALUES ('guest',
         'bestheroz',
         SYSDATE);
 
-COMMIT;
-CREATE TABLE SAMPLE_MENU_MST
-(
-    MENU_ID       INT(10) PRIMARY KEY AUTO_INCREMENT,
-    MENU_NAME     VARCHAR(1000) NOT NULL,
-    MENU_TYPE     CHAR(1)       NOT NULL,
-    PAR_MENU_ID   INT(10)       NOT NULL,
-    USE_TF        BOOLEAN       NOT NULL,
-    POWER         INT(10)       NOT NULL,
-    DISPLAY_ORDER INT(10)       NOT NULL,
-    URL           VARCHAR(4000),
-    REMARK1       VARCHAR(4000),
-    CREATED_BY    VARCHAR(100)  NOT NULL,
-    CREATED       DATETIME      NOT NULL,
-    UPDATED_BY    VARCHAR(100)  NOT NULL,
-    UPDATED       DATETIME      NOT NULL
-);
-
 INSERT
 INTO SAMPLE_MENU_MST
-(MENU_NAME,
- MENU_TYPE,
- PAR_MENU_ID,
- USE_TF,
+(NAME,
+ TYPE,
+ PARENT_ID,
+ IS_USING,
  POWER,
  DISPLAY_ORDER,
  URL,
@@ -162,10 +129,10 @@ VALUES ('Root',
 
 INSERT
 INTO SAMPLE_MENU_MST
-(MENU_NAME,
- MENU_TYPE,
- PAR_MENU_ID,
- USE_TF,
+(NAME,
+ TYPE,
+ PARENT_ID,
+ IS_USING,
  POWER,
  DISPLAY_ORDER,
  CREATED_BY,
@@ -174,7 +141,7 @@ INTO SAMPLE_MENU_MST
  UPDATED)
 SELECT 'JS 가이드',
        'G',
-       MENU_ID,
+       ID,
        TRUE,
        300,
        10,
@@ -183,15 +150,15 @@ SELECT 'JS 가이드',
        'bestheroz',
        SYSDATE
 FROM SAMPLE_MENU_MST
-WHERE MENU_NAME = 'Root';
+WHERE NAME = 'Root';
 
 
 INSERT
 INTO SAMPLE_MENU_MST
-(MENU_NAME,
- MENU_TYPE,
- PAR_MENU_ID,
- USE_TF,
+(NAME,
+ TYPE,
+ PARENT_ID,
+ IS_USING,
  POWER,
  DISPLAY_ORDER,
  CREATED_BY,
@@ -200,7 +167,7 @@ INTO SAMPLE_MENU_MST
  UPDATED)
 SELECT 'JSP 가이드',
        'G',
-       MENU_ID,
+       ID,
        TRUE,
        300,
        20,
@@ -209,14 +176,14 @@ SELECT 'JSP 가이드',
        'bestheroz',
        SYSDATE
 FROM SAMPLE_MENU_MST
-WHERE MENU_NAME = 'Root';
+WHERE NAME = 'Root';
 
 INSERT
 INTO SAMPLE_MENU_MST
-(MENU_NAME,
- MENU_TYPE,
- PAR_MENU_ID,
- USE_TF,
+(NAME,
+ TYPE,
+ PARENT_ID,
+ IS_USING,
  POWER,
  DISPLAY_ORDER,
  CREATED_BY,
@@ -225,7 +192,7 @@ INTO SAMPLE_MENU_MST
  UPDATED)
 SELECT 'Github',
        'G',
-       MENU_ID,
+       ID,
        TRUE,
        300,
        70,
@@ -234,14 +201,14 @@ SELECT 'Github',
        'bestheroz',
        SYSDATE
 FROM SAMPLE_MENU_MST
-WHERE MENU_NAME = 'Root';
+WHERE NAME = 'Root';
 
 INSERT
 INTO SAMPLE_MENU_MST
-(MENU_NAME,
- MENU_TYPE,
- PAR_MENU_ID,
- USE_TF,
+(NAME,
+ TYPE,
+ PARENT_ID,
+ IS_USING,
  POWER,
  DISPLAY_ORDER,
  CREATED_BY,
@@ -250,7 +217,7 @@ INTO SAMPLE_MENU_MST
  UPDATED)
 SELECT '관리자',
        'G',
-       MENU_ID,
+       ID,
        TRUE,
        700,
        110,
@@ -259,14 +226,14 @@ SELECT '관리자',
        'bestheroz',
        SYSDATE
 FROM SAMPLE_MENU_MST
-WHERE MENU_NAME = 'Root';
+WHERE NAME = 'Root';
 
 INSERT
 INTO SAMPLE_MENU_MST
-(MENU_NAME,
- MENU_TYPE,
- PAR_MENU_ID,
- USE_TF,
+(NAME,
+ TYPE,
+ PARENT_ID,
+ IS_USING,
  POWER,
  DISPLAY_ORDER,
  URL,
@@ -276,7 +243,7 @@ INTO SAMPLE_MENU_MST
  UPDATED)
 SELECT '메뉴관리',
        'P',
-       MENU_ID,
+       ID,
        TRUE,
        700,
        1,
@@ -286,14 +253,14 @@ SELECT '메뉴관리',
        'bestheroz',
        SYSDATE
 FROM SAMPLE_MENU_MST
-WHERE MENU_NAME = '관리자';
+WHERE NAME = '관리자';
 
 INSERT
 INTO SAMPLE_MENU_MST
-(MENU_NAME,
- MENU_TYPE,
- PAR_MENU_ID,
- USE_TF,
+(NAME,
+ TYPE,
+ PARENT_ID,
+ IS_USING,
  POWER,
  DISPLAY_ORDER,
  URL,
@@ -303,7 +270,7 @@ INTO SAMPLE_MENU_MST
  UPDATED)
 SELECT '코드관리',
        'P',
-       MENU_ID,
+       ID,
        TRUE,
        700,
        3,
@@ -313,14 +280,14 @@ SELECT '코드관리',
        'bestheroz',
        SYSDATE
 FROM SAMPLE_MENU_MST
-WHERE MENU_NAME = '관리자';
+WHERE NAME = '관리자';
 
 INSERT
 INTO SAMPLE_MENU_MST
-(MENU_NAME,
- MENU_TYPE,
- PAR_MENU_ID,
- USE_TF,
+(NAME,
+ TYPE,
+ PARENT_ID,
+ IS_USING,
  POWER,
  DISPLAY_ORDER,
  URL,
@@ -330,7 +297,7 @@ INTO SAMPLE_MENU_MST
  UPDATED)
 SELECT '우편번호검색API',
        'P',
-       MENU_ID,
+       ID,
        TRUE,
        300,
        30,
@@ -340,14 +307,14 @@ SELECT '우편번호검색API',
        'bestheroz',
        SYSDATE
 FROM SAMPLE_MENU_MST
-WHERE MENU_NAME = 'JS 가이드';
+WHERE NAME = 'JS 가이드';
 
 INSERT
 INTO SAMPLE_MENU_MST
-(MENU_NAME,
- MENU_TYPE,
- PAR_MENU_ID,
- USE_TF,
+(NAME,
+ TYPE,
+ PARENT_ID,
+ IS_USING,
  POWER,
  DISPLAY_ORDER,
  URL,
@@ -357,7 +324,7 @@ INTO SAMPLE_MENU_MST
  UPDATED)
 SELECT '회원관리',
        'P',
-       MENU_ID,
+       ID,
        TRUE,
        700,
        5,
@@ -367,14 +334,14 @@ SELECT '회원관리',
        'bestheroz',
        SYSDATE
 FROM SAMPLE_MENU_MST
-WHERE MENU_NAME = '관리자';
+WHERE NAME = '관리자';
 
 INSERT
 INTO SAMPLE_MENU_MST
-(MENU_NAME,
- MENU_TYPE,
- PAR_MENU_ID,
- USE_TF,
+(NAME,
+ TYPE,
+ PARENT_ID,
+ IS_USING,
  POWER,
  DISPLAY_ORDER,
  URL,
@@ -384,7 +351,7 @@ INTO SAMPLE_MENU_MST
  UPDATED)
 SELECT '모든 프로젝트 보기',
        'P',
-       MENU_ID,
+       ID,
        TRUE,
        300,
        10,
@@ -394,14 +361,14 @@ SELECT '모든 프로젝트 보기',
        'bestheroz',
        SYSDATE
 FROM SAMPLE_MENU_MST
-WHERE MENU_NAME = 'Github';
+WHERE NAME = 'Github';
 
 INSERT
 INTO SAMPLE_MENU_MST
-(MENU_NAME,
- MENU_TYPE,
- PAR_MENU_ID,
- USE_TF,
+(NAME,
+ TYPE,
+ PARENT_ID,
+ IS_USING,
  POWER,
  DISPLAY_ORDER,
  URL,
@@ -411,7 +378,7 @@ INTO SAMPLE_MENU_MST
  UPDATED)
 SELECT 'Spring_MyBatis_jQuery_Web_Project',
        'P',
-       MENU_ID,
+       ID,
        TRUE,
        300,
        20,
@@ -421,14 +388,14 @@ SELECT 'Spring_MyBatis_jQuery_Web_Project',
        'bestheroz',
        SYSDATE
 FROM SAMPLE_MENU_MST
-WHERE MENU_NAME = 'Github';
+WHERE NAME = 'Github';
 
 INSERT
 INTO SAMPLE_MENU_MST
-(MENU_NAME,
- MENU_TYPE,
- PAR_MENU_ID,
- USE_TF,
+(NAME,
+ TYPE,
+ PARENT_ID,
+ IS_USING,
  POWER,
  DISPLAY_ORDER,
  URL,
@@ -438,7 +405,7 @@ INTO SAMPLE_MENU_MST
  UPDATED)
 SELECT 'Spring_Mybatis_Swagger_API_Project',
        'P',
-       MENU_ID,
+       ID,
        TRUE,
        300,
        30,
@@ -448,14 +415,14 @@ SELECT 'Spring_Mybatis_Swagger_API_Project',
        'bestheroz',
        SYSDATE
 FROM SAMPLE_MENU_MST
-WHERE MENU_NAME = 'Github';
+WHERE NAME = 'Github';
 
 INSERT
 INTO SAMPLE_MENU_MST
-(MENU_NAME,
- MENU_TYPE,
- PAR_MENU_ID,
- USE_TF,
+(NAME,
+ TYPE,
+ PARENT_ID,
+ IS_USING,
  POWER,
  DISPLAY_ORDER,
  URL,
@@ -465,7 +432,7 @@ INTO SAMPLE_MENU_MST
  UPDATED)
 SELECT 'Spring_MyBatis_Swagger_API_Vue_Project',
        'P',
-       MENU_ID,
+       ID,
        TRUE,
        300,
        40,
@@ -475,15 +442,15 @@ SELECT 'Spring_MyBatis_Swagger_API_Vue_Project',
        'bestheroz',
        SYSDATE
 FROM SAMPLE_MENU_MST
-WHERE MENU_NAME = 'Github';
+WHERE NAME = 'Github';
 
 
 INSERT
 INTO SAMPLE_MENU_MST
-(MENU_NAME,
- MENU_TYPE,
- PAR_MENU_ID,
- USE_TF,
+(NAME,
+ TYPE,
+ PARENT_ID,
+ IS_USING,
  POWER,
  DISPLAY_ORDER,
  URL,
@@ -493,7 +460,7 @@ INTO SAMPLE_MENU_MST
  UPDATED)
 SELECT '모달(modal) 띄우기',
        'P',
-       MENU_ID,
+       ID,
        TRUE,
        300,
        10,
@@ -503,14 +470,14 @@ SELECT '모달(modal) 띄우기',
        'bestheroz',
        SYSDATE
 FROM SAMPLE_MENU_MST
-WHERE MENU_NAME = 'JS 가이드';
+WHERE NAME = 'JS 가이드';
 
 INSERT
 INTO SAMPLE_MENU_MST
-(MENU_NAME,
- MENU_TYPE,
- PAR_MENU_ID,
- USE_TF,
+(NAME,
+ TYPE,
+ PARENT_ID,
+ IS_USING,
  POWER,
  DISPLAY_ORDER,
  URL,
@@ -520,7 +487,7 @@ INTO SAMPLE_MENU_MST
  UPDATED)
 SELECT 'ajax 요청하기',
        'P',
-       MENU_ID,
+       ID,
        TRUE,
        300,
        1,
@@ -530,14 +497,14 @@ SELECT 'ajax 요청하기',
        'bestheroz',
        SYSDATE
 FROM SAMPLE_MENU_MST
-WHERE MENU_NAME = 'JS 가이드';
+WHERE NAME = 'JS 가이드';
 
 INSERT
 INTO SAMPLE_MENU_MST
-(MENU_NAME,
- MENU_TYPE,
- PAR_MENU_ID,
- USE_TF,
+(NAME,
+ TYPE,
+ PARENT_ID,
+ IS_USING,
  POWER,
  DISPLAY_ORDER,
  URL,
@@ -547,7 +514,7 @@ INTO SAMPLE_MENU_MST
  UPDATED)
 SELECT '팝업(popup)창 띄우기',
        'P',
-       MENU_ID,
+       ID,
        TRUE,
        300,
        11,
@@ -557,14 +524,14 @@ SELECT '팝업(popup)창 띄우기',
        'bestheroz',
        SYSDATE
 FROM SAMPLE_MENU_MST
-WHERE MENU_NAME = 'JS 가이드';
+WHERE NAME = 'JS 가이드';
 
 INSERT
 INTO SAMPLE_MENU_MST
-(MENU_NAME,
- MENU_TYPE,
- PAR_MENU_ID,
- USE_TF,
+(NAME,
+ TYPE,
+ PARENT_ID,
+ IS_USING,
  POWER,
  DISPLAY_ORDER,
  URL,
@@ -574,7 +541,7 @@ INTO SAMPLE_MENU_MST
  UPDATED)
 SELECT '달력 및 시간: datetimepicker',
        'P',
-       MENU_ID,
+       ID,
        TRUE,
        300,
        40,
@@ -584,14 +551,14 @@ SELECT '달력 및 시간: datetimepicker',
        'bestheroz',
        SYSDATE
 FROM SAMPLE_MENU_MST
-WHERE MENU_NAME = 'JS 가이드';
+WHERE NAME = 'JS 가이드';
 
 INSERT
 INTO SAMPLE_MENU_MST
-(MENU_NAME,
- MENU_TYPE,
- PAR_MENU_ID,
- USE_TF,
+(NAME,
+ TYPE,
+ PARENT_ID,
+ IS_USING,
  POWER,
  DISPLAY_ORDER,
  URL,
@@ -601,7 +568,7 @@ INTO SAMPLE_MENU_MST
  UPDATED)
 SELECT 'ajax - 파일다운로드',
        'P',
-       MENU_ID,
+       ID,
        TRUE,
        300,
        6,
@@ -611,14 +578,14 @@ SELECT 'ajax - 파일다운로드',
        'bestheroz',
        SYSDATE
 FROM SAMPLE_MENU_MST
-WHERE MENU_NAME = 'JS 가이드';
+WHERE NAME = 'JS 가이드';
 
 INSERT
 INTO SAMPLE_MENU_MST
-(MENU_NAME,
- MENU_TYPE,
- PAR_MENU_ID,
- USE_TF,
+(NAME,
+ TYPE,
+ PARENT_ID,
+ IS_USING,
  POWER,
  DISPLAY_ORDER,
  URL,
@@ -628,7 +595,7 @@ INTO SAMPLE_MENU_MST
  UPDATED)
 SELECT '날짜 처리',
        'P',
-       MENU_ID,
+       ID,
        TRUE,
        300,
        20,
@@ -638,14 +605,14 @@ SELECT '날짜 처리',
        'bestheroz',
        SYSDATE
 FROM SAMPLE_MENU_MST
-WHERE MENU_NAME = 'JS 가이드';
+WHERE NAME = 'JS 가이드';
 
 INSERT
 INTO SAMPLE_MENU_MST
-(MENU_NAME,
- MENU_TYPE,
- PAR_MENU_ID,
- USE_TF,
+(NAME,
+ TYPE,
+ PARENT_ID,
+ IS_USING,
  POWER,
  DISPLAY_ORDER,
  URL,
@@ -655,7 +622,7 @@ INTO SAMPLE_MENU_MST
  UPDATED)
 SELECT '필드 검증하기(필수값 등)',
        'P',
-       MENU_ID,
+       ID,
        TRUE,
        300,
        15,
@@ -665,14 +632,14 @@ SELECT '필드 검증하기(필수값 등)',
        'bestheroz',
        SYSDATE
 FROM SAMPLE_MENU_MST
-WHERE MENU_NAME = 'JS 가이드';
+WHERE NAME = 'JS 가이드';
 
 INSERT
 INTO SAMPLE_MENU_MST
-(MENU_NAME,
- MENU_TYPE,
- PAR_MENU_ID,
- USE_TF,
+(NAME,
+ TYPE,
+ PARENT_ID,
+ IS_USING,
  POWER,
  DISPLAY_ORDER,
  URL,
@@ -682,7 +649,7 @@ INTO SAMPLE_MENU_MST
  UPDATED)
 SELECT '값 검증하기',
        'P',
-       MENU_ID,
+       ID,
        TRUE,
        300,
        16,
@@ -692,14 +659,14 @@ SELECT '값 검증하기',
        'bestheroz',
        SYSDATE
 FROM SAMPLE_MENU_MST
-WHERE MENU_NAME = 'JS 가이드';
+WHERE NAME = 'JS 가이드';
 
 INSERT
 INTO SAMPLE_MENU_MST
-(MENU_NAME,
- MENU_TYPE,
- PAR_MENU_ID,
- USE_TF,
+(NAME,
+ TYPE,
+ PARENT_ID,
+ IS_USING,
  POWER,
  DISPLAY_ORDER,
  CREATED_BY,
@@ -708,7 +675,7 @@ INTO SAMPLE_MENU_MST
  UPDATED)
 SELECT '페이징 처리',
        'P',
-       MENU_ID,
+       ID,
        TRUE,
        300,
        90,
@@ -717,14 +684,14 @@ SELECT '페이징 처리',
        'bestheroz',
        SYSDATE
 FROM SAMPLE_MENU_MST
-WHERE MENU_NAME = 'JS 가이드';
+WHERE NAME = 'JS 가이드';
 
 INSERT
 INTO SAMPLE_MENU_MST
-(MENU_NAME,
- MENU_TYPE,
- PAR_MENU_ID,
- USE_TF,
+(NAME,
+ TYPE,
+ PARENT_ID,
+ IS_USING,
  POWER,
  DISPLAY_ORDER,
  URL,
@@ -734,7 +701,7 @@ INTO SAMPLE_MENU_MST
  UPDATED)
 SELECT 'ajax - 파일업로드',
        'P',
-       MENU_ID,
+       ID,
        TRUE,
        300,
        5,
@@ -744,14 +711,14 @@ SELECT 'ajax - 파일업로드',
        'bestheroz',
        SYSDATE
 FROM SAMPLE_MENU_MST
-WHERE MENU_NAME = 'JS 가이드';
+WHERE NAME = 'JS 가이드';
 
 INSERT
 INTO SAMPLE_MENU_MST
-(MENU_NAME,
- MENU_TYPE,
- PAR_MENU_ID,
- USE_TF,
+(NAME,
+ TYPE,
+ PARENT_ID,
+ IS_USING,
  POWER,
  DISPLAY_ORDER,
  URL,
@@ -761,7 +728,7 @@ INTO SAMPLE_MENU_MST
  UPDATED)
 SELECT '텍스트 에디터',
        'P',
-       MENU_ID,
+       ID,
        TRUE,
        300,
        60,
@@ -771,14 +738,14 @@ SELECT '텍스트 에디터',
        'bestheroz',
        SYSDATE
 FROM SAMPLE_MENU_MST
-WHERE MENU_NAME = 'JS 가이드';
+WHERE NAME = 'JS 가이드';
 
 INSERT
 INTO SAMPLE_MENU_MST
-(MENU_NAME,
- MENU_TYPE,
- PAR_MENU_ID,
- USE_TF,
+(NAME,
+ TYPE,
+ PARENT_ID,
+ IS_USING,
  POWER,
  DISPLAY_ORDER,
  URL,
@@ -788,7 +755,7 @@ INTO SAMPLE_MENU_MST
  UPDATED)
 SELECT 'HTML템플릿 - 핸들바JS',
        'P',
-       MENU_ID,
+       ID,
        TRUE,
        300,
        70,
@@ -798,14 +765,14 @@ SELECT 'HTML템플릿 - 핸들바JS',
        'bestheroz',
        SYSDATE
 FROM SAMPLE_MENU_MST
-WHERE MENU_NAME = 'JS 가이드';
+WHERE NAME = 'JS 가이드';
 
 INSERT
 INTO SAMPLE_MENU_MST
-(MENU_NAME,
- MENU_TYPE,
- PAR_MENU_ID,
- USE_TF,
+(NAME,
+ TYPE,
+ PARENT_ID,
+ IS_USING,
  POWER,
  DISPLAY_ORDER,
  URL,
@@ -815,7 +782,7 @@ INTO SAMPLE_MENU_MST
  UPDATED)
 SELECT '숫자 포맷&#40;콤마찍기 등&#41;',
        'P',
-       MENU_ID,
+       ID,
        TRUE,
        300,
        25,
@@ -825,14 +792,14 @@ SELECT '숫자 포맷&#40;콤마찍기 등&#41;',
        'bestheroz',
        SYSDATE
 FROM SAMPLE_MENU_MST
-WHERE MENU_NAME = 'JS 가이드';
+WHERE NAME = 'JS 가이드';
 
 INSERT
 INTO SAMPLE_MENU_MST
-(MENU_NAME,
- MENU_TYPE,
- PAR_MENU_ID,
- USE_TF,
+(NAME,
+ TYPE,
+ PARENT_ID,
+ IS_USING,
  POWER,
  DISPLAY_ORDER,
  URL,
@@ -842,7 +809,7 @@ INTO SAMPLE_MENU_MST
  UPDATED)
 SELECT 'my:html',
        'P',
-       MENU_ID,
+       ID,
        TRUE,
        300,
        10,
@@ -852,14 +819,14 @@ SELECT 'my:html',
        'bestheroz',
        SYSDATE
 FROM SAMPLE_MENU_MST
-WHERE MENU_NAME = 'JSP 가이드';
+WHERE NAME = 'JSP 가이드';
 
 INSERT
 INTO SAMPLE_MENU_MST
-(MENU_NAME,
- MENU_TYPE,
- PAR_MENU_ID,
- USE_TF,
+(NAME,
+ TYPE,
+ PARENT_ID,
+ IS_USING,
  POWER,
  DISPLAY_ORDER,
  URL,
@@ -869,7 +836,7 @@ INTO SAMPLE_MENU_MST
  UPDATED)
 SELECT '표준 API 프로젝트',
        'P',
-       MENU_ID,
+       ID,
        TRUE,
        300,
        30,
@@ -879,15 +846,15 @@ SELECT '표준 API 프로젝트',
        'bestheroz',
        SYSDATE
 FROM SAMPLE_MENU_MST
-WHERE MENU_NAME = 'JSP 가이드';
+WHERE NAME = 'JSP 가이드';
 
 
 INSERT
 INTO SAMPLE_MENU_MST
-(MENU_NAME,
- MENU_TYPE,
- PAR_MENU_ID,
- USE_TF,
+(NAME,
+ TYPE,
+ PARENT_ID,
+ IS_USING,
  POWER,
  DISPLAY_ORDER,
  URL,
@@ -897,7 +864,7 @@ INTO SAMPLE_MENU_MST
  UPDATED)
 SELECT '파일관리',
        'P',
-       MENU_ID,
+       ID,
        TRUE,
        700,
        40,
@@ -907,29 +874,17 @@ SELECT '파일관리',
        'bestheroz',
        SYSDATE
 FROM SAMPLE_MENU_MST
-WHERE MENU_NAME = '관리자';
-
-
-CREATE TABLE SAMPLE_CODE_MST
-(
-    GROUP_CODE      VARCHAR(100) PRIMARY KEY NOT NULL,
-    GROUP_CODE_NAME VARCHAR(1000)            NOT NULL,
-    REMARK1         VARCHAR(4000),
-    CREATED_BY      VARCHAR(100)             NOT NULL,
-    CREATED         DATETIME                 NOT NULL,
-    UPDATED_BY      VARCHAR(100)             NOT NULL,
-    UPDATED         DATETIME                 NOT NULL
-);
+WHERE NAME = '관리자';
 
 INSERT
 INTO SAMPLE_CODE_MST
 (GROUP_CODE,
- GROUP_CODE_NAME,
+ NAME,
  CREATED_BY,
  CREATED,
  UPDATED_BY,
  UPDATED)
-VALUES ('MENU_TYPE',
+VALUES ('TYPE',
         '메뉴타입',
         'bestheroz',
         SYSDATE,
@@ -939,7 +894,7 @@ VALUES ('MENU_TYPE',
 INSERT
 INTO SAMPLE_CODE_MST
 (GROUP_CODE,
- GROUP_CODE_NAME,
+ NAME,
  CREATED_BY,
  CREATED,
  UPDATED_BY,
@@ -952,33 +907,18 @@ VALUES ('MEMBER_TYPE',
         SYSDATE);
 
 
-CREATE TABLE SAMPLE_CODE_DET
-(
-    GROUP_CODE    VARCHAR(100)  NOT NULL,
-    CODE          VARCHAR(100)  NOT NULL,
-    CODE_NAME     VARCHAR(1000) NOT NULL,
-    USE_TF        BOOLEAN       NOT NULL,
-    DISPLAY_ORDER INT(10)       NOT NULL,
-    REMARK1       VARCHAR(4000),
-    CREATED_BY    VARCHAR(100)  NOT NULL,
-    CREATED       DATETIME      NOT NULL,
-    UPDATED_BY    VARCHAR(100)  NOT NULL,
-    UPDATED       DATETIME      NOT NULL
-);
-
-
 INSERT
 INTO SAMPLE_CODE_DET
 (GROUP_CODE,
  CODE,
- CODE_NAME,
- USE_TF,
+ NAME,
+ IS_USING,
  DISPLAY_ORDER,
  CREATED_BY,
  CREATED,
  UPDATED_BY,
  UPDATED)
-VALUES ('MENU_TYPE',
+VALUES ('TYPE',
         'G',
         '그룹',
         TRUE,
@@ -992,14 +932,14 @@ INSERT
 INTO SAMPLE_CODE_DET
 (GROUP_CODE,
  CODE,
- CODE_NAME,
- USE_TF,
+ NAME,
+ IS_USING,
  DISPLAY_ORDER,
  CREATED_BY,
  CREATED,
  UPDATED_BY,
  UPDATED)
-VALUES ('MENU_TYPE',
+VALUES ('TYPE',
         'P',
         '페이지',
         TRUE,
@@ -1014,8 +954,8 @@ INSERT
 INTO SAMPLE_CODE_DET
 (GROUP_CODE,
  CODE,
- CODE_NAME,
- USE_TF,
+ NAME,
+ IS_USING,
  DISPLAY_ORDER,
  CREATED_BY,
  CREATED,
@@ -1035,8 +975,8 @@ INSERT
 INTO SAMPLE_CODE_DET
 (GROUP_CODE,
  CODE,
- CODE_NAME,
- USE_TF,
+ NAME,
+ IS_USING,
  DISPLAY_ORDER,
  CREATED_BY,
  CREATED,
@@ -1056,8 +996,8 @@ INSERT
 INTO SAMPLE_CODE_DET
 (GROUP_CODE,
  CODE,
- CODE_NAME,
- USE_TF,
+ NAME,
+ IS_USING,
  DISPLAY_ORDER,
  CREATED_BY,
  CREATED,
@@ -1077,8 +1017,8 @@ INSERT
 INTO SAMPLE_CODE_DET
 (GROUP_CODE,
  CODE,
- CODE_NAME,
- USE_TF,
+ NAME,
+ IS_USING,
  DISPLAY_ORDER,
  CREATED_BY,
  CREATED,
@@ -1098,8 +1038,8 @@ INSERT
 INTO SAMPLE_CODE_DET
 (GROUP_CODE,
  CODE,
- CODE_NAME,
- USE_TF,
+ NAME,
+ IS_USING,
  DISPLAY_ORDER,
  CREATED_BY,
  CREATED,
@@ -1114,16 +1054,3 @@ VALUES ('MEMBER_TYPE',
         SYSDATE,
         'bestheroz',
         SYSDATE);
-
-CREATE TABLE SAMPLE_FILE_MST
-(
-    FILE_SEQ      INT(10) PRIMARY KEY AUTO_INCREMENT,
-    FILE_NAME     VARCHAR(4000) NOT NULL,
-    FILE_NAME_EXT VARCHAR(100)  NOT NULL,
-    MIME_TYPE     VARCHAR(100)  NOT NULL,
-    FILE_DATA     BLOB          NOT NULL,
-    CREATED_BY    VARCHAR(100)  NOT NULL,
-    CREATED       DATETIME      NOT NULL,
-    UPDATED_BY    VARCHAR(100)  NOT NULL,
-    UPDATED       DATETIME      NOT NULL
-);

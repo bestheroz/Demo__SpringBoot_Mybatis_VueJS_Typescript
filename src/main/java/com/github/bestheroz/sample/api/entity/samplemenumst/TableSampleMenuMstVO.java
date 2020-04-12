@@ -17,13 +17,14 @@ public class TableSampleMenuMstVO implements Serializable {
     private static final long serialVersionUID = 2658557582464222508L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer menuId;
-    private String menuName;
-    private String menuType;
-    private Integer parMenuId;
-    private Boolean useTf;
+    private Integer id;
+    private String name;
+    private String type;
+    private Integer parentId;
+    private Boolean isUsing;
     private Integer power;
     private Integer displayOrder;
     private String url;
+    private String icon;
     private String remark1;
 }

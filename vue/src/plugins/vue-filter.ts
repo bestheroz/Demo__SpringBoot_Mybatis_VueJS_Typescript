@@ -48,6 +48,6 @@ Vue.filter('getEllipseText', function (text: string, length: number): string {
     length: length,
   });
 });
-Vue.filter('getSwitchLabel', function (yn: string, prefix?: string): string {
-  return _.trim((prefix || '') + (yn === 'Y' ? ' 사용' : ' 사용안함'));
+Vue.filter('getSwitchLabel', function (yn: boolean, prefix?: string): string {
+  return _.trim((prefix || '') + (yn ? ' 사용' : ' 사용안함'));
 });

@@ -54,7 +54,8 @@
     <logger name="org.jdbcdslog.StatementLogger" level="INFO"/>
     <logger name="org.jdbcdslog.ResultSetLogger" level="INFO"/>
 
-    <logger name="org.hibernate.validator.internal" level="INFO"/>
+    <logger name="org.hibernate" level="INFO"/>
+    <logger name="org.hibernate.SQL.logStatement" level="DEBUG"/>
 
     <root level="DEBUG">
         <springProfile name="dev">

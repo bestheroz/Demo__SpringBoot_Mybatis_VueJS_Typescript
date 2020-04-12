@@ -9,6 +9,6 @@ import java.util.List;
 @Mapper
 @Repository
 public interface CodeDAO {
-    @Select(value = "SELECT COD2T.CODE AS VALUE, COD2T.CODENM AS TEXT FROM MGMT_SYSCOD2T COD2T WHERE COD2T.USE_YN = 'Y' AND COD2T.GRCODE = #{groupCode, jdbcType=VARCHAR} ORDER BY COD2T.SORTSEQ ASC")
+    @Select(value = "SELECT SCD.CODE AS VALUE, SCD.NAME AS TEXT FROM SAMPLE_CODE_DET SCD WHERE SCD.IS_USING = 'Y' AND SCD.GROUP_CODE = #{groupCode, jdbcType=VARCHAR} ORDER BY SCD.DISPLAY_ORDER ASC")
     List<CodeVO> getCodeVOList(final String groupCode);
 }

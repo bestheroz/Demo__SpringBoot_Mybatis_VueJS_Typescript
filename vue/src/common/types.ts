@@ -37,11 +37,54 @@ export interface SelectItem {
 }
 
 export interface TableSampleMemberMstVO {
-  memberId: string;
-  memberPw: string;
-  memberName: string;
-  loginFailCnt: number;
-  expired: Date;
-  closeTf: boolean;
-  token: string;
+  id?: string | null;
+  password?: string | null;
+  name?: string | null;
+  loginFailCnt?: number | null;
+  expired?: Date | null;
+  isClosed?: boolean | null;
+  token?: string | null;
+  created?: Date | null;
+  createdBy?: string | null;
+  updated?: Date | null;
+  updatedBy?: string | null;
+}
+
+export interface TableSampleMenuMstVO {
+  id?: number | null;
+  name?: string | null;
+  type?: string | null;
+  parentId?: number | null;
+  isUsing?: boolean | null;
+  power?: number | null;
+  displayOrder?: number | null;
+  url?: string | null;
+  remark1?: string | null;
+  created?: Date | null;
+  createdBy?: string | null;
+  updated?: Date | null;
+  updatedBy?: string | null;
+}
+
+export interface TableSampleCodeMstVO {
+  groupCode?: string | null;
+  name?: string | null;
+  remark1?: string | null;
+  created?: Date | null;
+  createdBy?: string | null;
+  updated?: Date | null;
+  updatedBy?: string | null;
+}
+
+export interface TableSampleCodeDetVO {
+  groupCode?: string | null;
+  code?: string | null;
+  name?: string | null;
+  isUsing?: boolean | null;
+  displayOrder?: number | null;
+  remark1?: string | null;
+  created?: Date | null;
+  createdBy?: string | null;
+  updated?: Date | null;
+  updatedBy?: string | null;
 }

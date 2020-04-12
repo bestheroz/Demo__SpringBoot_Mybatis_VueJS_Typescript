@@ -17,19 +17,21 @@ public class AuthController {
     @PostMapping(value = "/login")
     public ResponseVO login(@RequestBody final TableSampleMemberMstVO tableSampleMemberMstVO) {
         System.out.println(tableSampleMemberMstVO.toString());
-        return ResponseVO.getSuccessResponseVO(this.authService.login(tableSampleMemberMstVO.getMemberId(), tableSampleMemberMstVO.getMemberPw()));
+        return ResponseVO.getSuccessResponseVO(this.authService.login(tableSampleMemberMstVO.getId(), tableSampleMemberMstVO.getPassword()));
     }
 
     @PostMapping(value = "/verify")
     public ResponseVO verify(@RequestHeader(value = "Authorization", required = false) final String token) {
         final TableSampleMemberMstVO loginVO = SessionUtils.getLoginVO();
-        this.authService.verify(token, loginVO.getMemberId());
+        this.authService.verify(token, loginVO.getId());
         return ResponseVO.getSuccessResponseVO(loginVO);
     }
 
     @DeleteMapping(value = "/logout")
     public void logout() {
-        this.tableSampleMemberMstRepository.updateToken(SessionUtils.getMemberId(), null);
+        final TableSampleMemberMstVO loginVO = SessionUtils.getLoginVO();
+        loginVO.setToken(null);
+        this.tableSampleMemberMstRepository.save(loginVO);
         SessionUtils.logout();
     }
 }

@@ -19,12 +19,16 @@ public abstract class AbstractCreatedUpdateVO {
     @PrePersist
     protected void onCreate() {
         this.updated = this.created = LocalDateTime.now();
-        this.updatedBy = this.createdBy = SessionUtils.getMemberId();
+        if (SessionUtils.isLoggedIn()) {
+            this.updatedBy = this.createdBy = SessionUtils.getId();
+        }
     }
 
     @PreUpdate
     protected void onUpdate() {
         this.updated = LocalDateTime.now();
-        this.updatedBy = SessionUtils.getMemberId();
+        if (SessionUtils.isLoggedIn()) {
+            this.updatedBy = SessionUtils.getId();
+        }
     }
 }

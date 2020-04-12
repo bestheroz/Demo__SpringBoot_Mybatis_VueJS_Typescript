@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.github.bestheroz.sample.api.menu.MenuDAO">
+    <select id="getList" resultType="TableSampleMenuMstVO" parameterType="String">
+        SELECT A.* FROM (
+        SELECT 1 LVL ,
+        MM.ID ,
+        MM.NAME,
+        MM.TYPE,
+        MM.PARENT_ID,
+        MM.DISPLAY_ORDER,
+        MM.URL,
+        MM.ICON
+        FROM MGMT_MENUMST MM
+        <where>
+            AND MM.ID = 'MENUID_0000'
+        </where>
+        UNION ALL
+        SELECT 2 LVL ,
+        MM.ID ,
+        MM.NAME,
+        MM.PARENT_ID,
+        MM.TYPE,
+        MM.DISPLAY_ORDER,
+        MM.URL,
+        MM.ICON
+        FROM MGMT_MENUMST MM JOIN MGMT_GROUPLEVEL_MENU MGM ON INSTR(MGM.ID_LIST, MM.ID) > 0
+        <where>
+            AND MM.PARENT_ID = 'MENUID_0000'
+            AND MGM.LEVELCOD = #{levelcod, jdbcType=VARCHAR}
+        </where>
+        UNION ALL
+        SELECT 3 LVL ,
+        MM2.ID ,
+        MM2.NAME,
+        MM2.PARENT_ID,
+        MM2.TYPE,
+        MM2.DISPLAY_ORDER,
+        MM2.URL,
+        MM2.ICON
+        FROM MGMT_MENUMST MM JOIN MGMT_MENUMST MM2 ON MM2.PARENT_ID = MM.ID
+                            JOIN MGMT_GROUPLEVEL_MENU MGM ON INSTR(MGM.ID_LIST, MM2.ID) > 0
+        <where>
+            AND MM.PARENT_ID = 'MENUID_0000'
+            AND MGM.LEVELCOD = #{levelcod, jdbcType=VARCHAR}
+        </where>
+        ) A
+        ORDER BY A.LVL, A.DISPLAY_ORDER, A.NAME
+    </select>
+</mapper>
+

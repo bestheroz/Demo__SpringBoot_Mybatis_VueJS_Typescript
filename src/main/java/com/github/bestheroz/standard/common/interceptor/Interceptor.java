@@ -40,7 +40,7 @@ public class Interceptor extends HandlerInterceptorAdapter {
                     final Optional<TableSampleMemberMstVO> one = AccessBeanUtils.getBean(TableSampleMemberMstRepository.class).findByToken(authorization);
                     if (one.isPresent()) {
                         try {
-                            AccessBeanUtils.getBean(AuthService.class).verify(authorization, one.get().getMemberId());
+                            AccessBeanUtils.getBean(AuthService.class).verify(authorization, one.get().getId());
                         } catch (final BusinessException e) {
                             throw BusinessException.FAIL_TRY_LOGIN_FIRST;
                         }

@@ -16,6 +16,6 @@ public class TableSampleCodeMstVO extends AbstractCreatedUpdateVO implements Ser
     private static final long serialVersionUID = 5295387617727505308L;
     @Id
     private String groupCode;
-    private String groupCodeName;
+    private String name;
     private String remark1;
 }

@@ -11,10 +11,10 @@ import javax.annotation.Resource;
 @RestController
 @RequestMapping("code")
 public class CodeController {
-    @Resource private CodeService codeService;
+    @Resource private CodeDAO codeDAO;
 
     @GetMapping(value = "{groupCode}")
     public ResponseVO getCodeVOList(@PathVariable(value = "groupCode") final String groupCode) {
-        return ResponseVO.getSuccessResponseVO(this.codeService.getCodeVOList(groupCode));
+        return ResponseVO.getSuccessResponseVO(this.codeDAO.getCodeVOList(groupCode));
     }
 }

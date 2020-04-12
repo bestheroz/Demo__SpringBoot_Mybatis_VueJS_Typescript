@@ -51,18 +51,18 @@ public class SessionUtils {
 
     public static void setLoginVO(final TableSampleMemberMstVO loginVO) {
         getSession().setAttribute(SESSION_VALUE_OF_LOGIN_VO, loginVO);
-        getSession().setAttribute("memberId", loginVO.getMemberId());
-        getSession().setAttribute("memberName", loginVO.getMemberName());
+        getSession().setAttribute("id", loginVO.getId());
+        getSession().setAttribute("name", loginVO.getName());
     }
 
-    public static String getMemberId() {
+    public static String getId() {
         try {
-            final String memberId = (String) getSession().getAttribute("memberId");
-            if (memberId == null) {
+            final String id = (String) getSession().getAttribute("id");
+            if (id == null) {
                 log.warn(BusinessException.FAIL_TRY_LOGIN_FIRST.toString());
                 throw BusinessException.FAIL_TRY_LOGIN_FIRST;
             }
-            return memberId;
+            return id;
         } catch (final Throwable e) {
             LOGGER.warn(ExceptionUtils.getStackTrace(e));
             throw e;
