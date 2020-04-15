@@ -1,8 +1,8 @@
 package com.github.bestheroz.standard.common.interceptor;
 
 import com.github.bestheroz.sample.api.auth.AuthService;
-import com.github.bestheroz.sample.api.entity.samplemembermst.TableSampleMemberMstRepository;
-import com.github.bestheroz.sample.api.entity.samplemembermst.TableSampleMemberMstVO;
+import com.github.bestheroz.sample.api.entity.member.TableMemberRepository;
+import com.github.bestheroz.sample.api.entity.member.TableMemberVO;
 import com.github.bestheroz.standard.common.exception.BusinessException;
 import com.github.bestheroz.standard.common.util.AccessBeanUtils;
 import com.github.bestheroz.standard.common.util.SessionUtils;
@@ -37,7 +37,7 @@ public class Interceptor extends HandlerInterceptorAdapter {
                     if (StringUtils.isEmpty(authorization)) {
                         throw BusinessException.FAIL_TRY_LOGIN_FIRST;
                     }
-                    final Optional<TableSampleMemberMstVO> one = AccessBeanUtils.getBean(TableSampleMemberMstRepository.class).findByToken(authorization);
+                    final Optional<TableMemberVO> one = AccessBeanUtils.getBean(TableMemberRepository.class).findByToken(authorization);
                     if (one.isPresent()) {
                         try {
                             AccessBeanUtils.getBean(AuthService.class).verify(authorization, one.get().getId());

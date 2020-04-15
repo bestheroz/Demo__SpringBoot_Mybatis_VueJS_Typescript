@@ -22,7 +22,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
         registry.addInterceptor(new Interceptor()).addPathPatterns("/**")
-                .excludePathPatterns("/", "/fonts/**", "/webjars/**", "/img/**", "/js/**", "/**/*.css", "/**/*.ico", "/**/*.js", "/**/*.json", "/**/*.html", "/**/*.map", "/csrf", "/sample/auth/login",
+                .excludePathPatterns("/", "/fonts/**", "/webjars/**", "/img/**", "/js/**", "/**/*.css", "/**/*.ico", "/**/*.js", "/**/*.json", "/**/*.html", "/**/*.map", "/csrf", "/auth/login",
                         "/error", "/common/exception/error", "/code/**", "/variable/**", "/actuator/**", "/external/**");
     }
 

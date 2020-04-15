@@ -179,7 +179,7 @@
 
 <script lang="ts">
 import { Component, Prop, PropSync, Vue, Watch } from 'vue-property-decorator';
-import { SelectItem, TableSampleMemberMstVO } from '@/common/types';
+import { SelectItem, TableMemberVO } from '@/common/types';
 import {
   deleteDataApi,
   getListApi,
@@ -195,7 +195,7 @@ const SHA512 = require('crypto-js/sha256');
 })
 export default class extends Vue {
   @PropSync('dialog', { required: true, type: Boolean }) syncedDialog!: boolean;
-  @Prop({ required: true }) readonly editItem!: TableSampleMemberMstVO;
+  @Prop({ required: true }) readonly editItem!: TableMemberVO;
   @Prop({ required: true }) readonly mode!: string | null;
 
   loading: boolean = false;
@@ -230,10 +230,7 @@ export default class extends Vue {
     if (params.password) {
       params.password = SHA512(params.password).toString();
     }
-    const response = await postDataApi<TableSampleMemberMstVO>(
-      `admin/user/`,
-      params,
-    );
+    const response = await postDataApi<TableMemberVO>(`admin/user/`, params);
     this.loading = false;
     if (_.startsWith(response.code, `S`)) {
       this.syncedDialog = false;
@@ -247,7 +244,7 @@ export default class extends Vue {
     if (params.password) {
       params.password = SHA512(params.password).toString();
     }
-    const response = await patchDataApi<TableSampleMemberMstVO>(
+    const response = await patchDataApi<TableMemberVO>(
       `admin/user/`,
       params,
       this.editItem.id!,
@@ -263,7 +260,7 @@ export default class extends Vue {
     const result = await confirmDelete();
     if (result.value) {
       this.loading = true;
-      const response = await deleteDataApi<TableSampleMemberMstVO>(
+      const response = await deleteDataApi<TableMemberVO>(
         `admin/user/`,
         this.editItem.id!,
       );

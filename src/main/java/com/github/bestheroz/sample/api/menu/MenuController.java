@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 
 @RestController
-@RequestMapping("sample/menu")
+@RequestMapping("menu")
 public class MenuController {
     @Resource private MenuService menuService;
 

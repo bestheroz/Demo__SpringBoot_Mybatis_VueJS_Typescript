@@ -23,7 +23,7 @@
                   v-slot="{ errors }"
                 >
                   <v-text-field
-                    v-model="editItem.pMenuId"
+                    v-model="editItem.parentId"
                     label="*상위메뉴아이디"
                     :error-messages="errors"
                     disabled
@@ -128,7 +128,7 @@
 
 <script lang="ts">
 import { Component, Prop, PropSync, Vue, Watch } from 'vue-property-decorator';
-import { SelectItem, TableSampleMenuMstVO } from '@/common/types';
+import { SelectItem, TableMenuVO } from '@/common/types';
 import {
   deleteDataApi,
   getCodeListApi,
@@ -143,7 +143,7 @@ import { confirmDelete } from '@/utils/alerts';
 })
 export default class extends Vue {
   @PropSync('dialog', { required: true, type: Boolean }) syncedDialog!: boolean;
-  @Prop({ required: true }) readonly editItem!: TableSampleMenuMstVO;
+  @Prop({ required: true }) readonly editItem!: TableMenuVO;
   @Prop({ required: true }) readonly mode!: string | null;
 
   loading: boolean = false;
@@ -172,8 +172,8 @@ export default class extends Vue {
 
   async create() {
     this.loading = true;
-    const response = await postDataApi<TableSampleMenuMstVO>(
-      `admin/menu/`,
+    const response = await postDataApi<TableMenuVO>(
+      `admin/menus/`,
       this.editItem,
     );
     this.loading = false;
@@ -185,8 +185,8 @@ export default class extends Vue {
 
   async patch() {
     this.loading = true;
-    const response = await patchDataApi<TableSampleMenuMstVO>(
-      `admin/menu/`,
+    const response = await patchDataApi<TableMenuVO>(
+      `admin/menus/`,
       this.editItem,
       this.editItem.id!,
     );
@@ -201,8 +201,8 @@ export default class extends Vue {
     const result = await confirmDelete();
     if (result.value) {
       this.loading = true;
-      const response = await deleteDataApi<TableSampleMenuMstVO>(
-        `admin/menu/`,
+      const response = await deleteDataApi<TableMenuVO>(
+        `admin/menus/`,
         this.editItem.id!,
       );
       this.loading = false;

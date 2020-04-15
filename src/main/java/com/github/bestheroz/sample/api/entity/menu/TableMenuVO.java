@@ -1,5 +1,6 @@
-package com.github.bestheroz.sample.api.entity.samplemenumst;
+package com.github.bestheroz.sample.api.entity.menu;
 
+import com.github.bestheroz.sample.api.entity.AbstractCreatedUpdateVO;
 import lombok.*;
 
 import javax.persistence.Entity;
@@ -12,8 +13,8 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = false)
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Entity(name = "SAMPLE_MENU_MST")
-public class TableSampleMenuMstVO implements Serializable {
+@Entity(name = "MENU")
+public class TableMenuVO extends AbstractCreatedUpdateVO implements Serializable {
     private static final long serialVersionUID = 2658557582464222508L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,7 +23,6 @@ public class TableSampleMenuMstVO implements Serializable {
     private String type;
     private Integer parentId;
     private Boolean isUsing;
-    private Integer power;
     private Integer displayOrder;
     private String url;
     private String icon;

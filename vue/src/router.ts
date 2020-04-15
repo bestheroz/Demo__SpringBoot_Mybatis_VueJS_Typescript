@@ -3,7 +3,7 @@ import Router from 'vue-router';
 import store from './store';
 import { ApiDataResult } from '@/utils/apis';
 import _ from 'lodash';
-import { TableSampleMemberMstVO } from '@/common/types';
+import { TableMemberVO } from '@/common/types';
 import envs from '@/constants/envs';
 
 Vue.use(Router);
@@ -14,7 +14,7 @@ const requireAuth = () => async (to: any, from: any, next: any) => {
   } else {
     try {
       const response = await store.state.axiosInstance.post<
-        ApiDataResult<TableSampleMemberMstVO>
+        ApiDataResult<TableMemberVO>
       >(`${envs.API_HOST}auth/verify`);
       if (_.startsWith(response.data.code, `S`)) {
         store.commit('loginToken', response.data.data);

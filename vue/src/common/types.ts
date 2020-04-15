@@ -36,7 +36,7 @@ export interface SelectItem {
   text: string;
 }
 
-export interface TableSampleMemberMstVO {
+export interface TableMemberVO {
   id?: string | null;
   password?: string | null;
   name?: string | null;
@@ -50,13 +50,13 @@ export interface TableSampleMemberMstVO {
   updatedBy?: string | null;
 }
 
-export interface TableSampleMenuMstVO {
+export interface TableMenuVO {
   id?: number | null;
   name?: string | null;
   type?: string | null;
   parentId?: number | null;
   isUsing?: boolean | null;
-  power?: number | null;
+  authority?: number | null;
   displayOrder?: number | null;
   url?: string | null;
   remark1?: string | null;
@@ -66,8 +66,17 @@ export interface TableSampleMenuMstVO {
   updatedBy?: string | null;
 }
 
-export interface TableSampleCodeMstVO {
-  groupCode?: string | null;
+export interface TableMenuAuthorityVO {
+  authority?: number | null;
+  menuIdList?: string | null;
+  created?: Date | null;
+  createdBy?: string | null;
+  updated?: Date | null;
+  updatedBy?: string | null;
+}
+
+export interface TableCodeGroupVO {
+  codeGroup?: string | null;
   name?: string | null;
   remark1?: string | null;
   created?: Date | null;
@@ -76,8 +85,8 @@ export interface TableSampleCodeMstVO {
   updatedBy?: string | null;
 }
 
-export interface TableSampleCodeDetVO {
-  groupCode?: string | null;
+export interface TableCodeVO {
+  codeGroup?: string | null;
   code?: string | null;
   name?: string | null;
   isUsing?: boolean | null;

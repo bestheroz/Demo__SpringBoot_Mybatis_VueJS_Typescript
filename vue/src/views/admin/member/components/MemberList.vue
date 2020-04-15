@@ -64,11 +64,11 @@
         <template v-slot:item.userGroupId="{ item }" v-if="GROUP_LIST">
           {{ item.userGroupId | getCodeText(GROUP_LIST) }}
         </template>
-        <template v-slot:item.updDt="{ item }">
-          {{ item.updDt | formatDatetime }}
+        <template v-slot:item.updated="{ item }">
+          {{ item.updated | formatDatetime }}
         </template>
-        <template v-slot:item.updId="{ item }">
-          {{ item.updId | formatEmpNm }}
+        <template v-slot:item.updatedBy="{ item }">
+          {{ item.updatedBy | formatEmpNm }}
         </template>
       </v-data-table>
       <member-edit-dialog
@@ -84,11 +84,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import {
-  DataTableHeader,
-  SelectItem,
-  TableSampleMemberMstVO,
-} from '@/common/types';
+import { DataTableHeader, SelectItem, TableMemberVO } from '@/common/types';
 import { getListApi } from '@/utils/apis';
 import envs from '@/constants/envs';
 import ButtonSet from '@/components/speeddial/ButtonSet.vue';
@@ -106,12 +102,12 @@ import MemberEditDialog from '@/views/admin/member/components/MemberEditDialog.v
 export default class extends Vue {
   readonly envs: typeof envs = envs;
   mode: string | null = null;
-  sortBy: string[] = ['updDt'];
+  sortBy: string[] = ['updated'];
   sortDesc: boolean[] = [true];
-  items: TableSampleMemberMstVO[] = [];
-  filteredItems: TableSampleMemberMstVO[] = [];
-  editItem: TableSampleMemberMstVO = {};
-  selected: TableSampleMemberMstVO[] = [];
+  items: TableMemberVO[] = [];
+  filteredItems: TableMemberVO[] = [];
+  editItem: TableMemberVO = {};
+  selected: TableMemberVO[] = [];
   loading: boolean = false;
   dialog: boolean = false;
 
@@ -154,14 +150,14 @@ export default class extends Vue {
     {
       text: `작업일시`,
       align: `center`,
-      value: `updDt`,
+      value: `updated`,
       filterable: false,
       width: 160,
     },
     {
       text: `작업자`,
       align: `start`,
-      value: `updId`,
+      value: `updatedBy`,
       filterable: false,
       width: 100,
     },
@@ -176,7 +172,7 @@ export default class extends Vue {
     this.selected = [];
     this.items = [];
     this.loading = true;
-    const response = await getListApi<TableSampleMemberMstVO[]>(`admin/user/`);
+    const response = await getListApi<TableMemberVO[]>(`admin/user/`);
     this.loading = false;
     this.items = response.data || [];
   }

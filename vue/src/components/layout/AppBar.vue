@@ -8,67 +8,6 @@
     </v-toolbar-title>
     <v-spacer />
     <v-toolbar-title>
-      <v-menu
-        open-on-hover
-        bottom
-        offset-y
-        v-for="item in items"
-        :key="item.title"
-      >
-        <template v-slot:activator="{ on }">
-          <v-btn x-large text dark v-on="on">
-            <v-icon v-if="item.icon"> {{ item.icon }}</v-icon>
-            {{ item.title }}
-          </v-btn>
-        </template>
-
-        <v-list dense v-if="item.children">
-          <v-list-item
-            v-for="(child, i) in item.children"
-            :key="i"
-            @click="child.type === 'W' ? popupWindow(`${child.to}`) : undefined"
-            :to="child.type !== 'W' ? `${child.to}` : undefined"
-            link
-          >
-            <v-list-item-content>
-              <v-list-item-title>
-                {{ child.title }}
-                <v-icon v-if="child.type === 'W'">mdi-dock-window</v-icon>
-              </v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
-      </v-menu>
-    </v-toolbar-title>
-    <v-spacer />
-    <v-toolbar-title v-if="cmpAUrl || cmpBUrl">
-      <v-menu open-on-hover bottom offset-y>
-        <template v-slot:activator="{ on }">
-          <v-btn color="primary" x-large text dark v-on="on">
-            <v-icon> mdi-dock-window</v-icon>
-          </v-btn>
-        </template>
-
-        <v-list dense>
-          <v-list-item v-if="cmpAUrl">
-            <v-list-item-title>
-              <v-btn text @click="goCmpA"> CMP (A) </v-btn>
-            </v-list-item-title>
-          </v-list-item>
-          <v-list-item v-if="cmpBUrl">
-            <v-list-item-title>
-              <v-btn text @click="goCmpB"> CMP (B) </v-btn>
-            </v-list-item-title>
-          </v-list-item>
-          <v-list-item v-if="cmpAUrl">
-            <v-list-item-title>
-              <v-btn text to="/tester/grafana"> grafana </v-btn>
-            </v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu>
-    </v-toolbar-title>
-    <v-toolbar-title>
       <v-btn x-large text dark :ripple="false" color="primary">
         <countdown
           ref="countdown"
@@ -93,7 +32,7 @@
         <template v-slot:activator="{ on }">
           <v-btn color="primary" x-large text dark v-on="on">
             <v-icon> mdi-account</v-icon>
-            {{ $storage.get('userVO').empnm }}
+            {{ $storage.get('userVO').name }}
           </v-btn>
         </template>
 
@@ -126,8 +65,6 @@ import { DrawerItem } from '@/common/types';
 export default class extends Vue {
   @PropSync('drawer', { required: true, default: true }) syncedDrawer!: boolean;
   readonly envs: typeof envs = envs;
-  cmpAUrl: string | null = null;
-  cmpBUrl: string | null = null;
   appTitle: string | null = null;
   items: DrawerItem[] | null = null;
 
@@ -144,8 +81,6 @@ export default class extends Vue {
   }
 
   async mounted() {
-    this.cmpAUrl = await getVariableApi('cmpAUrl');
-    this.cmpBUrl = await getVariableApi('cmpAUrl');
     this.appTitle = await getVariableApi('appTitle');
   }
 

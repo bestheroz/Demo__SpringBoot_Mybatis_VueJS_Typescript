@@ -84,7 +84,7 @@ import { ApiDataResult, getVariableApi } from '@/utils/apis';
 import _ from 'lodash';
 import axios from 'axios';
 import envs from '@/constants/envs';
-import { TableSampleMemberMstVO } from '@/common/types';
+import { TableMemberVO } from '@/common/types';
 import { alertError } from '@/utils/alerts';
 
 const SHA512 = require('crypto-js/sha512');
@@ -109,8 +109,8 @@ export default class extends Vue {
       return;
     }
 
-    const response = await axios.post<ApiDataResult<TableSampleMemberMstVO>>(
-      `${envs.API_HOST}sample/auth/login`,
+    const response = await axios.post<ApiDataResult<TableMemberVO>>(
+      `${envs.API_HOST}auth/login`,
       {
         id: this.id,
         password: SHA512(this.password).toString(),

@@ -155,19 +155,19 @@ export async function deleteDataApi<T>(
 }
 
 export async function getCodeListApi<SelectItem>(
-  groupCode: string,
+  codeGroup: string,
 ): Promise<SelectItem[]> {
-  if (Vue.$storage.has(`code__${groupCode}`)) {
-    return Vue.$storage.get(`code__${groupCode}`);
+  if (Vue.$storage.has(`code__${codeGroup}`)) {
+    return Vue.$storage.get(`code__${codeGroup}`);
   } else {
     try {
       const response = await store.state.axiosInstance.get<
         ApiDataResult<SelectItem[]>
-      >(`code/${groupCode}`);
+      >(`code/${codeGroup}`);
       await logoutChecker(response.data);
       const result = response.data.data || [];
       if (result.length > 0) {
-        Vue.$storage.set(`code__${groupCode}`, result);
+        Vue.$storage.set(`code__${codeGroup}`, result);
       }
       // @ts-ignore
       return result;

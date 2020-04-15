@@ -11,73 +11,36 @@
           "
           class="title"
         >
-          시스템코드관리-DET {{ mode }}
+          시스템코드관리-MST {{ mode }}
         </v-alert>
         <v-card-text>
           <ValidationObserver ref="observer">
             <v-row>
-              <v-col cols="12" md="4">
+              <v-col cols="12" md="6">
                 <ValidationProvider
-                  name="그룹 코드"
-                  rules="required"
+                  name="그룹코드"
+                  rules="required|max:32"
                   v-slot="{ errors }"
                 >
                   <v-text-field
-                    v-model="editItem.groupCode"
-                    label="*그룹 코드"
-                    disabled
-                    :error-messages="errors"
-                  />
-                </ValidationProvider>
-              </v-col>
-              <v-col cols="12" md="4">
-                <v-switch
-                  v-model="editItem.isUsing"
-                  :label="editItem.isUsing | getSwitchLabel"
-                  false-value="N"
-                  true-value="Y"
-                />
-              </v-col>
-              <v-col cols="0" md="4" />
-              <v-col cols="12" md="4">
-                <ValidationProvider
-                  name="상세 코드"
-                  rules="max:50|required"
-                  v-slot="{ errors }"
-                >
-                  <v-text-field
-                    v-model="editItem.code"
-                    label="*상세 코드"
-                    :counter="50"
+                    v-model="editItem.codeGroup"
+                    label="*그룹코드"
+                    :counter="32"
                     :error-messages="errors"
                     :disabled="mode !== '추가'"
                   />
                 </ValidationProvider>
               </v-col>
-              <v-col cols="12" md="4">
+              <v-col cols="12" md="6">
                 <ValidationProvider
-                  name="상세 코드명"
-                  rules="max:100"
+                  name="그룹코드명"
+                  rules="required|max:100"
                   v-slot="{ errors }"
                 >
                   <v-text-field
-                    v-model="editItem.codenm"
-                    label="상세 코드명"
+                    v-model="editItem.codeGroupnm"
+                    label="그룹코드명"
                     :counter="100"
-                    :error-messages="errors"
-                    clearable
-                  />
-                </ValidationProvider>
-              </v-col>
-              <v-col cols="12" md="4">
-                <ValidationProvider
-                  name="정렬순서"
-                  rules="required|numeric"
-                  v-slot="{ errors }"
-                >
-                  <v-text-field
-                    v-model.number="editItem.sortseq"
-                    label="*정렬순서"
                     :error-messages="errors"
                   />
                 </ValidationProvider>
@@ -102,17 +65,17 @@
 
 <script lang="ts">
 import { Component, Prop, PropSync, Vue, Watch } from 'vue-property-decorator';
-import { TableSampleCodeDetVO } from '@/common/types';
+import { TableCodeGroupVO } from '@/common/types';
 import { deleteDataApi, patchDataApi, postDataApi } from '@/utils/apis';
 import _ from 'lodash';
 import { confirmDelete } from '@/utils/alerts';
 
 @Component({
-  name: 'CodeDetEditDialog',
+  name: 'CodeGroupEditDialog',
 })
 export default class extends Vue {
   @PropSync('dialog', { required: true, type: Boolean }) syncedDialog!: boolean;
-  @Prop({ required: true }) readonly editItem!: TableSampleCodeDetVO;
+  @Prop({ required: true }) readonly editItem!: TableCodeGroupVO;
   @Prop({ required: true }) readonly mode!: string | null;
 
   loading: boolean = false;
@@ -134,8 +97,8 @@ export default class extends Vue {
 
   async create() {
     this.loading = true;
-    const response = await postDataApi<TableSampleCodeDetVO>(
-      `admin/codeDet/`,
+    const response = await postDataApi<TableCodeGroupVO>(
+      `admin/codeGroups/`,
       this.editItem,
     );
     this.loading = false;
@@ -147,10 +110,10 @@ export default class extends Vue {
 
   async patch() {
     this.loading = true;
-    const response = await patchDataApi<TableSampleCodeDetVO>(
-      `admin/codeDet/`,
+    const response = await patchDataApi<TableCodeGroupVO>(
+      `admin/codeGroups/`,
       this.editItem,
-      { key: this.editItem.groupCode!, key2: this.editItem.code! },
+      this.editItem.codeGroup!,
     );
     this.loading = false;
     if (_.startsWith(response.code, `S`)) {
@@ -163,9 +126,9 @@ export default class extends Vue {
     const result = await confirmDelete();
     if (result.value) {
       this.loading = true;
-      const response = await deleteDataApi<TableSampleCodeDetVO>(
-        `admin/codeDet/`,
-        { key: this.editItem.groupCode!, key2: this.editItem.code! },
+      const response = await deleteDataApi<TableCodeGroupVO>(
+        `admin/codeGroups/`,
+        this.editItem.codeGroup!,
       );
       this.loading = false;
       if (_.startsWith(response.code, `S`)) {

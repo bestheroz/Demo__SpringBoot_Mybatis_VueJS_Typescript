@@ -6,7 +6,7 @@
         fixed-header
         :loading="loading"
         :headers="headers"
-        :items="filteredItems"
+        :items="items"
         item-key="id"
         disable-sort
         disable-filtering
@@ -17,27 +17,16 @@
         <template v-slot:top>
           <button-set reload-button @click:reload="getList" />
         </template>
-        <template v-slot:header>
-          <data-table-filter
-            :filter-header="headers"
-            :filtered-items.sync="filteredItems"
-            :original-items="items"
-            :filter-first-column="true"
-          />
+        <template v-slot:item.type="{ item }" v-if="MENU_TYPE">
+          {{ item.type | getCodeText(MENU_TYPE) }}
         </template>
-        <template v-slot:item.type="{ item }" v-if="W004">
-          {{ item.type | getCodeText(W004) }}
-        </template>
-        <template v-slot:item.menuNmKor="{ item }">
-          <span :style="`padding-left: ${50 * (item.lvl - 1)}px;`">
-            {{ item.menuNmKor }}
+        <template v-slot:item.name="{ item }">
+          <span :style="`padding-left: ${80 * (item.level - 1)}px;`">
+            {{ item.name }}
           </span>
         </template>
-        <template v-slot:item.seq="{ item }">
-          {{ item.seq.toLocaleString() }}
-        </template>
-        <template v-slot:item.updDt="{ item }">
-          {{ item.updDt | formatDatetime }}
+        <template v-slot:item.updated="{ item }">
+          {{ item.updated | formatDatetime }}
         </template>
         <template v-slot:item.action="{ item }">
           <v-btn
@@ -49,13 +38,12 @@
               () => {
                 mode = '추가';
                 editItem = {
-                  pMenuId: item.id,
-                  id: `${item.id}_00`,
+                  parentId: item.id,
                 };
                 dialog = true;
               }
             "
-            :disabled="item.lvl === 3"
+            :disabled="item.level === 3"
           >
             하위메뉴입력
           </v-btn>
@@ -64,7 +52,7 @@
             tile
             color="button-edit"
             x-small
-            :disabled="item.id === 'MENUID_0000'"
+            :disabled="item.name === 'ROOT'"
             @click="
               () => {
                 mode = '수정';
@@ -86,7 +74,7 @@
                 $refs.refEditDialog.delete();
               }
             "
-            :disabled="!item.pMenuId"
+            :disabled="!item.parentId"
           >
             삭제
           </v-btn>
@@ -105,21 +93,33 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import {
-  DataTableHeader,
-  SelectItem,
-  TableSampleMenuMstVO,
-} from '@/common/types';
+import { DataTableHeader, SelectItem, TableMenuVO } from '@/common/types';
 import { getCodeListApi, getListApi } from '@/utils/apis';
 import envs from '@/constants/envs';
 import MenuEditDialog from '@/views/admin/menu/components/MenuEditDialog.vue';
 import ButtonSet from '@/components/speeddial/ButtonSet.vue';
-import DataTableFilter from '@/components/datatable/DataTableFilter.vue';
+
+interface MenuVO {
+  level: number;
+  id: number;
+  name: string;
+  type: string;
+  parentId: number;
+  isUsing: boolean;
+  displayOrder: number;
+  url: string;
+  icon: string;
+  remark1: string;
+  children: MenuVO[];
+  created?: Date | null;
+  createdBy?: string | null;
+  updated?: Date | null;
+  updatedBy?: string | null;
+}
 
 @Component({
   name: 'MenuList',
   components: {
-    DataTableFilter,
     ButtonSet,
     MenuEditDialog,
   },
@@ -127,14 +127,13 @@ import DataTableFilter from '@/components/datatable/DataTableFilter.vue';
 export default class extends Vue {
   readonly envs: typeof envs = envs;
   mode: string | null = null;
-  items: TableSampleMenuMstVO[] = [];
-  filteredItems: TableSampleMenuMstVO[] = [];
-  editItem: TableSampleMenuMstVO = Object.create(null);
-  selected: TableSampleMenuMstVO[] = [];
+  items: TableMenuVO[] = [];
+  editItem: TableMenuVO = Object.create(null);
+  selected: TableMenuVO[] = [];
   loading: boolean = false;
   dialog: boolean = false;
 
-  W004: SelectItem[] | null = null;
+  MENU_TYPE: SelectItem[] | null = null;
 
   headers: DataTableHeader[] = [
     {
@@ -145,24 +144,14 @@ export default class extends Vue {
       filterSelectItem: [],
     },
     {
-      text: `메뉴 ID`,
-      align: `start`,
-      value: `id`,
-    },
-    {
-      text: `상위 메뉴 ID`,
-      align: `start`,
-      value: `pMenuId`,
-    },
-    {
       text: `메뉴명`,
       align: `start`,
-      value: `menuNmKor`,
+      value: `name`,
     },
     {
       text: `메뉴 순서`,
       align: `end`,
-      value: `seq`,
+      value: `displayOrder`,
       width: 100,
     },
     {
@@ -172,11 +161,25 @@ export default class extends Vue {
       filterable: false,
       width: 220,
     },
+    {
+      text: `작업일시`,
+      align: `center`,
+      value: `updated`,
+      filterable: false,
+      width: 160,
+    },
+    {
+      text: `작업자`,
+      align: `start`,
+      value: `updatedBy`,
+      filterable: false,
+      width: 100,
+    },
   ];
 
   async mounted() {
-    this.W004 = await getCodeListApi(`W004`);
-    this.headers[0].filterSelectItem = this.W004;
+    this.MENU_TYPE = await getCodeListApi(`MENU_TYPE`);
+    this.headers[0].filterSelectItem = this.MENU_TYPE;
     this.getList();
   }
 
@@ -184,7 +187,7 @@ export default class extends Vue {
     this.selected = [];
     this.items = [];
     this.loading = true;
-    const response = await getListApi<TableSampleMenuMstVO[]>(`admin/menu/`);
+    const response = await getListApi<MenuVO[]>(`admin/menus/`);
     this.loading = false;
     this.items = response.data || [];
   }

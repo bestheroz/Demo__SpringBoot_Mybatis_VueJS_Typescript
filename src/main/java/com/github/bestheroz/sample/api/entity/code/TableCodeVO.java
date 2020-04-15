@@ -1,4 +1,4 @@
-package com.github.bestheroz.sample.api.entity.samplecodedet;
+package com.github.bestheroz.sample.api.entity.code;
 
 import com.github.bestheroz.sample.api.entity.AbstractCreatedUpdateVO;
 import lombok.*;
@@ -12,12 +12,12 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = false)
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Entity(name = "SAMPLE_CODE_DET")
-@IdClass(TableSampleCodeDetId.class)
-public class TableSampleCodeDetVO extends AbstractCreatedUpdateVO implements Serializable {
+@Entity(name = "CODE")
+@IdClass(TableCodeVOId.class)
+public class TableCodeVO extends AbstractCreatedUpdateVO implements Serializable {
     private static final long serialVersionUID = -6076508411557466173L;
     @Id
-    private String groupCode;
+    private String codeGroup;
     @Id
     private String code;
     private String name;

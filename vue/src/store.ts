@@ -2,7 +2,7 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import router from '@/router';
 import axios from 'axios';
-import { TableSampleMemberMstVO } from '@/common/types';
+import { TableMemberVO } from '@/common/types';
 import envs from '@/constants/envs';
 
 Vue.use(Vuex);
@@ -20,7 +20,7 @@ export default new Vuex.Store({
     logoutTime: new Date().getTime() + 2 * 3600 * 1000,
   },
   mutations: {
-    async loginToken(state, userVO: TableSampleMemberMstVO) {
+    async loginToken(state, userVO: TableMemberVO) {
       Vue.$storage.clear();
       Vue.$storage.set('accessToken', userVO.token);
       Vue.$storage.set('userVO', userVO);

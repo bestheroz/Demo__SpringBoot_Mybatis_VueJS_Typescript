@@ -1,13 +1,12 @@
 package com.github.bestheroz.sample.api.menu;
 
 import com.github.bestheroz.sample.api.admin.menu.AdminMenuDAO;
-import com.github.bestheroz.sample.api.entity.samplemenumst.TableSampleMenuMstVO;
 import com.github.bestheroz.standard.common.util.SessionUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class MenuService {
@@ -15,36 +14,37 @@ public class MenuService {
     @Resource private AdminMenuDAO adminMenuDAO;
 
     public List<MenuVO> getMenuList() {
-        final List<TableSampleMenuMstVO> list;
-        if ("000".equals(SessionUtils.getAttribute("levelcod"))) {
-            list = this.adminMenuDAO.getList();
-        } else {
-            list = this.menuDAO.getList(SessionUtils.getAttribute("levelcod"));
-        }
-        final List<MenuVO> result = new ArrayList<>();
-        for (final TableSampleMenuMstVO tableMgmtMenumstVO : list) {
-            if (tableMgmtMenumstVO.getLvl() == 2) {
-                final MenuVO menuVO = new MenuVO();
-                menuVO.setTitle(tableMgmtMenumstVO.getMenuNmKor());
-                menuVO.setIcon(tableMgmtMenumstVO.getMenuIcon());
-                menuVO.setTo(tableMgmtMenumstVO.getUrl());
-                menuVO.setType(tableMgmtMenumstVO.getMenuType());
-                menuVO.setChildren(new ArrayList<>());
-                menuVO.setChecked(true);
-                result.add(menuVO);
-                for (final TableSampleMenuMstVO tableMgmtMenumstVO2 : list) {
-                    if (tableMgmtMenumstVO.getMenuId().equals(tableMgmtMenumstVO2.getPMenuId())) {
-                        final MenuVO menuVO2 = new MenuVO();
-                        menuVO2.setTitle(tableMgmtMenumstVO2.getMenuNmKor());
-                        menuVO2.setIcon(tableMgmtMenumstVO2.getMenuIcon());
-                        menuVO2.setTo(tableMgmtMenumstVO2.getUrl());
-                        menuVO2.setType(tableMgmtMenumstVO2.getMenuType());
-                        menuVO.setChecked(true);
-                        result.get(result.size() - 1).getChildren().add(menuVO2);
-                    }
-                }
-            }
-        }
+        final List<MenuVO> list = this.menuDAO.getList(SessionUtils.getAttributeInteger("authority"));
+        final List<MenuVO> result = list.stream().filter(item -> item.getLevel().equals(2)).collect(Collectors.toList());
+        result.stream().forEach(item -> {
+            item.setChildren(
+                    list.stream().filter(item2 -> item2.getLevel().equals(3) && item2.getParentId().equals(item.getId())).collect(Collectors.toList()));
+        });
+
+//        for (final MenuVO vo : list) {
+//            if (vo.getLevel() == 1) {
+//                final MenuVO menuVO = new MenuVO();
+//                menuVO.setTitle(vo.getMenuNmKor());
+//                menuVO.setIcon(vo.getMenuIcon());
+//                menuVO.setTo(vo.getUrl());
+//                menuVO.setType(vo.getMenuType());
+//                menuVO.setChildren(new ArrayList<>());
+//                menuVO.setChecked(true);
+
+//
+//                for (final MenuVO vo2 : list) {
+//                    if (vo.getId().equals(vo2.getParentId())) {
+//                        final MenuVO menuVO2 = new MenuVO();
+//                        menuVO2.setTitle(vo2.getMenuNmKor());
+//                        menuVO2.setIcon(vo2.getMenuIcon());
+//                        menuVO2.setTo(vo2.getUrl());
+//                        menuVO2.setType(vo2.getMenuType());
+//                        menuVO.setChecked(true);
+//                        result.get(result.size() - 1).getChildren().add(menuVO2);
+//                    }
+//                }
+//            }
+//        }
         return result;
     }
 }

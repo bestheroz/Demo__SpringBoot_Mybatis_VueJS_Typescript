@@ -3,7 +3,7 @@
     <v-card>
       <v-row no-gutters>
         <v-col cols="12">
-          <code-mst-list
+          <code-group-list
             @select="
               (item) => {
                 parentItem = (item && item[0]) || {};
@@ -14,7 +14,7 @@
         </v-col>
         <v-divider class="mr-1" />
         <v-col cols="12">
-          <code-det-list :parent-item="parentItem" />
+          <code-list :parent-item="parentItem" />
         </v-col>
       </v-row>
     </v-card>
@@ -23,18 +23,18 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { TableSampleCodeMstVO } from '@/common/types';
-import CodeDetList from '@/views/admin/code/components/CodeDetList.vue';
-import CodeMstList from '@/views/admin/code/components/CodeMstList.vue';
+import { TableCodeGroupVO } from '@/common/types';
+import CodeList from '@/views/admin/code/components/CodeList.vue';
+import CodeGroupList from '@/views/admin/code/components/CodeGroupList.vue';
 
 @Component({
   name: 'Code',
   components: {
-    CodeMstList,
-    CodeDetList,
+    CodeGroupList,
+    CodeList,
   },
 })
 export default class extends Vue {
-  parentItem: TableSampleCodeMstVO = {};
+  parentItem: TableCodeGroupVO = {};
 }
 </script>

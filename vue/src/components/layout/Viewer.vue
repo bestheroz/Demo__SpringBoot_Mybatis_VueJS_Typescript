@@ -20,7 +20,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { DrawerItem, SelectItem } from '@/common/types';
+import { DrawerItem, SelectItem, TableMemberVO } from '@/common/types';
 import { getListApi } from '@/utils/apis';
 
 @Component({ name: 'Viewer' })
@@ -32,9 +32,14 @@ export default class extends Vue {
       this.$storage.set('drawer', response.data.data);
       this.items = response.data.data;
     }
-    if (!Vue.$storage.has('empList')) {
-      const response = await getListApi<SelectItem[]>(`/admin/user/empList`);
-      Vue.$storage.set('empList', response.data);
+    if (!Vue.$storage.has('memberList')) {
+      const response = await getListApi<TableMemberVO[]>(`/admin/members`);
+      Vue.$storage.set(
+        'memberList',
+        response.data!.map((item) => {
+          return { value: item.id, text: item.name };
+        }),
+      );
     }
   }
 
@@ -44,9 +49,14 @@ export default class extends Vue {
       this.$storage.set('drawer', response.data.data);
       this.items = response.data.data;
     }
-    if (!Vue.$storage.has('empList')) {
-      const response = await getListApi<SelectItem[]>(`/admin/user/empList`);
-      Vue.$storage.set('empList', response.data);
+    if (!Vue.$storage.has('memberList')) {
+      const response = await getListApi<TableMemberVO[]>(`/admin/members`);
+      Vue.$storage.set(
+        'memberList',
+        response.data!.map((item) => {
+          return { value: item.id, text: item.name };
+        }),
+      );
     }
   }
 
@@ -68,12 +78,8 @@ export default class extends Vue {
           }
         }
       });
-      if (
-        !result &&
-        this.$route.fullPath !== '/' &&
-        this.$route.fullPath !== '/tester/grafana'
-      ) {
-        this.$router.push('/Code403');
+      if (!result && this.$route.fullPath !== '/') {
+        // this.$router.push('/Code403');
       }
     }
     return result.split('(팝업)').join('');

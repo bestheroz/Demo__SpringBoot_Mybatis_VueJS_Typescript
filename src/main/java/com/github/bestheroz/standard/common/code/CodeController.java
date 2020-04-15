@@ -13,8 +13,8 @@ import javax.annotation.Resource;
 public class CodeController {
     @Resource private CodeDAO codeDAO;
 
-    @GetMapping(value = "{groupCode}")
-    public ResponseVO getCodeVOList(@PathVariable(value = "groupCode") final String groupCode) {
-        return ResponseVO.getSuccessResponseVO(this.codeDAO.getCodeVOList(groupCode));
+    @GetMapping(value = "{codeGroup}")
+    public ResponseVO getCodeVOList(@PathVariable(value = "codeGroup") final String codeGroup) {
+        return ResponseVO.getSuccessResponseVO(this.codeDAO.getCodeVOList(codeGroup));
     }
 }

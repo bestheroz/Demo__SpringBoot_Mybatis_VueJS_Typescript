@@ -1,6 +1,6 @@
 package com.github.bestheroz.standard.common.util;
 
-import com.github.bestheroz.sample.api.entity.samplemembermst.TableSampleMemberMstVO;
+import com.github.bestheroz.sample.api.entity.member.TableMemberVO;
 import com.github.bestheroz.standard.common.exception.BusinessException;
 import com.google.gson.JsonObject;
 import lombok.extern.slf4j.Slf4j;
@@ -35,9 +35,9 @@ public class SessionUtils {
         return !isLoggedIn();
     }
 
-    public static TableSampleMemberMstVO getLoginVO() {
+    public static TableMemberVO getLoginVO() {
         try {
-            final TableSampleMemberMstVO loginVO = (TableSampleMemberMstVO) getSession().getAttribute(SESSION_VALUE_OF_LOGIN_VO);
+            final TableMemberVO loginVO = (TableMemberVO) getSession().getAttribute(SESSION_VALUE_OF_LOGIN_VO);
             if (loginVO == null) {
                 log.warn(BusinessException.FAIL_TRY_LOGIN_FIRST.toString());
                 throw BusinessException.FAIL_TRY_LOGIN_FIRST;
@@ -49,10 +49,11 @@ public class SessionUtils {
         }
     }
 
-    public static void setLoginVO(final TableSampleMemberMstVO loginVO) {
+    public static void setLoginVO(final TableMemberVO loginVO) {
         getSession().setAttribute(SESSION_VALUE_OF_LOGIN_VO, loginVO);
         getSession().setAttribute("id", loginVO.getId());
         getSession().setAttribute("name", loginVO.getName());
+        getSession().setAttribute("authority", loginVO.getAuthority());
     }
 
     public static String getId() {

@@ -9,7 +9,7 @@
         dense
         class="mb-0"
       >
-        코드 관리 - Master
+        코드 관리 - Detail
       </v-alert>
       <v-card-text class="py-1">
         <v-data-table
@@ -21,15 +21,16 @@
           :items="filteredItems"
           :sort-by="sortBy"
           :sort-desc="sortDesc"
-          item-key="groupCode"
+          item-key="code"
           single-select
           show-select
           dense
-          :height="326"
+          :height="327"
           :footer-props="envs.FOOTER_PROPS_100"
         >
           <template v-slot:top>
             <button-set
+              :disabled="!parentItem.codeGroup"
               add-button
               delete-button
               reload-button
@@ -37,7 +38,7 @@
               @click:add="
                 () => {
                   mode = '추가';
-                  editItem = {};
+                  editItem = { codeGroup: parentItem.codeGroup };
                   dialog = true;
                 }
               "
@@ -57,7 +58,7 @@
               :original-items="items"
             />
           </template>
-          <template v-slot:item.groupCode="{ item }">
+          <template v-slot:item.code="{ item }">
             <a
               :style="{ 'font-weight': 'bold' }"
               @click="
@@ -68,17 +69,34 @@
                 }
               "
             >
-              {{ item.groupCode }}
+              {{ item.code }}
             </a>
           </template>
-          <template v-slot:item.updDt="{ item }">
-            {{ item.updDt | formatDatetime }}
+          <template v-slot:item.isUsing="{ item }">
+            <span style="display: inline-flex;">
+              <v-checkbox
+                readonly
+                :input-value="item.isUsing"
+                true-value="Y"
+                false-value="N"
+                :ripple="false"
+                dense
+                hide-details
+                class="mt-0"
+              />
+            </span>
           </template>
-          <template v-slot:item.updId="{ item }">
-            {{ item.updId | formatEmpNm }}
+          <template v-slot:item.authority="{ item }" v-if="LEVELCOD">
+            {{ item.authority | getCodeText(LEVELCOD) }}
+          </template>
+          <template v-slot:item.updatedBy="{ item }">
+            {{ item.updatedBy | formatEmpNm }}
+          </template>
+          <template v-slot:item.updated="{ item }">
+            {{ item.updated | formatDatetime }}
           </template>
         </v-data-table>
-        <code-mst-edit-dialog
+        <code-edit-dialog
           ref="refEditDialog"
           :edit-item="editItem"
           :dialog.sync="dialog"
@@ -91,83 +109,118 @@
 </template>
 
 <script lang="ts">
-import { Component, Emit, Vue, Watch } from 'vue-property-decorator';
-import { DataTableHeader, TableSampleCodeMstVO } from '@/common/types';
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
+import {
+  DataTableHeader,
+  SelectItem,
+  TableCodeGroupVO,
+  TableCodeVO,
+} from '@/common/types';
 import { getListApi } from '@/utils/apis';
 import envs from '@/constants/envs';
-import dayjs from 'dayjs';
 import ButtonSet from '@/components/speeddial/ButtonSet.vue';
-import CodeMstEditDialog from '@/views/admin/code/components/CodeMstEditDialog.vue';
+import CodeEditDialog from '@/views/admin/code/components/CodeEditDialog.vue';
 import DataTableFilter from '@/components/datatable/DataTableFilter.vue';
 
 @Component({
-  name: 'CodeMstList',
+  name: 'CodeList',
   components: {
     DataTableFilter,
+    CodeEditDialog,
     ButtonSet,
-    CodeMstEditDialog,
   },
 })
 export default class extends Vue {
-  readonly dayjs: typeof dayjs = dayjs;
-  readonly envs: typeof envs = envs;
-  mode: string | null = null;
-  sortBy: string[] = ['groupCode'];
-  sortDesc: boolean[] = [false];
-  items: TableSampleCodeMstVO[] = [];
-  filteredItems: TableSampleCodeMstVO[] = [];
-  editItem: TableSampleCodeMstVO = {};
-  selected: TableSampleCodeMstVO[] = [];
-  dialog: boolean = false;
-  loading: boolean = false;
+  @Prop({ required: true }) readonly parentItem!: TableCodeGroupVO;
 
+  readonly envs: typeof envs = envs;
+
+  LEVELCOD: SelectItem[] | null = null;
+  mode: string | null = null;
+
+  loading: boolean = false;
+  sortBy: string[] = ['sortseq'];
+  sortDesc: boolean[] = [false];
+  items: TableCodeVO[] = [];
+  filteredItems: TableCodeVO[] = [];
+  editItem: TableCodeVO = {};
+  selected: TableCodeVO[] = [];
+  dialog: boolean = false;
   headers: DataTableHeader[] = [
     {
-      text: `그룹코드`,
+      text: `상세코드`,
       align: `start`,
-      value: `groupCode`,
+      value: `code`,
     },
     {
-      text: `그룹코드명`,
+      text: `상세코드명`,
       align: `start`,
-      value: `groupCodenm`,
+      value: `codenm`,
+    },
+    {
+      text: `사용여부`,
+      align: `center`,
+      value: `isUsing`,
+      filterType: 'switch',
+      width: 100,
+    },
+    {
+      text: `출력순서`,
+      align: `end`,
+      value: `sortseq`,
+      width: 100,
+    },
+    {
+      text: `권한`,
+      align: `start`,
+      value: `authority`,
+      filterType: 'select',
+      filterSelectItem: [],
     },
     {
       text: `작업일시`,
       align: `center`,
-      value: `updDt`,
+      value: `updated`,
       filterable: false,
       width: 160,
     },
     {
       text: `작업자`,
       align: `start`,
-      value: `updId`,
+      value: `updatedBy`,
       filterable: false,
       width: 100,
     },
   ];
 
   mounted() {
-    this.getList();
+    this.getCodeList();
   }
 
-  @Watch('selected')
-  @Emit('select')
-  watchSelected(val: TableSampleCodeMstVO[]) {
-    return val;
+  @Watch('parentItem')
+  watchParentItem(val: TableCodeGroupVO): void {
+    this.items = [];
+    if (val && val.codeGroup) {
+      this.getList();
+    }
   }
 
-  @Emit('updated')
   async getList() {
     this.selected = [];
     this.items = [];
     this.loading = true;
-    const response = await getListApi<TableSampleCodeMstVO[]>(
-      `admin/code-mst/`,
+    const response = await getListApi<TableCodeVO[]>(
+      `admin/codes/${this.parentItem.codeGroup}`,
     );
     this.loading = false;
     this.items = response.data || [];
+  }
+
+  async getCodeList() {
+    this.loading = true;
+    const response = await getListApi<SelectItem[]>(`admin/codes/levelList`);
+    this.loading = false;
+    this.headers[4].filterSelectItem = this.LEVELCOD = response.data || [];
   }
 }
 </script>
