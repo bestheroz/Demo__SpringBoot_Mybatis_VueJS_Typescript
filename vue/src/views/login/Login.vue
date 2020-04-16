@@ -84,7 +84,7 @@ import { ApiDataResult, getVariableApi } from '@/utils/apis';
 import _ from 'lodash';
 import axios from 'axios';
 import envs from '@/constants/envs';
-import { TableMemberVO } from '@/common/types';
+import { TableMemberVO, TableMenuVO } from '@/common/types';
 import { alertError } from '@/utils/alerts';
 
 const SHA512 = require('crypto-js/sha512');

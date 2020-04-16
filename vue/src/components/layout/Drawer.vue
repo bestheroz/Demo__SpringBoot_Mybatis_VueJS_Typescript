@@ -24,8 +24,10 @@
             v-for="(child, i) in item.children"
             :key="i"
             @click="child.type === 'W' ? popupWindow(`${child.to}`) : undefined"
-            :to="child.type !== 'W' ? `${child.to}` : undefined"
-            link
+            :to="
+              child.type !== 'W' ? `${!!child.to ? child.to : ''}` : undefined
+            "
+            :link="!!item.to"
           >
             <v-list-item-action>
               <v-icon v-if="child.icon"> {{ child.icon }} </v-icon>
@@ -39,7 +41,12 @@
           </v-list-item>
         </v-list-group>
 
-        <v-list-item v-else :to="item.to" :key="item.title" link>
+        <v-list-item
+          v-else
+          :to="!!item.to ? item.to : ''"
+          :key="item.title"
+          :link="!!item.to"
+        >
           <v-list-item-action>
             <v-icon> {{ item.icon }} </v-icon>
           </v-list-item-action>
@@ -88,9 +95,9 @@ export default class extends Vue {
 
   popupWindow(url: string) {
     window.open(
-      `#${url}`,
+      `${url.indexOf('http') === 0 ? '' : '#'}${url}`,
       '_blank',
-      'location=false,menubar=false,scrollbars=true,status=false,toolbar=false',
+      // 'location=false,menubar=false,scrollbars=true,status=false,toolbar=false',
     );
   }
 }

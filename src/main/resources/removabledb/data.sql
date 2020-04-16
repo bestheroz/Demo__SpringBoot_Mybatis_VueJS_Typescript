@@ -105,7 +105,6 @@ INTO MENU
 (NAME,
  TYPE,
  PARENT_ID,
- IS_USING,
  DISPLAY_ORDER,
  URL,
  REMARK1,
@@ -113,10 +112,9 @@ INTO MENU
  CREATED,
  UPDATED_BY,
  UPDATED)
-VALUES ('ROOT',
+VALUES ('///',
         'G',
         0,
-        TRUE,
         1,
         '/',
         '최상위(삭제하지마세요.)',
@@ -130,7 +128,6 @@ INTO MENU
 (NAME,
  TYPE,
  PARENT_ID,
- IS_USING,
  DISPLAY_ORDER,
  ICON,
  CREATED_BY,
@@ -140,7 +137,6 @@ INTO MENU
 SELECT '관리자',
        'G',
        ID,
-       TRUE,
        10,
        'mdi-account-cog',
        'bestheroz',
@@ -148,14 +144,13 @@ SELECT '관리자',
        'bestheroz',
        SYSDATE
 FROM MENU
-WHERE NAME = 'ROOT';
+WHERE NAME = '///';
 
 INSERT
 INTO MENU
 (NAME,
  TYPE,
  PARENT_ID,
- IS_USING,
  DISPLAY_ORDER,
  URL,
  CREATED_BY,
@@ -165,7 +160,6 @@ INTO MENU
 SELECT '메뉴관리',
        'P',
        ID,
-       TRUE,
        100,
        '/admin/menu',
        'bestheroz',
@@ -180,7 +174,6 @@ INTO MENU
 (NAME,
  TYPE,
  PARENT_ID,
- IS_USING,
  DISPLAY_ORDER,
  URL,
  CREATED_BY,
@@ -190,7 +183,6 @@ INTO MENU
 SELECT '코드관리',
        'P',
        ID,
-       TRUE,
        300,
        '/admin/code',
        'bestheroz',
@@ -205,7 +197,6 @@ INTO MENU
 (NAME,
  TYPE,
  PARENT_ID,
- IS_USING,
  DISPLAY_ORDER,
  URL,
  CREATED_BY,
@@ -215,7 +206,6 @@ INTO MENU
 SELECT '회원관리',
        'P',
        ID,
-       TRUE,
        500,
        '/admin/member',
        'bestheroz',
@@ -230,7 +220,6 @@ INTO MENU
 (NAME,
  TYPE,
  PARENT_ID,
- IS_USING,
  DISPLAY_ORDER,
  ICON,
  CREATED_BY,
@@ -240,7 +229,6 @@ INTO MENU
 SELECT '만든이',
        'G',
        ID,
-       TRUE,
        90,
        'mdi-account-hard-hat',
        'bestheroz',
@@ -248,14 +236,13 @@ SELECT '만든이',
        'bestheroz',
        SYSDATE
 FROM MENU
-WHERE NAME = 'ROOT';
+WHERE NAME = '///';
 
 INSERT
 INTO MENU
 (NAME,
  TYPE,
  PARENT_ID,
- IS_USING,
  DISPLAY_ORDER,
  URL,
  CREATED_BY,
@@ -263,11 +250,10 @@ INTO MENU
  UPDATED_BY,
  UPDATED)
 SELECT 'Github',
-       'P',
+       'W',
        ID,
-       TRUE,
        100,
-       'https://github.com/com.github.bestheroz?tab=repositories',
+       'https://github.com/bestheroz',
        'bestheroz',
        SYSDATE,
        'bestheroz',
@@ -281,7 +267,6 @@ INTO MENU
 (NAME,
  TYPE,
  PARENT_ID,
- IS_USING,
  DISPLAY_ORDER,
  URL,
  CREATED_BY,
@@ -289,9 +274,8 @@ INTO MENU
  UPDATED_BY,
  UPDATED)
 SELECT 'Blog',
-       'P',
+       'W',
        ID,
-       TRUE,
        200,
        'https://bestheroz.blog.me',
        'bestheroz',
@@ -306,7 +290,6 @@ INTO MENU
 (NAME,
  TYPE,
  PARENT_ID,
- IS_USING,
  DISPLAY_ORDER,
  ICON,
  CREATED_BY,
@@ -316,7 +299,6 @@ INTO MENU
 SELECT '메뉴그룹1',
        'G',
        ID,
-       TRUE,
        30,
        'mdi-numeric-1-box-outline',
        'bestheroz',
@@ -324,14 +306,13 @@ SELECT '메뉴그룹1',
        'bestheroz',
        SYSDATE
 FROM MENU
-WHERE NAME = 'ROOT';
+WHERE NAME = '///';
 
 INSERT
 INTO MENU
 (NAME,
  TYPE,
  PARENT_ID,
- IS_USING,
  DISPLAY_ORDER,
  CREATED_BY,
  CREATED,
@@ -340,7 +321,6 @@ INTO MENU
 SELECT '메뉴1',
        'P',
        ID,
-       TRUE,
        100,
        'bestheroz',
        SYSDATE,
@@ -355,7 +335,6 @@ INTO MENU
 (NAME,
  TYPE,
  PARENT_ID,
- IS_USING,
  DISPLAY_ORDER,
  CREATED_BY,
  CREATED,
@@ -364,7 +343,6 @@ INTO MENU
 SELECT '메뉴2',
        'P',
        ID,
-       TRUE,
        200,
        'bestheroz',
        SYSDATE,
@@ -378,7 +356,6 @@ INTO MENU
 (NAME,
  TYPE,
  PARENT_ID,
- IS_USING,
  DISPLAY_ORDER,
  ICON,
  CREATED_BY,
@@ -388,7 +365,6 @@ INTO MENU
 SELECT '메뉴그룹2',
        'G',
        ID,
-       TRUE,
        50,
        'mdi-numeric-2-box-outline',
        'bestheroz',
@@ -396,14 +372,13 @@ SELECT '메뉴그룹2',
        'bestheroz',
        SYSDATE
 FROM MENU
-WHERE NAME = 'ROOT';
+WHERE NAME = '///';
 
 INSERT
 INTO MENU
 (NAME,
  TYPE,
  PARENT_ID,
- IS_USING,
  DISPLAY_ORDER,
  CREATED_BY,
  CREATED,
@@ -412,7 +387,6 @@ INTO MENU
 SELECT '메뉴1',
        'P',
        ID,
-       TRUE,
        100,
        'bestheroz',
        SYSDATE,
@@ -427,7 +401,6 @@ INTO MENU
 (NAME,
  TYPE,
  PARENT_ID,
- IS_USING,
  DISPLAY_ORDER,
  CREATED_BY,
  CREATED,
@@ -436,7 +409,6 @@ INTO MENU
 SELECT '메뉴2',
        'P',
        ID,
-       TRUE,
        200,
        'bestheroz',
        SYSDATE,
@@ -450,7 +422,6 @@ INTO MENU
 (NAME,
  TYPE,
  PARENT_ID,
- IS_USING,
  DISPLAY_ORDER,
  ICON,
  CREATED_BY,
@@ -460,7 +431,6 @@ INTO MENU
 SELECT '메뉴그룹3',
        'G',
        ID,
-       TRUE,
        70,
        'mdi-numeric-3-box-outline',
        'bestheroz',
@@ -468,14 +438,13 @@ SELECT '메뉴그룹3',
        'bestheroz',
        SYSDATE
 FROM MENU
-WHERE NAME = 'ROOT';
+WHERE NAME = '///';
 
 INSERT
 INTO MENU
 (NAME,
  TYPE,
  PARENT_ID,
- IS_USING,
  DISPLAY_ORDER,
  CREATED_BY,
  CREATED,
@@ -484,7 +453,6 @@ INTO MENU
 SELECT '메뉴1',
        'P',
        ID,
-       TRUE,
        100,
        'bestheroz',
        SYSDATE,
@@ -499,7 +467,6 @@ INTO MENU
 (NAME,
  TYPE,
  PARENT_ID,
- IS_USING,
  DISPLAY_ORDER,
  CREATED_BY,
  CREATED,
@@ -508,7 +475,6 @@ INTO MENU
 SELECT '메뉴2',
        'P',
        ID,
-       TRUE,
        200,
        'bestheroz',
        SYSDATE,
@@ -600,6 +566,28 @@ VALUES ('MENU_TYPE',
         '페이지',
         TRUE,
         2,
+        'bestheroz',
+        SYSDATE,
+        'bestheroz',
+        SYSDATE);
+
+
+INSERT
+INTO CODE
+(CODE_GROUP,
+ CODE,
+ NAME,
+ IS_USING,
+ DISPLAY_ORDER,
+ CREATED_BY,
+ CREATED,
+ UPDATED_BY,
+ UPDATED)
+VALUES ('MENU_TYPE',
+        'W',
+        '새창',
+        TRUE,
+        3,
         'bestheroz',
         SYSDATE,
         'bestheroz',

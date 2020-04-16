@@ -28,6 +28,7 @@ export interface DrawerItem {
   type?: string | null;
   group?: string | null;
   checked?: boolean | null;
+  depth?: number | null;
   children?: DrawerItem[];
 }
 
@@ -55,9 +56,9 @@ export interface TableMenuVO {
   name?: string | null;
   type?: string | null;
   parentId?: number | null;
-  isUsing?: boolean | null;
   authority?: number | null;
   displayOrder?: number | null;
+  icon?: string | null;
   url?: string | null;
   remark1?: string | null;
   created?: Date | null;

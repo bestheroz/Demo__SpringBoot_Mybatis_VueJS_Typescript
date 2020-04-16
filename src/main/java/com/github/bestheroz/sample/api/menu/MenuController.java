@@ -13,7 +13,7 @@ public class MenuController {
     @Resource private MenuService menuService;
 
     @GetMapping
-    public ResponseVO getList() {
-        return ResponseVO.getSuccessResponseVO(this.menuService.getMenuList());
+    public ResponseVO getDrawerList() {
+        return ResponseVO.getSuccessResponseVO(this.menuService.getDrawerList());
     }
 }

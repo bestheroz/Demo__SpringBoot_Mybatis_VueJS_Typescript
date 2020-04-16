@@ -19,7 +19,6 @@ CREATE TABLE MENU
     NAME          VARCHAR(1000) NOT NULL,
     TYPE          CHAR(1)       NOT NULL,
     PARENT_ID     INT(10)       NOT NULL,
-    IS_USING      BOOLEAN       NOT NULL,
     DISPLAY_ORDER INT(10)       NOT NULL,
     ICON          VARCHAR(50)   NULL,
     URL           VARCHAR(4000),
@@ -63,4 +62,6 @@ CREATE TABLE CODE
     UPDATED_BY    VARCHAR(100)       NOT NULL,
     UPDATED       DATETIME           NOT NULL
 );
-ALTER TABLE CODE ADD PRIMARY KEY (CODE_GROUP, CODE)
+ALTER TABLE CODE ADD PRIMARY KEY (CODE_GROUP, CODE);
+
+create sequence hibernate_sequence start with 1 increment by 1;

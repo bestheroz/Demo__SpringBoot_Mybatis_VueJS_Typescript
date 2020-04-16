@@ -2,7 +2,6 @@
   <div>
     <v-card-text class="pb-1">
       <v-data-table
-        must-sort
         fixed-header
         :loading="loading"
         :headers="headers"
@@ -22,6 +21,7 @@
         </template>
         <template v-slot:item.name="{ item }">
           <span :style="`padding-left: ${80 * (item.level - 1)}px;`">
+            <v-icon v-if="item.icon"> {{ item.icon }} </v-icon>
             {{ item.name }}
           </span>
         </template>
@@ -52,7 +52,7 @@
             tile
             color="button-edit"
             x-small
-            :disabled="item.name === 'ROOT'"
+            :disabled="item.name === '///'"
             @click="
               () => {
                 mode = '수정';
@@ -99,22 +99,8 @@ import envs from '@/constants/envs';
 import MenuEditDialog from '@/views/admin/menu/components/MenuEditDialog.vue';
 import ButtonSet from '@/components/speeddial/ButtonSet.vue';
 
-interface MenuVO {
+interface MenuVO extends TableMenuVO {
   level: number;
-  id: number;
-  name: string;
-  type: string;
-  parentId: number;
-  isUsing: boolean;
-  displayOrder: number;
-  url: string;
-  icon: string;
-  remark1: string;
-  children: MenuVO[];
-  created?: Date | null;
-  createdBy?: string | null;
-  updated?: Date | null;
-  updatedBy?: string | null;
 }
 
 @Component({

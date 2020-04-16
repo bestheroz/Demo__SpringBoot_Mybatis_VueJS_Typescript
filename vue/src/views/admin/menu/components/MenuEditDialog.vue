@@ -18,15 +18,15 @@
             <v-row>
               <v-col cols="12" md="3">
                 <ValidationProvider
-                  name="상위메뉴아이디"
-                  rules="required"
+                  name="메뉴명"
+                  rules="required|max:50"
                   v-slot="{ errors }"
                 >
                   <v-text-field
-                    v-model="editItem.parentId"
-                    label="*상위메뉴아이디"
+                    v-model="editItem.name"
+                    label="*메뉴명"
+                    :counter="50"
                     :error-messages="errors"
-                    disabled
                   />
                 </ValidationProvider>
               </v-col>
@@ -38,7 +38,7 @@
                 >
                   <v-select
                     v-model="editItem.type"
-                    :items="W004"
+                    :items="filterMenuType(editItem)"
                     label="*타입"
                     :error-messages="errors"
                   />
@@ -46,13 +46,13 @@
               </v-col>
               <v-col cols="12" md="6">
                 <ValidationProvider
-                  name="화면 링크"
+                  name="링크 URL"
                   rules="max:255"
                   v-slot="{ errors }"
                 >
                   <v-text-field
                     v-model="editItem.url"
-                    label="화면 링크"
+                    label="링크 URL"
                     :counter="255"
                     :disabled="editItem.type === 'G'"
                     :error-messages="errors"
@@ -60,53 +60,24 @@
                   />
                 </ValidationProvider>
               </v-col>
-              <v-col cols="12" md="3">
-                <ValidationProvider
-                  name="메뉴아이디"
-                  rules="required|max:100"
-                  v-slot="{ errors }"
-                >
-                  <v-text-field
-                    v-model="editItem.id"
-                    label="*메뉴아이디"
-                    :counter="100"
-                    :error-messages="errors"
-                    :disabled="mode === '수정'"
-                  />
-                </ValidationProvider>
-              </v-col>
-              <v-col cols="12" md="3">
-                <ValidationProvider
-                  name="메뉴명"
-                  rules="required|max:50"
-                  v-slot="{ errors }"
-                >
-                  <v-text-field
-                    v-model="editItem.menuNmKor"
-                    label="*메뉴명"
-                    :counter="50"
-                    :error-messages="errors"
-                  />
-                </ValidationProvider>
-              </v-col>
               <v-col cols="12" md="2">
                 <ValidationProvider
-                  name="메뉴순차 번호"
+                  name="메뉴 순서"
                   rules="required|numeric"
                   v-slot="{ errors }"
                 >
                   <v-text-field
-                    v-model.number="editItem.seq"
-                    label="*메뉴순차 번호"
+                    v-model.number="editItem.displayOrder"
+                    label="*메뉴 순서"
                     :error-messages="errors"
                   />
                 </ValidationProvider>
               </v-col>
-              <v-col cols="12" md="3" v-if="editItem.lvl === 2">
-                <v-text-field v-model="editItem.menuIcon" label="메뉴 아이콘" />
+              <v-col cols="12" md="4" v-if="editItem.level === 2">
+                <v-text-field v-model="editItem.icon" label="메뉴 아이콘" />
               </v-col>
-              <v-col cols="12" md="1" v-if="editItem.lvl === 2">
-                <v-icon> {{ editItem.menuIcon }} </v-icon>
+              <v-col cols="12" md="1" v-if="editItem.level === 2">
+                <v-icon> {{ editItem.icon }} </v-icon>
               </v-col>
             </v-row>
           </ValidationObserver>
@@ -138,19 +109,23 @@ import {
 import _ from 'lodash';
 import { confirmDelete } from '@/utils/alerts';
 
+interface MenuVO extends TableMenuVO {
+  level: number;
+}
+
 @Component({
   name: 'MenuEditDialog',
 })
 export default class extends Vue {
   @PropSync('dialog', { required: true, type: Boolean }) syncedDialog!: boolean;
-  @Prop({ required: true }) readonly editItem!: TableMenuVO;
+  @Prop({ required: true }) readonly editItem!: MenuVO;
   @Prop({ required: true }) readonly mode!: string | null;
 
   loading: boolean = false;
-  W004: SelectItem[] | null = null;
+  MENU_TYPE: SelectItem[] | null = null;
 
   async mounted() {
-    this.W004 = await getCodeListApi(`W004`);
+    this.MENU_TYPE = await getCodeListApi(`MENU_TYPE`);
   }
 
   @Watch('dialog')
@@ -210,6 +185,13 @@ export default class extends Vue {
         this.$emit('finished');
       }
     }
+  }
+
+  filterMenuType(item: MenuVO) {
+    if (item.parentId !== 1) {
+      return this.MENU_TYPE!.filter((item) => item.value !== 'G');
+    }
+    return this.MENU_TYPE;
   }
 }
 </script>

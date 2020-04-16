@@ -2,7 +2,7 @@ package com.github.bestheroz.sample.api.admin.menu;
 
 import com.github.bestheroz.sample.api.entity.menu.TableMenuRepository;
 import com.github.bestheroz.sample.api.entity.menu.TableMenuVO;
-import com.github.bestheroz.sample.api.menu.MenuDAO;
+import com.github.bestheroz.sample.api.menu.MenuService;
 import com.github.bestheroz.standard.common.response.ResponseVO;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,12 +12,12 @@ import javax.annotation.Resource;
 @RequestMapping(value = "/admin/menus")
 public class AdminMenuController {
     @Resource private AdminMenuDAO adminMenuDAO;
-    @Resource private MenuDAO menuDAO;
+    @Resource private MenuService menuService;
     @Resource private TableMenuRepository tableMenuRepository;
 
     @GetMapping
     public ResponseVO getList() {
-        return ResponseVO.getSuccessResponseVO(this.menuDAO.getList(999));
+        return ResponseVO.getSuccessResponseVO(this.menuService.getMenuList());
     }
 
     @GetMapping(value = "{id}")

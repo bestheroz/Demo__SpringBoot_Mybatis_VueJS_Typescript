@@ -91,24 +91,8 @@ export default class extends Vue {
     }
   }
 
-  popupWindow(url: string) {
-    window.open(
-      `#${url}`,
-      '_blank',
-      'location=false,menubar=false,scrollbars=true,status=false,toolbar=false',
-    );
-  }
-
   goHome() {
     this.$router.currentRoute.path !== '/' && this.$router.push('/');
-  }
-
-  goCmpA() {
-    window.open(`${this.cmpAUrl}`, '_blank');
-  }
-
-  goCmpB() {
-    window.open(`${this.cmpBUrl}`, '_blank');
   }
 }
 </script>
