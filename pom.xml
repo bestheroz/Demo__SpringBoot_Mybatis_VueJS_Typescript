@@ -23,8 +23,7 @@
         <java-jwt-version>3.10.2</java-jwt-version>
         <jdbcdslogexp2-version>2.1</jdbcdslogexp2-version>
         <ddal-sqlparser-version>3.0.3</ddal-sqlparser-version>
-        <guava-version>28.2-jre</guava-version>
-        <mybatis-spring-boot-starter-version>2.1.2</mybatis-spring-boot-starter-version>
+        <guava-version>29.0-jre</guava-version>
         <lucy-version>1.6.3</lucy-version>
         <commons-codec-version>1.14</commons-codec-version>
         <commons-io-version>2.6</commons-io-version>
@@ -114,18 +113,6 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>${guava-version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.mybatis.spring.boot</groupId>
-            <artifactId>mybatis-spring-boot-starter</artifactId>
-            <version>${mybatis-spring-boot-starter-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.mybatis.spring.boot</groupId>
-            <artifactId>mybatis-spring-boot-starter-test</artifactId>
-            <version>${mybatis-spring-boot-starter-version}</version>
-            <scope>test</scope>
         </dependency>
 
         <!-- XSS Filter -->

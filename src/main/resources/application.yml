@@ -27,11 +27,6 @@ spring:
   output:
     ansi:
       enabled: always
-mybatis:
-  mapper-locations: classpath:**/*Mapper.xml
-  type-aliases-super-type: java.io.Serializable
-  type-aliases-package: com.github.bestheroz
-  config-location: classpath:mybatis-config.xml
 server:
   compression:
     enabled: true
