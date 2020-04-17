@@ -7,6 +7,7 @@ import com.github.bestheroz.standard.common.response.ResponseVO;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/admin/menus")
@@ -33,6 +34,10 @@ public class AdminMenuController {
 
     @PatchMapping(value = "{id}")
     public ResponseVO update(@PathVariable(value = "id") final Integer id, @RequestBody final TableMenuVO tableMenuVO) {
+        final Optional<TableMenuVO> byId = this.tableMenuRepository.findById(id);
+        if (byId.isPresent()) {
+            final TableMenuVO tableMenuVO1 = byId.get();
+        }
         tableMenuVO.setId(id);
         this.tableMenuRepository.save(tableMenuVO);
         return ResponseVO.SUCCESS_NORMAL;

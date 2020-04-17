@@ -1,10 +1,8 @@
 package com.github.bestheroz.sample.api.entity.menu;
 
-import org.apache.ibatis.annotations.Mapper;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-@Mapper
 @Repository
-public interface TableMenuRepository extends JpaRepository<TableMenuVO, Integer> {
+public interface TableMenuRepository extends CrudRepository<TableMenuVO, Integer> {
 }
