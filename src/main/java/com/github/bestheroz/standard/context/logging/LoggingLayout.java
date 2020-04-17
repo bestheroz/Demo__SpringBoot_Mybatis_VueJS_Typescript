@@ -5,7 +5,6 @@ import ch.qos.logback.core.CoreConstants;
 import ch.qos.logback.core.LayoutBase;
 import com.github.bestheroz.standard.common.util.DateUtils;
 import org.apache.commons.lang3.StringUtils;
-import studio.raptor.sqlparser.SQLUtils;
 
 public class LoggingLayout extends LayoutBase<ILoggingEvent> {
     private static final String TOTAL_LENGTH = "Total length : ";
@@ -85,11 +84,11 @@ public class LoggingLayout extends LayoutBase<ILoggingEvent> {
         String formattedMessage = event.getFormattedMessage();
         formattedMessage = StringUtils.remove(formattedMessage, "java.sql.Statement.execute: ");
         formattedMessage = StringUtils.remove(formattedMessage, "java.sql.PreparedStatement.execute: ");
-        if (StringUtils.length(formattedMessage) > 20000) {
-            sbuf.append(CoreConstants.LINE_SEPARATOR).append(StringUtils.abbreviate(formattedMessage, 20000)).append(CoreConstants.LINE_SEPARATOR);
-        } else {
-            sbuf.append(CoreConstants.LINE_SEPARATOR).append(SQLUtils.formatOracle(formattedMessage)).append(CoreConstants.LINE_SEPARATOR);
-        }
+//        if (StringUtils.length(formattedMessage) > 20000) {
+        sbuf.append(CoreConstants.LINE_SEPARATOR).append(StringUtils.abbreviate(formattedMessage, 20000)).append(CoreConstants.LINE_SEPARATOR);
+//        } else {
+//            sbuf.append(CoreConstants.LINE_SEPARATOR).append(SQLUtils.formatOracle(formattedMessage)).append(CoreConstants.LINE_SEPARATOR);
+//        }
         sbuf.append(CoreConstants.LINE_SEPARATOR);
     }
 
