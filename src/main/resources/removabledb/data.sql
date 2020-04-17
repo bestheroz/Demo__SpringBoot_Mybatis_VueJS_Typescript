@@ -144,6 +144,30 @@ SELECT '메뉴관리',
 FROM MENU
 WHERE NAME = '관리자';
 
+
+INSERT
+INTO MENU
+(NAME,
+ TYPE,
+ PARENT_ID,
+ DISPLAY_ORDER,
+ URL,
+ CREATED_BY,
+ CREATED,
+ UPDATED_BY,
+ UPDATED)
+SELECT '메뉴권한관리',
+       'P',
+       ID,
+       120,
+       '/admin/menu/authority',
+       'developer',
+       SYSDATE,
+       'developer',
+       SYSDATE
+FROM MENU
+WHERE NAME = '관리자';
+
 INSERT
 INTO MENU
 (NAME,

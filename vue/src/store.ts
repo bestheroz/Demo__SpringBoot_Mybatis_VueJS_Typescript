@@ -23,6 +23,7 @@ export default new Vuex.Store({
     async loginToken(state, userVO: TableMemberVO) {
       Vue.$storage.clear();
       Vue.$storage.set('accessToken', userVO.token);
+      Vue.$storage.set('authority', userVO.authority);
       Vue.$storage.set('userVO', userVO);
       state.axiosInstance.defaults.headers.Authorization = userVO.token;
     },

@@ -79,6 +79,9 @@
         <template v-slot:item.authority="{ item }" v-if="AUTHORITY">
           {{ item.authority | getCodeText(AUTHORITY) }}
         </template>
+        <template v-slot:item.timeout="{ item }">
+          {{ item.timeout.toLocaleString() }}
+        </template>
         <template v-slot:item.expired="{ item }">
           {{ item.expired | formatDatetime }}
         </template>
@@ -168,7 +171,7 @@ export default class extends Vue {
       text: `자동로그아웃시간(초)`,
       align: `end`,
       value: `timeout`,
-      width: 150,
+      width: 170,
     },
     {
       text: `작업 일시`,

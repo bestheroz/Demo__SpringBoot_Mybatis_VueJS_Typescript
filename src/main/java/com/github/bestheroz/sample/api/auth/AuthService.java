@@ -24,7 +24,6 @@ public class AuthService {
     @Resource private TableMemberRepository tableMemberRepository;
 
     TableMemberVO login(final String id, final String password) {
-//        System.out.println(this.tableMemberRepository.findAll());
         final Optional<TableMemberVO> one = this.tableMemberRepository.findById(id);
         // 로그인 관문
         // 1. 유저가 없으면

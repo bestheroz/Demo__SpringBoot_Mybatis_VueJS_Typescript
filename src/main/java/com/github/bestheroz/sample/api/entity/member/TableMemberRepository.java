@@ -10,6 +10,7 @@ import java.util.Optional;
 
 @Repository
 public interface TableMemberRepository extends CrudRepository<TableMemberVO, String> {
+
     Optional<TableMemberVO> findByToken(String token);
 
     @Query(value = "UPDATE MEMBER SET LOGIN_FAIL_CNT = LOGIN_FAIL_CNT + 1 WHERE ID = :id", nativeQuery = true)

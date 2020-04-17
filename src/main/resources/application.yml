@@ -70,7 +70,7 @@ server:
   port: 8080
 variable:
   app:
-    title: My_SpringBoot_MyBatis_Vue_Typescript_Project
+    title: My SpringBoot + JPA + VueJs + Typescript
 ---
 spring:
   profiles: dev

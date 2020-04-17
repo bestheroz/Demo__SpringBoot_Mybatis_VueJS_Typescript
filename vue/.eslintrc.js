@@ -30,5 +30,6 @@ module.exports = {
     'comma-dangle': ['error', 'only-multiline'],
     'space-before-function-paren': 'off',
     'no-unused-vars': 'off',
+    'no-unused-expressions': 'error',
   },
 };

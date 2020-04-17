@@ -10,11 +10,10 @@ import java.io.Serializable;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 @Entity(name = "MENU_AUTHORITY")
 public class TableMenuAuthorityVO extends AbstractCreatedUpdateVO implements Serializable {
     private static final long serialVersionUID = 7975686196090342524L;
-    @Id
-    private Integer authority;
+    @Id private Integer authority;
     private String menuIdList;
 }

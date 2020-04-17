@@ -21,6 +21,6 @@ import Viewer from '@/components/layout/Viewer.vue';
   },
 })
 export default class extends Vue {
-  drawer: boolean = false;
+  drawer: boolean = true;
 }
 </script>

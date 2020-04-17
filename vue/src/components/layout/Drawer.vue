@@ -1,12 +1,5 @@
 <template>
-  <v-navigation-drawer
-    v-model="syncedDrawer"
-    app
-    clipped
-    fixed
-    v-if="!isPopup"
-    temporary
-  >
+  <v-navigation-drawer v-model="syncedDrawer" app clipped fixed v-if="!isPopup">
     <v-list>
       <template v-for="item in items">
         <v-list-group
@@ -76,7 +69,7 @@ import { DrawerItem } from '@/common/types';
   name: 'Drawer',
 })
 export default class extends Vue {
-  @PropSync('drawer', { required: true, default: false })
+  @PropSync('drawer', { required: true, default: true })
   readonly syncedDrawer!: boolean;
 
   items: DrawerItem[] | null = null;

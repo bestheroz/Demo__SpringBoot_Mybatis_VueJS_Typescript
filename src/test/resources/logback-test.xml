@@ -16,8 +16,6 @@
     <logger name="org.apache.ibatis" level="INFO"/>
     <logger name="org.apache.commons.beanutils" level="INFO"/>
 
-    <logger name="org.mybatis.spring" level="INFO"/>
-
     <logger name="com.zaxxer.hikari.pool" level="INFO"/>
     <logger name="org.jdbcdslog" level="INFO"/>
     <logger name="org.jdbcdslog.StatementLogger" level="INFO"/>

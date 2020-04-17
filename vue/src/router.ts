@@ -47,6 +47,10 @@ const routes = () => {
       component: () => import('@/views/admin/menu/Menu.vue'),
     },
     {
+      path: 'admin/menu/authority',
+      component: () => import('@/views/admin/menuauthority/MenuAuthority.vue'),
+    },
+    {
       path: 'admin/member',
       component: () => import('@/views/admin/member/Member.vue'),
     },

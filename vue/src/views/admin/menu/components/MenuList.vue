@@ -146,7 +146,7 @@ export default class extends Vue {
       align: `center`,
       value: `action`,
       filterable: false,
-      width: 230,
+      width: 250,
     },
     {
       text: `작업 일시`,

@@ -28,13 +28,7 @@ public class LoggingLayout extends LayoutBase<ILoggingEvent> {
             }
         } else if (StringUtils.endsWithAny(event.getLoggerName(), "RequestResponseBodyMethodProcessor")) {
             this.getMessageStartWithMethod(event, sbuf);
-        } else if (StringUtils.endsWith(event.getLoggerName(), "SqlForTableVO") && StringUtils.equals(event.getLevel().levelStr, "DEBUG") &&
-                StringUtils.equalsAny(event.getCallerData()[0].getMethodName(), "selectOne", "select", "count", "insert", "update", "delete")) {
-            this.getMessageStartWithMethod(event, sbuf);
-        } else if (StringUtils.endsWith(event.getLoggerName(), "SqlSessionTemplateOverride") && StringUtils.equals(event.getLevel().levelStr, "DEBUG") &&
-                StringUtils.equals(event.getCallerData()[0].getMethodName(), "writeLog")) {
-            this.getMessageStartWithMethod(event, sbuf);
-        } else if (StringUtils.startsWithAny(event.getFormattedMessage(), "==>  Preparing:", "==> Parameters:", "<==    Updates:", "<==      Total:")) {
+        } else if (StringUtils.equalsAny(event.getLoggerName(), "org.hibernate.type.descriptor.sql.BasicBinder")) {
             this.getMessageOnylyFormattedMessage(event, sbuf);
         } else {
             this.getMessageByStdPattern(event, sbuf);
@@ -84,11 +78,7 @@ public class LoggingLayout extends LayoutBase<ILoggingEvent> {
         String formattedMessage = event.getFormattedMessage();
         formattedMessage = StringUtils.remove(formattedMessage, "java.sql.Statement.execute: ");
         formattedMessage = StringUtils.remove(formattedMessage, "java.sql.PreparedStatement.execute: ");
-//        if (StringUtils.length(formattedMessage) > 20000) {
         sbuf.append(CoreConstants.LINE_SEPARATOR).append(StringUtils.abbreviate(formattedMessage, 20000)).append(CoreConstants.LINE_SEPARATOR);
-//        } else {
-//            sbuf.append(CoreConstants.LINE_SEPARATOR).append(SQLUtils.formatOracle(formattedMessage)).append(CoreConstants.LINE_SEPARATOR);
-//        }
         sbuf.append(CoreConstants.LINE_SEPARATOR);
     }
 
@@ -123,8 +113,8 @@ public class LoggingLayout extends LayoutBase<ILoggingEvent> {
                     logString = StringUtils.replace(logString, str, STR_SKIP_TOO_LONG_TEXT);
                 }
             }
-            if (logString.length() > 10000) {
-                logString = StringUtils.abbreviate(logString, STR_SKIP_TOO_LONG_TEXT, 10000).concat(TOTAL_LENGTH).concat(String.valueOf(logString.length()));
+            if (logString.length() > 20000) {
+                logString = StringUtils.abbreviate(logString, STR_SKIP_TOO_LONG_TEXT, 20000).concat(TOTAL_LENGTH).concat(String.valueOf(logString.length()));
             }
         }
         return logString;
