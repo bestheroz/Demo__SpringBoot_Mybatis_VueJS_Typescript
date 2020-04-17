@@ -164,14 +164,8 @@
 <script lang="ts">
 import { Component, Prop, PropSync, Vue, Watch } from 'vue-property-decorator';
 import { SelectItem, TableMemberVO } from '@/common/types';
-import {
-  deleteDataApi,
-  getCodeListApi,
-  patchDataApi,
-  postDataApi,
-} from '@/utils/apis';
+import { getCodeListApi, patchDataApi, postDataApi } from '@/utils/apis';
 import _ from 'lodash';
-import { confirmDelete } from '@/utils/alerts';
 import DatetimePicker from '@/components/picker/DatetimePicker.vue';
 
 const SHA512 = require('crypto-js/sha256');
@@ -240,21 +234,6 @@ export default class extends Vue {
     if (_.startsWith(response.code, `S`)) {
       this.syncedDialog = false;
       this.$emit('finished');
-    }
-  }
-
-  async delete() {
-    const result = await confirmDelete();
-    if (result.value) {
-      this.loading = true;
-      const response = await deleteDataApi<TableMemberVO>(
-        `admin/members/`,
-        this.editItem.id!,
-      );
-      this.loading = false;
-      if (_.startsWith(response.code, `S`)) {
-        this.$emit('finished');
-      }
     }
   }
 }

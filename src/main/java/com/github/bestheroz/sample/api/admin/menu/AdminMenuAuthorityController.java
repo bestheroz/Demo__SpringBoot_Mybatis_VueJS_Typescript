@@ -5,6 +5,7 @@ import com.github.bestheroz.sample.api.entity.menuauthority.TableMenuAuthorityVO
 import com.github.bestheroz.standard.common.response.ResponseVO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -25,6 +26,7 @@ public class AdminMenuAuthorityController {
     }
 
     @PutMapping(value = "{authority}")
+    @CacheEvict(value = "drawerVO", key = "#authority")
     public ResponseVO save(@PathVariable("authority") final Integer authority, @RequestBody final Map<String, String> payload) {
         final TableMenuAuthorityVO TableMenuAuthorityVO = new TableMenuAuthorityVO();
         TableMenuAuthorityVO.setAuthority(authority);

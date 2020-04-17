@@ -4,6 +4,7 @@ import com.github.bestheroz.sample.api.entity.member.TableMemberRepository;
 import com.github.bestheroz.sample.api.entity.member.TableMemberVO;
 import com.github.bestheroz.standard.common.response.ResponseVO;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -25,21 +26,17 @@ public class AdminMemberController {
     }
 
     @PostMapping
+    @CacheEvict(value = "getMemberList")
     public ResponseVO insert(@RequestBody final TableMemberVO tableMemberVO) {
         this.tableMemberRepository.save(tableMemberVO);
         return ResponseVO.SUCCESS_NORMAL;
     }
 
     @PatchMapping(value = "{id}")
+    @CacheEvict(value = "getMemberList")
     public ResponseVO update(@PathVariable(value = "id") final String id, @RequestBody final TableMemberVO tableMemberVO) {
         tableMemberVO.setId(id);
         this.tableMemberRepository.save(tableMemberVO);
-        return ResponseVO.SUCCESS_NORMAL;
-    }
-
-    @DeleteMapping(value = "{id}")
-    public ResponseVO delete(@PathVariable(value = "id") final String id) {
-        this.tableMemberRepository.deleteById(id);
         return ResponseVO.SUCCESS_NORMAL;
     }
 }

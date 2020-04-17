@@ -16,7 +16,6 @@ public class AuthController {
 
     @PostMapping(value = "/login")
     public ResponseVO login(@RequestBody final TableMemberVO tableMemberVO) {
-        System.out.println(tableMemberVO.toString());
         return ResponseVO.getSuccessResponseVO(this.authService.login(tableMemberVO.getId(), tableMemberVO.getPassword()));
     }
 
@@ -30,8 +29,8 @@ public class AuthController {
     @DeleteMapping(value = "/logout")
     public void logout() {
         final TableMemberVO loginVO = SessionUtils.getLoginVO();
-        loginVO.setToken(null);
-        this.tableMemberRepository.save(loginVO);
+        this.authService.logoutToken(loginVO.getToken(), loginVO.getId());
+        this.tableMemberRepository.updateTokenNull(loginVO.getId());
         SessionUtils.logout();
     }
 }

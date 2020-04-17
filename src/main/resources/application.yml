@@ -39,17 +39,15 @@ server:
     session:
       cookie:
         name: JSESSIONID_MYAPP
-management:
-  endpoint:
-    shutdown:
-      enabled: true
-    health:
-      enabled: true
-  endpoints:
-    enabled-by-default: false
-    web:
-      exposure:
-        include: shutdown, health
+#management:
+#  endpoint:
+#    shutdown:
+#      enabled: true
+#  endpoints:
+#    enabled-by-default: false
+#    web:
+#      exposure:
+#        include: shutdown
 logging:
   level:
     org:

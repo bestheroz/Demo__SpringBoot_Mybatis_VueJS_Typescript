@@ -2,8 +2,8 @@ package com.github.bestheroz.sample.api.menu;
 
 import com.github.bestheroz.sample.api.entity.menu.TableMenuRepository;
 import com.github.bestheroz.sample.api.entity.menu.TableMenuVO;
-import com.github.bestheroz.standard.common.util.SessionUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -14,8 +14,8 @@ import java.util.stream.Collectors;
 public class MenuService {
     @Resource private TableMenuRepository tableMenuRepository;
 
-    public List<DrawerVO> getDrawerList() {
-        final Integer authority = SessionUtils.getAttributeInteger("authority");
+    @Cacheable(value = "drawerVO", key = "#authority")
+    public List<DrawerVO> getDrawerList(final Integer authority) {
         final List<DrawerVO> result;
         if (authority.equals(999)) {
             result = this.tableMenuRepository.getMenuListLevel2().stream().map(this::convertTableMenuVOToDrawerVO).collect(Collectors.toList());

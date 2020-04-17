@@ -11,6 +11,8 @@ import com.github.bestheroz.standard.common.util.SessionUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.LocalDateTime;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -56,11 +58,13 @@ public class AuthService {
 
         tableMemberVO.setLoginFailCnt(0);
         tableMemberVO.setToken(JWT.create().withIssuer(id).withExpiresAt(LocalDateTime.now().plusDays(1).toDate()).sign(ALGORITHM));
+        this.logoutToken(tableMemberVO.getToken(), tableMemberVO.getId());
         this.tableMemberRepository.save(tableMemberVO);
         SessionUtils.setLoginVO(tableMemberVO);
         return tableMemberVO;
     }
 
+    @Cacheable(value = "verify", key = "'#token' + '#id'")
     public void verify(@NotNull final String token, @NotNull final String id) {
         try {
             JWT.require(ALGORITHM).withIssuer(id).acceptExpiresAt(86400).build().verify(token);
@@ -68,5 +72,14 @@ public class AuthService {
             log.warn(new BusinessException(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER).toString());
             throw new BusinessException(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER);
         }
+    }
+
+    @CacheEvict(value = "findByToken", key = "#token")
+    public void logoutToken(final String token) {
+    }
+
+    @CacheEvict(value = "verify", key = "'#token' + '#id'")
+    public void logoutToken(final String token, final String id) {
+        this.logoutToken(token);
     }
 }

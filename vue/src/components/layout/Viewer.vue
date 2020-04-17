@@ -33,7 +33,7 @@ export default class extends Vue {
       this.items = response.data.data;
     }
     if (!Vue.$storage.has('memberList')) {
-      const response = await getListApi<TableMemberVO[]>(`/admin/members`);
+      const response = await getListApi<TableMemberVO[]>(`/members`);
       Vue.$storage.set(
         'memberList',
         response.data!.map((item) => {
@@ -50,7 +50,7 @@ export default class extends Vue {
       this.items = response.data.data;
     }
     if (!Vue.$storage.has('memberList')) {
-      const response = await getListApi<TableMemberVO[]>(`/admin/members`);
+      const response = await getListApi<TableMemberVO[]>(`/members`);
       Vue.$storage.set(
         'memberList',
         response.data!.map((item) => {
