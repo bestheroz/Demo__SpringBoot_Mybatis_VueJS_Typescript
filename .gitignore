@@ -1,5 +1,6 @@
 /classes/
 /node_modules/
+/src/main/resources/static/
 /target/
 /vue/node_modules/
 /.idea/artifacts/
