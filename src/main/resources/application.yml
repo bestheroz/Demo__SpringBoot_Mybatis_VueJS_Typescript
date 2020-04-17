@@ -19,8 +19,9 @@ spring:
       file-size-threshold: 0
   jpa:
     show-sql: true
-#    hibernate:
-#      ddl-auto: none
+    hibernate:
+      ddl-auto: none
+    generate-ddl: false
     properties:
       hibernate:
         format_sql: true

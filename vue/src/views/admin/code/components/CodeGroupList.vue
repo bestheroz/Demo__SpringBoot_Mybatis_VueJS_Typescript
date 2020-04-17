@@ -130,10 +130,10 @@ export default class extends Vue {
     {
       text: `그룹코드명`,
       align: `start`,
-      value: `codeGroupnm`,
+      value: `name`,
     },
     {
-      text: `작업일시`,
+      text: `작업 일시`,
       align: `center`,
       value: `updated`,
       filterable: false,

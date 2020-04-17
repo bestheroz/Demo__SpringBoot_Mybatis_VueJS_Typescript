@@ -5,7 +5,7 @@ INTO MEMBER
  NAME,
  AUTHORITY,
  LOGIN_FAIL_CNT,
- IS_CLOSED,
+ AVAILABLE,
  EXPIRED,
  CREATED_BY,
  CREATED,
@@ -16,11 +16,11 @@ VALUES ('developer',
         '개발자',
         999,
         0,
-        FALSE,
+        TRUE,
         SYSDATE + 365,
-        'bestheroz',
+        'developer',
         SYSDATE,
-        'bestheroz',
+        'developer',
         SYSDATE);
 
 INSERT
@@ -30,7 +30,7 @@ INTO MEMBER
  NAME,
  AUTHORITY,
  LOGIN_FAIL_CNT,
- IS_CLOSED,
+ AVAILABLE,
  EXPIRED,
  TOKEN,
  CREATED_BY,
@@ -42,12 +42,12 @@ VALUES ('1',
         '1',
         900,
         0,
-        FALSE,
+        TRUE,
         SYSDATE + 365,
         'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiIxMTIwMTkxMTMwOSJ9.KTzZHn6wkr6DQ8e86VuZkGHCYu1lTAdiVew0kk9GHJoez4fOidG7FhrP1SwWEWMkwXZ-CWWVrutE_QGDR8vqbQ',
-        'bestheroz',
+        'developer',
         SYSDATE,
-        'bestheroz',
+        'developer',
         SYSDATE);
 
 INSERT
@@ -57,32 +57,7 @@ INTO MEMBER
  NAME,
  AUTHORITY,
  LOGIN_FAIL_CNT,
- IS_CLOSED,
- EXPIRED,
- CREATED_BY,
- CREATED,
- UPDATED_BY,
- UPDATED)
-VALUES ('bestheroz',
-        '4dff4ea340f0a823f15d3f4f01ab62eae0e5da579ccb851f8db9dfe84c58b2b37b89903a740e1ee172da793a6e79d560e5f7f9bd058a12a280433ed6fa46510a',
-        '개발자/김동준M',
-        999,
-        0,
-        FALSE,
-        SYSDATE + 365,
-        'bestheroz',
-        SYSDATE,
-        'bestheroz',
-        SYSDATE);
-
-INSERT
-INTO MEMBER
-(ID,
- PASSWORD,
- NAME,
- AUTHORITY,
- LOGIN_FAIL_CNT,
- IS_CLOSED,
+ AVAILABLE,
  EXPIRED,
  CREATED_BY,
  CREATED,
@@ -93,11 +68,11 @@ VALUES ('guest',
         '게스트',
         100,
         0,
-        FALSE,
+        TRUE,
         SYSDATE + 365,
-        'bestheroz',
+        'developer',
         SYSDATE,
-        'bestheroz',
+        'developer',
         SYSDATE);
 
 INSERT
@@ -118,9 +93,9 @@ VALUES ('///',
         1,
         '/',
         '최상위(삭제하지마세요.)',
-        'bestheroz',
+        'developer',
         SYSDATE,
-        'bestheroz',
+        'developer',
         SYSDATE);
 
 INSERT
@@ -139,9 +114,9 @@ SELECT '관리자',
        ID,
        10,
        'mdi-account-cog',
-       'bestheroz',
+       'developer',
        SYSDATE,
-       'bestheroz',
+       'developer',
        SYSDATE
 FROM MENU
 WHERE NAME = '///';
@@ -162,9 +137,9 @@ SELECT '메뉴관리',
        ID,
        100,
        '/admin/menu',
-       'bestheroz',
+       'developer',
        SYSDATE,
-       'bestheroz',
+       'developer',
        SYSDATE
 FROM MENU
 WHERE NAME = '관리자';
@@ -185,9 +160,9 @@ SELECT '코드관리',
        ID,
        300,
        '/admin/code',
-       'bestheroz',
+       'developer',
        SYSDATE,
-       'bestheroz',
+       'developer',
        SYSDATE
 FROM MENU
 WHERE NAME = '관리자';
@@ -208,9 +183,9 @@ SELECT '회원관리',
        ID,
        500,
        '/admin/member',
-       'bestheroz',
+       'developer',
        SYSDATE,
-       'bestheroz',
+       'developer',
        SYSDATE
 FROM MENU
 WHERE NAME = '관리자';
@@ -231,9 +206,9 @@ SELECT '만든이',
        ID,
        90,
        'mdi-account-hard-hat',
-       'bestheroz',
+       'developer',
        SYSDATE,
-       'bestheroz',
+       'developer',
        SYSDATE
 FROM MENU
 WHERE NAME = '///';
@@ -253,10 +228,10 @@ SELECT 'Github',
        'W',
        ID,
        100,
-       'https://github.com/bestheroz',
-       'bestheroz',
+       'https://github.com/developer',
+       'developer',
        SYSDATE,
-       'bestheroz',
+       'developer',
        SYSDATE
 FROM MENU
 WHERE NAME = '만든이';
@@ -277,10 +252,10 @@ SELECT 'Blog',
        'W',
        ID,
        200,
-       'https://bestheroz.blog.me',
-       'bestheroz',
+       'https://developer.blog.me',
+       'developer',
        SYSDATE,
-       'bestheroz',
+       'developer',
        SYSDATE
 FROM MENU
 WHERE NAME = '만든이';
@@ -301,9 +276,9 @@ SELECT '메뉴그룹1',
        ID,
        30,
        'mdi-numeric-1-box-outline',
-       'bestheroz',
+       'developer',
        SYSDATE,
-       'bestheroz',
+       'developer',
        SYSDATE
 FROM MENU
 WHERE NAME = '///';
@@ -322,9 +297,9 @@ SELECT '메뉴1',
        'P',
        ID,
        100,
-       'bestheroz',
+       'developer',
        SYSDATE,
-       'bestheroz',
+       'developer',
        SYSDATE
 FROM MENU
 WHERE NAME = '메뉴그룹1';
@@ -344,9 +319,9 @@ SELECT '메뉴2',
        'P',
        ID,
        200,
-       'bestheroz',
+       'developer',
        SYSDATE,
-       'bestheroz',
+       'developer',
        SYSDATE
 FROM MENU
 WHERE NAME = '메뉴그룹1';
@@ -367,9 +342,9 @@ SELECT '메뉴그룹2',
        ID,
        50,
        'mdi-numeric-2-box-outline',
-       'bestheroz',
+       'developer',
        SYSDATE,
-       'bestheroz',
+       'developer',
        SYSDATE
 FROM MENU
 WHERE NAME = '///';
@@ -388,9 +363,9 @@ SELECT '메뉴1',
        'P',
        ID,
        100,
-       'bestheroz',
+       'developer',
        SYSDATE,
-       'bestheroz',
+       'developer',
        SYSDATE
 FROM MENU
 WHERE NAME = '메뉴그룹2';
@@ -410,9 +385,9 @@ SELECT '메뉴2',
        'P',
        ID,
        200,
-       'bestheroz',
+       'developer',
        SYSDATE,
-       'bestheroz',
+       'developer',
        SYSDATE
 FROM MENU
 WHERE NAME = '메뉴그룹2';
@@ -433,9 +408,9 @@ SELECT '메뉴그룹3',
        ID,
        70,
        'mdi-numeric-3-box-outline',
-       'bestheroz',
+       'developer',
        SYSDATE,
-       'bestheroz',
+       'developer',
        SYSDATE
 FROM MENU
 WHERE NAME = '///';
@@ -454,9 +429,9 @@ SELECT '메뉴1',
        'P',
        ID,
        100,
-       'bestheroz',
+       'developer',
        SYSDATE,
-       'bestheroz',
+       'developer',
        SYSDATE
 FROM MENU
 WHERE NAME = '메뉴그룹3';
@@ -476,9 +451,9 @@ SELECT '메뉴2',
        'P',
        ID,
        200,
-       'bestheroz',
+       'developer',
        SYSDATE,
-       'bestheroz',
+       'developer',
        SYSDATE
 FROM MENU
 WHERE NAME = '메뉴그룹3';
@@ -490,10 +465,10 @@ INSERT INTO MENU_AUTHORITY
  UPDATED_BY,
  UPDATED)
 SELECT 900,
-       (SELECT GROUP_CONCAT(CONCAT('^|', ID) separator ',') FROM MENU),
-       'bestheroz',
+       (SELECT GROUP_CONCAT(CONCAT('^|', ID, ',') separator '') FROM MENU),
+       'developer',
        SYSDATE,
-       'bestheroz',
+       'developer',
        SYSDATE
 FROM DUAL;
 
@@ -508,9 +483,9 @@ INTO CODE_GROUP
  UPDATED)
 VALUES ('MENU_TYPE',
         '메뉴타입',
-        'bestheroz',
+        'developer',
         SYSDATE,
-        'bestheroz',
+        'developer',
         SYSDATE);
 
 INSERT
@@ -523,9 +498,9 @@ INTO CODE_GROUP
  UPDATED)
 VALUES ('AUTHORITY',
         '회원권한',
-        'bestheroz',
+        'developer',
         SYSDATE,
-        'bestheroz',
+        'developer',
         SYSDATE);
 
 
@@ -534,8 +509,9 @@ INTO CODE
 (CODE_GROUP,
  CODE,
  NAME,
- IS_USING,
+ AVAILABLE,
  DISPLAY_ORDER,
+ AUTHORITY,
  CREATED_BY,
  CREATED,
  UPDATED_BY,
@@ -545,93 +521,8 @@ VALUES ('MENU_TYPE',
         '그룹',
         TRUE,
         1,
-        'bestheroz',
-        SYSDATE,
-        'bestheroz',
-        SYSDATE);
-
-INSERT
-INTO CODE
-(CODE_GROUP,
- CODE,
- NAME,
- IS_USING,
- DISPLAY_ORDER,
- CREATED_BY,
- CREATED,
- UPDATED_BY,
- UPDATED)
-VALUES ('MENU_TYPE',
-        'P',
-        '페이지',
-        TRUE,
-        2,
-        'bestheroz',
-        SYSDATE,
-        'bestheroz',
-        SYSDATE);
-
-
-INSERT
-INTO CODE
-(CODE_GROUP,
- CODE,
- NAME,
- IS_USING,
- DISPLAY_ORDER,
- CREATED_BY,
- CREATED,
- UPDATED_BY,
- UPDATED)
-VALUES ('MENU_TYPE',
-        'W',
-        '새창',
-        TRUE,
-        3,
-        'bestheroz',
-        SYSDATE,
-        'bestheroz',
-        SYSDATE);
-
-
-INSERT
-INTO CODE
-(CODE_GROUP,
- CODE,
- NAME,
- IS_USING,
- DISPLAY_ORDER,
- CREATED_BY,
- CREATED,
- UPDATED_BY,
- UPDATED)
-VALUES ('AUTHORITY',
-        '100',
-        '손님',
-        TRUE,
-        3,
-        'bestheroz',
-        SYSDATE,
-        'bestheroz',
-        SYSDATE);
-
-INSERT
-INTO CODE
-(CODE_GROUP,
- CODE,
- NAME,
- IS_USING,
- DISPLAY_ORDER,
- CREATED_BY,
- CREATED,
- UPDATED_BY,
- UPDATED)
-VALUES ('AUTHORITY',
-        '500',
-        '일반유저',
-        TRUE,
-        5,
-        'bestheroz',
+        100,
+        'developer',
         SYSDATE,
         'developer',
         SYSDATE);
@@ -641,8 +532,103 @@ INTO CODE
 (CODE_GROUP,
  CODE,
  NAME,
- IS_USING,
+ AVAILABLE,
  DISPLAY_ORDER,
+ AUTHORITY,
+ CREATED_BY,
+ CREATED,
+ UPDATED_BY,
+ UPDATED)
+VALUES ('MENU_TYPE',
+        'P',
+        '페이지',
+        TRUE,
+        2,
+        100,
+        'developer',
+        SYSDATE,
+        'developer',
+        SYSDATE);
+
+
+INSERT
+INTO CODE
+(CODE_GROUP,
+ CODE,
+ NAME,
+ AVAILABLE,
+ DISPLAY_ORDER,
+ AUTHORITY,
+ CREATED_BY,
+ CREATED,
+ UPDATED_BY,
+ UPDATED)
+VALUES ('MENU_TYPE',
+        'W',
+        '새창',
+        TRUE,
+        3,
+        100,
+        'developer',
+        SYSDATE,
+        'developer',
+        SYSDATE);
+
+
+INSERT
+INTO CODE
+(CODE_GROUP,
+ CODE,
+ NAME,
+ AVAILABLE,
+ DISPLAY_ORDER,
+ AUTHORITY,
+ CREATED_BY,
+ CREATED,
+ UPDATED_BY,
+ UPDATED)
+VALUES ('AUTHORITY',
+        '100',
+        '손님',
+        TRUE,
+        3,
+        100,
+        'developer',
+        SYSDATE,
+        'developer',
+        SYSDATE);
+
+INSERT
+INTO CODE
+(CODE_GROUP,
+ CODE,
+ NAME,
+ AVAILABLE,
+ DISPLAY_ORDER,
+ AUTHORITY,
+ CREATED_BY,
+ CREATED,
+ UPDATED_BY,
+ UPDATED)
+VALUES ('AUTHORITY',
+        '500',
+        '일반유저',
+        TRUE,
+        5,
+        100,
+        'developer',
+        SYSDATE,
+        'developer',
+        SYSDATE);
+
+INSERT
+INTO CODE
+(CODE_GROUP,
+ CODE,
+ NAME,
+ AVAILABLE,
+ DISPLAY_ORDER,
+ AUTHORITY,
  CREATED_BY,
  CREATED,
  UPDATED_BY,
@@ -652,9 +638,10 @@ VALUES ('AUTHORITY',
         '관리자',
         TRUE,
         7,
-        'bestheroz',
+        100,
+        'developer',
         SYSDATE,
-        'bestheroz',
+        'developer',
         SYSDATE);
 
 INSERT
@@ -662,8 +649,9 @@ INTO CODE
 (CODE_GROUP,
  CODE,
  NAME,
- IS_USING,
+ AVAILABLE,
  DISPLAY_ORDER,
+ AUTHORITY,
  CREATED_BY,
  CREATED,
  UPDATED_BY,
@@ -673,9 +661,10 @@ VALUES ('AUTHORITY',
         '마스터 관리자',
         TRUE,
         8,
-        'bestheroz',
+        100,
+        'developer',
         SYSDATE,
-        'bestheroz',
+        'developer',
         SYSDATE);
 
 INSERT
@@ -683,18 +672,20 @@ INTO CODE
 (CODE_GROUP,
  CODE,
  NAME,
- IS_USING,
+ AVAILABLE,
  DISPLAY_ORDER,
+ AUTHORITY,
  CREATED_BY,
  CREATED,
  UPDATED_BY,
  UPDATED)
 VALUES ('AUTHORITY',
         '999',
-        '마스터개발자',
+        '마스터 개발자',
         TRUE,
         10,
-        'bestheroz',
+        100,
+        'developer',
         SYSDATE,
-        'bestheroz',
+        'developer',
         SYSDATE);

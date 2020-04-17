@@ -25,11 +25,9 @@ public class AdminCodeController {
         return ResponseVO.getSuccessResponseVO(this.tableCodeRepository.findById(new TableCodeVOId(codeGroup, code)));
     }
 
-    @PostMapping(value = "{codeGroup}/{code}")
-    public ResponseVO insert(@PathVariable(value = "codeGroup") final String codeGroup,
-                             @PathVariable(value = "code") final String code, @RequestBody final TableCodeVO tableCodeVO) {
+    @PostMapping(value = "{codeGroup}")
+    public ResponseVO insert(@PathVariable(value = "codeGroup") final String codeGroup, @RequestBody final TableCodeVO tableCodeVO) {
         tableCodeVO.setCodeGroup(codeGroup);
-        tableCodeVO.setCode(code);
         this.tableCodeRepository.save(tableCodeVO);
         return ResponseVO.SUCCESS_NORMAL;
     }

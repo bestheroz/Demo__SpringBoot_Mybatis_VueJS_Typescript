@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.validation.Valid;
 
 @Slf4j
 @RestController
@@ -26,13 +25,13 @@ public class AdminMemberController {
     }
 
     @PostMapping
-    public ResponseVO insert(@Valid @RequestBody final TableMemberVO tableMemberVO) {
+    public ResponseVO insert(@RequestBody final TableMemberVO tableMemberVO) {
         this.tableMemberRepository.save(tableMemberVO);
         return ResponseVO.SUCCESS_NORMAL;
     }
 
     @PatchMapping(value = "{id}")
-    public ResponseVO update(@PathVariable(value = "id") final String id, @Valid @RequestBody final TableMemberVO tableMemberVO) {
+    public ResponseVO update(@PathVariable(value = "id") final String id, @RequestBody final TableMemberVO tableMemberVO) {
         tableMemberVO.setId(id);
         this.tableMemberRepository.save(tableMemberVO);
         return ResponseVO.SUCCESS_NORMAL;

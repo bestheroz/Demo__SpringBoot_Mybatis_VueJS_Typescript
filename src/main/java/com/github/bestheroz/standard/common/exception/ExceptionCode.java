@@ -19,9 +19,9 @@ public enum ExceptionCode {
 
     FAIL_TRANSFORM_DATA("F007", "데이터 변환 실패(Primitive -> Collection)"),
 
-    FAIL_SELECTKEY_RETURN_NO_DATA("F008", "키 생성에 실패하였습니다."),
+    FAIL_VALUE_TOO_LARGE_FOR_COLUMN("F008", "입력하신 값이 너무 큽니다."),
 
-    FAIL_VALUE_TOO_LARGE_FOR_COLUMN("F009", "입력하신 값이 너무 큽니다."),
+    FAIL_LOGIN_CLOSED("F009", "계정 차단"),
 
     FAIL_LOGIN_FAIL_CNT("F010", "로그인 실패 회수 초과"),
 

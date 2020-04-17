@@ -16,12 +16,11 @@ import java.io.Serializable;
 @IdClass(TableCodeVOId.class)
 public class TableCodeVO extends AbstractCreatedUpdateVO implements Serializable {
     private static final long serialVersionUID = -6076508411557466173L;
-    @Id
-    private String codeGroup;
-    @Id
-    private String code;
+    @Id private String codeGroup;
+    @Id private String code;
     private String name;
-    private Boolean isUsing;
+    private boolean available;
     private Integer displayOrder;
+    private Integer authority;
     private String remark1;
 }

@@ -48,8 +48,8 @@ export default class extends Vue {
   @Prop({ type: Boolean, default: false }) readonly filterFirstColumn!: boolean;
 
   readonly USE_YN: SelectItem[] = [
-    { value: 'Y', text: '예' },
-    { value: 'N', text: '아니요' },
+    { value: 'true', text: '예' },
+    { value: 'false', text: '아니요' },
   ];
 
   filter: string[] | null = null;

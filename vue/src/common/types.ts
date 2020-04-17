@@ -43,8 +43,10 @@ export interface TableMemberVO {
   name?: string | null;
   loginFailCnt?: number | null;
   expired?: Date | null;
-  isClosed?: boolean | null;
+  available?: boolean | null;
   token?: string | null;
+  authority?: number | null;
+  timeout?: number | null;
   created?: Date | null;
   createdBy?: string | null;
   updated?: Date | null;
@@ -90,8 +92,9 @@ export interface TableCodeVO {
   codeGroup?: string | null;
   code?: string | null;
   name?: string | null;
-  isUsing?: boolean | null;
+  available?: boolean | null;
   displayOrder?: number | null;
+  authority?: number | null;
   remark1?: string | null;
   created?: Date | null;
   createdBy?: string | null;

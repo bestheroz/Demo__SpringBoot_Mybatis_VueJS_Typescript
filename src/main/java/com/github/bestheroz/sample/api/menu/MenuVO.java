@@ -14,7 +14,7 @@ public class MenuVO implements Serializable {
     private String name;
     private String type;
     private Integer parentId;
-    private Boolean isUsing;
+    private boolean available;
     private Integer displayOrder;
     private String url;
     private String icon;

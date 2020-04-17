@@ -32,10 +32,8 @@
               </v-col>
               <v-col cols="12" md="4">
                 <v-switch
-                  v-model="editItem.isUsing"
-                  :label="editItem.isUsing | getSwitchLabel"
-                  false-value="N"
-                  true-value="Y"
+                  v-model="editItem.available"
+                  :label="editItem.available | getSwitchLabel"
                 />
               </v-col>
               <v-col cols="0" md="4" />
@@ -61,11 +59,30 @@
                   v-slot="{ errors }"
                 >
                   <v-text-field
-                    v-model="editItem.codenm"
+                    v-model="editItem.name"
                     label="상세 코드명"
                     :counter="100"
                     :error-messages="errors"
                     clearable
+                  />
+                </ValidationProvider>
+              </v-col>
+              <v-col cols="12" md="4">
+                <ValidationProvider
+                  name="권한"
+                  rules="required"
+                  v-slot="{ errors }"
+                >
+                  <v-select
+                    v-model.number="editItem.authority"
+                    :items="
+                      AUTHORITY.map((item) => {
+                        return { value: parseInt(item.value), text: item.text };
+                      })
+                    "
+                    label="*권한"
+                    :error-messages="errors"
+                    v-if="AUTHORITY"
                   />
                 </ValidationProvider>
               </v-col>
@@ -76,7 +93,7 @@
                   v-slot="{ errors }"
                 >
                   <v-text-field
-                    v-model.number="editItem.sortseq"
+                    v-model.number="editItem.displayOrder"
                     label="*정렬순서"
                     :error-messages="errors"
                   />
@@ -102,8 +119,13 @@
 
 <script lang="ts">
 import { Component, Prop, PropSync, Vue, Watch } from 'vue-property-decorator';
-import { TableCodeVO } from '@/common/types';
-import { deleteDataApi, patchDataApi, postDataApi } from '@/utils/apis';
+import { SelectItem, TableCodeVO } from '@/common/types';
+import {
+  deleteDataApi,
+  getCodeListApi,
+  patchDataApi,
+  postDataApi,
+} from '@/utils/apis';
 import _ from 'lodash';
 import { confirmDelete } from '@/utils/alerts';
 
@@ -115,7 +137,13 @@ export default class extends Vue {
   @Prop({ required: true }) readonly editItem!: TableCodeVO;
   @Prop({ required: true }) readonly mode!: string | null;
 
+  AUTHORITY: SelectItem[] | null = null;
+
   loading: boolean = false;
+
+  async mounted() {
+    this.AUTHORITY = await getCodeListApi('AUTHORITY');
+  }
 
   @Watch('dialog')
   watchDialog(val: boolean) {
@@ -135,7 +163,7 @@ export default class extends Vue {
   async create() {
     this.loading = true;
     const response = await postDataApi<TableCodeVO>(
-      `admin/codes/`,
+      `admin/codes/${this.editItem.codeGroup}`,
       this.editItem,
     );
     this.loading = false;

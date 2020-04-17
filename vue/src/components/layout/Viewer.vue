@@ -79,7 +79,7 @@ export default class extends Vue {
         }
       });
       if (!result && this.$route.fullPath !== '/') {
-        // this.$router.push('/Code403');
+        this.$router.push('/Code403');
       }
     }
     return result.split('(팝업)').join('');

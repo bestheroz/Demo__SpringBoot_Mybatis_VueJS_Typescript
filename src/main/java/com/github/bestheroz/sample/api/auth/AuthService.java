@@ -24,7 +24,7 @@ public class AuthService {
     @Resource private TableMemberRepository tableMemberRepository;
 
     TableMemberVO login(final String id, final String password) {
-        System.out.println(this.tableMemberRepository.findAll());
+//        System.out.println(this.tableMemberRepository.findAll());
         final Optional<TableMemberVO> one = this.tableMemberRepository.findById(id);
         // 로그인 관문
         // 1. 유저가 없으면
@@ -38,7 +38,7 @@ public class AuthService {
         // 2. 패스워드가 틀리면
         if (!StringUtils.equals(tableMemberVO.getPassword(), password)) {
             tableMemberVO.setLoginFailCnt(tableMemberVO.getLoginFailCnt() + 1);
-            this.tableMemberRepository.save(tableMemberVO);
+            this.tableMemberRepository.plusLoginFailCnt(tableMemberVO.getId());
             log.warn(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER.toString());
             throw new BusinessException(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER);
         }
@@ -47,6 +47,12 @@ public class AuthService {
         if (tableMemberVO.getLoginFailCnt() >= 5) {
             log.warn(ExceptionCode.FAIL_LOGIN_FAIL_CNT.toString());
             throw new BusinessException(ExceptionCode.FAIL_LOGIN_FAIL_CNT);
+        }
+
+        // 4. 계정 차단된 상태인가
+        if (!tableMemberVO.isAvailable()) {
+            log.warn(ExceptionCode.FAIL_LOGIN_CLOSED.toString());
+            throw new BusinessException(ExceptionCode.FAIL_LOGIN_CLOSED);
         }
 
         tableMemberVO.setLoginFailCnt(0);

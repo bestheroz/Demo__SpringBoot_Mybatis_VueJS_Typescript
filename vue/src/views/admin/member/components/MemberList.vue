@@ -26,7 +26,10 @@
             @click:add="
               () => {
                 mode = '추가';
-                editItem = {};
+                editItem = {
+                  expired: dayjs().add(1, 'year').toDate(),
+                  timeout: 7200,
+                };
                 dialog = true;
               }
             "
@@ -61,8 +64,23 @@
             {{ item.id }}
           </a>
         </template>
-        <template v-slot:item.userGroupId="{ item }" v-if="GROUP_LIST">
-          {{ item.userGroupId | getCodeText(GROUP_LIST) }}
+        <template v-slot:item.available="{ item }">
+          <span style="display: inline-flex;">
+            <v-checkbox
+              readonly
+              :input-value="item.available"
+              :ripple="false"
+              dense
+              hide-details
+              class="mt-0"
+            />
+          </span>
+        </template>
+        <template v-slot:item.authority="{ item }" v-if="AUTHORITY">
+          {{ item.authority | getCodeText(AUTHORITY) }}
+        </template>
+        <template v-slot:item.expired="{ item }">
+          {{ item.expired | formatDatetime }}
         </template>
         <template v-slot:item.updated="{ item }">
           {{ item.updated | formatDatetime }}
@@ -85,11 +103,12 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { DataTableHeader, SelectItem, TableMemberVO } from '@/common/types';
-import { getListApi } from '@/utils/apis';
+import { getCodeListApi, getListApi } from '@/utils/apis';
 import envs from '@/constants/envs';
 import ButtonSet from '@/components/speeddial/ButtonSet.vue';
 import DataTableFilter from '@/components/datatable/DataTableFilter.vue';
 import MemberEditDialog from '@/views/admin/member/components/MemberEditDialog.vue';
+import dayjs from 'dayjs';
 
 @Component({
   name: 'MemberList',
@@ -101,8 +120,9 @@ import MemberEditDialog from '@/views/admin/member/components/MemberEditDialog.v
 })
 export default class extends Vue {
   readonly envs: typeof envs = envs;
+  readonly dayjs: typeof dayjs = dayjs;
   mode: string | null = null;
-  sortBy: string[] = ['updated'];
+  sortBy: string[] = ['authority'];
   sortDesc: boolean[] = [true];
   items: TableMemberVO[] = [];
   filteredItems: TableMemberVO[] = [];
@@ -111,7 +131,7 @@ export default class extends Vue {
   loading: boolean = false;
   dialog: boolean = false;
 
-  GROUP_LIST: SelectItem[] | null = null;
+  AUTHORITY: SelectItem[] | null = null;
 
   headers: DataTableHeader[] = [
     {
@@ -122,33 +142,36 @@ export default class extends Vue {
     {
       text: `사용자명`,
       align: `start`,
-      value: `empnm`,
+      value: `name`,
     },
     {
-      text: `사용자그룹`,
+      text: `권한`,
       align: `center`,
-      value: `userGroupId`,
+      value: `authority`,
       filterType: 'select',
       filterSelectItem: [],
     },
     {
-      text: `이메일`,
-      align: `start`,
-      value: `email`,
+      text: `만료일`,
+      align: `center`,
+      value: `expired`,
+      width: 160,
     },
     {
-      text: `연락처`,
-      align: `start`,
-      value: `smsphone`,
+      text: `사용 가능`,
+      align: `center`,
+      value: `available`,
+      filterType: 'switch',
+      width: 100,
     },
     {
-      text: `세션타임아웃시간(초)`,
+      text: `자동로그아웃시간(초)`,
       align: `end`,
       value: `timeout`,
-      width: 170,
+      width: 150,
     },
     {
-      text: `작업일시`,
+      text: `작업 일시`,
       align: `center`,
       value: `updated`,
       filterable: false,
@@ -163,25 +186,20 @@ export default class extends Vue {
     },
   ];
 
-  mounted() {
-    this.getCodeList();
-    this.getList();
+  async mounted() {
+    this.headers[2].filterSelectItem = this.AUTHORITY = await getCodeListApi(
+      'AUTHORITY',
+    );
+    await this.getList();
   }
 
   async getList() {
     this.selected = [];
     this.items = [];
     this.loading = true;
-    const response = await getListApi<TableMemberVO[]>(`admin/user/`);
+    const response = await getListApi<TableMemberVO[]>(`admin/members/`);
     this.loading = false;
     this.items = response.data || [];
-  }
-
-  async getCodeList() {
-    this.loading = true;
-    const response = await getListApi<SelectItem[]>(`admin/user/groupList`);
-    this.loading = false;
-    this.headers[2].filterSelectItem = this.GROUP_LIST = response.data || [];
   }
 }
 </script>

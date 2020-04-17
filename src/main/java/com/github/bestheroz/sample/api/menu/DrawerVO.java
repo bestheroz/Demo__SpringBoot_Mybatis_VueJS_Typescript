@@ -12,6 +12,6 @@ public class DrawerVO {
     private String to;
     private String type;
     private String group;
-    private Boolean checked;
+    private boolean checked;
     private List<DrawerVO> children;
 }

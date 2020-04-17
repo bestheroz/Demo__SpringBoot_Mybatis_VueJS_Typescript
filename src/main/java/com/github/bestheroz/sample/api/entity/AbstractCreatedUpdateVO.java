@@ -13,13 +13,13 @@ import javax.validation.constraints.NotNull;
 @MappedSuperclass
 public abstract class AbstractCreatedUpdateVO {
     @NotNull
-    private String createdBy;
+    protected String createdBy;
     @NotNull
-    private LocalDateTime created;
+    protected LocalDateTime created;
     @NotNull
-    private String updatedBy;
+    protected String updatedBy;
     @NotNull
-    private LocalDateTime updated;
+    protected LocalDateTime updated;
 
     @PrePersist
     protected void onCreate() {

@@ -16,10 +16,18 @@ public class MenuService {
 
     public List<DrawerVO> getDrawerList() {
         final Integer authority = SessionUtils.getAttributeInteger("authority");
-        final List<DrawerVO> result = this.tableMenuRepository.getMenuListLevel2(authority).stream().map(this::convertTableMenuVOToDrawerVO).collect(Collectors.toList());
-        result.stream().forEach(item -> {
-            item.setChildren(this.tableMenuRepository.getMenuListLevel3(authority, item.getId()).stream().map(this::convertTableMenuVOToDrawerVO).collect(Collectors.toList()));
-        });
+        final List<DrawerVO> result;
+        if (authority.equals(999)) {
+            result = this.tableMenuRepository.getMenuListLevel2().stream().map(this::convertTableMenuVOToDrawerVO).collect(Collectors.toList());
+            result.stream().forEach(item -> {
+                item.setChildren(this.tableMenuRepository.getMenuListLevel3(item.getId()).stream().map(this::convertTableMenuVOToDrawerVO).collect(Collectors.toList()));
+            });
+        } else {
+            result = this.tableMenuRepository.getMenuListLevel2(authority).stream().map(this::convertTableMenuVOToDrawerVO).collect(Collectors.toList());
+            result.stream().forEach(item -> {
+                item.setChildren(this.tableMenuRepository.getMenuListLevel3(authority, item.getId()).stream().map(this::convertTableMenuVOToDrawerVO).collect(Collectors.toList()));
+            });
+        }
         return result;
     }
 

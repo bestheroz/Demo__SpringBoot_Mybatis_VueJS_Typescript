@@ -33,7 +33,7 @@
             class="mx-1"
             tile
             color="button-add"
-            x-small
+            small
             @click="
               () => {
                 mode = '추가';
@@ -51,7 +51,7 @@
             class="mx-1"
             tile
             color="button-edit"
-            x-small
+            small
             :disabled="item.name === '///'"
             @click="
               () => {
@@ -67,7 +67,7 @@
             class="mx-1"
             tile
             color="button-delete"
-            x-small
+            small
             @click="
               () => {
                 editItem = item;
@@ -128,6 +128,7 @@ export default class extends Vue {
       value: `type`,
       filterType: 'select',
       filterSelectItem: [],
+      width: 100,
     },
     {
       text: `메뉴명`,
@@ -145,10 +146,10 @@ export default class extends Vue {
       align: `center`,
       value: `action`,
       filterable: false,
-      width: 220,
+      width: 230,
     },
     {
-      text: `작업일시`,
+      text: `작업 일시`,
       align: `center`,
       value: `updated`,
       filterable: false,

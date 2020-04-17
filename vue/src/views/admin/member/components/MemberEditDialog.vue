@@ -38,7 +38,7 @@
                   v-slot="{ errors }"
                 >
                   <v-text-field
-                    v-model="editItem.empnm"
+                    v-model="editItem.name"
                     label="*사용자명"
                     :counter="100"
                     :error-messages="errors"
@@ -47,46 +47,20 @@
               </v-col>
               <v-col cols="12" md="4">
                 <ValidationProvider
-                  name="사용자그룹"
+                  name="권한"
                   rules="required"
                   v-slot="{ errors }"
                 >
                   <v-select
-                    v-model="editItem.userGroupId"
-                    :items="GROUP_LIST"
-                    label="*사용자그룹"
+                    v-model.number="editItem.authority"
+                    :items="
+                      AUTHORITY.map((item) => {
+                        return { value: parseInt(item.value), text: item.text };
+                      })
+                    "
+                    label="*권한"
                     :error-messages="errors"
-                  />
-                </ValidationProvider>
-              </v-col>
-              <v-col cols="12" md="4">
-                <ValidationProvider
-                  name="이메일"
-                  rules="email|max:50"
-                  v-slot="{ errors }"
-                >
-                  <v-text-field
-                    v-model="editItem.email"
-                    type="email"
-                    label="이메일"
-                    :counter="50"
-                    :error-messages="errors"
-                    clearable
-                  />
-                </ValidationProvider>
-              </v-col>
-              <v-col cols="12" md="4">
-                <ValidationProvider
-                  name="연락처"
-                  rules="max:100"
-                  v-slot="{ errors }"
-                >
-                  <v-text-field
-                    v-model="editItem.smsphone"
-                    label="연락처"
-                    :counter="100"
-                    :error-messages="errors"
-                    clearable
+                    v-if="AUTHORITY"
                   />
                 </ValidationProvider>
               </v-col>
@@ -104,6 +78,15 @@
                   />
                 </ValidationProvider>
               </v-col>
+              <v-col cols="12" md="8" class="pa-0">
+                <datetime-picker :date="editItem.expired" day-label="만료일" />
+              </v-col>
+              <v-col cols="12" md="4">
+                <v-switch
+                  v-model="editItem.available"
+                  :label="editItem.available | getSwitchLabel"
+                />
+              </v-col>
               <v-col cols="12" md="4">
                 <ValidationProvider
                   name="비밀번호"
@@ -119,6 +102,7 @@
                     :error-messages="errors"
                     :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
                     :type="show1 ? 'text' : 'password'"
+                    @click:append="show1 = !show1"
                   />
                 </ValidationProvider>
                 <ValidationProvider
@@ -182,16 +166,19 @@ import { Component, Prop, PropSync, Vue, Watch } from 'vue-property-decorator';
 import { SelectItem, TableMemberVO } from '@/common/types';
 import {
   deleteDataApi,
-  getListApi,
+  getCodeListApi,
   patchDataApi,
   postDataApi,
 } from '@/utils/apis';
 import _ from 'lodash';
 import { confirmDelete } from '@/utils/alerts';
+import DatetimePicker from '@/components/picker/DatetimePicker.vue';
+
 const SHA512 = require('crypto-js/sha256');
 
 @Component({
   name: 'MemberEditDialog',
+  components: { DatetimePicker },
 })
 export default class extends Vue {
   @PropSync('dialog', { required: true, type: Boolean }) syncedDialog!: boolean;
@@ -199,13 +186,13 @@ export default class extends Vue {
   @Prop({ required: true }) readonly mode!: string | null;
 
   loading: boolean = false;
-  GROUP_LIST: SelectItem[] | null = null;
+  AUTHORITY: SelectItem[] | null = null;
   password2: string | null = null;
   show1: boolean = false;
   show2: boolean = false;
 
-  mounted() {
-    this.getCodeList();
+  async mounted() {
+    this.AUTHORITY = await getCodeListApi('AUTHORITY');
   }
 
   @Watch('dialog')
@@ -230,7 +217,7 @@ export default class extends Vue {
     if (params.password) {
       params.password = SHA512(params.password).toString();
     }
-    const response = await postDataApi<TableMemberVO>(`admin/user/`, params);
+    const response = await postDataApi<TableMemberVO>(`admin/members/`, params);
     this.loading = false;
     if (_.startsWith(response.code, `S`)) {
       this.syncedDialog = false;
@@ -245,7 +232,7 @@ export default class extends Vue {
       params.password = SHA512(params.password).toString();
     }
     const response = await patchDataApi<TableMemberVO>(
-      `admin/user/`,
+      `admin/members/`,
       params,
       this.editItem.id!,
     );
@@ -261,7 +248,7 @@ export default class extends Vue {
     if (result.value) {
       this.loading = true;
       const response = await deleteDataApi<TableMemberVO>(
-        `admin/user/`,
+        `admin/members/`,
         this.editItem.id!,
       );
       this.loading = false;
@@ -269,13 +256,6 @@ export default class extends Vue {
         this.$emit('finished');
       }
     }
-  }
-
-  async getCodeList() {
-    this.loading = true;
-    const response = await getListApi<SelectItem[]>(`admin/user/groupList`);
-    this.loading = false;
-    this.GROUP_LIST = response.data || [];
   }
 }
 </script>

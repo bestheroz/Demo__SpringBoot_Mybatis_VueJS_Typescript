@@ -72,13 +72,11 @@
               {{ item.code }}
             </a>
           </template>
-          <template v-slot:item.isUsing="{ item }">
+          <template v-slot:item.available="{ item }">
             <span style="display: inline-flex;">
               <v-checkbox
                 readonly
-                :input-value="item.isUsing"
-                true-value="Y"
-                false-value="N"
+                :input-value="item.available"
                 :ripple="false"
                 dense
                 hide-details
@@ -86,8 +84,8 @@
               />
             </span>
           </template>
-          <template v-slot:item.authority="{ item }" v-if="LEVELCOD">
-            {{ item.authority | getCodeText(LEVELCOD) }}
+          <template v-slot:item.authority="{ item }" v-if="AUTHORITY">
+            {{ item.authority | getCodeText(AUTHORITY) }}
           </template>
           <template v-slot:item.updatedBy="{ item }">
             {{ item.updatedBy | formatEmpNm }}
@@ -116,7 +114,7 @@ import {
   TableCodeGroupVO,
   TableCodeVO,
 } from '@/common/types';
-import { getListApi } from '@/utils/apis';
+import { getCodeListApi, getListApi } from '@/utils/apis';
 import envs from '@/constants/envs';
 import ButtonSet from '@/components/speeddial/ButtonSet.vue';
 import CodeEditDialog from '@/views/admin/code/components/CodeEditDialog.vue';
@@ -135,11 +133,11 @@ export default class extends Vue {
 
   readonly envs: typeof envs = envs;
 
-  LEVELCOD: SelectItem[] | null = null;
+  AUTHORITY: SelectItem[] | null = null;
   mode: string | null = null;
 
   loading: boolean = false;
-  sortBy: string[] = ['sortseq'];
+  sortBy: string[] = ['displayOrder'];
   sortDesc: boolean[] = [false];
   items: TableCodeVO[] = [];
   filteredItems: TableCodeVO[] = [];
@@ -148,37 +146,37 @@ export default class extends Vue {
   dialog: boolean = false;
   headers: DataTableHeader[] = [
     {
-      text: `상세코드`,
+      text: `상세 코드`,
       align: `start`,
       value: `code`,
     },
     {
-      text: `상세코드명`,
+      text: `상세 코드명`,
       align: `start`,
-      value: `codenm`,
+      value: `name`,
     },
     {
-      text: `사용여부`,
+      text: `사용 가능`,
       align: `center`,
-      value: `isUsing`,
+      value: `available`,
       filterType: 'switch',
       width: 100,
     },
     {
-      text: `출력순서`,
+      text: `출력 순서`,
       align: `end`,
-      value: `sortseq`,
+      value: `displayOrder`,
       width: 100,
     },
     {
-      text: `권한`,
+      text: `권한(~부터 볼수 있음)`,
       align: `start`,
       value: `authority`,
       filterType: 'select',
       filterSelectItem: [],
     },
     {
-      text: `작업일시`,
+      text: `작업 일시`,
       align: `center`,
       value: `updated`,
       filterable: false,
@@ -193,8 +191,10 @@ export default class extends Vue {
     },
   ];
 
-  mounted() {
-    this.getCodeList();
+  async mounted() {
+    this.headers[4].filterSelectItem = this.AUTHORITY = await getCodeListApi(
+      'AUTHORITY',
+    );
   }
 
   @Watch('parentItem')
@@ -214,13 +214,6 @@ export default class extends Vue {
     );
     this.loading = false;
     this.items = response.data || [];
-  }
-
-  async getCodeList() {
-    this.loading = true;
-    const response = await getListApi<SelectItem[]>(`admin/codes/levelList`);
-    this.loading = false;
-    this.headers[4].filterSelectItem = this.LEVELCOD = response.data || [];
   }
 }
 </script>

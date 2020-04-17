@@ -38,7 +38,7 @@
                   v-slot="{ errors }"
                 >
                   <v-text-field
-                    v-model="editItem.codeGroupnm"
+                    v-model="editItem.name"
                     label="그룹코드명"
                     :counter="100"
                     :error-messages="errors"

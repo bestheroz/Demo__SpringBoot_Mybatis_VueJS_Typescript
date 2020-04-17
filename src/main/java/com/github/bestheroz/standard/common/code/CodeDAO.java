@@ -9,7 +9,7 @@ import java.util.List;
 
 @Repository
 public interface CodeDAO extends CrudRepository<CodeVO, String> {
-    @Query(value = "SELECT SCD.CODE AS VALUE, SCD.NAME AS TEXT FROM CODE SCD WHERE SCD.IS_USING = 'Y' AND SCD.CODE_GROUP = :codeGroup ORDER BY SCD.DISPLAY_ORDER ASC",
+    @Query(value = "SELECT SCD.CODE AS VALUE, SCD.NAME AS TEXT FROM CODE SCD WHERE SCD.AVAILABLE = 'Y' AND SCD.CODE_GROUP = :codeGroup AND SCD.AUTHORITY <= :authority ORDER BY SCD.DISPLAY_ORDER ASC",
             nativeQuery = true)
-    List<CodeVO> getCodeVOList(@Param("codeGroup") final String codeGroup);
+    List<CodeVO> getCodeVOList(@Param("codeGroup") final String codeGroup, @Param("authority") Integer authority);
 }

@@ -15,7 +15,9 @@ export function getText(
   value: string,
   defaultText?: string,
 ): string {
-  const filterElement = (codes || []).find((item) => item.value === value);
+  const filterElement = (codes || []).find(
+    (item) => item.value === value.toString(),
+  );
   return (filterElement && filterElement.text) || defaultText || '-';
 }
 
