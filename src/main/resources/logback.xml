@@ -48,9 +48,6 @@
     <logger name="org.apache.commons.beanutils" level="INFO"/>
 
     <logger name="com.zaxxer.hikari.pool" level="INFO"/>
-    <logger name="org.jdbcdslog" level="INFO"/>
-    <logger name="org.jdbcdslog.StatementLogger" level="INFO"/>
-    <logger name="org.jdbcdslog.ResultSetLogger" level="INFO"/>
 
     <logger name="org.hibernate" level="INFO"/>
     <logger name="org.hibernate.SQL.logStatement" level="DEBUG"/>

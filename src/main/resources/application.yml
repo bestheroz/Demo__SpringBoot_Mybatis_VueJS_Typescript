@@ -76,10 +76,10 @@ spring:
     hikari:
       username:
       password:
-      driver-class-name: org.jdbcdslog.DriverLoggingProxy
-      jdbc-url: jdbc:jdbcdslog:mysql://127.0.0.1:3306/dbname?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&&zeroDateTimeBehavior=convertToNull;targetDriver=org.gjt.mm.mysql.Driver
+      driver-class-name: org.gjt.mm.mysql.Driver
+      jdbc-url: jdbc:mysql://127.0.0.1:3306/dbname?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&&zeroDateTimeBehavior=convertToNull;
 server:
-  port: 3401
+  port: 8080
 variable:
   app:
     title:
@@ -90,8 +90,8 @@ spring:
     hikari:
       username:
       password:
-      driver-class-name: org.jdbcdslog.DriverLoggingProxy
-      jdbc-url: jdbc:jdbcdslog:mysql://127.0.0.1:3306/dbname?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&&zeroDateTimeBehavior=convertToNull;targetDriver=org.gjt.mm.mysql.Driver
+      driver-class-name: org.gjt.mm.mysql.Driver
+      jdbc-url: jdbc:mysql://127.0.0.1:3306/dbname?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&&zeroDateTimeBehavior=convertToNull;
 server:
   port:
 variable:
