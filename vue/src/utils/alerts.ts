@@ -12,19 +12,21 @@ export function alertInfo(message: string, timer = 3500): void {
     timer: timer,
     html: '<b>3</b> 초 후에 자동으로 닫힙니다.',
     onBeforeOpen: () => {
-      if (Swal.getTimerLeft()) {
-        timerInterval = setInterval(() => {
-          try {
-            Swal.getContent().querySelector('b')!.textContent = (
-              +(Swal.getTimerLeft() || 0) / 1000
-            ).toFixed(0);
-          } catch (e) {
-            timerInterval && clearInterval(timerInterval);
-            timerInterval = undefined;
-          }
-        }, 1002);
-      } else if (Swal.getContent().querySelector('#swal2-content')) {
-        Swal.getContent().querySelector('#swal2-content')!.innerHTML = '';
+      if (Swal.getContent() !== null) {
+        if (Swal.getTimerLeft()) {
+          timerInterval = setInterval(() => {
+            try {
+              Swal.getContent()!.querySelector('b')!.textContent = (
+                +(Swal.getTimerLeft() || 0) / 1000
+              ).toFixed(0);
+            } catch (e) {
+              timerInterval && clearInterval(timerInterval);
+              timerInterval = undefined;
+            }
+          }, 1002);
+        } else if (Swal.getContent()!.querySelector('#swal2-content')) {
+          Swal.getContent()!.querySelector('#swal2-content')!.innerHTML = '';
+        }
       }
     },
     onClose: () => {
@@ -41,19 +43,21 @@ export function alertSuccess(message: string, timer = 3500): void {
     timer: timer,
     html: '<b>3</b> 초 후에 자동으로 닫힙니다.',
     onBeforeOpen: () => {
-      if (Swal.getTimerLeft()) {
-        timerInterval = setInterval(() => {
-          try {
-            Swal.getContent().querySelector('b')!.textContent = (
-              +(Swal.getTimerLeft() || 0) / 1000
-            ).toFixed(0);
-          } catch (e) {
-            timerInterval && clearInterval(timerInterval);
-            timerInterval = undefined;
-          }
-        }, 1002);
-      } else if (Swal.getContent().querySelector('#swal2-content')) {
-        Swal.getContent().querySelector('#swal2-content')!.innerHTML = '';
+      if (Swal.getContent() !== null) {
+        if (Swal.getTimerLeft()) {
+          timerInterval = setInterval(() => {
+            try {
+              Swal.getContent()!.querySelector('b')!.textContent = (
+                +(Swal.getTimerLeft() || 0) / 1000
+              ).toFixed(0);
+            } catch (e) {
+              timerInterval && clearInterval(timerInterval);
+              timerInterval = undefined;
+            }
+          }, 1002);
+        } else if (Swal.getContent()!.querySelector('#swal2-content')) {
+          Swal.getContent()!.querySelector('#swal2-content')!.innerHTML = '';
+        }
       }
     },
     onClose: () => {
