@@ -2,7 +2,7 @@
   <v-app-bar absolute dark color="transparent" flat height="85" v-if="!isPopup">
     <v-container>
       <v-row align="center">
-        <v-toolbar-title v-text="appTitle" :style="{ cursor: 'pointer' }" />
+        <v-toolbar-title v-text="title" :style="{ cursor: 'pointer' }" />
         <v-spacer />
         <v-toolbar-title
           class="font-weight-light"
@@ -28,7 +28,7 @@ import { getVariableApi } from '@/utils/apis';
 export default class extends Vue {
   router: typeof router = router;
   envs: typeof envs = envs;
-  appTitle: string | null = null;
+  title: string | null = null;
 
   get isPopup(): boolean {
     return (
@@ -37,7 +37,7 @@ export default class extends Vue {
   }
 
   async mounted() {
-    this.appTitle = await getVariableApi('appTitle');
+    this.title = await getVariableApi('title');
   }
 }
 </script>

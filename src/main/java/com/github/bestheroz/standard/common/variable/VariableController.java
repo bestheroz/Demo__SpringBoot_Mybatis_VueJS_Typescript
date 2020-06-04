@@ -2,20 +2,22 @@ package com.github.bestheroz.standard.common.variable;
 
 import com.github.bestheroz.standard.common.response.ApiResult;
 import com.github.bestheroz.standard.common.response.Result;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("variable")
+@Configuration
+@RequestMapping("app")
+@ConfigurationProperties(prefix = "app")
 public class VariableController {
-    @Value("${variable.app.title}")
-    private String appTitle;
+    private String title;
 
-    @GetMapping("appTitle")
+    @GetMapping("title")
     ResponseEntity<ApiResult> getAppTitle() {
-        return Result.ok(this.appTitle);
+        return Result.ok(this.title);
     }
 }

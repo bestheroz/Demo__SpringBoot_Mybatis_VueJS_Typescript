@@ -3,7 +3,7 @@
     <v-app-bar-nav-icon @click.stop="syncedDrawer = !syncedDrawer" />
     <v-toolbar-title>
       <v-btn x-large text dark @click="goHome" color="primary">
-        {{ appTitle }}
+        {{ title }}
       </v-btn>
     </v-toolbar-title>
     <v-spacer />
@@ -65,7 +65,7 @@ import { DrawerItem } from '@/common/types';
 export default class extends Vue {
   @PropSync('drawer', { required: true, default: true }) syncedDrawer!: boolean;
   readonly envs: typeof envs = envs;
-  appTitle: string | null = null;
+  title: string | null = null;
   items: DrawerItem[] | null = null;
 
   get isPopup(): boolean {
@@ -81,7 +81,7 @@ export default class extends Vue {
   }
 
   async mounted() {
-    this.appTitle = await getVariableApi('appTitle');
+    this.title = await getVariableApi('title');
   }
 
   @Watch('$store.state.logoutTime')

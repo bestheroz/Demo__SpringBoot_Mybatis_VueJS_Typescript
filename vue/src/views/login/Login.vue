@@ -4,7 +4,7 @@
       <v-slide-y-transition appear>
         <v-card max-width="100%" width="600" class="elevation-12">
           <v-toolbar color="primary" dark flat>
-            <v-toolbar-title>Login at {{ appTitle }}</v-toolbar-title>
+            <v-toolbar-title>Login at {{ title }}</v-toolbar-title>
             <v-spacer />
             <template v-slot:heading>
               <div class="text-center">
@@ -94,13 +94,13 @@ export default class extends Vue {
   id: string | null = null;
   password: string | null = null;
   show1: boolean = false;
-  appTitle: string | null = null;
+  title: string | null = null;
 
   async mounted() {
     if (this.$route.query.need === 'login') {
       this.$toasted.error('로그인이 필요합니다.');
     }
-    this.appTitle = await getVariableApi('appTitle');
+    this.title = await getVariableApi('title');
   }
 
   async login() {
