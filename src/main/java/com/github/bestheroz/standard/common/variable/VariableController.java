@@ -1,7 +1,9 @@
 package com.github.bestheroz.standard.common.variable;
 
-import com.github.bestheroz.standard.common.response.ResponseVO;
+import com.github.bestheroz.standard.common.response.ApiResult;
+import com.github.bestheroz.standard.common.response.Result;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,7 +15,7 @@ public class VariableController {
     private String appTitle;
 
     @GetMapping("appTitle")
-    public ResponseVO getAppTitle() {
-        return ResponseVO.getSuccessResponseVO(this.appTitle);
+    ResponseEntity<ApiResult> getAppTitle() {
+        return Result.ok(this.appTitle);
     }
 }

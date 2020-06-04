@@ -2,8 +2,10 @@ package com.github.bestheroz.sample.api.admin.codegroup;
 
 import com.github.bestheroz.sample.api.entity.codegroup.TableCodeGroupRepository;
 import com.github.bestheroz.sample.api.entity.codegroup.TableCodeGroupVO;
-import com.github.bestheroz.standard.common.response.ResponseVO;
+import com.github.bestheroz.standard.common.response.ApiResult;
+import com.github.bestheroz.standard.common.response.Result;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -16,32 +18,32 @@ public class AdminCodeGroupController {
     @Resource private AdminCodeGroupService adminCodeGroupService;
 
     @GetMapping
-    public ResponseVO getList() {
-        return ResponseVO.getSuccessResponseVO(this.tableCodeGroupRepository.findAll());
+    ResponseEntity<ApiResult> getList() {
+        return Result.ok(this.tableCodeGroupRepository.findAll());
     }
 
     @GetMapping(value = "{codeGroup}")
-    public ResponseVO getOne(@PathVariable(value = "codeGroup", required = false) final String codeGroup) {
-        return ResponseVO.getSuccessResponseVO(this.tableCodeGroupRepository.findById(codeGroup));
+    ResponseEntity<ApiResult> getOne(@PathVariable(value = "codeGroup", required = false) final String codeGroup) {
+        return Result.ok(this.tableCodeGroupRepository.findById(codeGroup));
     }
 
     @PostMapping
-    public ResponseVO post(@RequestBody final TableCodeGroupVO tableCodeGroupVO) {
+    ResponseEntity<ApiResult> post(@RequestBody final TableCodeGroupVO tableCodeGroupVO) {
         this.tableCodeGroupRepository.save(tableCodeGroupVO);
-        return ResponseVO.SUCCESS_NORMAL;
+        return Result.ok();
     }
 
     @PatchMapping(value = "{codeGroup}")
-    public ResponseVO patch(@PathVariable(value = "codeGroup") final String codeGroup, @RequestBody final TableCodeGroupVO tableCodeGroupVO) {
+    ResponseEntity<ApiResult> patch(@PathVariable(value = "codeGroup") final String codeGroup, @RequestBody final TableCodeGroupVO tableCodeGroupVO) {
         tableCodeGroupVO.setCodeGroup(codeGroup);
         this.tableCodeGroupRepository.save(tableCodeGroupVO);
-        return ResponseVO.SUCCESS_NORMAL;
+        return Result.ok();
     }
 
     @DeleteMapping(value = "{codeGroup}")
-    public ResponseVO delete(@PathVariable(value = "codeGroup") final String codeGroup) {
+    ResponseEntity<ApiResult> delete(@PathVariable(value = "codeGroup") final String codeGroup) {
         this.adminCodeGroupService.delete(codeGroup);
-        return ResponseVO.SUCCESS_NORMAL;
+        return Result.ok();
     }
 
 }

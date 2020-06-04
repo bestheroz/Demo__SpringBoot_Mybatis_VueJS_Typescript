@@ -16,7 +16,7 @@ public class DateUtils {
     public static final Locale LOCALE_KOREAN = Locale.KOREAN;
 
     public static final String HH_MM_SS = "HH:mm:ss";
-    public static final String YYYY_MM_DD = "yyyy-MM-dd";
+    public final String YYYY_MM_DD = "yyyy-MM-dd";
     public static final String YYYY_MM_DD_HH_MM_SS = "yyyy-MM-dd HH:mm:ss";
     public static final String ISO_8601 = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
 

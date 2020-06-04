@@ -2,8 +2,10 @@ package com.github.bestheroz.sample.api.auth;
 
 import com.github.bestheroz.sample.api.entity.member.TableMemberRepository;
 import com.github.bestheroz.sample.api.entity.member.TableMemberVO;
-import com.github.bestheroz.standard.common.response.ResponseVO;
+import com.github.bestheroz.standard.common.response.ApiResult;
+import com.github.bestheroz.standard.common.response.Result;
 import com.github.bestheroz.standard.common.util.SessionUtils;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -15,15 +17,15 @@ public class AuthController {
     @Resource private TableMemberRepository tableMemberRepository;
 
     @PostMapping(value = "/login")
-    public ResponseVO login(@RequestBody final TableMemberVO tableMemberVO) {
-        return ResponseVO.getSuccessResponseVO(this.authService.login(tableMemberVO.getId(), tableMemberVO.getPassword()));
+    ResponseEntity<ApiResult> login(@RequestBody final TableMemberVO tableMemberVO) {
+        return Result.ok(this.authService.login(tableMemberVO.getId(), tableMemberVO.getPassword()));
     }
 
     @PostMapping(value = "/verify")
-    public ResponseVO verify(@RequestHeader(value = "Authorization", required = false) final String token) {
+    ResponseEntity<ApiResult> verify(@RequestHeader(value = "Authorization", required = false) final String token) {
         final TableMemberVO loginVO = SessionUtils.getLoginVO();
         this.authService.verify(token, loginVO.getId());
-        return ResponseVO.getSuccessResponseVO(loginVO);
+        return Result.ok(loginVO);
     }
 
     @DeleteMapping(value = "/logout")

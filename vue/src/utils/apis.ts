@@ -10,7 +10,7 @@ export interface ApiDataResult<T> {
   code: string;
   data?: T;
   message: string;
-  dataTotalLength?: number;
+  paginationTotalLength?: number;
 }
 export interface requestKey {
   key: string | number;
