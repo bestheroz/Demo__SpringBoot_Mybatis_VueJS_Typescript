@@ -39,11 +39,11 @@ public class BusinessException extends RuntimeException {
     }
 
     private void setApiResult(final ExceptionCode exceptionCode) {
-        this.apiResult = ApiResult.error(exceptionCode);
+        this.apiResult = ApiResult.code(exceptionCode);
     }
 
     private void setApiResult(final Throwable throwable) {
-        this.apiResult = ApiResult.error(this.getExceptionCode(throwable));
+        this.apiResult = ApiResult.code(this.getExceptionCode(throwable));
     }
 
     @Override

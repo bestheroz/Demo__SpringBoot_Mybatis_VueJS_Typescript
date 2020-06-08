@@ -29,15 +29,15 @@ public class Result {
     }
 
     public static ResponseEntity<ApiResult> error() {
-        return ResponseEntity.status(500).body(ApiResult.error(ExceptionCode.FAIL_SYSTEM_ERROR));
+        return ResponseEntity.status(500).body(ApiResult.code(ExceptionCode.FAIL_SYSTEM_ERROR));
     }
 
     public static ResponseEntity<ApiResult> error(final ExceptionCode exceptionCode) {
         Assert.notNull(exceptionCode, "Parameter `exceptionCode` must not be null");
         if (StringUtils.startsWith(exceptionCode.getCode(), "F")) {
-            return ResponseEntity.badRequest().body(ApiResult.error(exceptionCode));
+            return ResponseEntity.badRequest().body(ApiResult.code(exceptionCode));
         } else {
-            return ResponseEntity.status(500).body(ApiResult.error(exceptionCode));
+            return ResponseEntity.status(500).body(ApiResult.code(exceptionCode));
         }
     }
 

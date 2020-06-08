@@ -3,6 +3,8 @@ package com.github.bestheroz.standard.common.exception;
 public enum ExceptionCode {
     SUCCESS_NORMAL("S000", "성공"),
 
+    SUCCESS_LOGOUT("S001", "로그아웃 되었습니다."),
+
     FAIL_SYSTEM_ERROR("F000", "시스템에러"),
 
     FAIL_INVALID_REQUEST("F001", "올바르지 않은 요청"),
@@ -64,6 +66,14 @@ public enum ExceptionCode {
     FAIL_CONVERT_DATA("F029", "데이터 변환 실패 "),
 
     FAIL_INVALID_TOKEN("F030", "유효하지 않은 토큰"),
+
+    FAIL_INVALID_CREDENTIALS("F031", "Invalid credentials"),
+
+    FAIL_INVALID_AUTHENTICATION_REQUEST("F032", "Invalid authentication request"),
+
+    FAIL_INVALID_AUTHENTICATION_FAILURE("F033", "Authentication failure"),
+
+    FAIL_INVALID_AUTHENTICATION_FAILURE("F033", "Authentication failure"),
 
     // 이 라인 위로 새로운 메시지를 정의해주세요.
     // 개발자용 메시지는 최하위에 존재하게 해주세요
