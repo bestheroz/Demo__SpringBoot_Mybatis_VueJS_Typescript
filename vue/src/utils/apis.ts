@@ -48,7 +48,7 @@ export async function getDataApi<T>(
 ): Promise<ApiDataResult<T>> {
   try {
     const response = await store.state.axiosInstance.get<ApiDataResult<T>>(
-      `${url}${id || ''}`,
+      `api/${url}${id || ''}`,
     );
     await logoutChecker(response.data);
     return response.data;
@@ -60,7 +60,7 @@ export async function getDataApi<T>(
 export async function getApi<T>(url: string): Promise<ApiDataResult<T>> {
   try {
     const response = await store.state.axiosInstance.get<ApiDataResult<T>>(
-      `${url}`,
+      `api/${url}`,
     );
     await logoutChecker(response.data);
     return response.data;
@@ -76,7 +76,7 @@ export async function postDataApi<T>(
 ): Promise<ApiDataResult<T>> {
   try {
     const response = await store.state.axiosInstance.post<ApiDataResult<T>>(
-      `${url}`,
+      `api/${url}`,
       data,
     );
     await logoutChecker(response.data);
@@ -98,7 +98,7 @@ export async function putDataApi<T>(
 ): Promise<ApiDataResult<T>> {
   try {
     const response = await store.state.axiosInstance.put<ApiDataResult<T>>(
-      `${url}${await makeUrlKey(key)}`,
+      `api/${url}${await makeUrlKey(key)}`,
       data,
     );
     await logoutChecker(response.data);
@@ -120,7 +120,7 @@ export async function patchDataApi<T>(
 ): Promise<ApiDataResult<T>> {
   try {
     const response = await store.state.axiosInstance.patch<ApiDataResult<T>>(
-      `${url}${await makeUrlKey(key)}`,
+      `api/${url}${await makeUrlKey(key)}`,
       data,
     );
     await logoutChecker(response.data);
@@ -141,7 +141,7 @@ export async function deleteDataApi<T>(
 ): Promise<ApiDataResult<T>> {
   try {
     const response = await store.state.axiosInstance.delete(
-      `${url}${await makeUrlKey(key)}`,
+      `api/${url}${await makeUrlKey(key)}`,
     );
     await logoutChecker(response.data);
     // response.status === 204

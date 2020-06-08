@@ -73,8 +73,6 @@ public enum ExceptionCode {
 
     FAIL_INVALID_AUTHENTICATION_FAILURE("F033", "Authentication failure"),
 
-    FAIL_INVALID_AUTHENTICATION_FAILURE("F033", "Authentication failure"),
-
     // 이 라인 위로 새로운 메시지를 정의해주세요.
     // 개발자용 메시지는 최하위에 존재하게 해주세요
 

@@ -22,7 +22,7 @@ public class AuthenticationFilter extends AbstractAuthenticationProcessingFilter
     private static final Logger log = LoggerFactory.getLogger(AuthenticationFilter.class);
 
     public AuthenticationFilter() {
-        super(new AntPathRequestMatcher("/auth/login", "POST"));
+        super(new AntPathRequestMatcher("/api/auth/login", "POST"));
     }
 
     @Override
@@ -32,6 +32,7 @@ public class AuthenticationFilter extends AbstractAuthenticationProcessingFilter
         log.debug("Processing login request");
 
         final String requestBody = IOUtils.toString(request.getReader());
+        log.debug("requestBody : {}", requestBody);
         final LoginRequest loginRequest = MapperUtils.toObject(requestBody, LoginRequest.class);
         if (loginRequest == null || loginRequest.isInvalid()) {
             throw new InsufficientAuthenticationException("Invalid authentication request");
@@ -39,6 +40,7 @@ public class AuthenticationFilter extends AbstractAuthenticationProcessingFilter
 
         final UsernamePasswordAuthenticationToken token =
                 new UsernamePasswordAuthenticationToken(loginRequest.id, loginRequest.password);
+        log.debug("token: {}", token);
         return this.getAuthenticationManager().authenticate(token);
     }
 

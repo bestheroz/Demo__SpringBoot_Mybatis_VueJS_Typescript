@@ -29,7 +29,7 @@ export default new Vuex.Store({
     },
     async logout(state) {
       try {
-        await state.axiosInstance.delete('/auth/logout');
+        await state.axiosInstance.delete('/api/auth/logout');
       } catch (e) {
         console.error(e);
       }

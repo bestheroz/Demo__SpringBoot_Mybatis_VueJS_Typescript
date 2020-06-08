@@ -110,7 +110,7 @@ export default class extends Vue {
     }
 
     const response = await axios.post<ApiDataResult<TableMemberVO>>(
-      `${envs.API_HOST}auth/login`,
+      `${envs.API_HOST}api/auth/login`,
       {
         id: this.id,
         password: SHA512(this.password).toString(),
@@ -119,7 +119,7 @@ export default class extends Vue {
     if (_.startsWith(response.data.code, `S`)) {
       this.$store.commit('loginToken', response.data.data);
       this.$toasted.clear();
-      const response2 = await this.$store.state.axiosInstance.get('/menu');
+      const response2 = await this.$store.state.axiosInstance.get('api//menu');
       this.$storage.set('drawer', response2.data.data);
       await this.$router.push('/');
     } else {

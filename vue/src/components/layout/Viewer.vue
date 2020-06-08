@@ -28,12 +28,12 @@ export default class extends Vue {
   items: DrawerItem[] | null = null;
   async beforeCreate() {
     if (!this.$storage.has('drawer')) {
-      const response = await this.$store.state.axiosInstance.get('/menu');
+      const response = await this.$store.state.axiosInstance.get('api/menu');
       this.$storage.set('drawer', response.data.data);
       this.items = response.data.data;
     }
     if (!Vue.$storage.has('memberList')) {
-      const response = await getListApi<TableMemberVO[]>(`/members`);
+      const response = await getListApi<TableMemberVO[]>(`api/members`);
       Vue.$storage.set(
         'memberList',
         response.data!.map((item) => {
@@ -45,12 +45,12 @@ export default class extends Vue {
 
   async updated() {
     if (!this.$storage.has('drawer')) {
-      const response = await this.$store.state.axiosInstance.get('/menu');
+      const response = await this.$store.state.axiosInstance.get('api/menu');
       this.$storage.set('drawer', response.data.data);
       this.items = response.data.data;
     }
     if (!Vue.$storage.has('memberList')) {
-      const response = await getListApi<TableMemberVO[]>(`/members`);
+      const response = await getListApi<TableMemberVO[]>(`api/members`);
       Vue.$storage.set(
         'memberList',
         response.data!.map((item) => {
