@@ -169,7 +169,7 @@ export async function getCodeListApi<SelectItem>(
     try {
       const response = await store.state.axiosInstance.get<
         ApiDataResult<SelectItem[]>
-      >(`code/${codeGroup}`);
+      >(`api/codes/${codeGroup}`);
       await logoutChecker(response.data);
       const result = response.data.data || [];
       if (result.length > 0) {
@@ -193,7 +193,7 @@ export async function getVariableApi<String>(
     try {
       const response = await store.state.axiosInstance.get<
         ApiDataResult<string>
-      >(`variable/${variable}`);
+      >(`api/variables/${variable}`);
       await logoutChecker(response.data);
       const result = response.data.data;
       if (result) {

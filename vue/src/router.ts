@@ -33,25 +33,21 @@ const requireAuth = () => async (to: any, from: any, next: any) => {
 };
 
 const routes = () => {
-  const routes = [
+  const admin = [
     {
-      path: '',
-      component: () => import('@/views/Redirect.vue'),
-    },
-    {
-      path: 'admin/code',
+      path: 'code',
       component: () => import('@/views/admin/code/Code.vue'),
     },
     {
-      path: 'admin/menu',
+      path: 'menu',
       component: () => import('@/views/admin/menu/Menu.vue'),
     },
     {
-      path: 'admin/menu/authority',
+      path: 'menu/authority',
       component: () => import('@/views/admin/menuauthority/MenuAuthority.vue'),
     },
     {
-      path: 'admin/member',
+      path: 'member',
       component: () => import('@/views/admin/member/Member.vue'),
     },
   ];
@@ -70,9 +66,13 @@ const routes = () => {
     },
     {
       path: '/',
+      component: () => import('@/views/Redirect.vue'),
+    },
+    {
+      path: '/admin',
       component: () => import('@/views/index/Index.vue'),
       beforeEnter: requireAuth(),
-      children: routes,
+      children: admin,
     },
     {
       path: '*',

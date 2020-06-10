@@ -1,5 +1,6 @@
 package com.github.bestheroz.standard.common.security;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.util.ThrowableAnalyzer;
 import org.springframework.web.filter.GenericFilterBean;
@@ -12,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+@Slf4j
 public class ApiRequestAccessDeniedExceptionTranslationFilter extends GenericFilterBean {
 
     private final ThrowableAnalyzer throwableAnalyzer = new DefaultThrowableAnalyzer();
@@ -20,6 +22,7 @@ public class ApiRequestAccessDeniedExceptionTranslationFilter extends GenericFil
     public void doFilter(final ServletRequest req, final ServletResponse res, final FilterChain chain)
             throws IOException, ServletException {
 
+        log.debug("ApiRequestAccessDeniedExceptionTranslationFilter");
         final HttpServletRequest request = (HttpServletRequest) req;
         final HttpServletResponse response = (HttpServletResponse) res;
 

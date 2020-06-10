@@ -5,25 +5,41 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.github.bestheroz.sample.api.entity.member.TableMemberRepository;
 import com.github.bestheroz.sample.api.entity.member.TableMemberVO;
+import com.github.bestheroz.standard.common.authenticate.UserVO;
 import com.github.bestheroz.standard.common.exception.BusinessException;
 import com.github.bestheroz.standard.common.exception.ExceptionCode;
 import com.github.bestheroz.standard.common.util.SessionUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.LocalDateTime;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
 @Slf4j
-public class AuthService {
+public class AuthService implements UserDetailsService {
     private static final Algorithm ALGORITHM = Algorithm.HMAC512("secret");
     @Resource private TableMemberRepository tableMemberRepository;
+
+    @Override
+    public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
+        if (org.springframework.util.StringUtils.isEmpty(username)) {
+            throw new UsernameNotFoundException("No user found");
+        }
+        final Optional<TableMemberVO> oTableMemberVO = this.tableMemberRepository.findById(username);
+        if (!oTableMemberVO.isPresent()) {
+            throw new UsernameNotFoundException("No user found by `" + username + "`");
+        }
+        return new UserVO(oTableMemberVO.get());
+    }
 
     TableMemberVO login(final String id, final String password) {
         final Optional<TableMemberVO> one = this.tableMemberRepository.findById(id);
@@ -57,15 +73,13 @@ public class AuthService {
         }
 
         tableMemberVO.setLoginFailCnt(0);
-        tableMemberVO.setToken(JWT.create().withIssuer(id).withExpiresAt(LocalDateTime.now().plusDays(1).toDate()).sign(ALGORITHM));
-        this.logoutToken(tableMemberVO.getToken(), tableMemberVO.getId());
+//        tableMemberVO.setToken(JWT.create().withIssuer(id).withExpiresAt(LocalDateTime.now().plusDays(1).toDate()).sign(ALGORITHM));
         this.tableMemberRepository.save(tableMemberVO);
         SessionUtils.setLoginVO(tableMemberVO);
         return tableMemberVO;
     }
 
-    @Cacheable(value = "verify", key = "'#token' + '#id'")
-    public void verify(@NotNull final String token, @NotNull final String id) {
+    void verify(@NotNull final String token, @NotNull final String id) {
         try {
             JWT.require(ALGORITHM).withIssuer(id).acceptExpiresAt(86400).build().verify(token);
         } catch (final JWTVerificationException | NullPointerException e) {
@@ -74,12 +88,10 @@ public class AuthService {
         }
     }
 
-    @CacheEvict(value = "findByToken", key = "#token")
-    public void logoutToken(final String token) {
-    }
-
-    @CacheEvict(value = "verify", key = "'#token' + '#id'")
-    public void logoutToken(final String token, final String id) {
-        this.logoutToken(token);
+    Map<String, Object> getMyData(final UserVO userVO) {
+        final Map<String, Object> result = new HashMap<>();
+        result.put("userVO", userVO);
+        result.put("token", JWT.create().withIssuer(userVO.getId()).withExpiresAt(LocalDateTime.now().plusDays(1).toDate()).sign(ALGORITHM));
+        return result;
     }
 }

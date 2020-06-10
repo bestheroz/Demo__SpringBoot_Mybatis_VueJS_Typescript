@@ -24,7 +24,8 @@ public class AccessDeniedHandlerImpl implements AccessDeniedHandler {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
             }
         } else {
-            response.sendRedirect("/login");
+            log.debug("response.sendRedirect");
+//            response.sendRedirect("/login");
         }
     }
 }

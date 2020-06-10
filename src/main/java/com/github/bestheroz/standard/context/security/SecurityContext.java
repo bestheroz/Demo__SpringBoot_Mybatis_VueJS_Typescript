@@ -12,8 +12,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.access.ExceptionTranslationFilter;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -28,7 +28,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableWebSecurity
 public class SecurityContext extends WebSecurityConfigurerAdapter {
     private static final String[] PUBLIC = new String[]{
-            "/api/code", "/api/variable", "/api/auth"};
+            "/api/codes/**", "/api/variables/**", "/api/auth/login", "/", "/error"};
 
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
@@ -42,13 +42,13 @@ public class SecurityContext extends WebSecurityConfigurerAdapter {
                 .and()
                 .addFilterAt(this.authenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .addFilterAfter(this.apiRequestExceptionTranslationFilter(), ExceptionTranslationFilter.class)
-                .formLogin()
-                .loginPage("/login")
-                .and()
-                .logout()
-                .logoutUrl("/api/me/logout")
-                .logoutSuccessHandler(this.logoutSuccessHandler())
-                .and()
+//                .formLogin()
+//                .loginPage("/#/login")
+//                .and()
+//                .logout()
+//                .logoutUrl("/api/auth/logout")
+//                .logoutSuccessHandler(this.logoutSuccessHandler())
+//                .and()
                 .csrf().disable().cors();
     }
 
@@ -74,7 +74,7 @@ public class SecurityContext extends WebSecurityConfigurerAdapter {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return new Pbkdf2PasswordEncoder();
     }
 
     @Bean

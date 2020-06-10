@@ -79,15 +79,14 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Vue, Watch } from 'vue-property-decorator';
 import { ApiDataResult, getVariableApi } from '@/utils/apis';
-import _ from 'lodash';
 import axios from 'axios';
 import envs from '@/constants/envs';
 import { TableMemberVO, TableMenuVO } from '@/common/types';
 import { alertError } from '@/utils/alerts';
 
-const SHA512 = require('crypto-js/sha512');
+const pbkdf2 = require('pbkdf2');
 
 @Component({ name: 'Login' })
 export default class extends Vue {
@@ -108,22 +107,25 @@ export default class extends Vue {
     if (!inValid) {
       return;
     }
-
     try {
+      const pbkdf2Password: string = pbkdf2
+        .pbkdf2Sync(this.password, 'salt', 1, 32, 'sha512')
+        .toString();
+      Vue.$storage.set('id', this.id);
+      Vue.$storage.set('password', pbkdf2Password);
       const response = await axios.post<ApiDataResult<TableMemberVO>>(
         `${envs.API_HOST}api/auth/login`,
         {
           id: this.id,
-          password: SHA512(this.password).toString(),
+          password: pbkdf2Password,
         },
       );
       this.$store.commit('loginToken', response.data.data);
       this.$toasted.clear();
       const response2 = await this.$store.state.axiosInstance.get('api//menu');
       this.$storage.set('drawer', response2.data.data);
-      await this.$router.push('/');
+      // await this.$router.push('/');
     } catch (e) {
-      console.log(e);
       alertError(e);
     }
   }

@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Configuration
-@RequestMapping("variable")
+@RequestMapping("api/variables")
 @ConfigurationProperties(prefix = "app")
 @Setter
 @Getter

@@ -24,8 +24,6 @@ spring:
 server:
   compression:
     enabled: true
-  error:
-    path: /common/exception/error
   http2:
     enabled: true
   servlet:

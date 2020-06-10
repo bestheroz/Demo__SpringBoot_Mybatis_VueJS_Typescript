@@ -1,6 +1,8 @@
 package com.github.bestheroz.standard.common.authenticate;
 
 import com.github.bestheroz.sample.api.entity.member.TableMemberVO;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -10,6 +12,8 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 
+@EqualsAndHashCode(callSuper = true)
+@Data
 public class UserVO extends TableMemberVO implements UserDetails, Serializable {
     private static final long serialVersionUID = -3806331610004769750L;
 

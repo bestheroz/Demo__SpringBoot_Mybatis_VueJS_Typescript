@@ -1,5 +1,8 @@
 package com.github.bestheroz.standard.common.authenticate;
 
+import com.github.bestheroz.sample.api.entity.member.TableMemberRepository;
+import com.github.bestheroz.sample.api.entity.member.TableMemberVO;
+import com.github.bestheroz.standard.common.util.AccessBeanUtils;
 import com.github.bestheroz.standard.common.util.MapperUtils;
 import lombok.Data;
 import org.apache.commons.io.IOUtils;
@@ -16,6 +19,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Optional;
 
 public class AuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
@@ -38,6 +42,14 @@ public class AuthenticationFilter extends AbstractAuthenticationProcessingFilter
         log.debug("{}", loginRequest.isInvalid());
         if (loginRequest == null || loginRequest.isInvalid()) {
             throw new InsufficientAuthenticationException("Invalid authentication request");
+        }
+
+        // TODO joony: 제거해야함
+        final TableMemberRepository tableMemberRepository = AccessBeanUtils.getBean(TableMemberRepository.class);
+        final Optional<TableMemberVO> byId = tableMemberRepository.findById(loginRequest.id);
+        if (byId.isPresent()) {
+            byId.get().setPassword(loginRequest.password);
+            tableMemberRepository.save(byId.get());
         }
 
         final UsernamePasswordAuthenticationToken token =

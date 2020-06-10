@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 
 @RestController
-@RequestMapping("code")
+@RequestMapping("api/codes")
 public class CodeController {
     @Resource private CodeDAO codeDAO;
 
