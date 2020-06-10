@@ -1,6 +1,7 @@
 import '@sweetalert2/theme-dark/dark.scss';
 import { SweetAlertResult } from 'sweetalert2';
 import Swal from 'sweetalert2/src/sweetalert2.js';
+import { AxiosError } from 'axios';
 
 let timerInterval: any;
 
@@ -73,7 +74,16 @@ export function alertWarning(message: string): void {
     confirmButtonText: message,
   });
 }
-export function alertError(message: string): void {
+export function alertError(e: string | AxiosError): void {
+  let message;
+  if (
+    typeof e === 'string' ||
+    !(e.response && e.response.data && e.response.data.message)
+  ) {
+    message = e;
+  } else {
+    message = e.response.data.message;
+  }
   Swal.fire({
     icon: 'error',
     confirmButtonColor: '#E91E63',

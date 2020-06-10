@@ -28,7 +28,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableWebSecurity
 public class SecurityContext extends WebSecurityConfigurerAdapter {
     private static final String[] PUBLIC = new String[]{
-            "/variable", "/error", "/api/auth"};
+            "/api/code", "/api/variable", "/api/auth"};
 
     @Override
     protected void configure(final HttpSecurity http) throws Exception {

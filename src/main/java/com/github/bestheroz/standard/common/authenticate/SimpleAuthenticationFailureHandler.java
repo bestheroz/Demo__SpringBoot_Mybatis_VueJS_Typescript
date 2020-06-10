@@ -3,6 +3,7 @@ package com.github.bestheroz.standard.common.authenticate;
 import com.github.bestheroz.standard.common.exception.ExceptionCode;
 import com.github.bestheroz.standard.common.response.ApiResult;
 import com.github.bestheroz.standard.common.util.MapperUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
@@ -13,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+@Slf4j
 public class SimpleAuthenticationFailureHandler implements AuthenticationFailureHandler {
 
     @Override
@@ -27,6 +29,8 @@ public class SimpleAuthenticationFailureHandler implements AuthenticationFailure
         } else {
             failure = ApiResult.code(ExceptionCode.FAIL_INVALID_AUTHENTICATION_FAILURE);
         }
+        log.warn("failure: {}", failure);
+
         response.getWriter().write(MapperUtils.toString(failure));
     }
 }

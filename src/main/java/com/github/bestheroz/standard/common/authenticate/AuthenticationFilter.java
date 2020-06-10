@@ -34,6 +34,8 @@ public class AuthenticationFilter extends AbstractAuthenticationProcessingFilter
         final String requestBody = IOUtils.toString(request.getReader());
         log.debug("requestBody : {}", requestBody);
         final LoginRequest loginRequest = MapperUtils.toObject(requestBody, LoginRequest.class);
+        log.debug(loginRequest.getPassword());
+        log.debug("{}", loginRequest.isInvalid());
         if (loginRequest == null || loginRequest.isInvalid()) {
             throw new InsufficientAuthenticationException("Invalid authentication request");
         }
@@ -41,7 +43,9 @@ public class AuthenticationFilter extends AbstractAuthenticationProcessingFilter
         final UsernamePasswordAuthenticationToken token =
                 new UsernamePasswordAuthenticationToken(loginRequest.id, loginRequest.password);
         log.debug("token: {}", token);
-        return this.getAuthenticationManager().authenticate(token);
+        final Authentication authenticate = this.getAuthenticationManager().authenticate(token);
+        log.debug("authenticate: {}", authenticate);
+        return authenticate;
     }
 
     @Data

@@ -19,15 +19,21 @@ export interface requestKey {
 }
 
 async function getErrorResult<T>(error: AxiosError): Promise<ApiDataResult<T>> {
-  console.error(error);
   if (envs.ENV !== 'production') {
     console.error('에러난다. 빨리 고치자');
     await router.push('/Code500');
   }
-  return {
-    code: 'F000',
-    message: error.message,
-  };
+  if (error.response && error.response.data && error.response.data.message) {
+    return {
+      code: error.response.data.code,
+      message: error.response.data.message,
+    };
+  } else {
+    return {
+      code: 'F000',
+      message: error.message,
+    };
+  }
 }
 
 export async function getListApi<T>(url: string): Promise<ApiDataResult<T>> {

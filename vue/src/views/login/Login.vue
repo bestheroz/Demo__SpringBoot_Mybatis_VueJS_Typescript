@@ -109,21 +109,22 @@ export default class extends Vue {
       return;
     }
 
-    const response = await axios.post<ApiDataResult<TableMemberVO>>(
-      `${envs.API_HOST}api/auth/login`,
-      {
-        id: this.id,
-        password: SHA512(this.password).toString(),
-      },
-    );
-    if (_.startsWith(response.data.code, `S`)) {
+    try {
+      const response = await axios.post<ApiDataResult<TableMemberVO>>(
+        `${envs.API_HOST}api/auth/login`,
+        {
+          id: this.id,
+          password: SHA512(this.password).toString(),
+        },
+      );
       this.$store.commit('loginToken', response.data.data);
       this.$toasted.clear();
       const response2 = await this.$store.state.axiosInstance.get('api//menu');
       this.$storage.set('drawer', response2.data.data);
       await this.$router.push('/');
-    } else {
-      alertError(response.data.message);
+    } catch (e) {
+      console.log(e);
+      alertError(e);
     }
   }
 }
