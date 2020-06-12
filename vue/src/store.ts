@@ -7,6 +7,17 @@ import envs from '@/constants/envs';
 
 Vue.use(Vuex);
 
+axios.interceptors.request.use(
+  async function (config) {
+    config.headers.Authorization = Vue.$storage.get('accessToken');
+    return config;
+  },
+  function (error) {
+    // Do something with request error
+    return Promise.reject(error);
+  },
+);
+
 export default new Vuex.Store({
   state: {
     axiosInstance: axios.create({
@@ -20,6 +31,11 @@ export default new Vuex.Store({
     logoutTime: new Date().getTime() + 2 * 3600 * 1000,
   },
   mutations: {
+    async accessToken(state, token: string) {
+      Vue.$storage.clear();
+      Vue.$storage.set('accessToken', token);
+      state.axiosInstance.defaults.headers.Authorization = token;
+    },
     async loginToken(state, userVO: TableMemberVO) {
       Vue.$storage.clear();
       Vue.$storage.set('accessToken', userVO.token);

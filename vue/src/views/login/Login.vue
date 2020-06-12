@@ -120,10 +120,8 @@ export default class extends Vue {
           password: pbkdf2Password,
         },
       );
-      this.$store.commit('loginToken', response.data.data);
+      this.$store.commit('accessToken', response.data.data);
       this.$toasted.clear();
-      // const response2 = await this.$store.state.axiosInstance.get('api/menu');
-      // this.$storage.set('drawer', response2.data.data);
       await this.$router.push('/');
     } catch (e) {
       alertError(e);

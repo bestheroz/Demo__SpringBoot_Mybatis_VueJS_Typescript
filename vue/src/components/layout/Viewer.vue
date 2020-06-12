@@ -1,5 +1,5 @@
 <template>
-  <v-content :title="null">
+  <v-main :title="null">
     <v-alert
       id="pageTitle"
       border="bottom"
@@ -15,7 +15,7 @@
     <v-container fluid>
       <router-view />
     </v-container>
-  </v-content>
+  </v-main>
 </template>
 
 <script lang="ts">

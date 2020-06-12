@@ -19,6 +19,7 @@ const queryString = require('query-string');
 })
 export default class extends Vue {
   async mounted() {
+    console.log(Vue.$storage.has('id') && Vue.$storage.has('password'));
     if (!(Vue.$storage.has('id') && Vue.$storage.has('password'))) {
       await this.$router.push('/login');
     }

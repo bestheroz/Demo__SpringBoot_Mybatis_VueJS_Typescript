@@ -4,7 +4,7 @@ import com.github.bestheroz.sample.api.entity.member.TableMemberRepository;
 import com.github.bestheroz.sample.api.entity.member.TableMemberVO;
 import com.github.bestheroz.standard.common.response.ApiResult;
 import com.github.bestheroz.standard.common.response.Result;
-import com.github.bestheroz.standard.common.util.SessionUtils;
+import com.github.bestheroz.standard.common.util.AuthenticationUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,17 +27,10 @@ public class AuthController {
         return Result.ok(this.authService.getMyData(tableMemberVO.getId(), tableMemberVO.getPassword()));
     }
 
-    @PostMapping(value = "/verify")
-    ResponseEntity<ApiResult> verify(@RequestHeader(value = "Authorization", required = false) final String token) {
-        final TableMemberVO loginVO = SessionUtils.getLoginVO();
-        this.authService.verify(token, loginVO.getId());
-        return Result.ok(loginVO);
-    }
-
     @DeleteMapping(value = "/logout")
     public void logout() {
-        final TableMemberVO loginVO = SessionUtils.getLoginVO();
+        final TableMemberVO loginVO = AuthenticationUtils.getLoginVO();
         this.tableMemberRepository.updateTokenNull(loginVO.getId());
-        SessionUtils.logout();
+        AuthenticationUtils.logout();
     }
 }
