@@ -5,16 +5,12 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.github.bestheroz.sample.api.entity.member.TableMemberRepository;
 import com.github.bestheroz.sample.api.entity.member.TableMemberVO;
-import com.github.bestheroz.standard.common.authenticate.UserVO;
 import com.github.bestheroz.standard.common.exception.BusinessException;
 import com.github.bestheroz.standard.common.exception.ExceptionCode;
 import com.github.bestheroz.standard.common.util.SessionUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.LocalDateTime;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -25,21 +21,10 @@ import java.util.Optional;
 
 @Service
 @Slf4j
-public class AuthService implements UserDetailsService {
+public class AuthService {
     private static final Algorithm ALGORITHM = Algorithm.HMAC512("secret");
     @Resource private TableMemberRepository tableMemberRepository;
 
-    @Override
-    public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
-        if (org.springframework.util.StringUtils.isEmpty(username)) {
-            throw new UsernameNotFoundException("No user found");
-        }
-        final Optional<TableMemberVO> oTableMemberVO = this.tableMemberRepository.findById(username);
-        if (!oTableMemberVO.isPresent()) {
-            throw new UsernameNotFoundException("No user found by `" + username + "`");
-        }
-        return new UserVO(oTableMemberVO.get());
-    }
 
     TableMemberVO login(final String id, final String password) {
         final Optional<TableMemberVO> one = this.tableMemberRepository.findById(id);
@@ -88,10 +73,28 @@ public class AuthService implements UserDetailsService {
         }
     }
 
-    Map<String, Object> getMyData(final UserVO userVO) {
+    Map<String, Object> getMyData(final String id, final String password) {
+        final Optional<TableMemberVO> one = this.tableMemberRepository.findById(id);
+        // 로그인 관문
+        // 1. 유저가 없으면
+        if (!one.isPresent()) {
+            log.warn(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER.toString());
+            throw new BusinessException(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER);
+        }
+
+        final TableMemberVO tableMemberVO = one.get();
+
+        // 2. 패스워드가 틀리면
+        if (!StringUtils.equals(tableMemberVO.getPassword(), password)) {
+            tableMemberVO.setLoginFailCnt(tableMemberVO.getLoginFailCnt() + 1);
+            this.tableMemberRepository.plusLoginFailCnt(tableMemberVO.getId());
+            log.warn(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER.toString());
+            throw new BusinessException(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER);
+        }
+
         final Map<String, Object> result = new HashMap<>();
-        result.put("userVO", userVO);
-        result.put("token", JWT.create().withIssuer(userVO.getId()).withExpiresAt(LocalDateTime.now().plusDays(1).toDate()).sign(ALGORITHM));
+        result.put("userVO", tableMemberVO);
+        result.put("token", JWT.create().withIssuer(tableMemberVO.getId()).withExpiresAt(LocalDateTime.now().plusDays(1).toDate()).sign(ALGORITHM));
         return result;
     }
 }

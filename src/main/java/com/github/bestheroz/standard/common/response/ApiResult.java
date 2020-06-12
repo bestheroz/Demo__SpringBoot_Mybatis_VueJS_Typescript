@@ -12,12 +12,14 @@ public class ApiResult extends HashMap<String, Object> {
     public static final String CODE_KEY = "code";
     public static final String MESSAGE_KEY = "message";
     public static final String DATA_KEY = "data";
+    public static final String DATA_PATH = "path";
+    public static final String DATA_TIMESTAMP = "timestamp";
     public static final String PAGINATION_TOTAL_LENGTH_KEY = "paginationTotalLength";
     private static final ApiResult SUCCESS_NORMAL = ApiResult.code(ExceptionCode.SUCCESS_NORMAL);
     private static final long serialVersionUID = 753116906067010122L;
 
     public static ApiResult ok() {
-        return ApiResult.code(ExceptionCode.SUCCESS_NORMAL);
+        return SUCCESS_NORMAL;
     }
 
     public static ApiResult ok(final Object data) {

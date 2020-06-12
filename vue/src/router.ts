@@ -3,8 +3,9 @@ import Router from 'vue-router';
 import store from './store';
 import { ApiDataResult } from '@/utils/apis';
 import _ from 'lodash';
-import { TableMemberVO } from '@/common/types';
+import { LoginVO, TableMemberVO } from '@/common/types';
 import envs from '@/constants/envs';
+import { alertError } from '@/utils/alerts';
 
 Vue.use(Router);
 
@@ -14,15 +15,18 @@ const requireAuth = () => async (to: any, from: any, next: any) => {
   } else {
     try {
       const response = await store.state.axiosInstance.post<
-        ApiDataResult<TableMemberVO>
-      >(`${envs.API_HOST}auth/verify`);
+        ApiDataResult<LoginVO>
+      >(`${envs.API_HOST}api/auth/verify`);
       if (_.startsWith(response.data.code, `S`)) {
         store.commit('loginToken', response.data.data);
       } else {
-        next('/login');
+        store.commit('logout');
       }
     } catch (e) {
-      if (e.message === 'Network Error') {
+      alertError(e);
+      if (e.response.status === 401) {
+        store.commit('logout');
+      } else if (e.message === 'Network Error') {
         next('/Code503');
       } else {
         next('/Code500');

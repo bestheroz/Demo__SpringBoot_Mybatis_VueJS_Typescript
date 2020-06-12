@@ -109,7 +109,7 @@ export default class extends Vue {
     }
     try {
       const pbkdf2Password: string = pbkdf2
-        .pbkdf2Sync(this.password, 'salt', 1, 32, 'sha512')
+        .pbkdf2Sync(this.password, 'salt', 0, 32, 'sha512')
         .toString();
       Vue.$storage.set('id', this.id);
       Vue.$storage.set('password', pbkdf2Password);
@@ -122,9 +122,9 @@ export default class extends Vue {
       );
       this.$store.commit('loginToken', response.data.data);
       this.$toasted.clear();
-      const response2 = await this.$store.state.axiosInstance.get('api//menu');
-      this.$storage.set('drawer', response2.data.data);
-      // await this.$router.push('/');
+      // const response2 = await this.$store.state.axiosInstance.get('api/menu');
+      // this.$storage.set('drawer', response2.data.data);
+      await this.$router.push('/');
     } catch (e) {
       alertError(e);
     }

@@ -18,9 +18,6 @@ spring:
     properties:
       hibernate:
         format_sql: true
-  output:
-    ansi:
-      enabled: always
 server:
   compression:
     enabled: true

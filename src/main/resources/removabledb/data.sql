@@ -12,7 +12,7 @@ INTO MEMBER
  UPDATED_BY,
  UPDATED)
 VALUES ('developer',
-        '�ޤ�000fo%PO�001f8�.�9�+�Xڹ1����n�',
+        '�ޤ�o%PO�8�.�9�+�Xڹ1����n�ח',
         '개발자',
         999,
         0,
@@ -38,7 +38,7 @@ INTO MEMBER
  UPDATED_BY,
  UPDATED)
 VALUES ('1',
-        '�ޤ�000fo%PO�001f8�.�9�+�Xڹ1����n�',
+        '�ޤ�o%PO�8�.�9�+�Xڹ1����n�ח',
         '1',
         900,
         0,
@@ -64,7 +64,7 @@ INTO MEMBER
  UPDATED_BY,
  UPDATED)
 VALUES ('guest',
-        '�ޤ�000fo%PO�001f8�.�9�+�Xڹ1����n�',
+        '�ޤ�o%PO�8�.�9�+�Xڹ1����n�ח',
         '게스트',
         100,
         0,

@@ -27,15 +27,19 @@ public class ApiRequestAccessDeniedExceptionTranslationFilter extends GenericFil
         final HttpServletResponse response = (HttpServletResponse) res;
 
         try {
+            log.debug("111111111111111111");
             chain.doFilter(request, response);
         } catch (final IOException ex) {
+            log.debug("@@@@22222222222222222");
             throw ex;
         } catch (final Exception ex) {
             // Rethrow the exception when the request is not an API request
+            log.debug("22222222222222222");
             if (!request.getRequestURI().startsWith("/api/") && !request.getRequestURI().startsWith("/rt/")) {
                 throw ex;
             }
 
+            log.debug("333333333333333333");
             // Try to extract a SpringSecurityException from the stacktrace
             final Throwable[] causeChain = this.throwableAnalyzer.determineCauseChain(ex);
             final RuntimeException ase = (AccessDeniedException) this.throwableAnalyzer.getFirstThrowableOfType(
@@ -45,6 +49,8 @@ public class ApiRequestAccessDeniedExceptionTranslationFilter extends GenericFil
             if (ase == null) {
                 throw ex;
             }
+
+            log.debug("44444444444444444444");
 
             if (response.isCommitted()) {
                 throw new ServletException("Unable to translate AccessDeniedException because the response" +
