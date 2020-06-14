@@ -1,9 +1,10 @@
-/classes/
+a/classes/
 /node_modules/
 /src/main/resources/static/
 /src/main/resources/templates/
 /target/
 /vue/node_modules/
+/vue/dist/
 /.idea/artifacts/
 /.idea/libraries/
 /.idea/hotswap_agent.xml
