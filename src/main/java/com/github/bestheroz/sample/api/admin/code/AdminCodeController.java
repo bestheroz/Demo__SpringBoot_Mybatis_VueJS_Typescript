@@ -14,7 +14,7 @@ import javax.annotation.Resource;
 
 @Slf4j
 @RestController
-@RequestMapping(value = "/admin/codes")
+@RequestMapping(value = "api/admin/codes")
 public class AdminCodeController {
     @Resource private TableCodeRepository tableCodeRepository;
 

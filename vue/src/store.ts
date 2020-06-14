@@ -3,6 +3,7 @@ import Vuex from 'vuex';
 import router from '@/router';
 import axios from 'axios';
 import { TableMemberVO } from '@/common/types';
+import envs from '@/constants/envs';
 
 Vue.use(Vuex);
 
@@ -12,17 +13,15 @@ export default new Vuex.Store({
   },
   mutations: {
     async saveToken(state, token: string) {
-      console.log(token);
       Vue.$storage.set('accessToken', token);
     },
     async saveUserVO(state, loginVO: TableMemberVO) {
-      console.log(Vue.$storage.get('accessToken'));
       Vue.$storage.set('authority', loginVO.authority);
       Vue.$storage.set('userVO', loginVO);
     },
     async logout(state) {
       try {
-        await axios.delete('/api/auth/logout');
+        await axios.delete(`${envs.API_HOST}api/auth/logout`);
       } catch (e) {
         console.error(e);
       }

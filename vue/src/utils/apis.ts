@@ -36,7 +36,7 @@ axiosInstance.interceptors.response.use(
     // Do something with response error
     console.log('에러일 경우', error.config);
     const errorAPI = error.config;
-    if (error.response && error.response.data.status === 401) {
+    if (error.response && [401, 403].includes(error.response.data.status)) {
       // if (['F004', 'F011'].includes(response.code)) {
       await router.push(`/login?login=need`);
       // }
@@ -44,7 +44,7 @@ axiosInstance.interceptors.response.use(
     }
     if (envs.ENV !== 'production') {
       console.error('에러난다. 빨리 고치자');
-      await router.push('/Code500');
+      await router.push('/error/500');
     }
     if (error.response && error.response.data && error.response.data.message) {
       return {
@@ -74,7 +74,7 @@ export interface requestKey {
 }
 
 export async function getListApi<T>(url: string): Promise<ApiDataResult<T>> {
-  const response = await axiosInstance.get<ApiDataResult<T>>(`${url}`);
+  const response = await axiosInstance.get<ApiDataResult<T>>(`api/${url}`);
   return response.data;
 }
 

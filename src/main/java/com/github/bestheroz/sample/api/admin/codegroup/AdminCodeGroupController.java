@@ -12,7 +12,7 @@ import javax.annotation.Resource;
 
 @Slf4j
 @RestController
-@RequestMapping(value = "/admin/codeGroups")
+@RequestMapping(value = "api/admin/codeGroups")
 public class AdminCodeGroupController {
     @Resource private TableCodeGroupRepository tableCodeGroupRepository;
     @Resource private AdminCodeGroupService adminCodeGroupService;

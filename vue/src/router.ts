@@ -73,26 +73,41 @@ const routes = () => {
       children: admin,
     },
     {
-      path: '*',
+      path: '/error',
       component: () => import('@/views/index/IndexNoDrawer.vue'),
       children: [
         {
+          name: 'Error',
+          path: '',
+          component: () => import('@/views/error/Error500.vue'),
+        },
+        {
           name: '403 Forbidden',
-          path: 'Code403',
+          path: '403',
           component: () => import('@/views/error/Error403.vue'),
         },
         {
           name: '500 Internal Server Error',
-          path: 'Code500',
+          path: '500',
           component: () => import('@/views/error/Error500.vue'),
         },
         {
           name: '503 Service Unavailable',
-          path: 'Code503',
+          path: '503',
           component: () => import('@/views/error/Error503.vue'),
         },
         {
           name: '404 Page not found',
+          path: '404',
+          component: () => import('@/views/error/Error404.vue'),
+        },
+      ],
+    },
+    {
+      path: '*',
+      component: () => import('@/views/index/IndexNoDrawer.vue'),
+      children: [
+        {
           path: '',
           component: () => import('@/views/error/Error404.vue'),
         },
@@ -102,6 +117,7 @@ const routes = () => {
 };
 
 export default new Router({
+  mode: 'history',
   base: process.env.BASE_URL,
   routes: routes(),
 });

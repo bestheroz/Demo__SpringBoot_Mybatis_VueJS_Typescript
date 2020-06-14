@@ -13,7 +13,7 @@ import javax.annotation.Resource;
 
 @Slf4j
 @RestController
-@RequestMapping(value = "/admin/members")
+@RequestMapping(value = "api/admin/members")
 public class AdminMemberController {
     @Resource private TableMemberRepository tableMemberRepository;
 

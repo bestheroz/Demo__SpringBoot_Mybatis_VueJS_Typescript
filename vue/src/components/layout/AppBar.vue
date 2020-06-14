@@ -73,10 +73,6 @@ export default class extends Vue {
   }
 
   async created() {
-    if (!this.$storage.has('drawer')) {
-      const response = await getApi('menu');
-      this.$storage.set('drawer', response.data);
-    }
     this.items = this.$storage.get('drawer');
   }
 

@@ -13,7 +13,7 @@ import javax.annotation.Resource;
 import java.util.Optional;
 
 @RestController
-@RequestMapping(value = "/admin/menus")
+@RequestMapping(value = "api/admin/menus")
 public class AdminMenuController {
     @Resource private MenuService menuService;
     @Resource private TableMenuRepository tableMenuRepository;

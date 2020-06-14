@@ -30,8 +30,6 @@ public class AuthController {
 
     @DeleteMapping(value = "/logout")
     public void logout() {
-        final TableMemberVO loginVO = AuthenticationUtils.getLoginVO();
-        this.tableMemberRepository.updateTokenNull(loginVO.getId());
         AuthenticationUtils.logout();
     }
 }

@@ -107,7 +107,7 @@ export default class extends Vue {
     }
     try {
       const pbkdf2Password: string = pbkdf2
-        .pbkdf2Sync(this.password, 'salt', 0, 32, 'sha512')
+        .pbkdf2Sync(this.password, 'salt', 1, 32, 'sha512')
         .toString();
       const response = await axiosInstance.post<
         ApiDataResult<{
