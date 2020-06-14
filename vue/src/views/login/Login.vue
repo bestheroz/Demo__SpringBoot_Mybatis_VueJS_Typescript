@@ -100,6 +100,7 @@ export default class extends Vue {
       this.$toasted.error('로그인이 필요합니다.');
     }
     this.title = await getVariableApi('title');
+    Vue.$storage.clear();
   }
 
   async login() {
@@ -111,8 +112,6 @@ export default class extends Vue {
       const pbkdf2Password: string = pbkdf2
         .pbkdf2Sync(this.password, 'salt', 0, 32, 'sha512')
         .toString();
-      Vue.$storage.set('id', this.id);
-      Vue.$storage.set('password', pbkdf2Password);
       const response = await axios.post<ApiDataResult<TableMemberVO>>(
         `${envs.API_HOST}api/auth/login`,
         {

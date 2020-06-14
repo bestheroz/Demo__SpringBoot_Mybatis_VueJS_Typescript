@@ -13,21 +13,17 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MultipartException;
 
 @Slf4j
 @ControllerAdvice
-@RestController
 public class ApiExceptionHandler {
 
     // 아래서 놓친 예외가 있을때 이곳으로 확인하기 위해 존재한다.
     // 놓친 예외는 이곳에서 확인하여 추가해주면 된다.
     @ExceptionHandler({Throwable.class})
-    @GetMapping("/error")
     public ResponseEntity<ApiResult> exception(final Throwable e) {
         log.warn(ExceptionUtils.getStackTrace(e));
         return Result.error();

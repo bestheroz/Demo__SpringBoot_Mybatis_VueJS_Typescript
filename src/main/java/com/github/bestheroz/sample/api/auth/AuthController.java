@@ -2,6 +2,7 @@ package com.github.bestheroz.sample.api.auth;
 
 import com.github.bestheroz.sample.api.entity.member.TableMemberRepository;
 import com.github.bestheroz.sample.api.entity.member.TableMemberVO;
+import com.github.bestheroz.standard.common.authenticate.JwtTokenProvider;
 import com.github.bestheroz.standard.common.response.ApiResult;
 import com.github.bestheroz.standard.common.response.Result;
 import com.github.bestheroz.standard.common.util.AuthenticationUtils;
@@ -23,8 +24,8 @@ public class AuthController {
     }
 
     @GetMapping(value = "/me")
-    public ResponseEntity<ApiResult> getMyData(@RequestBody final TableMemberVO tableMemberVO) {
-        return Result.ok(this.authService.getMyData(tableMemberVO.getId(), tableMemberVO.getPassword()));
+    public ResponseEntity<ApiResult> getMyData(@RequestHeader(value = "Authorization", required = true) final String token) {
+        return Result.ok(JwtTokenProvider.getAuthentication(token).getPrincipal());
     }
 
     @DeleteMapping(value = "/logout")

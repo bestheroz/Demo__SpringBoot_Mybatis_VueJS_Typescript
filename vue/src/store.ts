@@ -3,54 +3,31 @@ import Vuex from 'vuex';
 import router from '@/router';
 import axios from 'axios';
 import { TableMemberVO } from '@/common/types';
-import envs from '@/constants/envs';
 
 Vue.use(Vuex);
 
-axios.interceptors.request.use(
-  async function (config) {
-    config.headers.Authorization = Vue.$storage.get('accessToken');
-    return config;
-  },
-  function (error) {
-    // Do something with request error
-    return Promise.reject(error);
-  },
-);
-
 export default new Vuex.Store({
   state: {
-    axiosInstance: axios.create({
-      baseURL: envs.API_HOST,
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Requested-With': `XMLHttpRequest`,
-        Authorization: Vue.$storage.get('accessToken'),
-      },
-    }),
     logoutTime: new Date().getTime() + 2 * 3600 * 1000,
   },
   mutations: {
     async accessToken(state, token: string) {
-      Vue.$storage.clear();
+      console.log(token);
       Vue.$storage.set('accessToken', token);
-      state.axiosInstance.defaults.headers.Authorization = token;
     },
-    async loginToken(state, userVO: TableMemberVO) {
+    async loginToken(state, loginVO: TableMemberVO) {
       Vue.$storage.clear();
-      Vue.$storage.set('accessToken', userVO.token);
-      Vue.$storage.set('authority', userVO.authority);
-      Vue.$storage.set('userVO', userVO);
-      state.axiosInstance.defaults.headers.Authorization = userVO.token;
+      Vue.$storage.set('authority', loginVO.authority);
+      Vue.$storage.set('userVO', loginVO);
     },
     async logout(state) {
       try {
-        await state.axiosInstance.delete('/api/auth/logout');
+        await axios.delete('/api/auth/logout');
       } catch (e) {
         console.error(e);
       }
       Vue.$storage.clear();
-      delete state.axiosInstance.defaults.headers.Authorization;
+      delete axios.defaults.headers.Authorization;
       await router.push('/login');
     },
     timer(state) {

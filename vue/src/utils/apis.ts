@@ -5,6 +5,45 @@ import store from '@/store';
 import { alertError, alertSuccess } from '@/utils/alerts';
 import envs from '@/constants/envs';
 import Vue from 'vue';
+import { TableMemberVO } from '@/common/types';
+
+axios.interceptors.request.use(
+  async function (config) {
+    config.headers.Authorization = Vue.$storage.get('accessToken');
+    return config;
+  },
+  function (error) {
+    // Do something with request error
+    return Promise.reject(error);
+  },
+);
+axios.interceptors.response.use(
+  function (response) {
+    // Any status code that lie within the range of 2xx cause this function to trigger
+    // Do something with response data
+    return response;
+  },
+  async function (error) {
+    // Any status codes that falls outside the range of 2xx cause this function to trigger
+    // Do something with response error
+    console.log('에러일 경우', error.config);
+    const errorAPI = error.config;
+    if (error.response.data.status === 401) {
+      errorAPI.retry = true;
+      console.log('토큰이 이상한 오류일 경우');
+      await getMyData();
+      return axios(errorAPI);
+    }
+    return Promise.reject(error);
+  },
+);
+
+export async function getMyData(): Promise<void> {
+  const response = await axios.get<ApiDataResult<TableMemberVO>>(
+    `${envs.API_HOST}api/auth/me`,
+  );
+  store.commit('loginToken', response.data.data);
+}
 
 export interface ApiDataResult<T> {
   code: string;
@@ -38,9 +77,7 @@ async function getErrorResult<T>(error: AxiosError): Promise<ApiDataResult<T>> {
 
 export async function getListApi<T>(url: string): Promise<ApiDataResult<T>> {
   try {
-    const response = await store.state.axiosInstance.get<ApiDataResult<T>>(
-      `${url}`,
-    );
+    const response = await axios.get<ApiDataResult<T>>(`${url}`);
     await logoutChecker(response.data);
     return response.data;
   } catch (error) {
@@ -53,9 +90,7 @@ export async function getDataApi<T>(
   id?: number | undefined,
 ): Promise<ApiDataResult<T>> {
   try {
-    const response = await store.state.axiosInstance.get<ApiDataResult<T>>(
-      `api/${url}${id || ''}`,
-    );
+    const response = await axios.get<ApiDataResult<T>>(`api/${url}${id || ''}`);
     await logoutChecker(response.data);
     return response.data;
   } catch (error) {
@@ -65,9 +100,7 @@ export async function getDataApi<T>(
 
 export async function getApi<T>(url: string): Promise<ApiDataResult<T>> {
   try {
-    const response = await store.state.axiosInstance.get<ApiDataResult<T>>(
-      `api/${url}`,
-    );
+    const response = await axios.get<ApiDataResult<T>>(`api/${url}`);
     await logoutChecker(response.data);
     return response.data;
   } catch (error) {
@@ -81,10 +114,7 @@ export async function postDataApi<T>(
   alert = true,
 ): Promise<ApiDataResult<T>> {
   try {
-    const response = await store.state.axiosInstance.post<ApiDataResult<T>>(
-      `api/${url}`,
-      data,
-    );
+    const response = await axios.post<ApiDataResult<T>>(`api/${url}`, data);
     await logoutChecker(response.data);
     // response.status === 201
     if (alert) {
@@ -103,7 +133,7 @@ export async function putDataApi<T>(
   alert = true,
 ): Promise<ApiDataResult<T>> {
   try {
-    const response = await store.state.axiosInstance.put<ApiDataResult<T>>(
+    const response = await axios.put<ApiDataResult<T>>(
       `api/${url}${await makeUrlKey(key)}`,
       data,
     );
@@ -125,7 +155,7 @@ export async function patchDataApi<T>(
   alert = true,
 ): Promise<ApiDataResult<T>> {
   try {
-    const response = await store.state.axiosInstance.patch<ApiDataResult<T>>(
+    const response = await axios.patch<ApiDataResult<T>>(
       `api/${url}${await makeUrlKey(key)}`,
       data,
     );
@@ -146,9 +176,7 @@ export async function deleteDataApi<T>(
   alert = true,
 ): Promise<ApiDataResult<T>> {
   try {
-    const response = await store.state.axiosInstance.delete(
-      `api/${url}${await makeUrlKey(key)}`,
-    );
+    const response = await axios.delete(`api/${url}${await makeUrlKey(key)}`);
     await logoutChecker(response.data);
     // response.status === 204
     if (alert) {
@@ -167,9 +195,9 @@ export async function getCodeListApi<SelectItem>(
     return Vue.$storage.get(`code__${codeGroup}`);
   } else {
     try {
-      const response = await store.state.axiosInstance.get<
-        ApiDataResult<SelectItem[]>
-      >(`api/codes/${codeGroup}`);
+      const response = await axios.get<ApiDataResult<SelectItem[]>>(
+        `api/codes/${codeGroup}`,
+      );
       await logoutChecker(response.data);
       const result = response.data.data || [];
       if (result.length > 0) {
@@ -191,9 +219,9 @@ export async function getVariableApi<String>(
     return Vue.$storage.get(`variable__${variable}`);
   } else {
     try {
-      const response = await store.state.axiosInstance.get<
-        ApiDataResult<string>
-      >(`api/variables/${variable}`);
+      const response = await axios.get<ApiDataResult<string>>(
+        `api/variables/${variable}`,
+      );
       await logoutChecker(response.data);
       const result = response.data.data;
       if (result) {

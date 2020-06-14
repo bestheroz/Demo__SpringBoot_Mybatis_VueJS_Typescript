@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("admin/menuAuthority/")
+@RequestMapping("api/admin/menuAuthority/")
 @Slf4j
 public class AdminMenuAuthorityController {
     @Resource private TableMenuAuthorityRepository tableMenuAuthorityRepository;

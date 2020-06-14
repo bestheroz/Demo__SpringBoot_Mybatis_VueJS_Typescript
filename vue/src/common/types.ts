@@ -32,11 +32,6 @@ export interface DrawerItem {
   children?: DrawerItem[];
 }
 
-export interface LoginVO {
-  userVO: TableMemberVO;
-  token: string;
-}
-
 export interface SelectItem {
   value: string;
   text: string;

@@ -28,7 +28,7 @@ export default class extends Vue {
   items: DrawerItem[] | null = null;
   async beforeCreate() {
     if (!this.$storage.has('drawer')) {
-      const response = await this.$store.state.axiosInstance.get('api/menu');
+      const response = await this.$axios.get('api/menu');
       this.$storage.set('drawer', response.data.data);
       this.items = response.data.data;
     }
@@ -45,7 +45,7 @@ export default class extends Vue {
 
   async updated() {
     if (!this.$storage.has('drawer')) {
-      const response = await this.$store.state.axiosInstance.get('api/menu');
+      const response = await this.$axios.get('api/menu');
       this.$storage.set('drawer', response.data.data);
       this.items = response.data.data;
     }

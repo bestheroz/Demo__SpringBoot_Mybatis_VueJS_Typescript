@@ -10,29 +10,29 @@ import { alertError } from '@/utils/alerts';
 Vue.use(Router);
 
 const requireAuth = () => async (to: any, from: any, next: any) => {
-  if (!Vue.$storage.has('accessToken')) {
-    next('/login');
-  } else {
-    try {
-      const response = await store.state.axiosInstance.post<
-        ApiDataResult<LoginVO>
-      >(`${envs.API_HOST}api/auth/verify`);
-      if (_.startsWith(response.data.code, `S`)) {
-        store.commit('loginToken', response.data.data);
-      } else {
-        store.commit('logout');
-      }
-    } catch (e) {
-      alertError(e);
-      if (e.response.status === 401) {
-        store.commit('logout');
-      } else if (e.message === 'Network Error') {
-        next('/Code503');
-      } else {
-        next('/Code500');
-      }
-    }
-  }
+  // if (!Vue.$storage.has('accessToken')) {
+  //   next('/login');
+  // } else {
+  //   try {
+  //     const response = await axios.post<
+  //       ApiDataResult<LoginVO>
+  //     >(`${envs.API_HOST}api/auth/verify`);
+  //     if (_.startsWith(response.data.code, `S`)) {
+  //       store.commit('loginToken', response.data.data);
+  //     } else {
+  //       store.commit('logout');
+  //     }
+  //   } catch (e) {
+  //     alertError(e);
+  //     if (e.response.status === 401) {
+  //       store.commit('logout');
+  //     } else if (e.message === 'Network Error') {
+  //       next('/Code503');
+  //     } else {
+  //       next('/Code500');
+  //     }
+  //   }
+  // }
   return next();
 };
 

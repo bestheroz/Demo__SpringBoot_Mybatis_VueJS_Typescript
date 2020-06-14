@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 
 @RestController
-@RequestMapping("members")
+@RequestMapping("api/members")
 public class MemberController {
     @Resource private MemberDAO memberDAO;
 

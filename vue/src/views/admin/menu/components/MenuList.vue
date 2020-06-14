@@ -167,14 +167,14 @@ export default class extends Vue {
   async mounted() {
     this.MENU_TYPE = await getCodeListApi(`MENU_TYPE`);
     this.headers[0].filterSelectItem = this.MENU_TYPE;
-    this.getList();
+    await this.getList();
   }
 
   async getList() {
     this.selected = [];
     this.items = [];
     this.loading = true;
-    const response = await getListApi<MenuVO[]>(`admin/menus/`);
+    const response = await getListApi<MenuVO[]>(`api/admin/menus/`);
     this.loading = false;
     this.items = response.data || [];
   }

@@ -1,7 +1,6 @@
 package com.github.bestheroz.standard.context.security;
 
 import com.github.bestheroz.standard.common.authenticate.JwtAuthenticationFilter;
-import com.github.bestheroz.standard.common.authenticate.JwtTokenProvider;
 import com.github.bestheroz.standard.common.security.AccessDeniedHandlerImpl;
 import com.github.bestheroz.standard.common.security.ApiRequestAccessDeniedExceptionTranslationFilter;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
@@ -20,27 +19,29 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import javax.annotation.Resource;
-
 
 @EnableWebSecurity
 public class SecurityContext extends WebSecurityConfigurerAdapter {
     private static final String[] PUBLIC = new String[]{
-            "/error", "/api/codes/**", "/api/variables/**", "/api/auth/login", "/"};
-
-    @Resource private JwtTokenProvider jwtTokenProvider;
+            "/error", "/", "/api/auth/login", "/api/variables/**"};
+//    private static final String[] FULLY_AUTHENTICATED = new String[]{
+//            "/api/admin/**", "/api/member/**", "/api/menu/**"};
 
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
         http.httpBasic().disable()
                 .exceptionHandling().accessDeniedHandler(this.accessDeniedHandler())
                 .and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
                 .authorizeRequests()
                 .antMatchers(PUBLIC).permitAll()
                 .requestMatchers(EndpointRequest.toAnyEndpoint()).permitAll()
                 .anyRequest().authenticated()
+//                .antMatchers(FULLY_AUTHENTICATED).fullyAuthenticated()
+//                .requestMatchers(EndpointRequest.toAnyEndpoint()).permitAll()
                 .and()
-                .addFilterBefore(new JwtAuthenticationFilter(this.jwtTokenProvider),
+                .addFilterBefore(new JwtAuthenticationFilter(),
                         UsernamePasswordAuthenticationFilter.class)
 //                .addFilterAt(this.authenticationFilter(), UsernamePasswordAuthenticationFilter.class)
 //                .addFilterAfter(this.apiRequestExceptionTranslationFilter(), ExceptionTranslationFilter.class)
@@ -51,8 +52,8 @@ public class SecurityContext extends WebSecurityConfigurerAdapter {
 //                .logoutUrl("/api/auth/logout")
 //                .logoutSuccessHandler(this.logoutSuccessHandler())
 //                .and()
-                .csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and().cors();
+                .csrf().disable()
+                .cors();
     }
 
     @Override

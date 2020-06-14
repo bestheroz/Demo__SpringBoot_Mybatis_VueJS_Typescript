@@ -6,29 +6,28 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.github.bestheroz.sample.api.auth.AuthService;
 import com.github.bestheroz.standard.common.exception.BusinessException;
 import com.github.bestheroz.standard.common.exception.ExceptionCode;
+import com.github.bestheroz.standard.common.util.AccessBeanUtils;
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.LocalDateTime;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 
 @Slf4j
-@Component
+@UtilityClass
 public class JwtTokenProvider {
-    private static final Algorithm ALGORITHM = Algorithm.HMAC512("secret");
-    @Resource private AuthService authService;
+    private final Algorithm ALGORITHM = Algorithm.HMAC512("secret");
 
     public String createToken(final String userPk) {
         return JWT.create().withClaim("userPk", userPk).withExpiresAt(LocalDateTime.now().plusDays(1).toDate()).sign(ALGORITHM);
     }
 
     public Authentication getAuthentication(final String token) {
-        final UserDetails userDetails = this.authService.loadUserByUsername(this.getUserPk(token));
+        final UserDetails userDetails = AccessBeanUtils.getBean(AuthService.class).loadUserByUsername(getUserPk(token));
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
