@@ -174,7 +174,7 @@ export default class extends Vue {
     this.selected = [];
     this.items = [];
     this.loading = true;
-    const response = await getListApi<MenuVO[]>(`api/admin/menus/`);
+    const response = await getListApi<MenuVO[]>(`admin/menus/`);
     this.loading = false;
     this.items = response.data || [];
   }

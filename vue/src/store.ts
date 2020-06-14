@@ -11,12 +11,12 @@ export default new Vuex.Store({
     logoutTime: new Date().getTime() + 2 * 3600 * 1000,
   },
   mutations: {
-    async accessToken(state, token: string) {
+    async saveToken(state, token: string) {
       console.log(token);
       Vue.$storage.set('accessToken', token);
     },
-    async loginToken(state, loginVO: TableMemberVO) {
-      Vue.$storage.clear();
+    async saveUserVO(state, loginVO: TableMemberVO) {
+      console.log(Vue.$storage.get('accessToken'));
       Vue.$storage.set('authority', loginVO.authority);
       Vue.$storage.set('userVO', loginVO);
     },
@@ -27,7 +27,6 @@ export default new Vuex.Store({
         console.error(e);
       }
       Vue.$storage.clear();
-      delete axios.defaults.headers.Authorization;
       await router.push('/login');
     },
     timer(state) {

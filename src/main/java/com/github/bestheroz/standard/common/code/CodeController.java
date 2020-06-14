@@ -2,7 +2,6 @@ package com.github.bestheroz.standard.common.code;
 
 import com.github.bestheroz.standard.common.response.ApiResult;
 import com.github.bestheroz.standard.common.response.Result;
-import com.github.bestheroz.standard.common.util.AuthenticationUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,10 +13,10 @@ import javax.annotation.Resource;
 @RestController
 @RequestMapping("api/codes")
 public class CodeController {
-    @Resource private CodeDAO codeDAO;
+    @Resource private CodeService codeService;
 
     @GetMapping(value = "{codeGroup}")
     public ResponseEntity<ApiResult> getCodeVOList(@PathVariable(value = "codeGroup") final String codeGroup) {
-        return Result.ok(this.codeDAO.getCodeVOList(codeGroup, AuthenticationUtils.getLoginVO().getAuthority()));
+        return Result.ok(this.codeService.getCodeVOListByAuthority(codeGroup));
     }
 }

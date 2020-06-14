@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface MemberDAO extends CrudRepository<CodeVO, String> {
+public interface MemberRepository extends CrudRepository<CodeVO, String> {
     @Query(value = "SELECT M.ID AS VALUE, M.NAME AS TEXT FROM MEMBER M ORDER BY M.ID ASC", nativeQuery = true)
     @Cacheable(value = "getMemberList")
     List<CodeVO> getMemberList() throws BusinessException;

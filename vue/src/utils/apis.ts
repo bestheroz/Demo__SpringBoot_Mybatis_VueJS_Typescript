@@ -5,10 +5,17 @@ import store from '@/store';
 import { alertError, alertSuccess } from '@/utils/alerts';
 import envs from '@/constants/envs';
 import Vue from 'vue';
-import { TableMemberVO } from '@/common/types';
 
-axios.interceptors.request.use(
-  async function (config) {
+export const axiosInstance = axios.create({
+  baseURL: envs.API_HOST,
+  headers: {
+    contentType: 'application/json',
+    Authorization: Vue.$storage.get('accessToken'),
+  },
+});
+
+axiosInstance.interceptors.request.use(
+  function (config) {
     config.headers.Authorization = Vue.$storage.get('accessToken');
     return config;
   },
@@ -17,33 +24,42 @@ axios.interceptors.request.use(
     return Promise.reject(error);
   },
 );
-axios.interceptors.response.use(
+axiosInstance.interceptors.response.use(
   function (response) {
     // Any status code that lie within the range of 2xx cause this function to trigger
     // Do something with response data
+    store.commit('timer');
     return response;
   },
-  async function (error) {
+  async function (error: AxiosError) {
     // Any status codes that falls outside the range of 2xx cause this function to trigger
     // Do something with response error
     console.log('에러일 경우', error.config);
     const errorAPI = error.config;
-    if (error.response.data.status === 401) {
-      errorAPI.retry = true;
-      console.log('토큰이 이상한 오류일 경우');
-      await getMyData();
+    if (error.response && error.response.data.status === 401) {
+      // if (['F004', 'F011'].includes(response.code)) {
+      await router.push(`/login?login=need`);
+      // }
       return axios(errorAPI);
     }
-    return Promise.reject(error);
+    if (envs.ENV !== 'production') {
+      console.error('에러난다. 빨리 고치자');
+      await router.push('/Code500');
+    }
+    if (error.response && error.response.data && error.response.data.message) {
+      return {
+        code: error.response.data.code,
+        message: error.response.data.message,
+      };
+    } else {
+      return {
+        code: 'F000',
+        message: error.message,
+      };
+    }
+    // return Promise.reject(error);
   },
 );
-
-export async function getMyData(): Promise<void> {
-  const response = await axios.get<ApiDataResult<TableMemberVO>>(
-    `${envs.API_HOST}api/auth/me`,
-  );
-  store.commit('loginToken', response.data.data);
-}
 
 export interface ApiDataResult<T> {
   code: string;
@@ -57,55 +73,24 @@ export interface requestKey {
   key3?: string;
 }
 
-async function getErrorResult<T>(error: AxiosError): Promise<ApiDataResult<T>> {
-  if (envs.ENV !== 'production') {
-    console.error('에러난다. 빨리 고치자');
-    await router.push('/Code500');
-  }
-  if (error.response && error.response.data && error.response.data.message) {
-    return {
-      code: error.response.data.code,
-      message: error.response.data.message,
-    };
-  } else {
-    return {
-      code: 'F000',
-      message: error.message,
-    };
-  }
-}
-
 export async function getListApi<T>(url: string): Promise<ApiDataResult<T>> {
-  try {
-    const response = await axios.get<ApiDataResult<T>>(`${url}`);
-    await logoutChecker(response.data);
-    return response.data;
-  } catch (error) {
-    return getErrorResult(error);
-  }
+  const response = await axiosInstance.get<ApiDataResult<T>>(`${url}`);
+  return response.data;
 }
 
 export async function getDataApi<T>(
   url: string,
   id?: number | undefined,
 ): Promise<ApiDataResult<T>> {
-  try {
-    const response = await axios.get<ApiDataResult<T>>(`api/${url}${id || ''}`);
-    await logoutChecker(response.data);
-    return response.data;
-  } catch (error) {
-    return getErrorResult(error);
-  }
+  const response = await axiosInstance.get<ApiDataResult<T>>(
+    `api/${url}${id || ''}`,
+  );
+  return response.data;
 }
 
 export async function getApi<T>(url: string): Promise<ApiDataResult<T>> {
-  try {
-    const response = await axios.get<ApiDataResult<T>>(`api/${url}`);
-    await logoutChecker(response.data);
-    return response.data;
-  } catch (error) {
-    return getErrorResult(error);
-  }
+  const response = await axiosInstance.get<ApiDataResult<T>>(`api/${url}`);
+  return response.data;
 }
 
 export async function postDataApi<T>(
@@ -113,17 +98,15 @@ export async function postDataApi<T>(
   data: T,
   alert = true,
 ): Promise<ApiDataResult<T>> {
-  try {
-    const response = await axios.post<ApiDataResult<T>>(`api/${url}`, data);
-    await logoutChecker(response.data);
-    // response.status === 201
-    if (alert) {
-      alertResponseMessage(response.data);
-    }
-    return response.data;
-  } catch (error) {
-    return getErrorResult(error);
+  const response = await axiosInstance.post<ApiDataResult<T>>(
+    `api/${url}`,
+    data,
+  );
+  // response.status === 201
+  if (alert) {
+    alertResponseMessage(response.data);
   }
+  return response.data;
 }
 
 export async function putDataApi<T>(
@@ -132,20 +115,15 @@ export async function putDataApi<T>(
   key: string | number | requestKey,
   alert = true,
 ): Promise<ApiDataResult<T>> {
-  try {
-    const response = await axios.put<ApiDataResult<T>>(
-      `api/${url}${await makeUrlKey(key)}`,
-      data,
-    );
-    await logoutChecker(response.data);
-    // response.status === 200
-    if (alert) {
-      alertResponseMessage(response.data);
-    }
-    return response.data;
-  } catch (error) {
-    return getErrorResult(error);
+  const response = await axiosInstance.put<ApiDataResult<T>>(
+    `api/${url}${await makeUrlKey(key)}`,
+    data,
+  );
+  // response.status === 200
+  if (alert) {
+    alertResponseMessage(response.data);
   }
+  return response.data;
 }
 
 export async function patchDataApi<T>(
@@ -154,20 +132,15 @@ export async function patchDataApi<T>(
   key: string | number | requestKey,
   alert = true,
 ): Promise<ApiDataResult<T>> {
-  try {
-    const response = await axios.patch<ApiDataResult<T>>(
-      `api/${url}${await makeUrlKey(key)}`,
-      data,
-    );
-    await logoutChecker(response.data);
-    // response.status === 200
-    if (alert) {
-      alertResponseMessage(response.data);
-    }
-    return response.data;
-  } catch (error) {
-    return getErrorResult(error);
+  const response = await axiosInstance.patch<ApiDataResult<T>>(
+    `api/${url}${await makeUrlKey(key)}`,
+    data,
+  );
+  // response.status === 200
+  if (alert) {
+    alertResponseMessage(response.data);
   }
+  return response.data;
 }
 
 export async function deleteDataApi<T>(
@@ -175,17 +148,14 @@ export async function deleteDataApi<T>(
   key: string | number | requestKey,
   alert = true,
 ): Promise<ApiDataResult<T>> {
-  try {
-    const response = await axios.delete(`api/${url}${await makeUrlKey(key)}`);
-    await logoutChecker(response.data);
-    // response.status === 204
-    if (alert) {
-      alertResponseMessage(response.data);
-    }
-    return response.data;
-  } catch (error) {
-    return getErrorResult(error);
+  const response = await axiosInstance.delete(
+    `api/${url}${await makeUrlKey(key)}`,
+  );
+  // response.status === 204
+  if (alert) {
+    alertResponseMessage(response.data);
   }
+  return response.data;
 }
 
 export async function getCodeListApi<SelectItem>(
@@ -195,10 +165,9 @@ export async function getCodeListApi<SelectItem>(
     return Vue.$storage.get(`code__${codeGroup}`);
   } else {
     try {
-      const response = await axios.get<ApiDataResult<SelectItem[]>>(
+      const response = await axiosInstance.get<ApiDataResult<SelectItem[]>>(
         `api/codes/${codeGroup}`,
       );
-      await logoutChecker(response.data);
       const result = response.data.data || [];
       if (result.length > 0) {
         Vue.$storage.set(`code__${codeGroup}`, result);
@@ -219,10 +188,9 @@ export async function getVariableApi<String>(
     return Vue.$storage.get(`variable__${variable}`);
   } else {
     try {
-      const response = await axios.get<ApiDataResult<string>>(
+      const response = await axiosInstance.get<ApiDataResult<string>>(
         `api/variables/${variable}`,
       );
-      await logoutChecker(response.data);
       const result = response.data.data;
       if (result) {
         Vue.$storage.set(`variable__${variable}`, result);
@@ -242,13 +210,6 @@ function alertResponseMessage(data: ApiDataResult<any>): void {
   } else {
     alertError(data.message);
   }
-}
-
-async function logoutChecker(response: ApiDataResult<any>): Promise<void> {
-  if (['F004', 'F011'].includes(response.code)) {
-    await router.push(`/login?need=login`);
-  }
-  store.commit('timer');
 }
 
 async function makeUrlKey(key: string | number | requestKey) {

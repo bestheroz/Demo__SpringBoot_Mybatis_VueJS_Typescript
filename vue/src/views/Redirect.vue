@@ -4,10 +4,9 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { getMyData } from '@/utils/apis';
-
-const pbkdf2 = require('pbkdf2');
-const queryString = require('query-string');
+import { TableMemberVO } from '@/common/types';
+import store from '@/store';
+import { ApiDataResult, getApi } from '@/utils/apis';
 
 @Component({
   name: 'Redirect',
@@ -18,9 +17,15 @@ export default class extends Vue {
       await this.$router.push('/login');
     }
     if (!Vue.$storage.has('userVO') || !Vue.$storage.has('authority')) {
-      await getMyData();
+      const response = await getApi<ApiDataResult<TableMemberVO>>(`auth/me`);
+      store.commit('saveUserVO', response.data);
     }
-    console.log(Vue.$storage.get('accessToken'));
+
+    if (!Vue.$storage.has('drawer')) {
+      const response = await getApi('menu');
+      this.$storage.set('drawer', response.data);
+    }
+
     await this.$router.push('/admin/menu');
   }
 }

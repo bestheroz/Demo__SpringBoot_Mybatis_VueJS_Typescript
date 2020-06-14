@@ -21,44 +21,44 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { DrawerItem, SelectItem, TableMemberVO } from '@/common/types';
-import { getListApi } from '@/utils/apis';
+import { getApi, getListApi } from '@/utils/apis';
 
 @Component({ name: 'Viewer' })
 export default class extends Vue {
   items: DrawerItem[] | null = null;
-  async beforeCreate() {
-    if (!this.$storage.has('drawer')) {
-      const response = await this.$axios.get('api/menu');
-      this.$storage.set('drawer', response.data.data);
-      this.items = response.data.data;
-    }
-    if (!Vue.$storage.has('memberList')) {
-      const response = await getListApi<TableMemberVO[]>(`api/members`);
-      Vue.$storage.set(
-        'memberList',
-        response.data!.map((item) => {
-          return { value: item.id, text: item.name };
-        }),
-      );
-    }
-  }
+  // async beforeCreate() {
+  //   if (!this.$storage.has('drawer')) {
+  //     const response = await getApi<DrawerItem[]>('api/menu');
+  //     this.$storage.set('drawer', response.data);
+  //     this.items = response.data;
+  //   }
+  //   if (!Vue.$storage.has('memberList')) {
+  //     const response = await getListApi<TableMemberVO[]>(`api/members`);
+  //     Vue.$storage.set(
+  //       'memberList',
+  //       response.data!.map((item) => {
+  //         return { value: item.id, text: item.name };
+  //       }),
+  //     );
+  //   }
+  // }
 
-  async updated() {
-    if (!this.$storage.has('drawer')) {
-      const response = await this.$axios.get('api/menu');
-      this.$storage.set('drawer', response.data.data);
-      this.items = response.data.data;
-    }
-    if (!Vue.$storage.has('memberList')) {
-      const response = await getListApi<TableMemberVO[]>(`api/members`);
-      Vue.$storage.set(
-        'memberList',
-        response.data!.map((item) => {
-          return { value: item.id, text: item.name };
-        }),
-      );
-    }
-  }
+  // async updated() {
+  //   if (!this.$storage.has('drawer')) {
+  //     const response = await getApi('api/menu');
+  //     this.$storage.set('drawer', response.data.data);
+  //     this.items = response.data.data;
+  //   }
+  //   if (!Vue.$storage.has('memberList')) {
+  //     const response = await getListApi<TableMemberVO[]>(`api/members`);
+  //     Vue.$storage.set(
+  //       'memberList',
+  //       response.data!.map((item) => {
+  //         return { value: item.id, text: item.name };
+  //       }),
+  //     );
+  //   }
+  // }
 
   get title() {
     let result: string = '';

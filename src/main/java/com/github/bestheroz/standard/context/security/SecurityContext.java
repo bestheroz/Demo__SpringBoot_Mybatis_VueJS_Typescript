@@ -3,7 +3,6 @@ package com.github.bestheroz.standard.context.security;
 import com.github.bestheroz.standard.common.authenticate.JwtAuthenticationFilter;
 import com.github.bestheroz.standard.common.security.AccessDeniedHandlerImpl;
 import com.github.bestheroz.standard.common.security.ApiRequestAccessDeniedExceptionTranslationFilter;
-import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -23,9 +22,9 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableWebSecurity
 public class SecurityContext extends WebSecurityConfigurerAdapter {
     private static final String[] PUBLIC = new String[]{
-            "/error", "/", "/api/auth/login", "/api/variables/**"};
-//    private static final String[] FULLY_AUTHENTICATED = new String[]{
-//            "/api/admin/**", "/api/member/**", "/api/menu/**"};
+            "/error", "/", "/api/auth/login", "/api/auth/logout", "/api/variables/**"};
+    private static final String[] FULLY_AUTHENTICATED = new String[]{
+            "/api/admin/**", "/api/member/**", "/api/menu/**"};
 
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
@@ -36,22 +35,9 @@ public class SecurityContext extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers(PUBLIC).permitAll()
-                .requestMatchers(EndpointRequest.toAnyEndpoint()).permitAll()
-                .anyRequest().authenticated()
-//                .antMatchers(FULLY_AUTHENTICATED).fullyAuthenticated()
-//                .requestMatchers(EndpointRequest.toAnyEndpoint()).permitAll()
+                .antMatchers(FULLY_AUTHENTICATED).authenticated()
                 .and()
-                .addFilterBefore(new JwtAuthenticationFilter(),
-                        UsernamePasswordAuthenticationFilter.class)
-//                .addFilterAt(this.authenticationFilter(), UsernamePasswordAuthenticationFilter.class)
-//                .addFilterAfter(this.apiRequestExceptionTranslationFilter(), ExceptionTranslationFilter.class)
-//                .formLogin()
-//                .loginPage("/#/login")
-//                .and()
-//                .logout()
-//                .logoutUrl("/api/auth/logout")
-//                .logoutSuccessHandler(this.logoutSuccessHandler())
-//                .and()
+                .addFilterBefore(new JwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .csrf().disable()
                 .cors();
     }

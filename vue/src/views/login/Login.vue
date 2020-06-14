@@ -79,11 +79,8 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator';
-import { ApiDataResult, getVariableApi } from '@/utils/apis';
-import axios from 'axios';
-import envs from '@/constants/envs';
-import { TableMemberVO, TableMenuVO } from '@/common/types';
+import { Component, Vue } from 'vue-property-decorator';
+import { ApiDataResult, axiosInstance, getVariableApi } from '@/utils/apis';
 import { alertError } from '@/utils/alerts';
 
 const pbkdf2 = require('pbkdf2');
@@ -96,7 +93,7 @@ export default class extends Vue {
   title: string | null = null;
 
   async mounted() {
-    if (this.$route.query.need === 'login') {
+    if (this.$route.query.login === 'need') {
       this.$toasted.error('로그인이 필요합니다.');
     }
     this.title = await getVariableApi('title');
@@ -112,14 +109,16 @@ export default class extends Vue {
       const pbkdf2Password: string = pbkdf2
         .pbkdf2Sync(this.password, 'salt', 0, 32, 'sha512')
         .toString();
-      const response = await axios.post<ApiDataResult<TableMemberVO>>(
-        `${envs.API_HOST}api/auth/login`,
-        {
-          id: this.id,
-          password: pbkdf2Password,
-        },
-      );
-      this.$store.commit('accessToken', response.data.data);
+      const response = await axiosInstance.post<
+        ApiDataResult<{
+          id: string;
+          password: string;
+        }>
+      >(`api/auth/login`, {
+        id: this.id,
+        password: pbkdf2Password,
+      });
+      this.$store.commit('saveToken', response.data.data);
       this.$toasted.clear();
       await this.$router.push('/');
     } catch (e) {

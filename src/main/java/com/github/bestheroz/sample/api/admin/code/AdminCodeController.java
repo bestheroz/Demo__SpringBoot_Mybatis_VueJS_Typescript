@@ -29,7 +29,7 @@ public class AdminCodeController {
     }
 
     @PostMapping(value = "{codeGroup}")
-    @CacheEvict(value = "CodeVO", key = "#codeGroup")
+    @CacheEvict(value = "codeCache", key = "#codeGroup")
     public ResponseEntity<ApiResult> insert(@PathVariable(value = "codeGroup") final String codeGroup, @RequestBody final TableCodeVO tableCodeVO) {
         tableCodeVO.setCodeGroup(codeGroup);
         this.tableCodeRepository.save(tableCodeVO);
@@ -37,7 +37,7 @@ public class AdminCodeController {
     }
 
     @PatchMapping(value = "{codeGroup}/{code}")
-    @CacheEvict(value = "CodeVO", key = "#codeGroup")
+    @CacheEvict(value = "codeCache", key = "#codeGroup")
     public ResponseEntity<ApiResult> update(@PathVariable(value = "codeGroup") final String codeGroup,
                                             @PathVariable(value = "code") final String code, @RequestBody final TableCodeVO tableCodeVO) {
         tableCodeVO.setCodeGroup(codeGroup);
@@ -47,7 +47,7 @@ public class AdminCodeController {
     }
 
     @DeleteMapping(value = "{codeGroup}/{code}")
-    @CacheEvict(value = "CodeVO", key = "#codeGroup")
+    @CacheEvict(value = "codeCache", key = "#codeGroup")
     public ResponseEntity<ApiResult> delete(@PathVariable(value = "codeGroup") final String codeGroup,
                                             @PathVariable(value = "code") final String code) {
         this.tableCodeRepository.deleteById(new TableCodeVOId(codeGroup, code));

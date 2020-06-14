@@ -55,7 +55,7 @@
 import { Component, PropSync, Vue, Watch } from 'vue-property-decorator';
 import envs from '@/constants/envs';
 import Countdown from 'vue-awesome-countdown/src/vue-awesome-countdown.vue';
-import { getVariableApi } from '@/utils/apis';
+import { getVariableApi, getApi } from '@/utils/apis';
 import { DrawerItem } from '@/common/types';
 
 @Component({
@@ -74,8 +74,8 @@ export default class extends Vue {
 
   async created() {
     if (!this.$storage.has('drawer')) {
-      const response = await this.$axios.get('api/menu');
-      this.$storage.set('drawer', response.data.data);
+      const response = await getApi('menu');
+      this.$storage.set('drawer', response.data);
     }
     this.items = this.$storage.get('drawer');
   }

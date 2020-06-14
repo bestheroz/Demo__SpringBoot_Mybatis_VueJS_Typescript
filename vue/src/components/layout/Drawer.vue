@@ -79,10 +79,10 @@ export default class extends Vue {
   }
 
   async created() {
-    if (!this.$storage.has('drawer')) {
-      const response = await this.$axios.get('api/menu');
-      this.$storage.set('drawer', response.data.data);
-    }
+    // if (!this.$storage.has('drawer')) {
+    //   const response = await axios.get('api/menu');
+    //   this.$storage.set('drawer', response.data.data);
+    // }
     this.items = this.$storage.get('drawer');
   }
 

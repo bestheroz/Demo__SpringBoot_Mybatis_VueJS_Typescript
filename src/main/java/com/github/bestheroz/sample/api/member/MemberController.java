@@ -12,10 +12,10 @@ import javax.annotation.Resource;
 @RestController
 @RequestMapping("api/members")
 public class MemberController {
-    @Resource private MemberDAO memberDAO;
+    @Resource private MemberRepository memberRepository;
 
     @GetMapping
     ResponseEntity<ApiResult> getList() {
-        return Result.ok(this.memberDAO.getMemberList());
+        return Result.ok(this.memberRepository.getMemberList());
     }
 }
