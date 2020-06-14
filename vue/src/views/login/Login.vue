@@ -66,6 +66,7 @@
                 depressed
                 text
                 rounded
+                :loading="loading"
                 @click="login"
               >
                 Let's Go
@@ -91,6 +92,7 @@ export default class extends Vue {
   password: string | null = null;
   show1: boolean = false;
   title: string | null = null;
+  loading: boolean = false;
 
   async mounted() {
     if (this.$route.query.login === 'need') {
@@ -105,6 +107,7 @@ export default class extends Vue {
     if (!inValid) {
       return;
     }
+    this.loading = true;
     try {
       const pbkdf2Password: string = pbkdf2
         .pbkdf2Sync(this.password, 'salt', 1, 32, 'sha512')
@@ -124,6 +127,7 @@ export default class extends Vue {
     } catch (e) {
       alertError(e);
     }
+    this.loading = false;
   }
 }
 </script>

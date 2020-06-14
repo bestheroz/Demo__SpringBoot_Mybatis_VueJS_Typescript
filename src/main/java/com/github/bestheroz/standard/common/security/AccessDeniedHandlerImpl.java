@@ -25,7 +25,7 @@ public class AccessDeniedHandlerImpl implements AccessDeniedHandler {
             }
         } else {
             log.debug("response.sendRedirect");
-//            response.sendRedirect("/login");
+            response.sendRedirect("/login");
         }
     }
 }

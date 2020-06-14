@@ -2,7 +2,6 @@ package com.github.bestheroz.standard.context.security;
 
 import com.github.bestheroz.standard.common.authenticate.JwtAuthenticationFilter;
 import com.github.bestheroz.standard.common.security.AccessDeniedHandlerImpl;
-import com.github.bestheroz.standard.common.security.ApiRequestAccessDeniedExceptionTranslationFilter;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -76,7 +75,4 @@ public class SecurityContext extends WebSecurityConfigurerAdapter {
         return new AccessDeniedHandlerImpl();
     }
 
-    public ApiRequestAccessDeniedExceptionTranslationFilter apiRequestExceptionTranslationFilter() {
-        return new ApiRequestAccessDeniedExceptionTranslationFilter();
-    }
 }

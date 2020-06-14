@@ -20,39 +20,21 @@ axiosInstance.interceptors.request.use(
     return config;
   },
   function (error) {
-    // Do something with request error
     return Promise.reject(error);
   },
 );
 axiosInstance.interceptors.response.use(
   function (response) {
-    // Any status code that lie within the range of 2xx cause this function to trigger
-    // Do something with response data
     store.commit('timer');
     return response;
   },
   async function (error: AxiosError) {
-    // Any status codes that falls outside the range of 2xx cause this function to trigger
-    // Do something with response error
-    if (error.response && error.response.data.status === 401) {
+    if (error.response && error.response.status === 401) {
+      console.log('push');
       await router.push(`/login?login=need`);
+      return;
     }
-    if (envs.ENV !== 'production') {
-      console.error('에러난다. 빨리 고치자');
-      await router.push('/error/500');
-    }
-    if (error.response && error.response.data && error.response.data.message) {
-      return {
-        code: error.response.data.code,
-        message: error.response.data.message,
-      };
-    } else {
-      return {
-        code: 'E000',
-        message: error.message,
-      };
-    }
-    // return Promise.reject(error);
+    return Promise.reject(error);
   },
 );
 
