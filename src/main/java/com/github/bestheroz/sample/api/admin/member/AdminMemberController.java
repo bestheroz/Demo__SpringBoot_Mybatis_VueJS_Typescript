@@ -28,14 +28,14 @@ public class AdminMemberController {
     }
 
     @PostMapping
-    @CacheEvict(value = "getMemberList")
+    @CacheEvict(value = "memberCache")
     public ResponseEntity<ApiResult> insert(@RequestBody final TableMemberVO tableMemberVO) {
         this.tableMemberRepository.save(tableMemberVO);
         return Result.ok();
     }
 
     @PatchMapping(value = "{id}")
-    @CacheEvict(value = "getMemberList")
+    @CacheEvict(value = "memberCache")
     public ResponseEntity<ApiResult> update(@PathVariable(value = "id") final String id, @RequestBody final TableMemberVO tableMemberVO) {
         tableMemberVO.setId(id);
         this.tableMemberRepository.save(tableMemberVO);

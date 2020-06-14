@@ -160,13 +160,13 @@ export default class extends Vue {
       align: `center`,
       value: `available`,
       filterType: 'switch',
-      width: 100,
+      width: 110,
     },
     {
       text: `출력 순서`,
       align: `end`,
       value: `displayOrder`,
-      width: 100,
+      width: 110,
     },
     {
       text: `권한(~부터 볼수 있음)`,
@@ -180,14 +180,14 @@ export default class extends Vue {
       align: `center`,
       value: `updated`,
       filterable: false,
-      width: 160,
+      width: 170,
     },
     {
       text: `작업자`,
       align: `start`,
       value: `updatedBy`,
       filterable: false,
-      width: 100,
+      width: 110,
     },
   ];
 

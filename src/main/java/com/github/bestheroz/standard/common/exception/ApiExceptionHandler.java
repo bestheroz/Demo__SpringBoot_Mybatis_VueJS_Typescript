@@ -35,8 +35,6 @@ public class ApiExceptionHandler {
 
         if (e.isEquals(ExceptionCode.FAIL_TRY_LOGIN_FIRST)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getApiResult());
-        } else if (e.isEquals(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getApiResult());
         }
         return ResponseEntity.badRequest().body(e.getApiResult());
     }

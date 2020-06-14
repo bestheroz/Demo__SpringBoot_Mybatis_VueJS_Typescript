@@ -29,7 +29,7 @@ public class Result {
     }
 
     public static ResponseEntity<ApiResult> error() {
-        return ResponseEntity.status(500).body(ApiResult.code(ExceptionCode.FAIL_SYSTEM_ERROR));
+        return ResponseEntity.status(500).body(ApiResult.code(ExceptionCode.ERROR_SYSTEM_ERROR));
     }
 
     public static ResponseEntity<ApiResult> error(final ExceptionCode exceptionCode) {

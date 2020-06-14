@@ -150,14 +150,14 @@ export default class extends Vue {
       text: `만료일`,
       align: `center`,
       value: `expired`,
-      width: 160,
+      width: 170,
     },
     {
       text: `사용 가능`,
       align: `center`,
       value: `available`,
       filterType: 'switch',
-      width: 100,
+      width: 110,
     },
     {
       text: `자동로그아웃시간(초)`,
@@ -170,14 +170,14 @@ export default class extends Vue {
       align: `center`,
       value: `updated`,
       filterable: false,
-      width: 160,
+      width: 170,
     },
     {
       text: `작업자`,
       align: `start`,
       value: `updatedBy`,
       filterable: false,
-      width: 100,
+      width: 110,
     },
   ];
 

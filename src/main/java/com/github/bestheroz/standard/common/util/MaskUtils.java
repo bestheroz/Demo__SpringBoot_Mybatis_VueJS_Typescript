@@ -7,7 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 @UtilityClass
 public class MaskUtils {
 
-    public static String getEmail(final String email) {
+    public String getEmail(final String email) {
         if (StringUtils.isEmpty(email)) {
             return StringUtils.EMPTY;
         }
@@ -41,7 +41,7 @@ public class MaskUtils {
         return returnValue.toString();
     }
 
-    public static String getId(final String id) {
+    public String getId(final String id) {
         if (StringUtils.isEmpty(id)) {
             return StringUtils.EMPTY;
         }
@@ -59,7 +59,7 @@ public class MaskUtils {
         return returnValue.toString();
     }
 
-    public static String getMobileTel(final String mobile) {
+    public String getMobileTel(final String mobile) {
         if (StringUtils.isEmpty(mobile)) {
             return StringUtils.EMPTY;
         }
@@ -89,7 +89,7 @@ public class MaskUtils {
         return returnValue.toString();
     }
 
-    public static String getName(final String name) {
+    public String getName(final String name) {
         if (StringUtils.isEmpty(name)) {
             return StringUtils.EMPTY;
         }

@@ -34,13 +34,8 @@ axiosInstance.interceptors.response.use(
   async function (error: AxiosError) {
     // Any status codes that falls outside the range of 2xx cause this function to trigger
     // Do something with response error
-    console.log('에러일 경우', error.config);
-    const errorAPI = error.config;
-    if (error.response && [401, 403].includes(error.response.data.status)) {
-      // if (['F004', 'F011'].includes(response.code)) {
+    if (error.response && error.response.data.status === 401) {
       await router.push(`/login?login=need`);
-      // }
-      return axios(errorAPI);
     }
     if (envs.ENV !== 'production') {
       console.error('에러난다. 빨리 고치자');
@@ -53,7 +48,7 @@ axiosInstance.interceptors.response.use(
       };
     } else {
       return {
-        code: 'F000',
+        code: 'E000',
         message: error.message,
       };
     }

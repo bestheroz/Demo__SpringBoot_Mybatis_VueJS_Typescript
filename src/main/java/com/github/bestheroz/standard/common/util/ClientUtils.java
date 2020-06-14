@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 @UtilityClass
 public class ClientUtils {
 
-    public static String getClientIpAddr(final HttpServletRequest request) {
+    public String getClientIpAddr(final HttpServletRequest request) {
         Assert.notNull(request, "Parameter `request` must not be null");
 
         final String[] headerValues = {"X-FORWARDED-FOR", "X-Forwarded-For", "Proxy-Client-IP", "WL-Proxy-Client-IP", "HTTP_CLIENT_IP", "HTTP_X_FORWARDED_FOR"};

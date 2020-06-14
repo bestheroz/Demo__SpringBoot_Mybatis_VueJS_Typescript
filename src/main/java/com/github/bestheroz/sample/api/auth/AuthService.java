@@ -1,8 +1,6 @@
 package com.github.bestheroz.sample.api.auth;
 
-import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.github.bestheroz.sample.api.entity.member.TableMemberRepository;
 import com.github.bestheroz.sample.api.entity.member.TableMemberVO;
 import com.github.bestheroz.standard.common.authenticate.JwtTokenProvider;
@@ -17,7 +15,6 @@ import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import javax.validation.constraints.NotNull;
 import java.util.Optional;
 
 @Service
@@ -74,14 +71,5 @@ public class AuthService implements UserDetailsService {
         tableMemberVO.setLoginFailCnt(0);
         this.tableMemberRepository.save(tableMemberVO);
         return JwtTokenProvider.createToken(tableMemberVO.getId());
-    }
-
-    void verify(@NotNull final String token, @NotNull final String id) {
-        try {
-            JWT.require(ALGORITHM).withIssuer(id).acceptExpiresAt(86400).build().verify(token);
-        } catch (final JWTVerificationException | NullPointerException e) {
-            log.warn(new BusinessException(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER).toString());
-            throw new BusinessException(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER);
-        }
     }
 }

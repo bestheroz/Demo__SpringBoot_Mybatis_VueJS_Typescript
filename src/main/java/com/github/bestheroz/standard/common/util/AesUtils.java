@@ -24,21 +24,21 @@ import java.util.Arrays;
 @Slf4j
 @UtilityClass
 public class AesUtils {
-    private static final String ALGORITHM = "AES";
-    private static final String TRANSFORMATION = "AES/CBC/PKCS5Padding";
-    private static final String DEFAULT_SECRET_KEY = "MY";
-    private static final String DEFAULT_IV = "MY";
-    private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
+    private final String ALGORITHM = "AES";
+    private final String TRANSFORMATION = "AES/CBC/PKCS5Padding";
+    private final String DEFAULT_SECRET_KEY = "MY";
+    private final String DEFAULT_IV = "MY";
+    private final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
 
-    public static String encrypt128(final String text) {
+    public String encrypt128(final String text) {
         return encrypt128(text, DEFAULT_SECRET_KEY, DEFAULT_IV);
     }
 
-    public static String encrypt128(final String text, final String secretKey) {
+    public String encrypt128(final String text, final String secretKey) {
         return encrypt128(text, secretKey, DEFAULT_IV);
     }
 
-    public static String encrypt128(final String text, final String secretKey, final String iv) {
+    public String encrypt128(final String text, final String secretKey, final String iv) {
         try {
             final Cipher cipher = Cipher.getInstance(TRANSFORMATION);
             cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(Arrays.copyOf(secretKey.getBytes(DEFAULT_CHARSET), 16), ALGORITHM),
@@ -46,22 +46,22 @@ public class AesUtils {
             return Base64.encodeBase64String(cipher.doFinal(text.getBytes(DEFAULT_CHARSET)));
         } catch (final IllegalBlockSizeException | BadPaddingException e) {
             log.warn(ExceptionUtils.getStackTrace(e));
-            throw new BusinessException(ExceptionCode.FAIL_ILLEGAL_BLOCK_SIZE_AES);
+            throw new BusinessException(ExceptionCode.ERROR_ILLEGAL_BLOCK_SIZE_AES);
         } catch (final InvalidKeyException | InvalidAlgorithmParameterException | NoSuchAlgorithmException | NoSuchPaddingException e) {
             log.warn(ExceptionUtils.getStackTrace(e));
             throw new BusinessException(e);
         }
     }
 
-    public static String decrypt128(final String text) {
+    public String decrypt128(final String text) {
         return decrypt128(text, DEFAULT_SECRET_KEY, DEFAULT_IV);
     }
 
-    public static String decrypt128(final String text, final String secretKey) {
+    public String decrypt128(final String text, final String secretKey) {
         return decrypt128(text, secretKey, DEFAULT_IV);
     }
 
-    public static String decrypt128(final String text, final String secretKey, final String iv) {
+    public String decrypt128(final String text, final String secretKey, final String iv) {
         try {
             final Cipher cipher = Cipher.getInstance(TRANSFORMATION);
             cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(Arrays.copyOf(secretKey.getBytes(DEFAULT_CHARSET), 16), ALGORITHM),
@@ -69,21 +69,21 @@ public class AesUtils {
             return new String(cipher.doFinal(Base64.decodeBase64(text)), DEFAULT_CHARSET);
         } catch (final IllegalBlockSizeException | BadPaddingException | InvalidKeyException | InvalidAlgorithmParameterException | NoSuchAlgorithmException | NoSuchPaddingException e) {
             log.warn(ExceptionUtils.getStackTrace(e));
-            // throw new CommonResponseException(CommonResultCode.FAIL_ILLEGAL_BLOCK_SIZE_AES);
+            // throw new CommonResponseException(CommonResultCode.ERROR_ILLEGAL_BLOCK_SIZE_AES);
             return StringUtils.EMPTY;
         } // throw new CommonResponseException(e);
 
     }
 
-    public static String encrypt256(final String text) {
+    public String encrypt256(final String text) {
         return encrypt256(text, DEFAULT_SECRET_KEY, DEFAULT_IV);
     }
 
-    public static String encrypt256(final String text, final String secretKey) {
+    public String encrypt256(final String text, final String secretKey) {
         return encrypt256(text, secretKey, DEFAULT_IV);
     }
 
-    public static String encrypt256(final String text, final String secretKey, final String iv) {
+    public String encrypt256(final String text, final String secretKey, final String iv) {
         try {
             final Cipher cipher = Cipher.getInstance(TRANSFORMATION);
             cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(Arrays.copyOf(secretKey.getBytes(DEFAULT_CHARSET), 32), ALGORITHM),
@@ -91,22 +91,22 @@ public class AesUtils {
             return Base64.encodeBase64String(cipher.doFinal(text.getBytes(DEFAULT_CHARSET)));
         } catch (final IllegalBlockSizeException | BadPaddingException e) {
             log.warn(ExceptionUtils.getStackTrace(e));
-            throw new BusinessException(ExceptionCode.FAIL_ILLEGAL_BLOCK_SIZE_AES);
+            throw new BusinessException(ExceptionCode.ERROR_ILLEGAL_BLOCK_SIZE_AES);
         } catch (final InvalidKeyException | InvalidAlgorithmParameterException | NoSuchAlgorithmException | NoSuchPaddingException e) {
             log.warn(ExceptionUtils.getStackTrace(e));
             throw new BusinessException(e);
         }
     }
 
-    public static String decrypt256(final String text) {
+    public String decrypt256(final String text) {
         return decrypt256(text, DEFAULT_SECRET_KEY, DEFAULT_IV);
     }
 
-    public static String decrypt256(final String text, final String secretKey) {
+    public String decrypt256(final String text, final String secretKey) {
         return decrypt256(text, secretKey, DEFAULT_IV);
     }
 
-    public static String decrypt256(final String text, final String secretKey, final String iv) {
+    public String decrypt256(final String text, final String secretKey, final String iv) {
         try {
             final Cipher cipher = Cipher.getInstance(TRANSFORMATION);
             cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(Arrays.copyOf(secretKey.getBytes(DEFAULT_CHARSET), 32), ALGORITHM),
@@ -114,7 +114,7 @@ public class AesUtils {
             return new String(cipher.doFinal(Base64.decodeBase64(text)), DEFAULT_CHARSET);
         } catch (final IllegalBlockSizeException | BadPaddingException | InvalidKeyException | InvalidAlgorithmParameterException | NoSuchAlgorithmException | NoSuchPaddingException e) {
             log.warn(ExceptionUtils.getStackTrace(e));
-            // throw new CommonResponseException(CommonResultCode.FAIL_ILLEGAL_BLOCK_SIZE_AES);
+            // throw new CommonResponseException(CommonResultCode.ERROR_ILLEGAL_BLOCK_SIZE_AES);
             return StringUtils.EMPTY;
         } // throw new CommonResponseException(e);
 

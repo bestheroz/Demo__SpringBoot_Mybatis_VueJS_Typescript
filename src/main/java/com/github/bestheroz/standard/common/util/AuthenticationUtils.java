@@ -2,6 +2,7 @@ package com.github.bestheroz.standard.common.util;
 
 import com.github.bestheroz.standard.common.authenticate.UserVO;
 import com.github.bestheroz.standard.common.exception.BusinessException;
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -9,13 +10,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 @Slf4j
+@UtilityClass
 public class AuthenticationUtils {
 
-    protected AuthenticationUtils() {
-        throw new UnsupportedOperationException();
-    }
-
-    public static boolean isLoggedIn() {
+    public boolean isLoggedIn() {
         try {
             getLoginVO();
             return true;
@@ -24,11 +22,11 @@ public class AuthenticationUtils {
         }
     }
 
-    public static boolean isNotLoggedIn() {
+    public boolean isNotLoggedIn() {
         return !isLoggedIn();
     }
 
-    public static UserVO getLoginVO() {
+    public UserVO getLoginVO() {
         try {
             final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             if (!authentication.isAuthenticated() || StringUtils.equals(authentication.getName(), "anonymousUser")) {
@@ -42,7 +40,7 @@ public class AuthenticationUtils {
         }
     }
 
-    public static String getUserName() {
+    public String getUserName() {
         try {
             final String username = SecurityContextHolder.getContext().getAuthentication().getName();
             if (username == null) {
@@ -56,7 +54,7 @@ public class AuthenticationUtils {
         }
     }
 
-    public static void logout() {
+    public void logout() {
         SecurityContextHolder.clearContext();
     }
 }

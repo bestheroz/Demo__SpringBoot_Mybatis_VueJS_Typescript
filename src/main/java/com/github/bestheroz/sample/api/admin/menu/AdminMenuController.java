@@ -29,14 +29,14 @@ public class AdminMenuController {
     }
 
     @PostMapping
-    @CacheEvict(value = "drawerVO", allEntries = true)
+    @CacheEvict(value = "drawerCache", allEntries = true)
     public ResponseEntity<ApiResult> insert(@RequestBody final TableMenuVO tableMenuVO) {
         this.tableMenuRepository.save(tableMenuVO);
         return Result.ok();
     }
 
     @PatchMapping(value = "{id}")
-    @CacheEvict(value = "drawerVO", allEntries = true)
+    @CacheEvict(value = "drawerCache", allEntries = true)
     public ResponseEntity<ApiResult> update(@PathVariable(value = "id") final Integer id, @RequestBody final TableMenuVO tableMenuVO) {
         final Optional<TableMenuVO> byId = this.tableMenuRepository.findById(id);
         if (byId.isPresent()) {
@@ -48,7 +48,7 @@ public class AdminMenuController {
     }
 
     @DeleteMapping(value = "{id}")
-    public @CacheEvict(value = "drawerVO", allEntries = true)
+    public @CacheEvict(value = "drawerCache", allEntries = true)
     ResponseEntity<ApiResult> delete(@PathVariable(value = "id") final Integer id) {
         this.tableMenuRepository.deleteById(id);
         return Result.ok();

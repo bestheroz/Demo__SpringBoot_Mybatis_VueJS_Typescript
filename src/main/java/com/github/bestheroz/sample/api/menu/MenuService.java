@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 public class MenuService {
     @Resource private TableMenuRepository tableMenuRepository;
 
-    @Cacheable(value = "drawerVO", key = "#authority")
+    @Cacheable(value = "drawerCache", key = "#authority")
     public List<DrawerVO> getDrawerList(final Integer authority) {
         final List<DrawerVO> result;
         if (authority.equals(999)) {

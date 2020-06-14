@@ -5,7 +5,6 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.github.bestheroz.sample.api.auth.AuthService;
 import com.github.bestheroz.standard.common.exception.BusinessException;
-import com.github.bestheroz.standard.common.exception.ExceptionCode;
 import com.github.bestheroz.standard.common.util.AccessBeanUtils;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -35,8 +34,8 @@ public class JwtTokenProvider {
         try {
             return JWT.require(ALGORITHM).acceptExpiresAt(86400).build().verify(token).getClaims().get("userPk").asString();
         } catch (final JWTVerificationException | NullPointerException e) {
-            log.warn(new BusinessException(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER).toString());
-            throw new BusinessException(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER);
+            log.warn(BusinessException.FAIL_TRY_LOGIN_FIRST.toString());
+            throw BusinessException.FAIL_TRY_LOGIN_FIRST;
         }
     }
 
@@ -52,5 +51,4 @@ public class JwtTokenProvider {
             return false;
         }
     }
-
 }
