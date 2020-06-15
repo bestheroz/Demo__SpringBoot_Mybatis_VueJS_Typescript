@@ -10,6 +10,9 @@ spring:
       max-file-size: 20MB
       max-request-size: 10MB
       file-size-threshold: 0
+  mvc:
+    converters:
+      preferred-json-mapper: gson
   jpa:
     show-sql: true
     hibernate:
