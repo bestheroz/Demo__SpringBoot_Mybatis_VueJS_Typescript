@@ -1,6 +1,5 @@
 package com.github.bestheroz.sample.api.auth;
 
-import com.auth0.jwt.algorithms.Algorithm;
 import com.github.bestheroz.sample.api.entity.member.TableMemberRepository;
 import com.github.bestheroz.sample.api.entity.member.TableMemberVO;
 import com.github.bestheroz.standard.common.authenticate.JwtTokenProvider;
@@ -20,7 +19,6 @@ import java.util.Optional;
 @Service
 @Slf4j
 public class AuthService implements UserDetailsService {
-    private static final Algorithm ALGORITHM = Algorithm.HMAC512("secret");
     @Resource private TableMemberRepository tableMemberRepository;
 
     @Override
