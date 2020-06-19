@@ -1,9 +1,9 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import router from '@/router';
-import axios from 'axios';
 import { TableMemberVO } from '@/common/types';
 import envs from '@/constants/envs';
+import { axiosInstance } from '@/utils/apis';
 
 Vue.use(Vuex);
 
@@ -21,7 +21,7 @@ export default new Vuex.Store({
     },
     async logout(state) {
       try {
-        await axios.delete(`${envs.API_HOST}api/auth/logout`);
+        await axiosInstance.delete(`${envs.API_HOST}api/auth/logout`);
       } catch (e) {
         console.error(e);
       }
