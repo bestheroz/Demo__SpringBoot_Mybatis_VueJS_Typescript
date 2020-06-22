@@ -168,7 +168,7 @@ import { getCodeListApi, patchDataApi, postDataApi } from '@/utils/apis';
 import _ from 'lodash';
 import DatetimePicker from '@/components/picker/DatetimePicker.vue';
 
-const SHA512 = require('crypto-js/sha256');
+const pbkdf2 = require('pbkdf2');
 
 @Component({
   name: 'MemberEditDialog',
@@ -209,7 +209,9 @@ export default class extends Vue {
     this.loading = true;
     const params = { ...this.editItem };
     if (params.password) {
-      params.password = SHA512(params.password).toString();
+      params.password = pbkdf2
+        .pbkdf2Sync(params.password, 'salt', 1, 32, 'sha512')
+        .toString();
     }
     const response = await postDataApi<TableMemberVO>(`admin/members/`, params);
     this.loading = false;
@@ -223,7 +225,9 @@ export default class extends Vue {
     this.loading = true;
     const params = { ...this.editItem };
     if (params.password) {
-      params.password = SHA512(params.password).toString();
+      params.password = pbkdf2
+        .pbkdf2Sync(params.password, 'salt', 1, 32, 'sha512')
+        .toString();
     }
     const response = await patchDataApi<TableMemberVO>(
       `admin/members/`,

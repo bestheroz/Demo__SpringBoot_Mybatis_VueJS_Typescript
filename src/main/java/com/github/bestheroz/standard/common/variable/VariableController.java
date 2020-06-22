@@ -1,19 +1,25 @@
 package com.github.bestheroz.standard.common.variable;
 
-import com.github.bestheroz.standard.common.response.ResponseVO;
-import org.springframework.beans.factory.annotation.Value;
+import com.github.bestheroz.standard.common.response.ApiResult;
+import com.github.bestheroz.standard.common.response.Result;
+import lombok.Setter;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("variable")
+@Configuration
+@RequestMapping("api/variables")
+@ConfigurationProperties(prefix = "app")
+@Setter
 public class VariableController {
-    @Value("${variable.app.title}")
-    private String appTitle;
+    private String title;
 
-    @GetMapping("appTitle")
-    public ResponseVO getAppTitle() {
-        return ResponseVO.getSuccessResponseVO(this.appTitle);
+    @GetMapping("title")
+    ResponseEntity<ApiResult> getAppTitle() {
+        return Result.ok(this.title);
     }
 }

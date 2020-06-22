@@ -128,7 +128,7 @@ export default class extends Vue {
       value: `type`,
       filterType: 'select',
       filterSelectItem: [],
-      width: 100,
+      width: 110,
     },
     {
       text: `메뉴명`,
@@ -146,28 +146,28 @@ export default class extends Vue {
       align: `center`,
       value: `action`,
       filterable: false,
-      width: 250,
+      width: 280,
     },
     {
       text: `작업 일시`,
       align: `center`,
       value: `updated`,
       filterable: false,
-      width: 160,
+      width: 170,
     },
     {
       text: `작업자`,
       align: `start`,
       value: `updatedBy`,
       filterable: false,
-      width: 100,
+      width: 110,
     },
   ];
 
   async mounted() {
     this.MENU_TYPE = await getCodeListApi(`MENU_TYPE`);
     this.headers[0].filterSelectItem = this.MENU_TYPE;
-    this.getList();
+    await this.getList();
   }
 
   async getList() {

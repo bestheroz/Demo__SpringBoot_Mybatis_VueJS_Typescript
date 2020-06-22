@@ -4,7 +4,7 @@
       <v-slide-y-transition appear>
         <v-card max-width="100%" width="600" class="elevation-12">
           <v-toolbar color="primary" dark flat>
-            <v-toolbar-title>Login at {{ appTitle }}</v-toolbar-title>
+            <v-toolbar-title>Login at {{ title }}</v-toolbar-title>
             <v-spacer />
             <template v-slot:heading>
               <div class="text-center">
@@ -66,6 +66,7 @@
                 depressed
                 text
                 rounded
+                :loading="loading"
                 @click="login"
               >
                 Let's Go
@@ -80,27 +81,25 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { ApiDataResult, getVariableApi } from '@/utils/apis';
-import _ from 'lodash';
-import axios from 'axios';
-import envs from '@/constants/envs';
-import { TableMemberVO, TableMenuVO } from '@/common/types';
+import { ApiDataResult, axiosInstance, getVariableApi } from '@/utils/apis';
 import { alertError } from '@/utils/alerts';
 
-const SHA512 = require('crypto-js/sha512');
+const pbkdf2 = require('pbkdf2');
 
 @Component({ name: 'Login' })
 export default class extends Vue {
   id: string | null = null;
   password: string | null = null;
   show1: boolean = false;
-  appTitle: string | null = null;
+  title: string | null = null;
+  loading: boolean = false;
 
   async mounted() {
-    if (this.$route.query.need === 'login') {
+    if (this.$route.query.login === 'need') {
       this.$toasted.error('로그인이 필요합니다.');
     }
-    this.appTitle = await getVariableApi('appTitle');
+    this.title = await getVariableApi('title');
+    Vue.$storage.clear();
   }
 
   async login() {
@@ -108,23 +107,27 @@ export default class extends Vue {
     if (!inValid) {
       return;
     }
-
-    const response = await axios.post<ApiDataResult<TableMemberVO>>(
-      `${envs.API_HOST}auth/login`,
-      {
+    this.loading = true;
+    try {
+      const pbkdf2Password: string = pbkdf2
+        .pbkdf2Sync(this.password, 'salt', 1, 32, 'sha512')
+        .toString();
+      const response = await axiosInstance.post<
+        ApiDataResult<{
+          id: string;
+          password: string;
+        }>
+      >(`api/auth/login`, {
         id: this.id,
-        password: SHA512(this.password).toString(),
-      },
-    );
-    if (_.startsWith(response.data.code, `S`)) {
-      this.$store.commit('loginToken', response.data.data);
+        password: pbkdf2Password,
+      });
+      this.$store.commit('saveToken', response.data.data);
       this.$toasted.clear();
-      const response2 = await this.$store.state.axiosInstance.get('/menu');
-      this.$storage.set('drawer', response2.data.data);
       await this.$router.push('/');
-    } else {
-      alertError(response.data.message);
+    } catch (e) {
+      alertError(e);
     }
+    this.loading = false;
   }
 }
 </script>

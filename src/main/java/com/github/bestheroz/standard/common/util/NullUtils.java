@@ -18,7 +18,7 @@ import java.util.Set;
 public class NullUtils {
 
     // int 도 함께 커버됨
-    public static boolean equals(final Integer n1, final Integer n2) {
+    public boolean equals(final Integer n1, final Integer n2) {
         try {
             return n1 != null && n2 != null && n1.intValue() == n2.intValue();
         } catch (final Throwable e) {
@@ -27,7 +27,7 @@ public class NullUtils {
         }
     }
 
-    public static boolean equals(final Long n1, final Long n2) {
+    public boolean equals(final Long n1, final Long n2) {
         try {
             return n1 != null && n2 != null && n1.longValue() == n2.longValue();
         } catch (final Throwable e) {
@@ -36,7 +36,7 @@ public class NullUtils {
         }
     }
 
-    public static boolean exists(final File file) {
+    public boolean exists(final File file) {
         try {
             return file != null && file.exists();
         } catch (final Throwable e) {
@@ -45,7 +45,7 @@ public class NullUtils {
         }
     }
 
-    public static boolean hasNext(final Iterator<?> iterator) {
+    public boolean hasNext(final Iterator<?> iterator) {
         try {
             return iterator != null && iterator.hasNext();
         } catch (final Throwable e) {
@@ -54,7 +54,7 @@ public class NullUtils {
         }
     }
 
-    public static boolean isEmpty(final JsonElement json) {
+    public boolean isEmpty(final JsonElement json) {
         try {
             if (json == null) {
                 return true;
@@ -72,7 +72,7 @@ public class NullUtils {
         }
     }
 
-    public static boolean isEmpty(final MultipartFile multipartFile) {
+    public boolean isEmpty(final MultipartFile multipartFile) {
         try {
             return multipartFile == null || multipartFile.isEmpty();
         } catch (final Throwable e) {
@@ -81,7 +81,7 @@ public class NullUtils {
         }
     }
 
-    public static boolean isEmpty(final List<?> list) {
+    public boolean isEmpty(final List<?> list) {
         try {
             return size(list) == 0;
         } catch (final Throwable e) {
@@ -90,7 +90,7 @@ public class NullUtils {
         }
     }
 
-    public static boolean isEmpty(final Set<?> list) {
+    public boolean isEmpty(final Set<?> list) {
         try {
             return size(list) == 0;
         } catch (final Throwable e) {
@@ -99,23 +99,23 @@ public class NullUtils {
         }
     }
 
-    public static boolean isNotEmpty(final JsonElement json) {
+    public boolean isNotEmpty(final JsonElement json) {
         return !isEmpty(json);
     }
 
-    public static boolean isNotEmpty(final MultipartFile multipartFile) {
+    public boolean isNotEmpty(final MultipartFile multipartFile) {
         return !isEmpty(multipartFile);
     }
 
-    public static boolean isNotEmpty(final List<?> list) {
+    public boolean isNotEmpty(final List<?> list) {
         return !isEmpty(list);
     }
 
-    public static boolean isNotEmpty(final Set<?> list) {
+    public boolean isNotEmpty(final Set<?> list) {
         return !isEmpty(list);
     }
 
-    public static int size(final List<?> list) {
+    public int size(final List<?> list) {
         try {
             return list == null ? 0 : list.size();
         } catch (final Throwable e) {
@@ -124,7 +124,7 @@ public class NullUtils {
         }
     }
 
-    public static int size(final Set<?> list) {
+    public int size(final Set<?> list) {
         try {
             return list == null ? 0 : list.size();
         } catch (final Throwable e) {
@@ -133,7 +133,7 @@ public class NullUtils {
         }
     }
 
-    public static int size(final JsonArray list) {
+    public int size(final JsonArray list) {
         try {
             return list == null ? 0 : list.size();
         } catch (final Throwable e) {
@@ -142,7 +142,7 @@ public class NullUtils {
         }
     }
 
-    public static int size(final Map<String, ?> map) {
+    public int size(final Map<String, ?> map) {
         try {
             return map == null ? 0 : map.size();
         } catch (final Throwable e) {

@@ -3,6 +3,7 @@ package com.github.bestheroz.standard.common.util;
 import com.github.bestheroz.standard.common.exception.BusinessException;
 import com.github.bestheroz.standard.common.exception.ExceptionCode;
 import com.google.common.collect.ImmutableSet;
+import lombok.experimental.UtilityClass;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.RegExUtils;
@@ -25,38 +26,35 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+@UtilityClass
 public class FileUtils {
-    private static final Logger LOGGER = LoggerFactory.getLogger(FileUtils.class);
-    private static final String FILE_ROOT_PATH = "/workspace/uploadRootPath/";
-    private static final String STR_DOT = ".";
-    private static final String STR_INFO_MESSAGE = "Target for uploading file : {}";
-    private static final String STR_UNDERLINE = "_";
-    private static final Tika TIKA_INSTANCE = new Tika();
+    private final Logger LOGGER = LoggerFactory.getLogger(FileUtils.class);
+    private final String FILE_ROOT_PATH = "/workspace/uploadRootPath/";
+    private final String STR_DOT = ".";
+    private final String STR_INFO_MESSAGE = "Target for uploading file : {}";
+    private final String STR_UNDERLINE = "_";
+    private final Tika TIKA_INSTANCE = new Tika();
 
-    protected FileUtils() {
-        throw new UnsupportedOperationException();
-    }
-
-    public static boolean deleteDirectory(final File file) {
+    public boolean deleteDirectory(final File file) {
         forceDelete(file);
         LOGGER.info("Target for deleting dir : {}", file.getAbsolutePath());
         return true;
     }
 
-    public static void deleteDirectory(final String filePath) {
+    public void deleteDirectory(final String filePath) {
         deleteFile(getFile(filePath));
     }
 
-    public static void deleteFile(final File file) {
+    public void deleteFile(final File file) {
         forceDelete(file);
         LOGGER.info("Target for deleting file : {}", file.getAbsolutePath());
     }
 
-    public static void deleteFile(final String filePath) {
+    public void deleteFile(final String filePath) {
         deleteFile(getFile(filePath));
     }
 
-    private static File forceDelete(final File file) {
+    private File forceDelete(final File file) {
         try {
             org.apache.commons.io.FileUtils.forceDelete(file);
         } catch (final IOException e) {
@@ -66,7 +64,7 @@ public class FileUtils {
         return file;
     }
 
-    public static String getEncodedFileName(final HttpServletRequest request, final String fileName) {
+    public String getEncodedFileName(final HttpServletRequest request, final String fileName) {
         try {
             final String header = request.getHeader("User-Agent");
 
@@ -103,21 +101,21 @@ public class FileUtils {
         }
     }
 
-    public static File getFile(final String filePath) {
+    public File getFile(final String filePath) {
         final String path = RegExUtils.replaceAll(getFileRoot() + filePath, "\\\\", "/").replaceAll("//", "/");
         final File file = org.apache.commons.io.FileUtils.getFile(path);
         if (file.isDirectory() && !StringUtils.endsWith(path, "/")) {
-            LOGGER.warn("{} : {}", path, ExceptionCode.FAIL_DIR_PATH_MUST_ENDS_WITH_SLASH.toString());
-            throw new BusinessException(ExceptionCode.FAIL_DIR_PATH_MUST_ENDS_WITH_SLASH);
+            LOGGER.warn("{} : {}", path, ExceptionCode.ERROR_DIR_PATH_MUST_ENDS_WITH_SLASH.toString());
+            throw new BusinessException(ExceptionCode.ERROR_DIR_PATH_MUST_ENDS_WITH_SLASH);
         }
         return file;
     }
 
-    public static File getDirectory(final String dirPath) {
+    public File getDirectory(final String dirPath) {
         final String path = RegExUtils.replaceAll(getFileRoot() + dirPath, "\\\\", "/").replaceAll("//", "/");
         if (!StringUtils.endsWith(path, "/")) {
-            LOGGER.warn("{} : {}", path, ExceptionCode.FAIL_DIR_PATH_MUST_ENDS_WITH_SLASH.toString());
-            throw new BusinessException(ExceptionCode.FAIL_DIR_PATH_MUST_ENDS_WITH_SLASH);
+            LOGGER.warn("{} : {}", path, ExceptionCode.ERROR_DIR_PATH_MUST_ENDS_WITH_SLASH.toString());
+            throw new BusinessException(ExceptionCode.ERROR_DIR_PATH_MUST_ENDS_WITH_SLASH);
         }
         final File file = getFile(path);
         if (!NullUtils.exists(file)) {
@@ -131,7 +129,7 @@ public class FileUtils {
         return file;
     }
 
-    private static String getFileRoot() {
+    private String getFileRoot() {
         if (StringUtils.containsIgnoreCase(System.getProperty("os.name"), "win")) {
             return "C:" + FILE_ROOT_PATH;
         } else {
@@ -139,11 +137,11 @@ public class FileUtils {
         }
     }
 
-    public static boolean isExistsFile(final String filePath) {
+    public boolean isExistsFile(final String filePath) {
         return NullUtils.exists(getFile(filePath));
     }
 
-    public static List<File> uploadAllFiles(final MultipartHttpServletRequest mRequest, final String targetDirPath) {
+    public List<File> uploadAllFiles(final MultipartHttpServletRequest mRequest, final String targetDirPath) {
         final Map<String, MultipartFile> fileMap = mRequest.getFileMap();
         if (NullUtils.size(fileMap) < 1) {
             return null;
@@ -162,7 +160,7 @@ public class FileUtils {
         return savedFiles;
     }
 
-    private static File uploadMultipartFile(final String targetDirPath, final MultipartFile multipartFile) {
+    private File uploadMultipartFile(final String targetDirPath, final MultipartFile multipartFile) {
         final StringBuilder fileName = new StringBuilder(80);
         fileName.append(DateTime.now().toString(DateUtils.YYYYMMDDHHMMSS)).append(STR_UNDERLINE).append(DigestUtils.md5Hex(multipartFile.getOriginalFilename()));
         if (StringUtils.isNotEmpty(getExtension(multipartFile))) {
@@ -178,7 +176,7 @@ public class FileUtils {
         return file;
     }
 
-    public static File uploadFile(final MultipartFile multipartFile, final String targetDirPath) {
+    public File uploadFile(final MultipartFile multipartFile, final String targetDirPath) {
         if (NullUtils.isEmpty(multipartFile)) {
             return null;
         }
@@ -190,7 +188,7 @@ public class FileUtils {
     }
 
     // 업로드 하려는 파일의 검증(MultipartFile 이용)
-    public static void validateFile(final MultipartFile multipartFile) {
+    public void validateFile(final MultipartFile multipartFile) {
         if (FileType.ILLEGAL.extList.contains(getExtension(multipartFile))) {
             LOGGER.warn("{}{}", ExceptionCode.FAIL_FILE_SIZE.toString(), multipartFile.getOriginalFilename());
             throw new BusinessException(ExceptionCode.FAIL_FILE_SIZE);
@@ -202,7 +200,7 @@ public class FileUtils {
     }
 
     // 업로드된 파일의 검증(File 이용)
-    public static void validateFile(final File file) {
+    public void validateFile(final File file) {
         if (FileType.ILLEGAL.extList.contains(getExtension(file))) {
             LOGGER.warn("{}{}", ExceptionCode.FAIL_FILE_SIZE.toString(), file.getAbsolutePath());
             throw new BusinessException(ExceptionCode.FAIL_FILE_SIZE);
@@ -214,7 +212,7 @@ public class FileUtils {
     }
 
     // 업로드 하려는 파일의 검증(MultipartFile 이용)
-    public static void validateFile(final MultipartFile multipartFile, final FileType fileType) {
+    public void validateFile(final MultipartFile multipartFile, final FileType fileType) {
         try {
             if (!fileType.extList.contains(getExtension(multipartFile))) {
                 LOGGER.warn("{}{}", ExceptionCode.FAIL_FILE_SIZE.toString(), multipartFile.getOriginalFilename());
@@ -232,7 +230,7 @@ public class FileUtils {
     }
 
     // 업로드된 파일의 검증(File 이용)
-    public static void validateFile(final File file, final FileType fileType) {
+    public void validateFile(final File file, final FileType fileType) {
         try {
             if (!fileType.extList.contains(getExtension(file))) {
                 LOGGER.warn("{}{}", ExceptionCode.FAIL_FILE_SIZE.toString(), file.getAbsolutePath());
@@ -249,7 +247,7 @@ public class FileUtils {
         }
     }
 
-    private static BusinessException setResultCodeByFileType(final BusinessException e, final FileType fileType) {
+    private BusinessException setResultCodeByFileType(final BusinessException e, final FileType fileType) {
         if (FileType.IMAGE.equals(fileType)) {
             if (e.isEquals(ExceptionCode.FAIL_FILE_SIZE)) {
                 return new BusinessException(ExceptionCode.FAIL_IMAGE_EXT);
@@ -278,15 +276,15 @@ public class FileUtils {
         return e;
     }
 
-    public static boolean isFileType(final MultipartFile multipartFile, final FileType fileType) {
+    public boolean isFileType(final MultipartFile multipartFile, final FileType fileType) {
         return fileType.extList.contains(getExtension(multipartFile)) && fileType.mimeTypeList.contains(getMimeType(multipartFile));
     }
 
-    public static boolean isFileType(final File file, final FileType fileType) {
+    public boolean isFileType(final File file, final FileType fileType) {
         return fileType.extList.contains(getExtension(file)) && fileType.mimeTypeList.contains(getMimeType(file));
     }
 
-    public static String getMimeType(final MultipartFile multipartFile) {
+    public String getMimeType(final MultipartFile multipartFile) {
         try {
             if (multipartFile == null) {
                 return null;
@@ -298,7 +296,7 @@ public class FileUtils {
         }
     }
 
-    public static String getMimeType(final File file) {
+    public String getMimeType(final File file) {
         try {
             if (file == null) {
                 return null;
@@ -310,57 +308,57 @@ public class FileUtils {
         }
     }
 
-    public static String getFullName(final MultipartFile multipartFile) {
+    public String getFullName(final MultipartFile multipartFile) {
         if (multipartFile == null) {
             return null;
         }
         return getFullName(multipartFile.getOriginalFilename());
     }
 
-    public static String getFullName(final File file) {
+    public String getFullName(final File file) {
         if (file == null) {
             return null;
         }
         return getFullName(file.getName());
     }
 
-    public static String getFullName(final String fileName) {
+    public String getFullName(final String fileName) {
         return FilenameUtils.getName(fileName);
     }
 
-    public static String getBaseName(final MultipartFile multipartFile) {
+    public String getBaseName(final MultipartFile multipartFile) {
         if (multipartFile == null) {
             return null;
         }
         return getBaseName(multipartFile.getOriginalFilename());
     }
 
-    public static String getBaseName(final File file) {
+    public String getBaseName(final File file) {
         if (file == null) {
             return null;
         }
         return getBaseName(file.getName());
     }
 
-    public static String getBaseName(final String fileName) {
+    public String getBaseName(final String fileName) {
         return FilenameUtils.getBaseName(fileName);
     }
 
-    public static String getExtension(final MultipartFile multipartFile) {
+    public String getExtension(final MultipartFile multipartFile) {
         if (multipartFile == null) {
             return null;
         }
         return getExtension(multipartFile.getOriginalFilename());
     }
 
-    public static String getExtension(final File file) {
+    public String getExtension(final File file) {
         if (file == null) {
             return null;
         }
         return getExtension(file.getName());
     }
 
-    public static String getExtension(final String fileName) {
+    public String getExtension(final String fileName) {
         return FilenameUtils.getExtension(fileName).toLowerCase(Locale.getDefault());
     }
 

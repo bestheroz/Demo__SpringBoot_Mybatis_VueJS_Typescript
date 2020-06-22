@@ -252,12 +252,15 @@ export default class extends Vue {
   get localStartDayLabel(): string {
     return this.startDayLabel || '날짜선택(From)';
   }
+
   get localEndDayLabel(): string {
     return this.endDayLabel || '날짜선택(To)';
   }
+
   get localStartTimeLabel(): string {
     return this.endTimeLabel || '시간선택(From)';
   }
+
   get localEndTimeLabel(): string {
     return this.endTimeLabel || '시간선택(To)';
   }

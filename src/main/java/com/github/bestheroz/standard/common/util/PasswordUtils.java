@@ -16,7 +16,7 @@ public class PasswordUtils {
      * - 스페이스, 탭 등을 비포함
      * </pre>
      */
-    private static final String PATTERN = "^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[~!@#$%^&*()_+=-])(?=\\S+$).{8,}$";
+    private final String PATTERN = "^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[~!@#$%^&*()_+=-])(?=\\S+$).{8,}$";
 
     /**
      * <pre>
@@ -40,7 +40,7 @@ public class PasswordUtils {
      * </pre>
      */
 
-    public static boolean checkPasswordSafe(final String password) {
+    public boolean checkPasswordSafe(final String password) {
         if (StringUtils.isEmpty(password)) {
             return false;
         }

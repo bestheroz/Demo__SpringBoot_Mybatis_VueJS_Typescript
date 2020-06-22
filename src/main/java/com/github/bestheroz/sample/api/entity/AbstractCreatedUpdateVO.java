@@ -1,6 +1,6 @@
 package com.github.bestheroz.sample.api.entity;
 
-import com.github.bestheroz.standard.common.util.SessionUtils;
+import com.github.bestheroz.standard.common.util.AuthenticationUtils;
 import lombok.Data;
 import org.joda.time.LocalDateTime;
 
@@ -24,16 +24,16 @@ public abstract class AbstractCreatedUpdateVO {
     @PrePersist
     protected void onCreate() {
         this.updated = this.created = LocalDateTime.now();
-        if (SessionUtils.isLoggedIn()) {
-            this.updatedBy = this.createdBy = SessionUtils.getId();
+        if (AuthenticationUtils.isLoggedIn()) {
+            this.updatedBy = this.createdBy = AuthenticationUtils.getUserName();
         }
     }
 
     @PreUpdate
     protected void onUpdate() {
         this.updated = LocalDateTime.now();
-        if (SessionUtils.isLoggedIn()) {
-            this.updatedBy = SessionUtils.getId();
+        if (AuthenticationUtils.isLoggedIn()) {
+            this.updatedBy = AuthenticationUtils.getUserName();
         }
     }
 }

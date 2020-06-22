@@ -132,8 +132,6 @@ export default class extends Vue {
   watchDialog(val: boolean) {
     if (val) {
       this.$refs.observer && (this.$refs.observer as any).reset();
-    } else {
-      this.$storage.remove('drawer');
     }
   }
 

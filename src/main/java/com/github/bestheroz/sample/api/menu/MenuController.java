@@ -1,7 +1,9 @@
 package com.github.bestheroz.sample.api.menu;
 
-import com.github.bestheroz.standard.common.response.ResponseVO;
-import com.github.bestheroz.standard.common.util.SessionUtils;
+import com.github.bestheroz.standard.common.response.ApiResult;
+import com.github.bestheroz.standard.common.response.Result;
+import com.github.bestheroz.standard.common.util.AuthenticationUtils;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -9,12 +11,12 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 
 @RestController
-@RequestMapping("menu")
+@RequestMapping("api/menu")
 public class MenuController {
     @Resource private MenuService menuService;
 
     @GetMapping
-    public ResponseVO getDrawerList() {
-        return ResponseVO.getSuccessResponseVO(this.menuService.getDrawerList(SessionUtils.getAttributeInteger("authority")));
+    ResponseEntity<ApiResult> getDrawerList() {
+        return Result.ok(this.menuService.getDrawerList(AuthenticationUtils.getLoginVO().getAuthority()));
     }
 }

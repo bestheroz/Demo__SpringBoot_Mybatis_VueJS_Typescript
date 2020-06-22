@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE configuration>
 <!-- <configuration debug="true" scan="true" scanPeriod="1 seconds"> -->
-<configuration debug="true">
+<configuration>
     <springProfile name="dev">
         <property name="LOG_DIR" value="/home/user/WAS/logs"/>
 

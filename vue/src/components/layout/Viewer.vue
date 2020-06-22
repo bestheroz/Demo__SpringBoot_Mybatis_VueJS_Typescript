@@ -1,5 +1,5 @@
 <template>
-  <v-content :title="null">
+  <v-main :title="null">
     <v-alert
       id="pageTitle"
       border="bottom"
@@ -15,55 +15,31 @@
     <v-container fluid>
       <router-view />
     </v-container>
-  </v-content>
+  </v-main>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { DrawerItem, SelectItem, TableMemberVO } from '@/common/types';
-import { getListApi } from '@/utils/apis';
+import { DrawerItem, TableMenuVO } from '@/common/types';
 
 @Component({ name: 'Viewer' })
 export default class extends Vue {
-  items: DrawerItem[] | null = null;
-  async beforeCreate() {
-    if (!this.$storage.has('drawer')) {
-      const response = await this.$store.state.axiosInstance.get('/menu');
-      this.$storage.set('drawer', response.data.data);
-      this.items = response.data.data;
-    }
-    if (!Vue.$storage.has('memberList')) {
-      const response = await getListApi<TableMemberVO[]>(`/members`);
-      Vue.$storage.set(
-        'memberList',
-        response.data!.map((item) => {
-          return { value: item.id, text: item.name };
-        }),
-      );
-    }
-  }
-
-  async updated() {
-    if (!this.$storage.has('drawer')) {
-      const response = await this.$store.state.axiosInstance.get('/menu');
-      this.$storage.set('drawer', response.data.data);
-      this.items = response.data.data;
-    }
-    if (!Vue.$storage.has('memberList')) {
-      const response = await getListApi<TableMemberVO[]>(`/members`);
-      Vue.$storage.set(
-        'memberList',
-        response.data!.map((item) => {
-          return { value: item.id, text: item.name };
-        }),
-      );
+  mounted() {
+    const items: TableMenuVO[] = this.$storage.get('menus');
+    if (items && items.length > 0) {
+      const result = items.find((item) => item.url === this.$route.fullPath);
+      if (!result && this.$route.fullPath !== '/error/404') {
+        this.$router.push('/error/404');
+      }
     }
   }
 
   get title() {
     let result: string = '';
-    if (this.items && this.items.length > 0) {
-      this.items.forEach((item) => {
+    const items: DrawerItem[] = this.$storage.get('drawer');
+    console.log(items);
+    if (items && items.length > 0) {
+      items.forEach((item) => {
         if (this.$route.name) {
           return '';
         }
@@ -79,7 +55,7 @@ export default class extends Vue {
         }
       });
       if (!result && this.$route.fullPath !== '/') {
-        this.$router.push('/Code403');
+        this.$router.push('/error/403');
       }
     }
     return result.split('(팝업)').join('');

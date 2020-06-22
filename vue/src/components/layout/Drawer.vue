@@ -79,10 +79,6 @@ export default class extends Vue {
   }
 
   async created() {
-    if (!this.$storage.has('drawer')) {
-      const response = await this.$store.state.axiosInstance.get('/menu');
-      this.$storage.set('drawer', response.data.data);
-    }
     this.items = this.$storage.get('drawer');
   }
 

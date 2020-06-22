@@ -1,6 +1,7 @@
 import '@sweetalert2/theme-dark/dark.scss';
 import { SweetAlertResult } from 'sweetalert2';
 import Swal from 'sweetalert2/src/sweetalert2.js';
+import { AxiosError } from 'axios';
 
 let timerInterval: any;
 
@@ -12,19 +13,21 @@ export function alertInfo(message: string, timer = 3500): void {
     timer: timer,
     html: '<b>3</b> 초 후에 자동으로 닫힙니다.',
     onBeforeOpen: () => {
-      if (Swal.getTimerLeft()) {
-        timerInterval = setInterval(() => {
-          try {
-            Swal.getContent().querySelector('b')!.textContent = (
-              +(Swal.getTimerLeft() || 0) / 1000
-            ).toFixed(0);
-          } catch (e) {
-            timerInterval && clearInterval(timerInterval);
-            timerInterval = undefined;
-          }
-        }, 1002);
-      } else if (Swal.getContent().querySelector('#swal2-content')) {
-        Swal.getContent().querySelector('#swal2-content')!.innerHTML = '';
+      if (Swal.getContent() !== null) {
+        if (Swal.getTimerLeft()) {
+          timerInterval = setInterval(() => {
+            try {
+              Swal.getContent()!.querySelector('b')!.textContent = (
+                +(Swal.getTimerLeft() || 0) / 1000
+              ).toFixed(0);
+            } catch (e) {
+              timerInterval && clearInterval(timerInterval);
+              timerInterval = undefined;
+            }
+          }, 1002);
+        } else if (Swal.getContent()!.querySelector('#swal2-content')) {
+          Swal.getContent()!.querySelector('#swal2-content')!.innerHTML = '';
+        }
       }
     },
     onClose: () => {
@@ -41,19 +44,21 @@ export function alertSuccess(message: string, timer = 3500): void {
     timer: timer,
     html: '<b>3</b> 초 후에 자동으로 닫힙니다.',
     onBeforeOpen: () => {
-      if (Swal.getTimerLeft()) {
-        timerInterval = setInterval(() => {
-          try {
-            Swal.getContent().querySelector('b')!.textContent = (
-              +(Swal.getTimerLeft() || 0) / 1000
-            ).toFixed(0);
-          } catch (e) {
-            timerInterval && clearInterval(timerInterval);
-            timerInterval = undefined;
-          }
-        }, 1002);
-      } else if (Swal.getContent().querySelector('#swal2-content')) {
-        Swal.getContent().querySelector('#swal2-content')!.innerHTML = '';
+      if (Swal.getContent() !== null) {
+        if (Swal.getTimerLeft()) {
+          timerInterval = setInterval(() => {
+            try {
+              Swal.getContent()!.querySelector('b')!.textContent = (
+                +(Swal.getTimerLeft() || 0) / 1000
+              ).toFixed(0);
+            } catch (e) {
+              timerInterval && clearInterval(timerInterval);
+              timerInterval = undefined;
+            }
+          }, 1002);
+        } else if (Swal.getContent()!.querySelector('#swal2-content')) {
+          Swal.getContent()!.querySelector('#swal2-content')!.innerHTML = '';
+        }
       }
     },
     onClose: () => {
@@ -69,7 +74,16 @@ export function alertWarning(message: string): void {
     confirmButtonText: message,
   });
 }
-export function alertError(message: string): void {
+export function alertError(e: string | AxiosError): void {
+  let message;
+  if (
+    typeof e === 'string' ||
+    !(e.response && e.response.data && e.response.data.message)
+  ) {
+    message = e;
+  } else {
+    message = e.response.data.message;
+  }
   Swal.fire({
     icon: 'error',
     confirmButtonColor: '#E91E63',

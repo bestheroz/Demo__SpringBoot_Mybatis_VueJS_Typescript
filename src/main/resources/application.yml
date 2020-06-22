@@ -1,13 +1,6 @@
 spring:
   profiles:
     active: local
-  http:
-    encoding:
-      charset: UTF-8
-      enabled: true
-      force: true
-#    converters:
-#      preferred-json-mapper: gson
   resources:
     chain:
       compressed: true
@@ -17,6 +10,9 @@ spring:
       max-file-size: 20MB
       max-request-size: 10MB
       file-size-threshold: 0
+  mvc:
+    converters:
+      preferred-json-mapper: gson
   jpa:
     show-sql: true
     hibernate:
@@ -25,20 +21,19 @@ spring:
     properties:
       hibernate:
         format_sql: true
-  output:
-    ansi:
-      enabled: always
 server:
   compression:
     enabled: true
-  error:
-    path: /common/exception/error
   http2:
     enabled: true
   servlet:
     session:
       cookie:
         name: JSESSIONID_MYAPP
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
 #management:
 #  endpoint:
 #    shutdown:
@@ -66,9 +61,8 @@ spring:
     sql-script-encoding: UTF-8
 server:
   port: 8080
-variable:
-  app:
-    title: My SpringBoot + JPA + VueJs + Typescript
+app:
+  title: My SpringBoot + JPA + VueJs + Typescript
 ---
 spring:
   profiles: dev
@@ -80,9 +74,8 @@ spring:
       jdbc-url: jdbc:mysql://127.0.0.1:3306/dbname?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&&zeroDateTimeBehavior=convertToNull;
 server:
   port: 8080
-variable:
-  app:
-    title:
+app:
+  title:
 ---
 spring:
   profiles: production
@@ -94,6 +87,5 @@ spring:
       jdbc-url: jdbc:mysql://127.0.0.1:3306/dbname?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&&zeroDateTimeBehavior=convertToNull;
 server:
   port:
-variable:
-  app:
-    title:
+app:
+  title:

@@ -27,9 +27,5 @@ import { Component, Vue } from 'vue-property-decorator';
 @Component({
   name: 'Error403',
 })
-export default class extends Vue {
-  mounted() {
-    this.$storage.remove('drawer');
-  }
-}
+export default class extends Vue {}
 </script>

@@ -2,35 +2,34 @@ package com.github.bestheroz.sample.api.auth;
 
 import com.github.bestheroz.sample.api.entity.member.TableMemberRepository;
 import com.github.bestheroz.sample.api.entity.member.TableMemberVO;
-import com.github.bestheroz.standard.common.response.ResponseVO;
-import com.github.bestheroz.standard.common.util.SessionUtils;
+import com.github.bestheroz.standard.common.authenticate.JwtTokenProvider;
+import com.github.bestheroz.standard.common.response.ApiResult;
+import com.github.bestheroz.standard.common.response.Result;
+import com.github.bestheroz.standard.common.util.AuthenticationUtils;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
 @RestController
-@RequestMapping(value = "/auth")
+@RequestMapping(value = "/api/auth")
 public class AuthController {
     @Resource private AuthService authService;
     @Resource private TableMemberRepository tableMemberRepository;
 
     @PostMapping(value = "/login")
-    public ResponseVO login(@RequestBody final TableMemberVO tableMemberVO) {
-        return ResponseVO.getSuccessResponseVO(this.authService.login(tableMemberVO.getId(), tableMemberVO.getPassword()));
+    @ResponseBody
+    ResponseEntity<ApiResult> login(@RequestBody final TableMemberVO tableMemberVO) {
+        return Result.ok(this.authService.login(tableMemberVO.getId(), tableMemberVO.getPassword()));
     }
 
-    @PostMapping(value = "/verify")
-    public ResponseVO verify(@RequestHeader(value = "Authorization", required = false) final String token) {
-        final TableMemberVO loginVO = SessionUtils.getLoginVO();
-        this.authService.verify(token, loginVO.getId());
-        return ResponseVO.getSuccessResponseVO(loginVO);
+    @GetMapping(value = "/me")
+    public ResponseEntity<ApiResult> getMyData(@RequestHeader(value = "Authorization", required = true) final String token) {
+        return Result.ok(JwtTokenProvider.getAuthentication(token).getPrincipal());
     }
 
     @DeleteMapping(value = "/logout")
     public void logout() {
-        final TableMemberVO loginVO = SessionUtils.getLoginVO();
-        this.authService.logoutToken(loginVO.getToken(), loginVO.getId());
-        this.tableMemberRepository.updateTokenNull(loginVO.getId());
-        SessionUtils.logout();
+        AuthenticationUtils.logout();
     }
 }

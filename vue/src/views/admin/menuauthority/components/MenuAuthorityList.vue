@@ -90,19 +90,19 @@ export default class extends Vue {
       value: `type`,
       filterType: 'select',
       filterSelectItem: [],
-      width: 100,
+      width: 110,
     },
     {
       text: `메뉴 ID`,
       align: `start`,
       value: `id`,
-      width: 100,
+      width: 110,
     },
     {
       text: `상위 메뉴 ID`,
       align: `start`,
       value: `parentId`,
-      width: 100,
+      width: 110,
     },
     {
       text: `메뉴명`,

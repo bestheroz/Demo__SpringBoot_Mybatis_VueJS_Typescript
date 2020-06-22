@@ -3,7 +3,7 @@
     <v-app-bar-nav-icon @click.stop="syncedDrawer = !syncedDrawer" />
     <v-toolbar-title>
       <v-btn x-large text dark @click="goHome" color="primary">
-        {{ appTitle }}
+        {{ title }}
       </v-btn>
     </v-toolbar-title>
     <v-spacer />
@@ -55,7 +55,7 @@
 import { Component, PropSync, Vue, Watch } from 'vue-property-decorator';
 import envs from '@/constants/envs';
 import Countdown from 'vue-awesome-countdown/src/vue-awesome-countdown.vue';
-import { getVariableApi } from '@/utils/apis';
+import { getVariableApi, getApi } from '@/utils/apis';
 import { DrawerItem } from '@/common/types';
 
 @Component({
@@ -65,7 +65,7 @@ import { DrawerItem } from '@/common/types';
 export default class extends Vue {
   @PropSync('drawer', { required: true, default: true }) syncedDrawer!: boolean;
   readonly envs: typeof envs = envs;
-  appTitle: string | null = null;
+  title: string | null = null;
   items: DrawerItem[] | null = null;
 
   get isPopup(): boolean {
@@ -73,15 +73,11 @@ export default class extends Vue {
   }
 
   async created() {
-    if (!this.$storage.has('drawer')) {
-      const response = await this.$store.state.axiosInstance.get('/menu');
-      this.$storage.set('drawer', response.data.data);
-    }
     this.items = this.$storage.get('drawer');
   }
 
   async mounted() {
-    this.appTitle = await getVariableApi('appTitle');
+    this.title = await getVariableApi('title');
   }
 
   @Watch('$store.state.logoutTime')
