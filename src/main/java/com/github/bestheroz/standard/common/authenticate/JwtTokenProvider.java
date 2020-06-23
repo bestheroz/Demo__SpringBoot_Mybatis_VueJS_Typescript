@@ -12,9 +12,9 @@ import org.joda.time.LocalDateTime;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.util.Assert;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.NotNull;
 
 @Slf4j
 @UtilityClass
@@ -43,7 +43,8 @@ public class JwtTokenProvider {
         return request.getHeader("Authorization");
     }
 
-    public boolean validateToken(@NotNull final String token) {
+    public boolean validateToken(final String token) {
+        Assert.hasText(token, "token parameter must not be empty or null");
         try {
             JWT.require(ALGORITHM).acceptExpiresAt(86400).build().verify(token);
             return true;

@@ -7,18 +7,13 @@ import org.joda.time.LocalDateTime;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
-import javax.validation.constraints.NotNull;
 
 @Data
 @MappedSuperclass
 public abstract class AbstractCreatedUpdateVO {
-    @NotNull
     protected String createdBy;
-    @NotNull
     protected LocalDateTime created;
-    @NotNull
     protected String updatedBy;
-    @NotNull
     protected LocalDateTime updated;
 
     @PrePersist
