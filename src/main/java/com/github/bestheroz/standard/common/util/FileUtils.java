@@ -24,7 +24,10 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 @UtilityClass
 public class FileUtils {
@@ -35,10 +38,9 @@ public class FileUtils {
     private final String STR_UNDERLINE = "_";
     private final Tika TIKA_INSTANCE = new Tika();
 
-    public boolean deleteDirectory(final File file) {
+    public void deleteDirectory(final File file) {
         forceDelete(file);
         LOGGER.info("Target for deleting dir : {}", file.getAbsolutePath());
-        return true;
     }
 
     public void deleteDirectory(final String filePath) {
@@ -54,14 +56,13 @@ public class FileUtils {
         deleteFile(getFile(filePath));
     }
 
-    private File forceDelete(final File file) {
+    private void forceDelete(final File file) {
         try {
             org.apache.commons.io.FileUtils.forceDelete(file);
         } catch (final IOException e) {
             LOGGER.warn(ExceptionUtils.getStackTrace(e));
             // throw new CommonResponseException(e);
         }
-        return file;
     }
 
     public String getEncodedFileName(final HttpServletRequest request, final String fileName) {
@@ -104,7 +105,7 @@ public class FileUtils {
         return file;
     }
 
-    public File getDirectory(final String dirPath) {
+    public void checkExistingDirectory(final String dirPath) {
         final String path = RegExUtils.replaceAll(getFileRoot() + dirPath, "\\\\", "/").replaceAll("//", "/");
         if (!StringUtils.endsWith(path, "/")) {
             LOGGER.warn("{} : {}", path, ExceptionCode.ERROR_DIR_PATH_MUST_ENDS_WITH_SLASH.toString());
@@ -119,7 +120,6 @@ public class FileUtils {
                 // ignored
             }
         }
-        return file;
     }
 
     private String getFileRoot() {
@@ -134,23 +134,19 @@ public class FileUtils {
         return NullUtils.exists(getFile(filePath));
     }
 
-    public List<File> uploadAllFiles(final MultipartHttpServletRequest mRequest, final String targetDirPath) {
+    public void uploadAllFiles(final MultipartHttpServletRequest mRequest, final String targetDirPath) {
         final Map<String, MultipartFile> fileMap = mRequest.getFileMap();
         if (NullUtils.size(fileMap) < 1) {
-            return null;
+            return;
         }
-        getDirectory(targetDirPath);
+        checkExistingDirectory(targetDirPath);
         final Iterator<String> fileNames = mRequest.getFileNames();
-        final List<File> savedFiles = new ArrayList<>();
         while (NullUtils.hasNext(fileNames)) {
             final MultipartFile multipartFile = fileMap.get(fileNames.next());
             validateFile(multipartFile);
-
             final File file = uploadMultipartFile(targetDirPath, multipartFile);
-            savedFiles.add(file);
             LOGGER.info(STR_INFO_MESSAGE, file.getAbsolutePath());
         }
-        return savedFiles;
     }
 
     private File uploadMultipartFile(final String targetDirPath, final MultipartFile multipartFile) {
@@ -169,15 +165,14 @@ public class FileUtils {
         return file;
     }
 
-    public File uploadFile(final MultipartFile multipartFile, final String targetDirPath) {
+    public void uploadFile(final MultipartFile multipartFile, final String targetDirPath) {
         if (NullUtils.isEmpty(multipartFile)) {
-            return null;
+            return;
         }
         validateFile(multipartFile);
-        getDirectory(targetDirPath);
+        checkExistingDirectory(targetDirPath);
         final File file = uploadMultipartFile(targetDirPath, multipartFile);
         LOGGER.info(STR_INFO_MESSAGE, file.getAbsolutePath());
-        return file;
     }
 
     // 업로드 하려는 파일의 검증(MultipartFile 이용)

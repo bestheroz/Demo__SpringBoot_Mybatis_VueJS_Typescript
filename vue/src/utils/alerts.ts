@@ -5,6 +5,27 @@ import { AxiosError } from 'axios';
 
 let timerInterval: any;
 
+const countdownDialog = () => {
+  if (Swal.getContent() !== null) {
+    setTimeout(() => {
+      if (Swal.getTimerLeft()) {
+        timerInterval = setInterval(() => {
+          try {
+            Swal.getContent()!.querySelector('b')!.textContent = (
+              +(Swal.getTimerLeft() || 0) / 1000
+            ).toFixed(0);
+          } catch (e) {
+            timerInterval && clearInterval(timerInterval);
+            timerInterval = undefined;
+          }
+        }, 1002);
+      } else if (Swal.getContent()!.querySelector('#swal2-content')) {
+        Swal.getContent()!.querySelector('#swal2-content')!.innerHTML = '';
+      }
+    }, 400);
+  }
+};
+
 export function alertInfo(message: string, timer = 3500): void {
   Swal.fire({
     icon: 'info',
@@ -12,24 +33,7 @@ export function alertInfo(message: string, timer = 3500): void {
     confirmButtonText: message,
     timer: timer,
     html: '<b>3</b> 초 후에 자동으로 닫힙니다.',
-    onBeforeOpen: () => {
-      if (Swal.getContent() !== null) {
-        if (Swal.getTimerLeft()) {
-          timerInterval = setInterval(() => {
-            try {
-              Swal.getContent()!.querySelector('b')!.textContent = (
-                +(Swal.getTimerLeft() || 0) / 1000
-              ).toFixed(0);
-            } catch (e) {
-              timerInterval && clearInterval(timerInterval);
-              timerInterval = undefined;
-            }
-          }, 1002);
-        } else if (Swal.getContent()!.querySelector('#swal2-content')) {
-          Swal.getContent()!.querySelector('#swal2-content')!.innerHTML = '';
-        }
-      }
-    },
+    onBeforeOpen: countdownDialog,
     onClose: () => {
       timerInterval && clearInterval(timerInterval);
       timerInterval = undefined;
@@ -43,24 +47,7 @@ export function alertSuccess(message: string, timer = 3500): void {
     confirmButtonText: message,
     timer: timer,
     html: '<b>3</b> 초 후에 자동으로 닫힙니다.',
-    onBeforeOpen: () => {
-      if (Swal.getContent() !== null) {
-        if (Swal.getTimerLeft()) {
-          timerInterval = setInterval(() => {
-            try {
-              Swal.getContent()!.querySelector('b')!.textContent = (
-                +(Swal.getTimerLeft() || 0) / 1000
-              ).toFixed(0);
-            } catch (e) {
-              timerInterval && clearInterval(timerInterval);
-              timerInterval = undefined;
-            }
-          }, 1002);
-        } else if (Swal.getContent()!.querySelector('#swal2-content')) {
-          Swal.getContent()!.querySelector('#swal2-content')!.innerHTML = '';
-        }
-      }
-    },
+    onBeforeOpen: countdownDialog,
     onClose: () => {
       timerInterval && clearInterval(timerInterval);
       timerInterval = undefined;
@@ -97,7 +84,7 @@ export async function confirm(
   confirmButtonText = '확인',
   cancelButtonText = '취소',
 ): Promise<SweetAlertResult> {
-  const result = await Swal.fire({
+  return await Swal.fire({
     title: title,
     text: text,
     icon: 'question',
@@ -107,13 +94,12 @@ export async function confirm(
     cancelButtonColor: '#E91E63',
     cancelButtonText: cancelButtonText,
   });
-  return result;
 }
 export async function confirmDelete(
   title = '삭제 하시겠습니까?',
   text = '',
 ): Promise<SweetAlertResult> {
-  const result = await Swal.fire({
+  return await Swal.fire({
     title: title,
     text: text,
     icon: 'question',
@@ -123,5 +109,4 @@ export async function confirmDelete(
     cancelButtonColor: '#E91E63',
     cancelButtonText: '취소',
   });
-  return result;
 }

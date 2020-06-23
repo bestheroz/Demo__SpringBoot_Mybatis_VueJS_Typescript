@@ -14,12 +14,12 @@ export interface DataTableHeader {
   filterSelectItem?: SelectItem[] | null;
 }
 
-export interface Pagination {
-  page: number | null;
-  sortBy: string[] | null;
-  sortDesc: boolean[] | null;
-  itemsPerPage: number | null; // -1 for All
-}
+// export interface Pagination {
+//   page: number | null;
+//   sortBy: string[] | null;
+//   sortDesc: boolean[] | null;
+//   itemsPerPage: number | null; // -1 for All
+// }
 
 export interface DrawerItem {
   title: string;
@@ -69,14 +69,14 @@ export interface TableMenuVO {
   updatedBy?: string | null;
 }
 
-export interface TableMenuAuthorityVO {
-  authority?: number | null;
-  menuIdList?: string | null;
-  created?: Date | null;
-  createdBy?: string | null;
-  updated?: Date | null;
-  updatedBy?: string | null;
-}
+// export interface TableMenuAuthorityVO {
+//   authority?: number | null;
+//   menuIdList?: string | null;
+//   created?: Date | null;
+//   createdBy?: string | null;
+//   updated?: Date | null;
+//   updatedBy?: string | null;
+// }
 
 export interface TableCodeGroupVO {
   codeGroup?: string | null;

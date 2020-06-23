@@ -107,7 +107,6 @@ public abstract class AbstractExcelXView extends AbstractView {
     /**
      * Renders the Excel view, given the specified model.
      */
-    @SuppressWarnings("DuplicatedCode")
     @Override
     protected final void renderMergedOutputModel(final Map<String, Object> model, final HttpServletRequest request, final HttpServletResponse response) {
         // java.lang.OutOfMemoryError: Java heap space 발생시...
@@ -184,7 +183,7 @@ public abstract class AbstractExcelXView extends AbstractView {
         return new SXSSFWorkbook(new XSSFWorkbook(inputFile.getInputStream()));
     }
 
-    protected abstract void buildExcelDocument(Map<String, Object> model, SXSSFWorkbook workbook, HttpServletRequest request, HttpServletResponse response) throws Exception;
+    protected abstract void buildExcelDocument(Map<String, Object> model, SXSSFWorkbook workbook, HttpServletRequest request, HttpServletResponse response);
 
     protected SXSSFCell getCell(final SXSSFSheet sheet, final int row, final int col) {
         SXSSFRow sheetRow = sheet.getRow(row);

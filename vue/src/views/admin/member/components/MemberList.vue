@@ -32,6 +32,13 @@
                 dialog = true;
               }
             "
+            @click:delete="
+              () => {
+                editItem = selected[0];
+                $refs.refEditDialog.delete();
+              }
+            "
+            @click:reload="getList"
           />
         </template>
         <template v-slot:header>

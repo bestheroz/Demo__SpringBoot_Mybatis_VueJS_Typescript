@@ -7,9 +7,7 @@ import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormat;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Objects;
 
 @UtilityClass
@@ -74,27 +72,6 @@ public class DateUtils {
         return new LocalDateTime(date);
     }
 
-    public List<LocalDateTime> getBeetwenAllLocolDate(final String from, final String to, final String pattern) {
-        LocalDateTime fromDt = DateUtils.getLocalDateTime(from, pattern);
-        final LocalDateTime toDt = DateUtils.getLocalDateTime(to, pattern);
-
-        if (fromDt == null || toDt == null) {
-            return null;
-        }
-
-        final List<LocalDateTime> res = new ArrayList<>();
-        while (fromDt.compareTo(toDt) != 1) {
-            res.add(fromDt);
-            if (YYYYMMDD.equals(pattern)) {
-                // 시작날짜 + 1 일
-                fromDt = fromDt.plusDays(1);
-            } else if (YYYYMM.equals(pattern)) {
-                fromDt = fromDt.plusMonths(1);
-            }
-        }
-        return res;
-    }
-
     public DateTime getDateTimeNow() {
         return DateTime.now(DateTimeZone.getDefault());
     }
@@ -118,27 +95,6 @@ public class DateUtils {
             return null;
         }
         return new DateTime(date, DateTimeZone.getDefault());
-    }
-
-    public List<DateTime> getBeetwenAllDate(final String from, final String to, final String pattern) {
-        DateTime fromDt = DateUtils.getDateTime(from, pattern);
-        final DateTime toDt = DateUtils.getDateTime(to, pattern);
-
-        if (fromDt == null || toDt == null) {
-            return null;
-        }
-
-        final List<DateTime> res = new ArrayList<>();
-        while (fromDt.compareTo(toDt) != 1) {
-            res.add(fromDt);
-            if (YYYYMMDD.equals(pattern)) {
-                // 시작날짜 + 1 일
-                fromDt = fromDt.plusDays(1);
-            } else if (YYYYMM.equals(pattern)) {
-                fromDt = fromDt.plusMonths(1);
-            }
-        }
-        return res;
     }
 
     public LocalDateTime getLocalDateTimeIgnoreException(final String arg0) {

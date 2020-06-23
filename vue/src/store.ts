@@ -12,14 +12,14 @@ export default new Vuex.Store({
     logoutTime: new Date().getTime() + 2 * 3600 * 1000,
   },
   mutations: {
-    async saveToken(state, token: string) {
+    saveToken(state, token: string) {
       Vue.$storage.set('accessToken', token);
     },
-    async saveUserVO(state, loginVO: TableMemberVO) {
+    saveUserVO(state, loginVO: TableMemberVO) {
       Vue.$storage.set('authority', loginVO.authority);
       Vue.$storage.set('userVO', loginVO);
     },
-    async logout(state) {
+    async logout() {
       try {
         await axiosInstance.delete(`${envs.API_HOST}api/auth/logout`);
       } catch (e) {

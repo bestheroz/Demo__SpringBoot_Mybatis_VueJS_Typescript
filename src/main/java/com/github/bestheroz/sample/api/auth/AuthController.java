@@ -24,7 +24,7 @@ public class AuthController {
     }
 
     @GetMapping(value = "/me")
-    public ResponseEntity<ApiResult> getMyData(@RequestHeader(value = "Authorization", required = true) final String token) {
+    public ResponseEntity<ApiResult> getMyData(@RequestHeader(value = "Authorization") final String token) {
         return Result.ok(JwtTokenProvider.getAuthentication(token).getPrincipal());
     }
 

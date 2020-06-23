@@ -37,7 +37,6 @@ export default class extends Vue {
   get title() {
     let result: string = '';
     const items: DrawerItem[] = this.$storage.get('drawer');
-    console.log(items);
     if (items && items.length > 0) {
       items.forEach((item) => {
         if (this.$route.name) {

@@ -164,9 +164,15 @@
 <script lang="ts">
 import { Component, Prop, PropSync, Vue, Watch } from 'vue-property-decorator';
 import { SelectItem, TableMemberVO } from '@/common/types';
-import { getCodeListApi, patchDataApi, postDataApi } from '@/utils/apis';
+import {
+  deleteDataApi,
+  getCodeListApi,
+  patchDataApi,
+  postDataApi,
+} from '@/utils/apis';
 import _ from 'lodash';
 import DatetimePicker from '@/components/picker/DatetimePicker.vue';
+import { confirmDelete } from '@/utils/alerts';
 
 const pbkdf2 = require('pbkdf2');
 
@@ -179,6 +185,7 @@ export default class extends Vue {
   @Prop({ required: true }) readonly editItem!: TableMemberVO;
   @Prop({ required: true }) readonly mode!: string | null;
 
+  readonly ENDPOINT_URL: string = 'admin/members/';
   loading: boolean = false;
   AUTHORITY: SelectItem[] | null = null;
   password2: string | null = null;
@@ -202,7 +209,7 @@ export default class extends Vue {
     if (!isValid) {
       return;
     }
-    this.mode === '수정' ? this.patch() : this.create();
+    this.mode === '수정' ? await this.patch() : await this.create();
   }
 
   async create() {
@@ -213,7 +220,10 @@ export default class extends Vue {
         .pbkdf2Sync(params.password, 'salt', 1, 32, 'sha512')
         .toString();
     }
-    const response = await postDataApi<TableMemberVO>(`admin/members/`, params);
+    const response = await postDataApi<TableMemberVO>(
+      this.ENDPOINT_URL,
+      params,
+    );
     this.loading = false;
     if (_.startsWith(response.code, `S`)) {
       this.syncedDialog = false;
@@ -230,7 +240,7 @@ export default class extends Vue {
         .toString();
     }
     const response = await patchDataApi<TableMemberVO>(
-      `admin/members/`,
+      this.ENDPOINT_URL,
       params,
       this.editItem.id!,
     );
@@ -238,6 +248,21 @@ export default class extends Vue {
     if (_.startsWith(response.code, `S`)) {
       this.syncedDialog = false;
       this.$emit('finished');
+    }
+  }
+
+  async delete() {
+    const result = await confirmDelete();
+    if (result.value) {
+      this.loading = true;
+      const response = await deleteDataApi<TableMemberVO>(
+        this.ENDPOINT_URL,
+        this.editItem.id!,
+      );
+      this.loading = false;
+      if (_.startsWith(response.code, `S`)) {
+        this.$emit('finished');
+      }
     }
   }
 }

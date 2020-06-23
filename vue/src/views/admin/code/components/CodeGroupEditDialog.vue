@@ -92,7 +92,7 @@ export default class extends Vue {
     if (!isValid) {
       return;
     }
-    this.mode === '수정' ? this.patch() : this.create();
+    this.mode === '수정' ? await this.patch() : await this.create();
   }
 
   async create() {

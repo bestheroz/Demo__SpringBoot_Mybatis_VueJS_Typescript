@@ -10,7 +10,7 @@ import javax.persistence.PrePersist;
 import java.io.Serializable;
 
 @Data
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity(name = "MEMBER")

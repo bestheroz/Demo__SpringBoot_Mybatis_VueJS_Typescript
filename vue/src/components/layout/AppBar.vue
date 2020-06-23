@@ -55,7 +55,7 @@
 import { Component, PropSync, Vue, Watch } from 'vue-property-decorator';
 import envs from '@/constants/envs';
 import Countdown from 'vue-awesome-countdown/src/vue-awesome-countdown.vue';
-import { getVariableApi, getApi } from '@/utils/apis';
+import { getVariableApi } from '@/utils/apis';
 import { DrawerItem } from '@/common/types';
 
 @Component({
