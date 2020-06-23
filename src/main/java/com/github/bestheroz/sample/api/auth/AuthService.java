@@ -44,8 +44,6 @@ public class AuthService implements UserDetailsService {
 
         final TableMemberVO tableMemberVO = one.get();
         final Pbkdf2PasswordEncoder pbkdf2PasswordEncoder = new Pbkdf2PasswordEncoder();
-        log.debug("{}", pbkdf2PasswordEncoder.matches(tableMemberVO.getPassword(), pbkdf2PasswordEncoder.encode(password)));
-
         // 2. 패스워드가 틀리면
         if (!pbkdf2PasswordEncoder.matches(tableMemberVO.getPassword(), pbkdf2PasswordEncoder.encode(password))) {
             tableMemberVO.setLoginFailCnt(tableMemberVO.getLoginFailCnt() + 1);
