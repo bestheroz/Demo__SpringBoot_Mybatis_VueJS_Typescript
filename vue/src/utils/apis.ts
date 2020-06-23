@@ -30,7 +30,6 @@ axiosInstance.interceptors.response.use(
   },
   async function (error: AxiosError) {
     if (error.response && error.response.status === 401) {
-      console.log('push');
       await router.push(`/login?login=need`);
       return;
     }

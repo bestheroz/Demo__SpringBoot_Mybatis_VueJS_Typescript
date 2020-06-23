@@ -17,6 +17,7 @@ export default new Vuex.Store({
     },
     saveUserVO(state, loginVO: TableMemberVO) {
       Vue.$storage.set('authority', loginVO.authority);
+      Vue.$storage.set('timeout', loginVO.timeout);
       Vue.$storage.set('userVO', loginVO);
     },
     async logout() {
