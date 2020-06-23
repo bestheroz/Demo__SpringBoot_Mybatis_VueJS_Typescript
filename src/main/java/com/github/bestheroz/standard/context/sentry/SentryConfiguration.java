@@ -7,7 +7,7 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 
 @Configuration
 @Profile(value = {"dev", "production"})
-public class SentryContext {
+public class SentryConfiguration {
     @Bean
     public HandlerExceptionResolver sentryExceptionResolver() {
         return new io.sentry.spring.SentryExceptionResolver();

@@ -7,14 +7,13 @@ import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormat;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 
 @UtilityClass
 public class DateUtils {
-
-    public final DateTimeZone TIME_ZONE_ASIA_SEOUL = DateTimeZone.forID("Asia/Seoul");
-    public final Locale LOCALE_KOREAN = Locale.KOREAN;
-
     public final String HH_MM_SS = "HH:mm:ss";
     public final String YYYY_MM_DD = "yyyy-MM-dd";
     public final String YYYY_MM_DD_HH_MM_SS = "yyyy-MM-dd HH:mm:ss";
@@ -41,17 +40,6 @@ public class DateUtils {
             return StringUtils.EMPTY;
         }
         return DateUtils.getString(date.getTime(), pattern);
-    }
-
-    // public  String getString(final DateTime dateTime, final String pattern) {
-    // return dateTime.toString(pattern);
-    // }
-
-    public String getString(final DateTime dateTime, final String pattern) {
-        if (dateTime == null) {
-            return StringUtils.EMPTY;
-        }
-        return dateTime.toString(pattern);
     }
 
     public String getString(final String string, final String fromPattern, final String toPattern) {

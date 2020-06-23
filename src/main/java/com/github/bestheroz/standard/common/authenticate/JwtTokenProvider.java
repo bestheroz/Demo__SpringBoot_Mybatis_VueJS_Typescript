@@ -8,6 +8,7 @@ import com.github.bestheroz.standard.common.exception.BusinessException;
 import com.github.bestheroz.standard.common.util.AccessBeanUtils;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.LocalDateTime;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -22,15 +23,18 @@ public class JwtTokenProvider {
     private final Algorithm ALGORITHM = Algorithm.HMAC512("secret");
 
     public String createToken(final String userPk) {
+        Assert.hasText(userPk, "userPk parameter must not be empty or null");
         return JWT.create().withClaim("userPk", userPk).withExpiresAt(LocalDateTime.now().plusDays(1).toDate()).sign(ALGORITHM);
     }
 
     public Authentication getAuthentication(final String token) {
+        Assert.hasText(token, "token parameter must not be empty or null");
         final UserDetails userDetails = AccessBeanUtils.getBean(AuthService.class).loadUserByUsername(getUserPk(token));
-        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(userDetails, StringUtils.EMPTY, userDetails.getAuthorities());
     }
 
     public String getUserPk(final String token) {
+        Assert.hasText(token, "token parameter must not be empty or null");
         try {
             return JWT.require(ALGORITHM).acceptExpiresAt(86400).build().verify(token).getClaims().get("userPk").asString();
         } catch (final JWTVerificationException | NullPointerException e) {

@@ -23,7 +23,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.LocalizedResourceHelper;
-import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.web.servlet.view.AbstractView;
 
@@ -38,7 +37,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-@Component("AbstractExcelXView")
 @Slf4j
 public abstract class AbstractExcelXView extends AbstractView {
     /**

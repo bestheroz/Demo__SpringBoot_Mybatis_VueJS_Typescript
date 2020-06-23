@@ -32,7 +32,6 @@ public class ApiExceptionHandler {
     @ExceptionHandler({BusinessException.class})
     public ResponseEntity<ApiResult> response(final BusinessException e) {
         log.warn(e.toString());
-
         if (e.isEquals(ExceptionCode.FAIL_TRY_LOGIN_FIRST)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getApiResult());
         }

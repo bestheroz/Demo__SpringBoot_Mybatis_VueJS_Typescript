@@ -68,7 +68,7 @@ public class FileUtils {
         try {
             final String header = request.getHeader("User-Agent");
 
-            String encodedFilename;
+            final String encodedFilename;
             if (StringUtils.contains(header, "MSIE")) {
                 encodedFilename = URLEncoder.encode(fileName, StandardCharsets.UTF_8.displayName()).replaceAll("\\+", "%20");
             } else if (StringUtils.contains(header, "Trident")) {
@@ -78,21 +78,14 @@ public class FileUtils {
                 for (int i = 0; i < fileName.length(); i++) {
                     final char c = fileName.charAt(i);
                     if (c > '~') {
-                        sb.append(URLEncoder.encode("" + c, StandardCharsets.UTF_8.displayName()));
+                        sb.append(URLEncoder.encode(StringUtils.EMPTY + c, StandardCharsets.UTF_8.displayName()));
                     } else {
                         sb.append(c);
                     }
                 }
                 encodedFilename = sb.toString();
             } else {
-                encodedFilename = "\"" + new String(fileName.getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1) + "\"";
-                if (StringUtils.contains(header, "Opera")) {
-                    // } else if (StringUtils.contains(header, "Safari")) {
-                    // encodedFilename = "\"" + new String(fileName.getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1) + "\"";
-                    // encodedFilename = URLDecoder.decode(encodedFilename, StandardCharsets.UTF_8.displayName());
-                } else {
-                    encodedFilename = URLDecoder.decode(encodedFilename, StandardCharsets.UTF_8.displayName());
-                }
+                encodedFilename = URLDecoder.decode("\"" + new String(fileName.getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1) + "\"", StandardCharsets.UTF_8.displayName());
             }
             return encodedFilename;
         } catch (final UnsupportedEncodingException e) {

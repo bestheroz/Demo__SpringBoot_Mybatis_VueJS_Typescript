@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.view.ResourceBundleViewResolver;
 
 @Configuration
-public class ResourceBundleViewContext {
+public class ResourceBundleViewConfiguration {
     @Bean(name = "resourceBundleViewResolver")
     public ResourceBundleViewResolver getResourceBundleViewResolver() {
         final ResourceBundleViewResolver resourceBundleViewResolver = new ResourceBundleViewResolver();

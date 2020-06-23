@@ -73,8 +73,6 @@ public class MapperUtils {
             lst.add(MapperUtils.toObject(json, returnType));
         }
         return lst;
-        // return GSON_INSTANCE.fromJson(getJsonElementWithExceptionString(content), new TypeToken<ArrayList<T>>() {
-        // }.getType());
     }
 
     public Gson getGsonObject() {
