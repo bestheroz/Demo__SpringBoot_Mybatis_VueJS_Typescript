@@ -4,7 +4,6 @@ import com.github.bestheroz.standard.common.exception.BusinessException;
 import com.github.bestheroz.standard.common.exception.ExceptionCode;
 import com.google.common.collect.ImmutableSet;
 import lombok.experimental.UtilityClass;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -13,6 +12,7 @@ import org.apache.tika.Tika;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.DigestUtils;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -151,7 +151,7 @@ public class FileUtils {
 
     private File uploadMultipartFile(final String targetDirPath, final MultipartFile multipartFile) {
         final StringBuilder fileName = new StringBuilder(80);
-        fileName.append(DateTime.now().toString(DateUtils.YYYYMMDDHHMMSS)).append(STR_UNDERLINE).append(DigestUtils.md5Hex(multipartFile.getOriginalFilename()));
+        fileName.append(DateTime.now().toString(DateUtils.YYYYMMDDHHMMSS)).append(STR_UNDERLINE).append(DigestUtils.md5DigestAsHex(multipartFile.getOriginalFilename().getBytes()));
         if (StringUtils.isNotEmpty(getExtension(multipartFile))) {
             fileName.append(STR_DOT).append(getExtension(multipartFile));
         }
