@@ -211,3 +211,9 @@ export default class extends Vue {
   @Emit('click:save') clickSave() {}
 }
 </script>
+<style lang="scss">
+#buttonSet {
+  right: 8px;
+  top: 8px;
+}
+</style>

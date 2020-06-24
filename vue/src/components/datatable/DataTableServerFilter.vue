@@ -155,42 +155,4 @@ export default class extends Vue {
     border-right: thin solid rgba(255, 255, 255, 0.12);
   }
 }
-
-.v-data-table {
-  thead {
-    th {
-      background-color: #424242 !important;
-      border-top: thin solid rgba(255, 255, 255, 0.12);
-      border-left: thin solid rgba(255, 255, 255, 0.12);
-    }
-
-    th:last-child {
-      background-color: #424242 !important;
-      border-top: thin solid rgba(255, 255, 255, 0.12);
-      border-left: thin solid rgba(255, 255, 255, 0.12);
-      border-right: thin solid rgba(255, 255, 255, 0.12);
-    }
-
-    .v-data-table__progress {
-      .v-progress-linear {
-        height: 25px !important;
-      }
-    }
-  }
-
-  tbody {
-    td {
-      border-bottom: thin solid rgba(255, 255, 255, 0.12);
-      border-left: thin solid rgba(255, 255, 255, 0.12);
-      word-break: break-all;
-    }
-
-    td:last-child {
-      border-bottom: thin solid rgba(255, 255, 255, 0.12);
-      border-left: thin solid rgba(255, 255, 255, 0.12);
-      border-right: thin solid rgba(255, 255, 255, 0.12);
-      word-break: break-all;
-    }
-  }
-}
 </style>

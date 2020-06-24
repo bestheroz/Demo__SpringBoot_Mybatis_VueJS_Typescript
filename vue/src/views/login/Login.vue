@@ -2,7 +2,7 @@
   <v-container id="login" class="fill-height" tag="section">
     <v-row justify="center">
       <v-slide-y-transition appear>
-        <v-card max-width="100%" width="600" class="elevation-12">
+        <v-card :min-width="600" width="40%" class="elevation-12">
           <v-toolbar color="primary" dark flat>
             <v-toolbar-title>Login at {{ title }}</v-toolbar-title>
             <v-spacer />
@@ -59,16 +59,16 @@
               >
                 테스트 계정 ==> 1 / 1
               </v-alert>
-              <v-divider />
               <v-btn
                 large
                 color="success"
-                depressed
                 text
+                outlined
                 rounded
                 :loading="loading"
                 @click="login"
               >
+                <v-icon class="pr-2">mdi-login</v-icon>
                 Let's Go
               </v-btn>
             </v-card-text>
