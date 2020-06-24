@@ -1,17 +1,18 @@
 <template>
   <div>
     <v-card>
-      <v-alert
-        border="bottom"
-        colored-border
-        color="success"
-        icon="mdi-format-list-checkbox"
-        dense
-        class="mb-0"
-      >
-        코드 관리 - Detail
-      </v-alert>
       <v-card-text class="py-1">
+        <v-alert
+          border="bottom"
+          colored-border
+          color="success"
+          icon="mdi-format-list-checkbox"
+          dense
+          text
+          class="mb-0"
+        >
+          코드 관리 - Detail
+        </v-alert>
         <v-data-table
           must-sort
           fixed-header
@@ -132,7 +133,6 @@ export default class extends Vue {
   @Prop({ required: true }) readonly parentItem!: TableCodeGroupVO;
 
   readonly envs: typeof envs = envs;
-
   AUTHORITY: SelectItem[] | null = null;
   mode: string | null = null;
 
@@ -141,7 +141,7 @@ export default class extends Vue {
   sortDesc: boolean[] = [false];
   items: TableCodeVO[] = [];
   filteredItems: TableCodeVO[] = [];
-  editItem: TableCodeVO = {};
+  editItem: TableCodeVO = Object.create(null);
   selected: TableCodeVO[] = [];
   dialog: boolean = false;
   headers: DataTableHeader[] = [

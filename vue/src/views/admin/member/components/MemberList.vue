@@ -128,7 +128,7 @@ export default class extends Vue {
   sortDesc: boolean[] = [true];
   items: TableMemberVO[] = [];
   filteredItems: TableMemberVO[] = [];
-  editItem: TableMemberVO = {};
+  editItem: TableMemberVO = Object.create(null);
   selected: TableMemberVO[] = [];
   loading: boolean = false;
   dialog: boolean = false;

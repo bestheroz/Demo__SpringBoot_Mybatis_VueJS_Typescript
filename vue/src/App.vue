@@ -59,5 +59,16 @@ export default class extends Vue {
       word-break: break-all;
     }
   }
+
+  .v-data-footer__select {
+    .v-input__slot:before {
+      top: 28px;
+      height: 0;
+    }
+    .v-select {
+      margin-top: 4px;
+      margin-bottom: 4px;
+    }
+  }
 }
 </style>

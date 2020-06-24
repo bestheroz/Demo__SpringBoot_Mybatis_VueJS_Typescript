@@ -1,17 +1,18 @@
 <template>
   <div>
     <v-card>
-      <v-alert
-        border="bottom"
-        colored-border
-        color="success"
-        icon="mdi-format-list-checkbox"
-        dense
-        class="mb-0"
-      >
-        코드 관리 - Master
-      </v-alert>
       <v-card-text class="py-1">
+        <v-alert
+          border="bottom"
+          colored-border
+          color="success"
+          icon="mdi-format-list-checkbox"
+          dense
+          text
+          class="mb-0"
+        >
+          코드 관리 - Master
+        </v-alert>
         <v-data-table
           must-sort
           fixed-header
@@ -37,7 +38,7 @@
               @click:add="
                 () => {
                   mode = '추가';
-                  editItem = {};
+                  editItem = Object.create(null);
                   dialog = true;
                 }
               "
@@ -116,7 +117,7 @@ export default class extends Vue {
   sortDesc: boolean[] = [false];
   items: TableCodeGroupVO[] = [];
   filteredItems: TableCodeGroupVO[] = [];
-  editItem: TableCodeGroupVO = {};
+  editItem: TableCodeGroupVO = Object.create(null);
   selected: TableCodeGroupVO[] = [];
   dialog: boolean = false;
   loading: boolean = false;

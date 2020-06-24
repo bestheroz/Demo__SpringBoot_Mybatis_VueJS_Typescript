@@ -6,10 +6,10 @@
           <code-group-list
             @select="
               (item) => {
-                parentItem = (item && item[0]) || {};
+                parentItem = (item && item[0]) || Object.create(null);
               }
             "
-            @updated="parentItem = {}"
+            @updated="parentItem = Object.create(null)"
           />
         </v-col>
         <v-divider class="mr-1" />
@@ -35,6 +35,6 @@ import CodeGroupList from '@/views/admin/code/components/CodeGroupList.vue';
   },
 })
 export default class extends Vue {
-  parentItem: TableCodeGroupVO = {};
+  parentItem: TableCodeGroupVO = Object.create(null);
 }
 </script>

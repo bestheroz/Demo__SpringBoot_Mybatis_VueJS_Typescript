@@ -9,7 +9,7 @@
       class="mx-3 mt-3 mb-0 pl-6"
       v-if="title"
     >
-      <v-icon class="pb-1">mdi-circle-edit-outline</v-icon>
+      <v-icon class="pb-1">mdi-file-document-outline</v-icon>
       {{ title }}
     </v-alert>
     <v-container fluid>
