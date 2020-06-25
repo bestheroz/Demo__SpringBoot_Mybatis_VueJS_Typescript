@@ -161,19 +161,6 @@
                 <version>${codehaus-version}</version>
                 <executions>
                     <execution>
-                        <id>front-end install</id>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <phase>prepare-package</phase>
-                        <configuration>
-                            <executable>npm</executable>
-                            <arguments>
-                                <argument>install</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-                    <execution>
                         <id>front-end lint test</id>
                         <goals>
                             <goal>exec</goal>
@@ -210,61 +197,7 @@
                 <artifactId>maven-resources-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>copy front-end template</id>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <phase>prepare-package</phase>
-                        <configuration>
-                            <outputDirectory>${basedir}/src/main/resources/templates</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>vue/dist</directory>
-                                    <includes>
-                                        <include>index.html</include>
-                                    </includes>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>copy front-end assets</id>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <phase>prepare-package</phase>
-                        <configuration>
-                            <outputDirectory>${basedir}/src/main/resources/static</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>vue/dist</directory>
-                                    <excludes>
-                                        <exclude>index.html</exclude>
-                                    </excludes>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>copy front-end template to target</id>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <phase>prepare-package</phase>
-                        <configuration>
-                            <outputDirectory>${basedir}/target/classes/templates</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>vue/dist</directory>
-                                    <includes>
-                                        <include>index.html</include>
-                                    </includes>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>copy front-end assets to target</id>
+                        <id>copy front-end to target</id>
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>
@@ -274,9 +207,6 @@
                             <resources>
                                 <resource>
                                     <directory>vue/dist</directory>
-                                    <excludes>
-                                        <exclude>index.html</exclude>
-                                    </excludes>
                                 </resource>
                             </resources>
                         </configuration>
@@ -290,58 +220,10 @@
                         <fileset>
                             <directory>${basedir}/src/main/resources/static/static</directory>
                         </fileset>
-                        <fileset>
-                            <directory>${basedir}/src/main/resources/templates</directory>
-                            <includes>
-                                <include>index.html</include>
-                            </includes>
-                        </fileset>
                     </filesets>
                 </configuration>
             </plugin>
         </plugins>
-        <resources>
-            <resource>
-                <directory>${project.basedir}/src/main/java</directory>
-                <includes>
-                    <include>**/*Mapper.xml</include>
-                </includes>
-            </resource>
-            <resource>
-                <directory>${project.basedir}/src/main/resources</directory>
-            </resource>
-        </resources>
     </build>
-
-    <repositories>
-        <repository>
-            <id>spring-milestones</id>
-            <name>Spring Milestones</name>
-            <url>https://repo.spring.io/milestone</url>
-        </repository>
-        <repository>
-            <id>spring-snapshots</id>
-            <name>Spring Snapshots</name>
-            <url>https://repo.spring.io/snapshot</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>spring-milestones</id>
-            <name>Spring Milestones</name>
-            <url>https://repo.spring.io/milestone</url>
-        </pluginRepository>
-        <pluginRepository>
-            <id>spring-snapshots</id>
-            <name>Spring Snapshots</name>
-            <url>https://repo.spring.io/snapshot</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </pluginRepository>
-    </pluginRepositories>
 
 </project>
