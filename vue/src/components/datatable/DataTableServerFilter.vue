@@ -90,59 +90,69 @@ export default class extends Vue {
 }
 </script>
 <style lang="scss">
-.v-data-table--dense {
-  #datatable-header-filter {
-    text-align: center;
+#datatable-header-filter {
+  text-align: center;
 
-    td {
-      height: 24px;
-      padding-right: 2px;
-      padding-left: 2px;
+  td {
+    height: 1.5rem;
+    padding-right: 2px;
+    padding-left: 2px;
+    border-bottom: thin solid rgba(255, 255, 255, 0.12);
+    border-left: thin solid rgba(255, 255, 255, 0.12);
+    div.v-input {
+      div.v-input__append-inner {
+        div.v-input__icon {
+          width: 1rem;
+          min-width: 1rem;
+        }
+      }
 
-      .v-input__control {
-        width: 0;
+      div.v-input__control {
+        div.v-input__slot {
+          padding-left: 0.25rem;
+        }
+      }
+    }
+    .v-input__control {
+      width: 0;
 
-        .v-input__slot {
-          padding-left: 8px;
-          padding-right: 3px;
-          min-height: 0;
-          height: 24px;
+      .v-input__slot {
+        padding-left: 0.5rem;
+        padding-right: 3px;
+        min-height: 0;
+        height: 1.5rem;
 
-          fieldset {
-            height: 28px;
+        fieldset {
+          height: 1.75rem;
+        }
+
+        .v-text-field__slot {
+          height: 1.46rem;
+
+          input {
+            padding-top: 0;
+            padding-bottom: 0;
           }
+        }
 
-          .v-text-field__slot {
-            height: 23px;
+        .v-input__append-inner {
+          margin-top: 0;
+          padding-left: 0;
+        }
 
-            input {
-              font-size: 14px;
-              padding-top: 0;
-              padding-bottom: 0;
-            }
-          }
+        .v-select__slot {
+          height: 1.45rem;
 
-          .v-input__append-inner {
-            margin-top: 0;
-            padding-left: 0;
-
-            .v-icon.v-icon {
-              font-size: 16px;
-            }
-          }
-
-          .v-select__slot {
-            height: 23px;
-
-            input {
-              font-size: 14px;
-              padding-top: 0;
-              padding-bottom: 0;
-            }
+          input {
+            padding-top: 0;
+            padding-bottom: 0;
           }
         }
       }
     }
+  }
+  td:last-child {
+    border-right: thin solid rgba(255, 255, 255, 0.12);
   }
 }
 </style>

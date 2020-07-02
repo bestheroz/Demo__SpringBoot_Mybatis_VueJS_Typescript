@@ -9,7 +9,7 @@
       class="mx-3 mt-3 mb-0 pl-6"
       v-if="title"
     >
-      <v-icon class="pb-1">mdi-circle-edit-outline</v-icon>
+      <v-icon class="pb-1">mdi-file-document-outline</v-icon>
       {{ title }}
     </v-alert>
     <v-container fluid>
@@ -28,8 +28,19 @@ export default class extends Vue {
     const items: TableMenuVO[] = this.$storage.get('menus');
     if (items && items.length > 0) {
       const result = items.find((item) => item.url === this.$route.fullPath);
-      if (!result && this.$route.fullPath !== '/error/404') {
-        this.$router.push('/error/404');
+      if (
+        !result &&
+        ![
+          '/',
+          '/login',
+          '/login?login=need',
+          '/error/403',
+          '/error/404',
+          '/error/500',
+          '/error/503',
+        ].includes(this.$route.fullPath)
+      ) {
+        this.$router.replace('/error/404');
       }
     }
   }
@@ -37,7 +48,6 @@ export default class extends Vue {
   get title() {
     let result: string = '';
     const items: DrawerItem[] = this.$storage.get('drawer');
-    console.log(items);
     if (items && items.length > 0) {
       items.forEach((item) => {
         if (this.$route.name) {
@@ -54,8 +64,19 @@ export default class extends Vue {
           }
         }
       });
-      if (!result && this.$route.fullPath !== '/') {
-        this.$router.push('/error/403');
+      if (
+        !result &&
+        ![
+          '/',
+          '/login',
+          '/login?login=need',
+          '/error/403',
+          '/error/404',
+          '/error/500',
+          '/error/503',
+        ].includes(this.$route.fullPath)
+      ) {
+        this.$router.replace('/error/403');
       }
     }
     return result.split('(팝업)').join('');

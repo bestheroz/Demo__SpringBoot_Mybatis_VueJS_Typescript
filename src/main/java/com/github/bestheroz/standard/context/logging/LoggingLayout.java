@@ -18,18 +18,18 @@ public class LoggingLayout extends LayoutBase<ILoggingEvent> {
             if (StringUtils.equals(event.getLevel().levelStr, "WARN") && event.getCallerData()[0].getLineNumber() == 49) {
                 this.getExceptionMessage(event, sbuf);
             } else {
-                this.getMessageOnylyFormattedMessage(event, sbuf);
+                this.getMessageOnlyFormattedMessage(event, sbuf);
             }
         } else if (StringUtils.startsWithAny(event.getLoggerName(), "org.jdbcdslog.StatementLogger", "org.jdbcdslog.ResultSetLogger")) {
             if (StringUtils.startsWithAny(event.getFormattedMessage(), "java.sql.ResultSet.next")) {
-                this.getMessageOnylyFormattedMessage(event, sbuf);
+                this.getMessageOnlyFormattedMessage(event, sbuf);
             } else {
                 this.getSql(event, sbuf);
             }
         } else if (StringUtils.endsWithAny(event.getLoggerName(), "RequestResponseBodyMethodProcessor")) {
             this.getMessageStartWithMethod(event, sbuf);
         } else if (StringUtils.equalsAny(event.getLoggerName(), "org.hibernate.type.descriptor.sql.BasicBinder")) {
-            this.getMessageOnylyFormattedMessage(event, sbuf);
+            this.getMessageOnlyFormattedMessage(event, sbuf);
         } else {
             this.getMessageByStdPattern(event, sbuf);
         }
@@ -60,14 +60,12 @@ public class LoggingLayout extends LayoutBase<ILoggingEvent> {
 
     private void getExceptionMessage(final ILoggingEvent event, final StringBuffer sbuf) {
         this.getMessageHeader(event, sbuf);
-        sbuf.append("<");
-        sbuf.append("[Throw Exception]");
-        sbuf.append("> ");
+        sbuf.append("<[Throw Exception]>");
         sbuf.append(event.getFormattedMessage());
         sbuf.append(CoreConstants.LINE_SEPARATOR);
     }
 
-    private void getMessageOnylyFormattedMessage(final ILoggingEvent event, final StringBuffer sbuf) {
+    private void getMessageOnlyFormattedMessage(final ILoggingEvent event, final StringBuffer sbuf) {
         this.getMessageHeader(event, sbuf);
         sbuf.append(this.skipLogText(event.getFormattedMessage()));
         sbuf.append(CoreConstants.LINE_SEPARATOR);
@@ -75,11 +73,7 @@ public class LoggingLayout extends LayoutBase<ILoggingEvent> {
 
     private void getSql(final ILoggingEvent event, final StringBuffer sbuf) {
         this.getMessageHeader(event, sbuf);
-        String formattedMessage = event.getFormattedMessage();
-        formattedMessage = StringUtils.remove(formattedMessage, "java.sql.Statement.execute: ");
-        formattedMessage = StringUtils.remove(formattedMessage, "java.sql.PreparedStatement.execute: ");
-        sbuf.append(CoreConstants.LINE_SEPARATOR).append(StringUtils.abbreviate(formattedMessage, 20000)).append(CoreConstants.LINE_SEPARATOR);
-        sbuf.append(CoreConstants.LINE_SEPARATOR);
+        sbuf.append(CoreConstants.LINE_SEPARATOR).append(StringUtils.abbreviate(event.getFormattedMessage(), 20000)).append(CoreConstants.LINE_SEPARATOR).append(CoreConstants.LINE_SEPARATOR);
     }
 
     private void getMessageHeader(final ILoggingEvent event, final StringBuffer sbuf) {
@@ -106,7 +100,7 @@ public class LoggingLayout extends LayoutBase<ILoggingEvent> {
                     logString = StringUtils.replace(logString, str, STR_SKIP_TOO_LONG_TEXT);
                 }
             }
-            // sql 로그에서.. (보통 jdbcdslog)
+            // sql 로그에서..
             substringsBetween = StringUtils.substringsBetween(logString, "src='||chr(38)||'quot;data:image/", "chr(38)||'quot;'||chr(38)||'gt;'");
             if (substringsBetween != null) {
                 for (final String str : substringsBetween) {

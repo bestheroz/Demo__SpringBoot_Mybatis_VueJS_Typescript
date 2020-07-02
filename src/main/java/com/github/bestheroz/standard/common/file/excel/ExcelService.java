@@ -30,7 +30,6 @@ import java.util.Map;
 public class ExcelService extends AbstractExcelXView {
     public static final String VIEW_NAME = "excelView";
 
-    @SuppressWarnings("DuplicatedCode")
     @Override
     protected void buildExcelDocument(final Map<String, Object> model, final SXSSFWorkbook workbook, final HttpServletRequest request, final HttpServletResponse response) {
         @SuppressWarnings("unchecked") final List<ExcelVO> excelVOs = (List<ExcelVO>) model.get(AbstractExcelXView.EXCEL_VOS);
@@ -48,7 +47,6 @@ public class ExcelService extends AbstractExcelXView {
         this.autoSizeColumn(sheet, excelVOs);
     }
 
-    @SuppressWarnings("DuplicatedCode")
     private void createColumnLabel(final SXSSFSheet sheet, final List<ExcelVO> excelVOs) {
         final SXSSFRow row0 = sheet.createRow(0);
         final CellRangeAddress mergedRegion = new CellRangeAddress(0, 0, 0, excelVOs.size() - 1);

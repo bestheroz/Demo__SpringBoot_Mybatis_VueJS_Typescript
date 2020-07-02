@@ -13,7 +13,7 @@ import javax.persistence.Id;
 import java.io.Serializable;
 
 @Data
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "MENU")

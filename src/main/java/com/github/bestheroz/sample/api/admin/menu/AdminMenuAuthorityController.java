@@ -32,7 +32,7 @@ public class AdminMenuAuthorityController {
     public ResponseEntity<ApiResult> save(@PathVariable("authority") final Integer authority, @RequestBody final Map<String, String> payload) {
         final TableMenuAuthorityVO TableMenuAuthorityVO = new TableMenuAuthorityVO();
         TableMenuAuthorityVO.setAuthority(authority);
-        TableMenuAuthorityVO.setMenuIdList(Arrays.stream(StringUtils.split(payload.get("menuIdList"), ",")).map(item -> "^|" + item + ",").collect(Collectors.joining("")));
+        TableMenuAuthorityVO.setMenuIdList(Arrays.stream(StringUtils.split(payload.get("menuIdList"), ",")).map(item -> "^|" + item + ",").collect(Collectors.joining(StringUtils.EMPTY)));
         this.tableMenuAuthorityRepository.save(TableMenuAuthorityVO);
         return Result.ok();
     }

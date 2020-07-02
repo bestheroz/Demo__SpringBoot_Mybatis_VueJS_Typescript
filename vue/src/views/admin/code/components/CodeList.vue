@@ -1,17 +1,18 @@
 <template>
   <div>
     <v-card>
-      <v-alert
-        border="bottom"
-        colored-border
-        color="success"
-        icon="mdi-format-list-checkbox"
-        dense
-        class="mb-0"
-      >
-        코드 관리 - Detail
-      </v-alert>
       <v-card-text class="py-1">
+        <v-alert
+          border="bottom"
+          colored-border
+          color="success"
+          icon="mdi-format-list-checkbox"
+          dense
+          text
+          class="mb-0"
+        >
+          코드 관리 - Detail
+        </v-alert>
         <v-data-table
           must-sort
           fixed-header
@@ -132,7 +133,6 @@ export default class extends Vue {
   @Prop({ required: true }) readonly parentItem!: TableCodeGroupVO;
 
   readonly envs: typeof envs = envs;
-
   AUTHORITY: SelectItem[] | null = null;
   mode: string | null = null;
 
@@ -141,7 +141,7 @@ export default class extends Vue {
   sortDesc: boolean[] = [false];
   items: TableCodeVO[] = [];
   filteredItems: TableCodeVO[] = [];
-  editItem: TableCodeVO = {};
+  editItem: TableCodeVO = Object.create(null);
   selected: TableCodeVO[] = [];
   dialog: boolean = false;
   headers: DataTableHeader[] = [
@@ -160,13 +160,13 @@ export default class extends Vue {
       align: `center`,
       value: `available`,
       filterType: 'switch',
-      width: 110,
+      width: '7rem',
     },
     {
       text: `출력 순서`,
       align: `end`,
       value: `displayOrder`,
-      width: 110,
+      width: '7rem',
     },
     {
       text: `권한(~부터 볼수 있음)`,
@@ -180,14 +180,14 @@ export default class extends Vue {
       align: `center`,
       value: `updated`,
       filterable: false,
-      width: 170,
+      width: '11rem',
     },
     {
       text: `작업자`,
       align: `start`,
       value: `updatedBy`,
       filterable: false,
-      width: 110,
+      width: '8rem',
     },
   ];
 

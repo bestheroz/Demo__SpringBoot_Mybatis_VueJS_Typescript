@@ -1,6 +1,10 @@
 package com.github.bestheroz.standard.common.authenticate;
 
-import org.springframework.security.core.Authentication;
+import com.github.bestheroz.sample.api.entity.member.TableMemberRepository;
+import com.github.bestheroz.sample.api.entity.member.TableMemberVO;
+import com.github.bestheroz.standard.common.util.AccessBeanUtils;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
 
@@ -9,20 +13,39 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Optional;
 
+@Slf4j
 public class JwtAuthenticationFilter extends GenericFilterBean {
 
     @Override
     public void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse, final FilterChain filterChain) throws IOException, ServletException {
-        // 헤더에서 JWT 를 받아옵니다.
-        final String token = JwtTokenProvider.resolveToken((HttpServletRequest) servletRequest);
-        // 유효한 토큰인지 확인합니다.
-        if (token != null && JwtTokenProvider.validateToken(token)) {
-            // 토큰이 유효하면 토큰으로부터 유저 정보를 받아옵니다.
-            final Authentication authentication = JwtTokenProvider.getAuthentication(token);
-            // SecurityContext 에 Authentication 객체를 저장합니다.
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+        final String token = JwtTokenProvider.resolveAccessToken((HttpServletRequest) servletRequest);
+        final String refreshToken = JwtTokenProvider.resolveRefreshToken((HttpServletRequest) servletRequest);
+        if (StringUtils.isAnyEmpty(token, refreshToken) && StringUtils.startsWithAny(((HttpServletRequest) servletRequest).getRequestURI(), "/api/admin/", "/api/menus/")) {
+            ((HttpServletResponse) servletResponse).sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
+        if (token != null) {
+            if (JwtTokenProvider.validateAccessToken(token)) {
+                SecurityContextHolder.getContext().setAuthentication(JwtTokenProvider.getAuthentication(token));
+            } else if (JwtTokenProvider.validateRefreshToken(token, refreshToken)) {
+                final Optional<TableMemberVO> one = AccessBeanUtils.getBean(TableMemberRepository.class).findByToken(refreshToken);
+                if (one.isPresent()) {
+                    final TableMemberVO tableMemberVO = one.get();
+                    final String newAccessToken = JwtTokenProvider.createAccessToken(tableMemberVO.getId());
+                    final String newRefreshToken = JwtTokenProvider.createRefreshToken(tableMemberVO.getId(), newAccessToken);
+                    tableMemberVO.setToken(newRefreshToken);
+                    SecurityContextHolder.getContext().setAuthentication(JwtTokenProvider.getAuthentication(newAccessToken));
+                    AccessBeanUtils.getBean(TableMemberRepository.class).save(tableMemberVO);
+                    ((HttpServletResponse) servletResponse).addHeader("accessToken", newAccessToken);
+                    ((HttpServletResponse) servletResponse).addHeader("refreshToken", newRefreshToken);
+                    ((HttpServletResponse) servletResponse).sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                    return;
+                }
+            }
         }
         filterChain.doFilter(servletRequest, servletResponse);
     }

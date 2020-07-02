@@ -28,7 +28,7 @@ public class TraceLoggingInAOP {
     private static final String STR_END_EXECUTE_TIME = "{} E N D ....... Execute Time ....... : {} - return Value({}) : {}";
 
     @Around("execution(* com.github.bestheroz..*Controller.*(..)) || execution(* com.github.bestheroz..*Service.*(..)) " +
-            "|| execution(* com.github.bestheroz..*Repository.*(..)) || execution(* com.github.bestheroz..*Integercptor.*(..))")
+            "|| execution(* com.github.bestheroz..*Repository.*(..))")
     public Object doLoggingAround(final ProceedingJoinPoint pjp) throws Throwable {
         final Object retVal;
 

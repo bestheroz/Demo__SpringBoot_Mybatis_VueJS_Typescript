@@ -4,7 +4,6 @@ import com.github.bestheroz.standard.common.response.ApiResult;
 import com.github.bestheroz.standard.common.response.Result;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.jdbc.UncategorizedSQLException;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
@@ -15,7 +14,6 @@ import java.io.FileNotFoundException;
 import java.net.BindException;
 import java.util.Set;
 
-@Slf4j
 @Setter
 @Getter
 public class BusinessException extends RuntimeException {

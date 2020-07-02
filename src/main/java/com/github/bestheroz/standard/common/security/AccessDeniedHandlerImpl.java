@@ -16,7 +16,6 @@ public class AccessDeniedHandlerImpl implements AccessDeniedHandler {
     public void handle(final HttpServletRequest request, final HttpServletResponse response,
                        final AccessDeniedException accessDeniedException) throws IOException {
         log.debug("Access to `" + request.getRequestURI() + "` denied.");
-
         if (request.getRequestURI().startsWith("/api/")) {
             if (request.getUserPrincipal() instanceof TableMemberVO) {
                 response.sendError(HttpServletResponse.SC_FORBIDDEN);

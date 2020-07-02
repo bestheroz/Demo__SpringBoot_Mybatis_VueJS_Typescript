@@ -32,6 +32,13 @@
                 dialog = true;
               }
             "
+            @click:delete="
+              () => {
+                editItem = selected[0];
+                $refs.refEditDialog.delete();
+              }
+            "
+            @click:reload="getList"
           />
         </template>
         <template v-slot:header>
@@ -121,7 +128,7 @@ export default class extends Vue {
   sortDesc: boolean[] = [true];
   items: TableMemberVO[] = [];
   filteredItems: TableMemberVO[] = [];
-  editItem: TableMemberVO = {};
+  editItem: TableMemberVO = Object.create(null);
   selected: TableMemberVO[] = [];
   loading: boolean = false;
   dialog: boolean = false;
@@ -150,34 +157,34 @@ export default class extends Vue {
       text: `만료일`,
       align: `center`,
       value: `expired`,
-      width: 170,
+      width: '11rem',
     },
     {
       text: `사용 가능`,
       align: `center`,
       value: `available`,
       filterType: 'switch',
-      width: 110,
+      width: '7rem',
     },
     {
       text: `자동로그아웃시간(초)`,
       align: `end`,
       value: `timeout`,
-      width: 170,
+      width: '11rem',
     },
     {
       text: `작업 일시`,
       align: `center`,
       value: `updated`,
       filterable: false,
-      width: 170,
+      width: '11rem',
     },
     {
       text: `작업자`,
       align: `start`,
       value: `updatedBy`,
       filterable: false,
-      width: 110,
+      width: '8rem',
     },
   ];
 

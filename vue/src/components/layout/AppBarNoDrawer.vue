@@ -8,7 +8,10 @@
           class="font-weight-light"
           :style="{ cursor: 'pointer' }"
           @click="$store.commit('logout')"
-          v-if="$router.currentRoute.path !== '/login'"
+          v-if="
+            $router.currentRoute.path !== '/login' &&
+            this.$storage.has('accessToken')
+          "
         >
           <v-icon>mdi-logout</v-icon>
           로그아웃
