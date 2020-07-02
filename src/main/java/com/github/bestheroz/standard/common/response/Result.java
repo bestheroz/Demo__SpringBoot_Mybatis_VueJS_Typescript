@@ -11,7 +11,7 @@ public class Result {
     private Result() {
     }
 
-    public static ResponseEntity<ApiResult> created() {
+    public static ResponseEntity<ApiResult> created() {  // TODO : created 적용좀 하자.
         return ResponseEntity.status(201).body(ApiResult.ok());
     }
 

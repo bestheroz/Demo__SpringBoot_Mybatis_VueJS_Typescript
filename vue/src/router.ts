@@ -64,6 +64,11 @@ const routes = () => {
           component: () => import('@/views/error/Error403.vue'),
         },
         {
+          name: '404 Page not found',
+          path: '404',
+          component: () => import('@/views/error/Error404.vue'),
+        },
+        {
           name: '500 Internal Server Error',
           path: '500',
           component: () => import('@/views/error/Error500.vue'),
@@ -72,11 +77,6 @@ const routes = () => {
           name: '503 Service Unavailable',
           path: '503',
           component: () => import('@/views/error/Error503.vue'),
-        },
-        {
-          name: '404 Page not found',
-          path: '404',
-          component: () => import('@/views/error/Error404.vue'),
         },
       ],
     },

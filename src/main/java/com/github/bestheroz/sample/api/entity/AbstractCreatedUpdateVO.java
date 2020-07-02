@@ -20,7 +20,7 @@ public abstract class AbstractCreatedUpdateVO {
     protected void onCreate() {
         this.updated = this.created = LocalDateTime.now();
         if (AuthenticationUtils.isLoggedIn()) {
-            this.updatedBy = this.createdBy = AuthenticationUtils.getUserName();
+            this.updatedBy = this.createdBy = AuthenticationUtils.getUserPk();
         }
     }
 
@@ -28,7 +28,7 @@ public abstract class AbstractCreatedUpdateVO {
     protected void onUpdate() {
         this.updated = LocalDateTime.now();
         if (AuthenticationUtils.isLoggedIn()) {
-            this.updatedBy = AuthenticationUtils.getUserName();
+            this.updatedBy = AuthenticationUtils.getUserPk();
         }
     }
 }

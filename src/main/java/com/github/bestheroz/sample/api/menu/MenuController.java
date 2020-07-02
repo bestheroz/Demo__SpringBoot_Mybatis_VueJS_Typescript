@@ -11,11 +11,16 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 
 @RestController
-@RequestMapping("api/menu")
+@RequestMapping("api/menus")
 public class MenuController {
     @Resource private MenuService menuService;
 
-    @GetMapping
+    @GetMapping()
+    ResponseEntity<ApiResult> getMenus() {
+        return Result.ok(this.menuService.getMenuList());
+    }
+
+    @GetMapping(value = "drawer")
     ResponseEntity<ApiResult> getDrawerList() {
         return Result.ok(this.menuService.getDrawerList(AuthenticationUtils.getLoginVO().getAuthority()));
     }

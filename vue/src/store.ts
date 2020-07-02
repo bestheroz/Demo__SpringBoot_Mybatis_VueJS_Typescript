@@ -12,8 +12,9 @@ export default new Vuex.Store({
     logoutTime: new Date().getTime() + 2 * 3600 * 1000,
   },
   mutations: {
-    saveToken(state, token: string) {
-      Vue.$storage.set('accessToken', token);
+    saveToken(state, token: { accessToken: string; refreshToken: string }) {
+      Vue.$storage.set('accessToken', token.accessToken);
+      Vue.$storage.set('refreshToken', token.refreshToken);
     },
     saveUserVO(state, loginVO: TableMemberVO) {
       Vue.$storage.set('authority', loginVO.authority);
@@ -27,7 +28,7 @@ export default new Vuex.Store({
         console.error(e);
       }
       Vue.$storage.clear();
-      await router.push('/login');
+      await router.replace('/login');
     },
     timer(state) {
       state.logoutTime =

@@ -11,12 +11,14 @@ export const axiosInstance = axios.create({
   headers: {
     contentType: 'application/json',
     Authorization: Vue.$storage.get('accessToken'),
+    AuthorizationR: Vue.$storage.get('refreshToken'),
   },
 });
 
 axiosInstance.interceptors.request.use(
   function (config) {
     config.headers.Authorization = Vue.$storage.get('accessToken');
+    config.headers.AuthorizationR = Vue.$storage.get('refreshToken');
     return config;
   },
   function (error) {
@@ -29,9 +31,36 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   async function (error: AxiosError) {
-    if (error.response && error.response.status === 401) {
-      await router.push(`/login?login=need`);
-      return;
+    if (error.response) {
+      if (error.response.status === 401) {
+        if (
+          error.response.headers.accesstoken &&
+          error.response.headers.refreshtoken
+        ) {
+          return axios.request(refreshToken(error).config);
+        }
+        await router.replace(`/login?login=need`);
+        return;
+      } else if (error.response.status === 403) {
+        await router.replace(`/error/403`);
+        return;
+      } else if (error.response.status === 404) {
+        await router.replace(`/error/404`);
+        return;
+      } else if (error.response.status === 500) {
+        await router.replace(`/error/500`);
+        return;
+      } else if (error.response.status === 503) {
+        await router.replace(`/error/503`);
+        return;
+      } else if (error.response.status === 400) {
+        if (
+          error.response.headers.accesstoken &&
+          error.response.headers.refreshtoken
+        ) {
+          return axios.request(refreshToken(error).config);
+        }
+      }
     }
     return Promise.reject(error);
   },
@@ -235,4 +264,20 @@ export async function getExcelApi(url: string): Promise<void> {
   window.URL.revokeObjectURL(newUrl);
   store.commit('timer');
   return response.data;
+}
+
+function refreshToken(error: AxiosError) {
+  if (
+    error.response &&
+    error.response.headers.accesstoken &&
+    error.response.headers.refreshtoken
+  ) {
+    store.commit('saveToken', {
+      accessToken: error.response.headers.accesstoken,
+      refreshToken: error.response.headers.refreshtoken,
+    });
+    error.config.headers.Authorization = error.response.headers.accesstoken;
+    error.config.headers.AuthorizationR = error.response.headers.refreshtoken;
+  }
+  return error;
 }

@@ -40,7 +40,7 @@ public class AuthenticationUtils {
         }
     }
 
-    public String getUserName() {
+    public String getUserPk() {
         try {
             final String username = SecurityContextHolder.getContext().getAuthentication().getName();
             if (username == null) {
