@@ -2,14 +2,12 @@ package com.github.bestheroz.standard.common.util;
 
 import com.github.bestheroz.standard.common.exception.BusinessException;
 import com.github.bestheroz.standard.common.exception.ExceptionCode;
-import com.google.common.collect.ImmutableSet;
 import lombok.experimental.UtilityClass;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.tika.Tika;
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.DigestUtils;
@@ -24,6 +22,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.time.OffsetDateTime;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
@@ -151,7 +150,7 @@ public class FileUtils {
 
     private File uploadMultipartFile(final String targetDirPath, final MultipartFile multipartFile) {
         final StringBuilder fileName = new StringBuilder(80);
-        fileName.append(DateTime.now().toString(DateUtils.YYYYMMDDHHMMSS)).append(STR_UNDERLINE).append(DigestUtils.md5DigestAsHex(multipartFile.getOriginalFilename().getBytes()));
+        fileName.append(OffsetDateTime.now().format(DateUtils.YYYYMMDDHHMMSS)).append(STR_UNDERLINE).append(DigestUtils.md5DigestAsHex(multipartFile.getOriginalFilename().getBytes()));
         if (StringUtils.isNotEmpty(getExtension(multipartFile))) {
             fileName.append(STR_DOT).append(getExtension(multipartFile));
         }
@@ -351,18 +350,18 @@ public class FileUtils {
     }
 
     public enum FileType {
-        IMAGE(ImmutableSet.of("gif", "jpg", "jpeg", "tif", "tiff", "png", "bmp"), ImmutableSet.of("image/gif", "image/jpeg", "image/pjpeg", "image/tiff", "image/x-tiff", "image/png", "image/bmp")),
+        IMAGE(Set.of("gif", "jpg", "jpeg", "tif", "tiff", "png", "bmp"), Set.of("image/gif", "image/jpeg", "image/pjpeg", "image/tiff", "image/x-tiff", "image/png", "image/bmp")),
 
-        EXCEL(ImmutableSet.of("xlsx", "xls"),
-                ImmutableSet.of("application/excel", "application/vnd.ms-excel", "application/x-excel", "application/x-msexcel", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")),
+        EXCEL(Set.of("xlsx", "xls"),
+                Set.of("application/excel", "application/vnd.ms-excel", "application/x-excel", "application/x-msexcel", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")),
 
-        WORD(ImmutableSet.of("docx", "doc", "dotx"), ImmutableSet.of("application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        WORD(Set.of("docx", "doc", "dotx"), Set.of("application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
                 "application/vnd.openxmlformats-officedocument.wordprocessingml.template")),
 
-        PDF(ImmutableSet.of("pdf"), ImmutableSet.of("application/pdf", "application/x-pdf")),
+        PDF(Set.of("pdf"), Set.of("application/pdf", "application/x-pdf")),
 
-        ILLEGAL(ImmutableSet.of("exe", "sh", "csh", "ai"),
-                ImmutableSet.of("application/octet-stream", "application/x-sh", "application/x-shar", "text/x-script.sh", "application/x-csh", "text/x-script.csh", "application/postscript"));
+        ILLEGAL(Set.of("exe", "sh", "csh", "ai"),
+                Set.of("application/octet-stream", "application/x-sh", "application/x-shar", "text/x-script.sh", "application/x-csh", "text/x-script.csh", "application/postscript"));
 
         private final Set<String> extList;
         private final Set<String> mimeTypeList;

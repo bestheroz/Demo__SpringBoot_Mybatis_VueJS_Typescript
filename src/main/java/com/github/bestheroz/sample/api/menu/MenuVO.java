@@ -1,9 +1,9 @@
 package com.github.bestheroz.sample.api.menu;
 
 import lombok.Data;
-import org.joda.time.LocalDateTime;
 
 import java.io.Serializable;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Data
@@ -21,7 +21,7 @@ public class MenuVO implements Serializable {
     private String remark1;
     private List<MenuVO> children;
     private String createdBy;
-    private LocalDateTime created;
+    private OffsetDateTime created;
     private String updatedBy;
-    private LocalDateTime updated;
+    private OffsetDateTime updated;
 }

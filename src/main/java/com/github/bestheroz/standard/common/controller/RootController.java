@@ -5,6 +5,8 @@ import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import javax.annotation.PreDestroy;
+
 @Controller
 @Slf4j
 public class RootController implements ErrorController {
@@ -21,6 +23,7 @@ public class RootController implements ErrorController {
     }
 
     @Override
+    @PreDestroy
     public String getErrorPath() {
         return INDEX_HTML;
     }

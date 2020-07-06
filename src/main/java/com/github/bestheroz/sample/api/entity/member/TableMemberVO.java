@@ -2,12 +2,12 @@ package com.github.bestheroz.sample.api.entity.member;
 
 import com.github.bestheroz.sample.api.entity.AbstractCreatedUpdateVO;
 import lombok.*;
-import org.joda.time.LocalDateTime;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.PrePersist;
 import java.io.Serializable;
+import java.time.OffsetDateTime;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -22,7 +22,7 @@ public class TableMemberVO extends AbstractCreatedUpdateVO implements Serializab
     private String name;
     private Integer authority;
     private Integer loginFailCnt;
-    private LocalDateTime expired;
+    private OffsetDateTime expired;
     private boolean available;
     private Integer timeout;
     private String token;
