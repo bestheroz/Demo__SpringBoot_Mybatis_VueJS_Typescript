@@ -18,9 +18,11 @@ export default class extends Vue {
 </script>
 
 <style lang="scss">
-.v-application a {
-  color: #4caf50;
+.v-application {
   font-family: 'Open Sans', sans-serif;
+  a {
+    color: #4caf50;
+  }
 }
 
 .v-data-table {
