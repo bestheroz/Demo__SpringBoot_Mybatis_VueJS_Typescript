@@ -40,7 +40,7 @@ public class AdminMenuController {
     @CacheEvict(value = "drawerCache", allEntries = true)
     public ResponseEntity<ApiResult> update(@PathVariable(value = "id") final Integer id, @RequestBody final TableMenuVO tableMenuVO) {
         final Optional<TableMenuVO> byId = this.tableMenuRepository.findById(id);
-        if (!byId.isPresent()) {
+        if (byId.isEmpty()) {
             throw BusinessException.FAIL_INVALID_REQUEST;
         }
         tableMenuVO.setId(id);
