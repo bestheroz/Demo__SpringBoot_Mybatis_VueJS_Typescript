@@ -4,9 +4,6 @@ import com.github.bestheroz.standard.common.util.DateUtils;
 import com.github.bestheroz.standard.common.util.FileUtils;
 import com.github.bestheroz.standard.common.util.MapperUtils;
 import com.github.bestheroz.standard.context.abstractview.AbstractExcelXView;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.FillPatternType;
@@ -23,6 +20,7 @@ import org.apache.poi.xssf.usermodel.XSSFFont;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -33,7 +31,7 @@ public class ExcelService extends AbstractExcelXView {
     @Override
     protected void buildExcelDocument(final Map<String, Object> model, final SXSSFWorkbook workbook, final HttpServletRequest request, final HttpServletResponse response) {
         @SuppressWarnings("unchecked") final List<ExcelVO> excelVOs = (List<ExcelVO>) model.get(AbstractExcelXView.EXCEL_VOS);
-        final JsonArray listData = MapperUtils.toJsonArray(model.get(AbstractExcelXView.LIST_DATA));
+        final List<HashMap> listData = MapperUtils.toArrayList(model.get(AbstractExcelXView.LIST_DATA), HashMap.class);
         final String fileName = FileUtils.getEncodedFileName(request, (String) model.get(AbstractExcelXView.FILE_NAME));
 
         response.setHeader("Content-Disposition", "attachment;filename=" + fileName + "_" + DateUtils.getStringNow(DateUtils.YYYYMMDDHHMMSS) + AbstractExcelXView.EXTENSION + ";");
@@ -72,17 +70,17 @@ public class ExcelService extends AbstractExcelXView {
         }
     }
 
-    private void addRowData(final SXSSFSheet sheet, final List<ExcelVO> excelVOs, final JsonArray listData) {
+    private void addRowData(final SXSSFSheet sheet, final List<ExcelVO> excelVOs, final List<HashMap> listData) {
         for (int i = 0; i < listData.size(); i++) {
             if (i != 0 && i % 100 == 0) {
                 log.debug("[Excel]{} write {} rows", sheet.getSheetName(), i + 1);
             }
             final SXSSFRow row = sheet.createRow(3 + i);
-            final JsonObject jo = listData.get(i).getAsJsonObject();
+            final HashMap jo = listData.get(i);
             for (int j = 0; j < excelVOs.size(); j++) {
-                final JsonElement jsonElement = jo.get(excelVOs.get(j).getDbColName());
-                if (jsonElement != null && !jsonElement.isJsonNull() && StringUtils.isNotEmpty(jsonElement.getAsString())) {
-                    this.writeColumnData(excelVOs, j, row.createCell(j), jsonElement.getAsString());
+                final String value = (String) jo.get(excelVOs.get(j).getDbColName());
+                if (value != null && StringUtils.isNotEmpty(value)) {
+                    this.writeColumnData(excelVOs, j, row.createCell(j), value);
                 }
             }
         }

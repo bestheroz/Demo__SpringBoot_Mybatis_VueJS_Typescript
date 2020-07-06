@@ -6,19 +6,19 @@ import lombok.Data;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
-import java.time.OffsetDateTime;
+import java.time.Instant;
 
 @Data
 @MappedSuperclass
 public abstract class AbstractCreatedUpdateVO {
     protected String createdBy;
-    protected OffsetDateTime created;
+    protected Instant created;
     protected String updatedBy;
-    protected OffsetDateTime updated;
+    protected Instant updated;
 
     @PrePersist
     protected void onCreate() {
-        this.updated = this.created = OffsetDateTime.now();
+        this.updated = this.created = Instant.now();
         if (AuthenticationUtils.isLoggedIn()) {
             this.updatedBy = this.createdBy = AuthenticationUtils.getUserPk();
         }
@@ -26,7 +26,7 @@ public abstract class AbstractCreatedUpdateVO {
 
     @PreUpdate
     protected void onUpdate() {
-        this.updated = OffsetDateTime.now();
+        this.updated = Instant.now();
         if (AuthenticationUtils.isLoggedIn()) {
             this.updatedBy = AuthenticationUtils.getUserPk();
         }

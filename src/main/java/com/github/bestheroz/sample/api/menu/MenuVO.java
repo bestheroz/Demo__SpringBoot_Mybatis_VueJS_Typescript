@@ -3,7 +3,7 @@ package com.github.bestheroz.sample.api.menu;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.time.OffsetDateTime;
+import java.time.Instant;
 import java.util.List;
 
 @Data
@@ -21,7 +21,7 @@ public class MenuVO implements Serializable {
     private String remark1;
     private List<MenuVO> children;
     private String createdBy;
-    private OffsetDateTime created;
+    private Instant created;
     private String updatedBy;
-    private OffsetDateTime updated;
+    private Instant updated;
 }

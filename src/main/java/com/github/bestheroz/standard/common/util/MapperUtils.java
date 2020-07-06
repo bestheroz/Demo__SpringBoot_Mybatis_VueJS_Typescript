@@ -1,104 +1,90 @@
 package com.github.bestheroz.standard.common.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.github.bestheroz.standard.common.exception.BusinessException;
 import com.github.bestheroz.standard.common.exception.ExceptionCode;
-import com.github.bestheroz.standard.common.util.typeadapter.InstantDeserializerTypeAdapter;
-import com.github.bestheroz.standard.common.util.typeadapter.InstantSerializerTypeAdapter;
-import com.github.bestheroz.standard.common.util.typeadapter.MapDeserializerTypeAdapter;
-import com.google.gson.*;
-import com.google.gson.internal.LinkedTreeMap;
-import com.google.gson.reflect.TypeToken;
+import com.github.bestheroz.standard.common.util.serializer.InstantSerializer;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tika.utils.ExceptionUtils;
 
-import java.lang.reflect.Type;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Slf4j
 @UtilityClass
 public class MapperUtils {
-    private final Gson GSON_INSTANCE = new GsonBuilder()
-            .registerTypeAdapter(Instant.class, new InstantDeserializerTypeAdapter()).registerTypeAdapter(Instant.class, new InstantSerializerTypeAdapter())
-//            .registerTypeAdapter(Map.class, new MapDeserializerTypeAdapter()).registerTypeAdapter(HashMap.class, new MapDeserializerTypeAdapter())
-            .registerTypeAdapter(LinkedTreeMap.class, new MapDeserializerTypeAdapter()).disableHtmlEscaping().create();
-
+    private ObjectMapper OBJECT_MAPPER = null;
 
     public <T> T toObject(final Object content, final Class<T> returnType) {
-        return GSON_INSTANCE.fromJson(toJsonElement(content), returnType);
+        try {
+            return getObjectMapper().readValue(toString(content), returnType);
+        } catch (final JsonProcessingException e) {
+            log.warn(ExceptionUtils.getStackTrace(e));
+            throw new BusinessException(ExceptionCode.ERROR_TRANSFORM_DATA);
+        }
     }
 
-    public <T> T toObject(final Object content, final Type typeOfT) {
-        return GSON_INSTANCE.fromJson(toJsonElement(content), typeOfT);
-    }
-
-    public JsonArray toJsonArray(final Object content) {
-        return getCollectionTypeCatchException(content, JsonArray.class);
-    }
-
-    public JsonObject toJsonObject(final Object content) {
-        return getCollectionTypeCatchException(content, JsonObject.class);
+    public <T> T toObject(final Object content, final JavaType typeOfT) {
+        try {
+            return getObjectMapper().readValue(toString(content), typeOfT);
+        } catch (final JsonProcessingException e) {
+            log.warn(ExceptionUtils.getStackTrace(e));
+            throw new BusinessException(ExceptionCode.ERROR_TRANSFORM_DATA);
+        }
     }
 
     public Map<String, Object> toHashMap(final Object content) {
-        return toObject(getCollectionTypeCatchException(content, JsonObject.class), new TypeToken<HashMap<String, Object>>() {
-        }.getType());
-    }
-
-    public JsonPrimitive toJsonPrimitive(final Object content) {
-        return toJsonElement(content).getAsJsonPrimitive();
-    }
-
-    public JsonElement toJsonElement(final Object content) {
-        if (content instanceof String) {
-            try {
-                return JsonParser.parseString((String) content);
-            } catch (final Throwable e) {
-                // ignored
-                return GSON_INSTANCE.toJsonTree(content);
-            }
-        } else {
-            return GSON_INSTANCE.toJsonTree(content);
+        try {
+            return getObjectMapper().readValue(toString(content), new TypeReference<Map<String, Object>>() {
+            });
+        } catch (final JsonProcessingException e) {
+            log.warn(ExceptionUtils.getStackTrace(e));
+            throw new BusinessException(ExceptionCode.ERROR_TRANSFORM_DATA);
         }
     }
 
     public String toString(final Object content) {
-        return GSON_INSTANCE.toJson(content);
+        try {
+            return getObjectMapper().writeValueAsString(content);
+        } catch (final JsonProcessingException e) {
+            log.warn(ExceptionUtils.getStackTrace(e));
+            throw new BusinessException(ExceptionCode.ERROR_TRANSFORM_DATA);
+        }
+    }
+
+    public JsonNode toJsonNode(final Object content) {
+        try {
+            return getObjectMapper().readTree(toString(content));
+        } catch (final JsonProcessingException e) {
+            log.warn(ExceptionUtils.getStackTrace(e));
+            throw new BusinessException(ExceptionCode.ERROR_TRANSFORM_DATA);
+        }
     }
 
     public <T> List<T> toArrayList(final Object content, final Class<T> returnType) {
-        final JsonArray array = MapperUtils.toObject(content, JsonArray.class);
-        final List<T> lst = new ArrayList<>();
-        for (final JsonElement json : array) {
-            lst.add(MapperUtils.toObject(json, returnType));
-        }
-        return lst;
-    }
-
-    public Gson getGsonObject() {
-        return GSON_INSTANCE;
-    }
-
-    @SuppressWarnings("unchecked")
-    private <T> T getCollectionTypeCatchException(final Object content, final Class<T> returnType) {
-        final JsonElement jsonElement = toJsonElement(content);
-        if (jsonElement.isJsonPrimitive()) {
-            log.warn(jsonElement.toString());
-            log.warn(ExceptionCode.ERROR_TRANSFORM_DATA.toString());
+        try {
+            return getObjectMapper().readValue(toString(content), new TypeReference<List<T>>() {
+            });
+        } catch (final JsonProcessingException e) {
+            log.warn(ExceptionUtils.getStackTrace(e));
             throw new BusinessException(ExceptionCode.ERROR_TRANSFORM_DATA);
-        } else if (jsonElement.isJsonNull()) {
-            if (returnType == JsonObject.class) {
-                return (T) new JsonObject();
-            } else if (returnType == JsonArray.class) {
-                return (T) new JsonArray();
-            } else if (returnType == Map.class) {
-                return (T) new HashMap<String, Object>();
-            }
         }
-
-        return toObject(jsonElement, returnType);
     }
+
+    public ObjectMapper getObjectMapper() {
+        if (OBJECT_MAPPER == null) {
+            final SimpleModule module = new SimpleModule();
+            module.addSerializer(Instant.class, new InstantSerializer());
+            OBJECT_MAPPER = new ObjectMapper().registerModule(module);
+        }
+        return OBJECT_MAPPER;
+    }
+
 }

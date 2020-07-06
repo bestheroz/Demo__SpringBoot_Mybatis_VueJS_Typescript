@@ -7,7 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.PrePersist;
 import java.io.Serializable;
-import java.time.OffsetDateTime;
+import java.time.Instant;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -22,7 +22,7 @@ public class TableMemberVO extends AbstractCreatedUpdateVO implements Serializab
     private String name;
     private Integer authority;
     private Integer loginFailCnt;
-    private OffsetDateTime expired;
+    private Instant expired;
     private boolean available;
     private Integer timeout;
     private String token;
