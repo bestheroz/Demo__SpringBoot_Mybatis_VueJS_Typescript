@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.github.bestheroz.standard.common.exception.BusinessException;
 import com.github.bestheroz.standard.common.exception.ExceptionCode;
+import com.github.bestheroz.standard.common.util.serializer.InstantDeserializer;
 import com.github.bestheroz.standard.common.util.serializer.InstantSerializer;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -82,6 +83,7 @@ public class MapperUtils {
         if (OBJECT_MAPPER == null) {
             final SimpleModule module = new SimpleModule();
             module.addSerializer(Instant.class, new InstantSerializer());
+            module.addDeserializer(Instant.class, new InstantDeserializer());
             OBJECT_MAPPER = new ObjectMapper().registerModule(module);
         }
         return OBJECT_MAPPER;
