@@ -15,10 +15,10 @@ export interface DataTableHeader {
 }
 
 // export interface Pagination {
-//   page: number | null;
-//   sortBy: string[] | null;
-//   sortDesc: boolean[] | null;
-//   itemsPerPage: number | null; // -1 for All
+//   page: number;
+//   sortBy: string[];
+//   sortDesc: boolean[];
+//   itemsPerPage: number; // -1 for All
 // }
 
 export interface DrawerItem {
