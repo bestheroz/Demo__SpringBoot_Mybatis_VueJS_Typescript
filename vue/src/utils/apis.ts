@@ -39,19 +39,19 @@ axiosInstance.interceptors.response.use(
         ) {
           return axios.request(refreshToken(error).config);
         }
-        await router.replace(`/login?login=need`);
+        store.commit('needLogin');
         return;
       } else if (error.response.status === 403) {
-        await router.replace(`/error/403`);
+        store.commit('error', 403);
         return;
       } else if (error.response.status === 404) {
-        await router.replace(`/error/404`);
+        store.commit('error', 404);
         return;
       } else if (error.response.status === 500) {
-        await router.replace(`/error/500`);
+        store.commit('error', 405);
         return;
       } else if (error.response.status === 503) {
-        await router.replace(`/error/503`);
+        store.commit('error', 503);
         return;
       } else if (error.response.status === 400) {
         if (
@@ -173,12 +173,16 @@ export async function getCodeListApi<SelectItem>(
       const response = await axiosInstance.get<ApiDataResult<SelectItem[]>>(
         `api/codes/${codeGroup}`,
       );
-      const result = response.data.data || [];
-      if (result.length > 0) {
-        Vue.$storage.set(`code__${codeGroup}`, result);
+      if (response && response.data && response.data.data) {
+        const result = response.data.data || [];
+        if (result.length > 0) {
+          Vue.$storage.set(`code__${codeGroup}`, result);
+        }
+        // @ts-ignore
+        return result;
+      } else {
+        return [];
       }
-      // @ts-ignore
-      return result;
     } catch (error) {
       // console.warn(getErrorResult(error).message);
       return [];

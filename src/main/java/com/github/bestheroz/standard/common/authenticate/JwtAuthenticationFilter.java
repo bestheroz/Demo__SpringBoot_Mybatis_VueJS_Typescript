@@ -6,13 +6,12 @@ import com.github.bestheroz.standard.common.util.AccessBeanUtils;
 import com.github.bestheroz.standard.context.security.SecurityConfiguration;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.filter.GenericFilterBean;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -20,16 +19,22 @@ import java.util.Arrays;
 import java.util.Optional;
 
 @Slf4j
-public class JwtAuthenticationFilter extends GenericFilterBean {
+public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
+
+    public JwtAuthenticationFilter(final AuthenticationManager authenticationManager) {
+        super(authenticationManager);
+    }
 
     @Override
-    public void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse, final FilterChain filterChain) throws IOException, ServletException {
-        final String token = JwtTokenProvider.resolveAccessToken((HttpServletRequest) servletRequest);
-        final String refreshToken = JwtTokenProvider.resolveRefreshToken((HttpServletRequest) servletRequest);
-        final String requestURI = ((HttpServletRequest) servletRequest).getRequestURI();
-        final Optional<String> first = Arrays.stream(SecurityConfiguration.PUBLIC).map(item -> item.replace("*", "")).filter(item -> requestURI.startsWith(item)).findFirst();
+    protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response, final FilterChain chain)
+            throws IOException, ServletException {
+
+        final String token = JwtTokenProvider.resolveAccessToken(request);
+        final String refreshToken = JwtTokenProvider.resolveRefreshToken(request);
+        final String requestURI = (request).getRequestURI();
+        final Optional<String> first = Arrays.stream(SecurityConfiguration.PUBLIC).map(item -> item.replace("*", "")).filter(requestURI::startsWith).findFirst();
         if (StringUtils.isAnyEmpty(token, refreshToken) && first.isEmpty()) {
-            ((HttpServletResponse) servletResponse).sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            (response).sendError(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
         if (token != null) {
@@ -44,13 +49,13 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
                     tableMemberVO.setToken(newRefreshToken);
                     SecurityContextHolder.getContext().setAuthentication(JwtTokenProvider.getAuthentication(newAccessToken));
                     AccessBeanUtils.getBean(TableMemberRepository.class).save(tableMemberVO);
-                    ((HttpServletResponse) servletResponse).addHeader("accessToken", newAccessToken);
-                    ((HttpServletResponse) servletResponse).addHeader("refreshToken", newRefreshToken);
-                    ((HttpServletResponse) servletResponse).sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                    (response).addHeader("accessToken", newAccessToken);
+                    (response).addHeader("refreshToken", newRefreshToken);
+                    (response).sendError(HttpServletResponse.SC_UNAUTHORIZED);
                     return;
                 }
             }
         }
-        filterChain.doFilter(servletRequest, servletResponse);
+        chain.doFilter(request, response);
     }
 }

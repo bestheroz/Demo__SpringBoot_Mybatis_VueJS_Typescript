@@ -1,6 +1,5 @@
 package com.github.bestheroz.sample.api.entity.menu;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.github.bestheroz.sample.api.entity.AbstractCreatedUpdateVO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,7 +17,6 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "MENU")
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class TableMenuVO extends AbstractCreatedUpdateVO implements Serializable {
     private static final long serialVersionUID = 2658557582464222508L;
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY) private Integer id;

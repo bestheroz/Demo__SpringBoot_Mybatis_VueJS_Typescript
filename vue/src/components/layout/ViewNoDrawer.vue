@@ -17,20 +17,7 @@ export default class extends Vue {
     const items: TableMenuVO[] = this.$storage.get('menus');
     if (items && items.length > 0) {
       const result = items.find((item) => item.url === this.$route.fullPath);
-      if (
-        !result &&
-        ![
-          '/',
-          '/login',
-          '/login?login=need',
-          '/error/403',
-          '/error/404',
-          '/error/500',
-          '/error/503',
-        ].includes(this.$route.fullPath)
-      ) {
-        this.$router.replace('/error/404');
-      }
+      !result && this.$store.commit('error', 404);
     }
   }
 }

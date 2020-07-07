@@ -30,6 +30,27 @@ export default new Vuex.Store({
       Vue.$storage.clear();
       await router.replace('/login');
     },
+    async error(statsCode) {
+      if (
+        ![
+          '/',
+          '/login',
+          '/error',
+          '/error/403',
+          '/error/404',
+          '/error/500',
+          '/error/503',
+        ].includes(router.currentRoute.path)
+      ) {
+        await router.replace(`/error/${statsCode}`);
+      }
+    },
+    async needLogin() {
+      if (router.currentRoute.path !== '/login') {
+        Vue.$storage.clear();
+        await router.replace('/login?login=need');
+      }
+    },
     timer(state) {
       state.logoutTime =
         new Date().getTime() + Vue.$storage.get('timeout', 2 * 3600) * 1000;
