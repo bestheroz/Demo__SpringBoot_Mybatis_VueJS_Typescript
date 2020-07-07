@@ -12,8 +12,6 @@ import java.time.Instant;
 public class InstantToDateConverter implements AttributeConverter<Instant, Timestamp> {
     @Override
     public Timestamp convertToDatabaseColumn(final Instant locDate) {
-        log.debug("OffsetDateTimeConverter");
-        log.debug("{}", locDate);
         return locDate == null ? null : Timestamp.from(locDate);
     }
 

@@ -2,10 +2,11 @@ package com.github.bestheroz.standard.common.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.github.bestheroz.standard.common.exception.BusinessException;
 import com.github.bestheroz.standard.common.exception.ExceptionCode;
 import com.github.bestheroz.standard.common.util.serializer.InstantDeserializer;
@@ -14,6 +15,7 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tika.utils.ExceptionUtils;
 
+import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
@@ -25,27 +27,18 @@ public class MapperUtils {
 
     public <T> T toObject(final Object content, final Class<T> returnType) {
         try {
-            return getObjectMapper().readValue(toString(content), returnType);
-        } catch (final JsonProcessingException e) {
+            return getObjectMapper().readValue(toByte(content), returnType);
+        } catch (final IOException e) {
             log.warn(ExceptionUtils.getStackTrace(e));
             throw new BusinessException(ExceptionCode.ERROR_TRANSFORM_DATA);
         }
     }
 
-    public <T> T toObject(final Object content, final JavaType typeOfT) {
+    public Map<String, Object> toMap(final Object content) {
         try {
-            return getObjectMapper().readValue(toString(content), typeOfT);
-        } catch (final JsonProcessingException e) {
-            log.warn(ExceptionUtils.getStackTrace(e));
-            throw new BusinessException(ExceptionCode.ERROR_TRANSFORM_DATA);
-        }
-    }
-
-    public Map<String, Object> toHashMap(final Object content) {
-        try {
-            return getObjectMapper().readValue(toString(content), new TypeReference<Map<String, Object>>() {
+            return content instanceof Map ? (Map) content : getObjectMapper().readValue(toByte(content), new TypeReference<Map<String, Object>>() {
             });
-        } catch (final JsonProcessingException e) {
+        } catch (final IOException e) {
             log.warn(ExceptionUtils.getStackTrace(e));
             throw new BusinessException(ExceptionCode.ERROR_TRANSFORM_DATA);
         }
@@ -53,7 +46,16 @@ public class MapperUtils {
 
     public String toString(final Object content) {
         try {
-            return getObjectMapper().writeValueAsString(content);
+            return content instanceof String ? (String) content : getObjectMapper().writeValueAsString(content);
+        } catch (final JsonProcessingException e) {
+            log.warn(ExceptionUtils.getStackTrace(e));
+            throw new BusinessException(ExceptionCode.ERROR_TRANSFORM_DATA);
+        }
+    }
+
+    public byte[] toByte(final Object content) {
+        try {
+            return content instanceof byte[] ? (byte[]) content : getObjectMapper().writeValueAsBytes(content);
         } catch (final JsonProcessingException e) {
             log.warn(ExceptionUtils.getStackTrace(e));
             throw new BusinessException(ExceptionCode.ERROR_TRANSFORM_DATA);
@@ -62,8 +64,8 @@ public class MapperUtils {
 
     public JsonNode toJsonNode(final Object content) {
         try {
-            return getObjectMapper().readTree(toString(content));
-        } catch (final JsonProcessingException e) {
+            return content instanceof JsonNode ? (JsonNode) content : getObjectMapper().readTree(toByte(content));
+        } catch (final IOException e) {
             log.warn(ExceptionUtils.getStackTrace(e));
             throw new BusinessException(ExceptionCode.ERROR_TRANSFORM_DATA);
         }
@@ -71,9 +73,8 @@ public class MapperUtils {
 
     public <T> List<T> toArrayList(final Object content, final Class<T> returnType) {
         try {
-            return getObjectMapper().readValue(toString(content), new TypeReference<List<T>>() {
-            });
-        } catch (final JsonProcessingException e) {
+            return getObjectMapper().readValue(toByte(content), TypeFactory.defaultInstance().constructCollectionType(List.class, returnType));
+        } catch (final IOException e) {
             log.warn(ExceptionUtils.getStackTrace(e));
             throw new BusinessException(ExceptionCode.ERROR_TRANSFORM_DATA);
         }
@@ -84,7 +85,7 @@ public class MapperUtils {
             final SimpleModule module = new SimpleModule();
             module.addSerializer(Instant.class, new InstantSerializer());
             module.addDeserializer(Instant.class, new InstantDeserializer());
-            OBJECT_MAPPER = new ObjectMapper().registerModule(module);
+            OBJECT_MAPPER = new ObjectMapper().registerModule(module).configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         }
         return OBJECT_MAPPER;
     }

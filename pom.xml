@@ -61,7 +61,6 @@
             <artifactId>spring-boot-configuration-processor</artifactId>
         </dependency>
 
-
         <!-- lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
