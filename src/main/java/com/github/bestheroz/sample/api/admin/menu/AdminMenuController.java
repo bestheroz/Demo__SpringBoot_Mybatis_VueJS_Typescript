@@ -49,8 +49,8 @@ public class AdminMenuController {
     }
 
     @DeleteMapping(value = "{id}")
-    public @CacheEvict(value = "drawerCache", allEntries = true)
-    ResponseEntity<ApiResult> delete(@PathVariable(value = "id") final Integer id) {
+    @CacheEvict(value = "drawerCache", allEntries = true)
+    public ResponseEntity<ApiResult> delete(@PathVariable(value = "id") final Integer id) {
         this.tableMenuRepository.deleteById(id);
         return Result.ok();
     }

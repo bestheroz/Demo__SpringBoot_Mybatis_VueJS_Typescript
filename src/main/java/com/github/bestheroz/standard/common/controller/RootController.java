@@ -12,19 +12,16 @@ public class RootController implements ErrorController {
 
     @GetMapping(value = {"/", "/index.html"})
     public String root() {
-        log.debug("root");
         return INDEX_HTML;
     }
 
     @GetMapping("/error")
     public String redirectRoot() {
-        log.debug("redirectRoot");
         return INDEX_HTML;
     }
 
     @Override
     public String getErrorPath() {
-        log.debug("getErrorPath");
         return INDEX_HTML;
     }
 }

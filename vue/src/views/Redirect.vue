@@ -6,7 +6,7 @@
 import { Component, Vue } from 'vue-property-decorator';
 import { TableMemberVO, TableMenuVO } from '@/common/types';
 import store from '@/store';
-import { ApiDataResult, getApi } from '@/utils/apis';
+import { getApi } from '@/utils/apis';
 
 @Component({
   name: 'Redirect',

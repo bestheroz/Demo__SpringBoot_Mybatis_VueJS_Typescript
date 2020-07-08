@@ -1,6 +1,5 @@
 import axios, { AxiosError } from 'axios';
 import _ from 'lodash';
-import router from '@/router';
 import store from '@/store';
 import { alertError, alertSuccess } from '@/utils/alerts';
 import envs from '@/constants/envs';

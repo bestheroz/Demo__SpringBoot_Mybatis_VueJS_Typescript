@@ -30,7 +30,7 @@ export default new Vuex.Store({
       Vue.$storage.clear();
       await router.replace('/login');
     },
-    async error(statsCode) {
+    async error(state, statsCode) {
       if (
         ![
           '/',
