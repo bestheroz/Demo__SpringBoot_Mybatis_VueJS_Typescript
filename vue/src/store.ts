@@ -32,15 +32,9 @@ export default new Vuex.Store({
     },
     async error(state, statsCode) {
       if (
-        ![
-          '/',
-          '/login',
-          '/error',
-          '/error/403',
-          '/error/404',
-          '/error/500',
-          '/error/503',
-        ].includes(router.currentRoute.path)
+        !['/', '/login', '/error', '/error/403', '/error/404'].includes(
+          router.currentRoute.path,
+        )
       ) {
         await router.replace(`/error/${statsCode}`);
       }

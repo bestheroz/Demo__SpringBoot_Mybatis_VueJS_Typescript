@@ -72,16 +72,6 @@ const routes = () => {
           path: '404',
           component: () => import('@/views/error/Error404.vue'),
         },
-        {
-          name: '500 Internal Server Error',
-          path: '500',
-          component: () => import('@/views/error/Error500.vue'),
-        },
-        {
-          name: '503 Service Unavailable',
-          path: '503',
-          component: () => import('@/views/error/Error503.vue'),
-        },
       ],
     },
     {
