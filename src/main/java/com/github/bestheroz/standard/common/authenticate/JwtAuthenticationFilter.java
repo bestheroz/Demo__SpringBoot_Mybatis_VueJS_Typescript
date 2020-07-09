@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.util.UrlPathHelper;
 
@@ -44,7 +45,12 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
         }
         if (token != null) {
             if (JwtTokenProvider.validateAccessToken(token)) {
-                SecurityContextHolder.getContext().setAuthentication(JwtTokenProvider.getAuthentication(token));
+                try {
+                    SecurityContextHolder.getContext().setAuthentication(JwtTokenProvider.getAuthentication(token));
+                } catch (final UsernameNotFoundException e) {
+                    (response).sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                    return;
+                }
             } else if (JwtTokenProvider.validateRefreshToken(token, refreshToken)) {
                 final Optional<TableMemberVO> one = AccessBeanUtils.getBean(TableMemberRepository.class).findByToken(refreshToken);
                 if (one.isPresent()) {

@@ -5,6 +5,7 @@ import com.github.bestheroz.standard.common.response.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.BindException;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
@@ -37,6 +38,12 @@ public class ApiExceptionHandler {
             return Result.unauthenticated();
         }
         return Result.error(e);
+    }
+
+    @ExceptionHandler({UsernameNotFoundException.class})
+    public ResponseEntity<ApiResult> response(final UsernameNotFoundException e) {
+        log.warn(e.toString());
+        return Result.unauthenticated();
     }
 
     @ExceptionHandler({BindException.class, MethodArgumentTypeMismatchException.class, MissingServletRequestParameterException.class})
