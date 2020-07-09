@@ -44,15 +44,6 @@ axiosInstance.interceptors.response.use(
       } else if (error.response.status === 403) {
         store.commit('error', 403);
         return;
-      } else if (error.response.status === 404) {
-        store.commit('error', 404);
-        return;
-      } else if (error.response.status === 500) {
-        store.commit('error', 500);
-        return;
-      } else if (error.response.status === 503) {
-        store.commit('error', 503);
-        return;
       } else if (error.response.status === 400) {
         if (
           error.response.headers.accesstoken &&
@@ -288,5 +279,5 @@ function refreshToken(error: AxiosError) {
 }
 
 export function alertAxiosError(e: AxiosError): void {
-  e.response && alertError(e.response.data.message);
+  e.response && alertError(e.response.data.message || 'System Error');
 }
