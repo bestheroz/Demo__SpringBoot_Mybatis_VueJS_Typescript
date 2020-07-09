@@ -81,7 +81,12 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { ApiDataResult, axiosInstance, getVariableApi } from '@/utils/apis';
+import {
+  alertAxiosError,
+  ApiDataResult,
+  axiosInstance,
+  getVariableApi,
+} from '@/utils/apis';
 import { alertError } from '@/utils/alerts';
 
 const pbkdf2 = require('pbkdf2');
@@ -125,7 +130,7 @@ export default class extends Vue {
       this.$toasted.clear();
       await this.$router.push('/');
     } catch (e) {
-      alertError(e);
+      alertAxiosError(e);
     }
     this.loading = false;
   }
