@@ -33,7 +33,7 @@ export default class extends Vue {
       border-left: thin solid rgba(255, 255, 255, 0.12);
       min-width: 100px;
       i.v-icon {
-        color: #4caf50 !important;
+        color: #ffe0b2 !important;
       }
     }
 
