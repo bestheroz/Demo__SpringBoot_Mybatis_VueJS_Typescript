@@ -21,6 +21,7 @@ axiosInstance.interceptors.request.use(
     return config;
   },
   function (error) {
+    alertAxiosError(error);
     return Promise.reject(error);
   },
 );
@@ -47,7 +48,7 @@ axiosInstance.interceptors.response.use(
         store.commit('error', 404);
         return;
       } else if (error.response.status === 500) {
-        store.commit('error', 405);
+        store.commit('error', 500);
         return;
       } else if (error.response.status === 503) {
         store.commit('error', 503);
@@ -61,6 +62,7 @@ axiosInstance.interceptors.response.use(
         }
       }
     }
+    alertAxiosError(error);
     return Promise.reject(error);
   },
 );
@@ -283,4 +285,8 @@ function refreshToken(error: AxiosError) {
     error.config.headers.AuthorizationR = error.response.headers.refreshtoken;
   }
   return error;
+}
+
+export function alertAxiosError(e: AxiosError): void {
+  e.response && alertError(e.response.data.message);
 }
