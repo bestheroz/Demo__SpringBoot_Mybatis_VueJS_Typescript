@@ -9,13 +9,14 @@ import com.github.bestheroz.standard.common.util.AccessBeanUtils;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.joda.time.LocalDateTime;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.Assert;
 
 import javax.servlet.http.HttpServletRequest;
+import java.sql.Date;
+import java.time.OffsetDateTime;
 
 @Slf4j
 @UtilityClass
@@ -26,12 +27,14 @@ public class JwtTokenProvider {
 
     public String createAccessToken(final String userPk) {
         Assert.hasText(userPk, "userPk parameter must not be empty or null");
-        return JWT.create().withClaim("userPk", userPk).withExpiresAt(LocalDateTime.now().plusSeconds(expiresAtAccessToken.intValue()).toDate()).sign(ALGORITHM);
+        return JWT.create().withClaim("userPk", userPk).withExpiresAt(Date.from(OffsetDateTime.now().plusSeconds(expiresAtAccessToken.intValue()).toInstant())).sign(ALGORITHM);
     }
 
     public String createRefreshToken(final String userPk, final String accessToken) {
         Assert.hasText(userPk, "userPk parameter must not be empty or null");
-        return JWT.create().withClaim("userPk", userPk).withClaim("accessToken", accessToken).withExpiresAt(LocalDateTime.now().plusSeconds(expiresAtRefreshToken.intValue()).toDate()).sign(ALGORITHM);
+        return JWT.create().withClaim("userPk", userPk).withClaim("accessToken", accessToken)
+                .withExpiresAt(Date.from(OffsetDateTime.now().plusSeconds(expiresAtRefreshToken.intValue()).toInstant()))
+                .sign(ALGORITHM);
     }
 
     public Authentication getAuthentication(final String token) {

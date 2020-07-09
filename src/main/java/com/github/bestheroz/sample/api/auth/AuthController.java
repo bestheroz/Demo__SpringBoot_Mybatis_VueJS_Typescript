@@ -26,11 +26,6 @@ public class AuthController {
         return Result.ok(JwtTokenProvider.getAuthentication(token).getPrincipal());
     }
 
-    @GetMapping(value = "/refreshToken")
-    public ResponseEntity<ApiResult> refreshToken(@RequestHeader(value = "Authorization") final String token) {
-        return Result.ok(JwtTokenProvider.getAuthentication(token).getPrincipal());
-    }
-
     @DeleteMapping(value = "/logout")
     public void logout() {
         this.authService.logout();

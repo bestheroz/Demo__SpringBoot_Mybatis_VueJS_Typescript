@@ -3,6 +3,7 @@ package com.github.bestheroz.sample.api.admin.menu;
 import com.github.bestheroz.sample.api.entity.menu.TableMenuRepository;
 import com.github.bestheroz.sample.api.entity.menu.TableMenuVO;
 import com.github.bestheroz.sample.api.menu.MenuService;
+import com.github.bestheroz.standard.common.exception.BusinessException;
 import com.github.bestheroz.standard.common.response.ApiResult;
 import com.github.bestheroz.standard.common.response.Result;
 import org.springframework.cache.annotation.CacheEvict;
@@ -39,8 +40,8 @@ public class AdminMenuController {
     @CacheEvict(value = "drawerCache", allEntries = true)
     public ResponseEntity<ApiResult> update(@PathVariable(value = "id") final Integer id, @RequestBody final TableMenuVO tableMenuVO) {
         final Optional<TableMenuVO> byId = this.tableMenuRepository.findById(id);
-        if (byId.isPresent()) {
-            final TableMenuVO tableMenuVO1 = byId.get();
+        if (byId.isEmpty()) {
+            throw BusinessException.FAIL_INVALID_REQUEST;
         }
         tableMenuVO.setId(id);
         this.tableMenuRepository.save(tableMenuVO);
@@ -48,8 +49,8 @@ public class AdminMenuController {
     }
 
     @DeleteMapping(value = "{id}")
-    public @CacheEvict(value = "drawerCache", allEntries = true)
-    ResponseEntity<ApiResult> delete(@PathVariable(value = "id") final Integer id) {
+    @CacheEvict(value = "drawerCache", allEntries = true)
+    public ResponseEntity<ApiResult> delete(@PathVariable(value = "id") final Integer id) {
         this.tableMenuRepository.deleteById(id);
         return Result.ok();
     }

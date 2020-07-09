@@ -32,7 +32,7 @@ public class AuthService implements UserDetailsService {
             throw new UsernameNotFoundException("No user found");
         }
         final Optional<TableMemberVO> oTableMemberVO = this.tableMemberRepository.findById(username);
-        if (!oTableMemberVO.isPresent()) {
+        if (oTableMemberVO.isEmpty()) {
             throw new UsernameNotFoundException("No user found by `" + username + "`");
         }
         return new UserVO(oTableMemberVO.get());
@@ -42,7 +42,7 @@ public class AuthService implements UserDetailsService {
         final Optional<TableMemberVO> one = this.tableMemberRepository.findById(id);
         // 로그인 관문
         // 1. 유저가 없으면
-        if (!one.isPresent()) {
+        if (one.isEmpty()) {
             log.warn(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER.toString());
             throw new BusinessException(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER);
         }

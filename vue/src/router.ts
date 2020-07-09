@@ -1,10 +1,14 @@
 import Vue from 'vue';
 import Router from 'vue-router';
+import store from '@/store';
 
 Vue.use(Router);
 
 const requireAuth = () => async (to: any, from: any, next: any) => {
-  return next();
+  if (Vue.$storage.has('accessToken') && Vue.$storage.has('refreshToken')) {
+    return next();
+  }
+  return store.commit('needLogin');
 };
 
 const routes = () => {
@@ -67,16 +71,6 @@ const routes = () => {
           name: '404 Page not found',
           path: '404',
           component: () => import('@/views/error/Error404.vue'),
-        },
-        {
-          name: '500 Internal Server Error',
-          path: '500',
-          component: () => import('@/views/error/Error500.vue'),
-        },
-        {
-          name: '503 Service Unavailable',
-          path: '503',
-          component: () => import('@/views/error/Error503.vue'),
         },
       ],
     },

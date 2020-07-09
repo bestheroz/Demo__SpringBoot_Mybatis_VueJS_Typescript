@@ -18,8 +18,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
-    private static final String[] AUTHENTICATED = new String[]{
-            "/api/admin/**", "/api/menus/**"};
+    public static final String[] PUBLIC = new String[]{
+            "/error", "/api/auth/**", "/api/variables/**", "/actuator/**"};
 
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
@@ -27,12 +27,15 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers(AUTHENTICATED).authenticated()
+                .antMatchers(PUBLIC).permitAll()
                 .requestMatchers(EndpointRequest.toAnyEndpoint()).permitAll()
+                .anyRequest().authenticated()
                 .and()
-                .addFilterBefore(new JwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
-                .csrf().disable()
-                .cors();
+                .addFilterBefore(new JwtAuthenticationFilter(this.authenticationManagerBean()), UsernamePasswordAuthenticationFilter.class)
+                .formLogin()
+                .loginPage("/login")
+                .and()
+                .csrf().disable().cors();
     }
 
     @Override
@@ -61,5 +64,4 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     public PasswordEncoder passwordEncoder() {
         return new Pbkdf2PasswordEncoder();
     }
-
 }

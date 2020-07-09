@@ -18,9 +18,11 @@ export default class extends Vue {
 </script>
 
 <style lang="scss">
-.v-application a {
-  color: #4caf50;
+.v-application {
   font-family: 'Open Sans', sans-serif;
+  a {
+    color: #4caf50;
+  }
 }
 
 .v-data-table {
@@ -29,6 +31,10 @@ export default class extends Vue {
       background-color: #424242 !important;
       border-top: thin solid rgba(255, 255, 255, 0.12);
       border-left: thin solid rgba(255, 255, 255, 0.12);
+      min-width: 100px;
+      i.v-icon {
+        color: #fafad2 !important;
+      }
     }
 
     th:last-child {

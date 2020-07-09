@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class RootController implements ErrorController {
     final static private String INDEX_HTML = "index.html";
 
-    @GetMapping("/")
+    @GetMapping(value = {"/", "/index.html"})
     public String root() {
         return INDEX_HTML;
     }

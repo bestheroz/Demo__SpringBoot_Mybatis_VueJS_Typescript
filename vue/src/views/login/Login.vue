@@ -81,8 +81,14 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { ApiDataResult, axiosInstance, getVariableApi } from '@/utils/apis';
-import { alertError } from '@/utils/alerts';
+import {
+  alertAxiosError,
+  ApiDataResult,
+  axiosInstance,
+  getVariableApi,
+} from '@/utils/apis';
+import { alertError, alertSuccess } from '@/utils/alerts';
+import _ from 'lodash';
 
 const pbkdf2 = require('pbkdf2');
 
@@ -121,11 +127,15 @@ export default class extends Vue {
         id: this.id,
         password: pbkdf2Password,
       });
+      if (!_.startsWith(response.data.code, `S`)) {
+        alertError(response.data.message);
+        return;
+      }
       this.$store.commit('saveToken', response.data.data);
       this.$toasted.clear();
       await this.$router.push('/');
     } catch (e) {
-      alertError(e);
+      alertAxiosError(e);
     }
     this.loading = false;
   }
