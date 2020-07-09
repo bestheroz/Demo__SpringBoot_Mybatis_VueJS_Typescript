@@ -28,9 +28,7 @@ export default class extends Vue {
     const items: TableMenuVO[] = this.$storage.get('menus');
     if (items && items.length > 0) {
       const result = items.find((item) => item.url === this.$route.fullPath);
-      if (!result && this.$route.fullPath !== '/error/404') {
-        this.$router.push('/error/404');
-      }
+      !result && this.$store.commit('error', 404);
     }
   }
 
@@ -53,9 +51,7 @@ export default class extends Vue {
           }
         }
       });
-      if (!result && this.$route.fullPath !== '/') {
-        this.$router.push('/error/403');
-      }
+      !result && this.$store.commit('error', 403);
     }
     return result.split('(팝업)').join('');
   }

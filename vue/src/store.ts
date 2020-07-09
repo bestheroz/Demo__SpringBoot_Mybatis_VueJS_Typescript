@@ -12,8 +12,9 @@ export default new Vuex.Store({
     logoutTime: new Date().getTime() + 2 * 3600 * 1000,
   },
   mutations: {
-    saveToken(state, token: string) {
-      Vue.$storage.set('accessToken', token);
+    saveToken(state, token: { accessToken: string; refreshToken: string }) {
+      Vue.$storage.set('accessToken', token.accessToken);
+      Vue.$storage.set('refreshToken', token.refreshToken);
     },
     saveUserVO(state, loginVO: TableMemberVO) {
       Vue.$storage.set('authority', loginVO.authority);
@@ -27,7 +28,28 @@ export default new Vuex.Store({
         console.error(e);
       }
       Vue.$storage.clear();
-      await router.push('/login');
+      await router.replace('/login');
+    },
+    async error(state, statsCode) {
+      if (
+        ![
+          '/',
+          '/login',
+          '/error',
+          '/error/403',
+          '/error/404',
+          '/error/500',
+          '/error/503',
+        ].includes(router.currentRoute.path)
+      ) {
+        await router.replace(`/error/${statsCode}`);
+      }
+    },
+    async needLogin() {
+      if (router.currentRoute.path !== '/login') {
+        Vue.$storage.clear();
+        await router.replace('/login?login=need');
+      }
     },
     timer(state) {
       state.logoutTime =

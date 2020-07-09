@@ -11,7 +11,7 @@
       <v-btn x-large text dark :ripple="false" color="primary">
         <countdown
           ref="countdown"
-          :end-time="$store.state.logoutTime"
+          :end-time="logoutTime"
           @finished="$store.commit('logout')"
           :speed="1000"
         >
@@ -32,7 +32,7 @@
         <template v-slot:activator="{ on }">
           <v-btn color="primary" x-large text dark v-on="on">
             <v-icon> mdi-account</v-icon>
-            {{ $storage.get('userVO').name }}
+            {{ userName }}
           </v-btn>
         </template>
 
@@ -70,6 +70,18 @@ export default class extends Vue {
 
   get isPopup(): boolean {
     return !window.toolbar.visible;
+  }
+
+  get userName() {
+    if (this.$storage.has('userVO')) {
+      return this.$storage.get('userVO').name;
+    } else {
+      return '';
+    }
+  }
+
+  get logoutTime() {
+    return this.$store.state.logoutTime;
   }
 
   async created() {

@@ -1,6 +1,5 @@
 import axios, { AxiosError } from 'axios';
 import _ from 'lodash';
-import router from '@/router';
 import store from '@/store';
 import { alertError, alertSuccess } from '@/utils/alerts';
 import envs from '@/constants/envs';
@@ -11,15 +10,18 @@ export const axiosInstance = axios.create({
   headers: {
     contentType: 'application/json',
     Authorization: Vue.$storage.get('accessToken'),
+    AuthorizationR: Vue.$storage.get('refreshToken'),
   },
 });
 
 axiosInstance.interceptors.request.use(
   function (config) {
     config.headers.Authorization = Vue.$storage.get('accessToken');
+    config.headers.AuthorizationR = Vue.$storage.get('refreshToken');
     return config;
   },
   function (error) {
+    alertAxiosError(error);
     return Promise.reject(error);
   },
 );
@@ -29,10 +31,38 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   async function (error: AxiosError) {
-    if (error.response && error.response.status === 401) {
-      await router.push(`/login?login=need`);
-      return;
+    if (error.response) {
+      if (error.response.status === 401) {
+        if (
+          error.response.headers.accesstoken &&
+          error.response.headers.refreshtoken
+        ) {
+          return axios.request(refreshToken(error).config);
+        }
+        store.commit('needLogin');
+        return;
+      } else if (error.response.status === 403) {
+        store.commit('error', 403);
+        return;
+      } else if (error.response.status === 404) {
+        store.commit('error', 404);
+        return;
+      } else if (error.response.status === 500) {
+        store.commit('error', 500);
+        return;
+      } else if (error.response.status === 503) {
+        store.commit('error', 503);
+        return;
+      } else if (error.response.status === 400) {
+        if (
+          error.response.headers.accesstoken &&
+          error.response.headers.refreshtoken
+        ) {
+          return axios.request(refreshToken(error).config);
+        }
+      }
     }
+    alertAxiosError(error);
     return Promise.reject(error);
   },
 );
@@ -144,12 +174,16 @@ export async function getCodeListApi<SelectItem>(
       const response = await axiosInstance.get<ApiDataResult<SelectItem[]>>(
         `api/codes/${codeGroup}`,
       );
-      const result = response.data.data || [];
-      if (result.length > 0) {
-        Vue.$storage.set(`code__${codeGroup}`, result);
+      if (response && response.data && response.data.data) {
+        const result = response.data.data || [];
+        if (result.length > 0) {
+          Vue.$storage.set(`code__${codeGroup}`, result);
+        }
+        // @ts-ignore
+        return result;
+      } else {
+        return [];
       }
-      // @ts-ignore
-      return result;
     } catch (error) {
       // console.warn(getErrorResult(error).message);
       return [];
@@ -235,4 +269,24 @@ export async function getExcelApi(url: string): Promise<void> {
   window.URL.revokeObjectURL(newUrl);
   store.commit('timer');
   return response.data;
+}
+
+function refreshToken(error: AxiosError) {
+  if (
+    error.response &&
+    error.response.headers.accesstoken &&
+    error.response.headers.refreshtoken
+  ) {
+    store.commit('saveToken', {
+      accessToken: error.response.headers.accesstoken,
+      refreshToken: error.response.headers.refreshtoken,
+    });
+    error.config.headers.Authorization = error.response.headers.accesstoken;
+    error.config.headers.AuthorizationR = error.response.headers.refreshtoken;
+  }
+  return error;
+}
+
+export function alertAxiosError(e: AxiosError): void {
+  e.response && alertError(e.response.data.message);
 }

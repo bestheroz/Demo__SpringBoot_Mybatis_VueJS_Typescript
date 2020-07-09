@@ -1,6 +1,5 @@
 package com.github.bestheroz.sample.api.auth;
 
-import com.github.bestheroz.sample.api.entity.member.TableMemberRepository;
 import com.github.bestheroz.sample.api.entity.member.TableMemberVO;
 import com.github.bestheroz.standard.common.authenticate.JwtTokenProvider;
 import com.github.bestheroz.standard.common.response.ApiResult;
@@ -15,7 +14,6 @@ import javax.annotation.Resource;
 @RequestMapping(value = "/api/auth")
 public class AuthController {
     @Resource private AuthService authService;
-    @Resource private TableMemberRepository tableMemberRepository;
 
     @PostMapping(value = "/login")
     @ResponseBody
@@ -30,6 +28,7 @@ public class AuthController {
 
     @DeleteMapping(value = "/logout")
     public void logout() {
+        this.authService.logout();
         AuthenticationUtils.logout();
     }
 }

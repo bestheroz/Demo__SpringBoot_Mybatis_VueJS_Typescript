@@ -9,7 +9,7 @@ public enum ExceptionCode {
 
     ERROR_FILE_NOT_FOUND("E001", "파일이 존재하지 않습니다."),
 
-    ERROR_TRANSFORM_DATA("E002", "데이터 변환 실패(Primitive -> Collection)"),
+    ERROR_TRANSFORM_DATA("E002", "데이터 변환 실패"),
 
     ERROR_DIR_PATH_MUST_ENDS_WITH_SLASH("E003", "디렉토리 경로는 항상 '/' 으로 끝나야만 합니다."),
 

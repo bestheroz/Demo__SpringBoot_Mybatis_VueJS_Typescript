@@ -6,18 +6,23 @@ import com.github.bestheroz.standard.common.authenticate.JwtTokenProvider;
 import com.github.bestheroz.standard.common.authenticate.UserVO;
 import com.github.bestheroz.standard.common.exception.BusinessException;
 import com.github.bestheroz.standard.common.exception.ExceptionCode;
+import com.github.bestheroz.standard.common.util.AuthenticationUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
 @Slf4j
+@Transactional
 public class AuthService implements UserDetailsService {
     @Resource private TableMemberRepository tableMemberRepository;
 
@@ -27,17 +32,17 @@ public class AuthService implements UserDetailsService {
             throw new UsernameNotFoundException("No user found");
         }
         final Optional<TableMemberVO> oTableMemberVO = this.tableMemberRepository.findById(username);
-        if (!oTableMemberVO.isPresent()) {
+        if (oTableMemberVO.isEmpty()) {
             throw new UsernameNotFoundException("No user found by `" + username + "`");
         }
         return new UserVO(oTableMemberVO.get());
     }
 
-    String login(final String id, final String password) {
+    Map<String, String> login(final String id, final String password) {
         final Optional<TableMemberVO> one = this.tableMemberRepository.findById(id);
         // 로그인 관문
         // 1. 유저가 없으면
-        if (!one.isPresent()) {
+        if (one.isEmpty()) {
             log.warn(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER.toString());
             throw new BusinessException(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER);
         }
@@ -65,7 +70,22 @@ public class AuthService implements UserDetailsService {
         }
 
         tableMemberVO.setLoginFailCnt(0);
+        final String accessToken = JwtTokenProvider.createAccessToken(tableMemberVO.getId());
+        final String refreshToken = JwtTokenProvider.createRefreshToken(tableMemberVO.getId(), accessToken);
+        tableMemberVO.setToken(refreshToken);
         this.tableMemberRepository.save(tableMemberVO);
-        return JwtTokenProvider.createToken(tableMemberVO.getId());
+        final Map<String, String> result = new HashMap<>();
+        result.put("accessToken", accessToken);
+        result.put("refreshToken", refreshToken);
+        return result;
+    }
+
+    void logout() {
+        final Optional<TableMemberVO> one = this.tableMemberRepository.findById(AuthenticationUtils.getUserPk());
+        if (one.isPresent()) {
+            final TableMemberVO tableMemberVO = one.get();
+            tableMemberVO.setToken(null);
+            this.tableMemberRepository.save(tableMemberVO);
+        }
     }
 }

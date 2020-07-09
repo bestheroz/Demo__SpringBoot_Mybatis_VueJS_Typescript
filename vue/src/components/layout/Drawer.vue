@@ -78,7 +78,7 @@ export default class extends Vue {
     return !window.toolbar.visible;
   }
 
-  async created() {
+  created() {
     this.items = this.$storage.get('drawer');
   }
 

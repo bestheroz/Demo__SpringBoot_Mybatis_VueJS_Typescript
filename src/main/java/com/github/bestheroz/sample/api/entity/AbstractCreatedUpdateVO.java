@@ -2,33 +2,33 @@ package com.github.bestheroz.sample.api.entity;
 
 import com.github.bestheroz.standard.common.util.AuthenticationUtils;
 import lombok.Data;
-import org.joda.time.LocalDateTime;
 
 import javax.persistence.MappedSuperclass;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
+import java.time.Instant;
 
 @Data
 @MappedSuperclass
 public abstract class AbstractCreatedUpdateVO {
     protected String createdBy;
-    protected LocalDateTime created;
+    protected Instant created;
     protected String updatedBy;
-    protected LocalDateTime updated;
+    protected Instant updated;
 
     @PrePersist
     protected void onCreate() {
-        this.updated = this.created = LocalDateTime.now();
+        this.updated = this.created = Instant.now();
         if (AuthenticationUtils.isLoggedIn()) {
-            this.updatedBy = this.createdBy = AuthenticationUtils.getUserName();
+            this.updatedBy = this.createdBy = AuthenticationUtils.getUserPk();
         }
     }
 
     @PreUpdate
     protected void onUpdate() {
-        this.updated = LocalDateTime.now();
+        this.updated = Instant.now();
         if (AuthenticationUtils.isLoggedIn()) {
-            this.updatedBy = AuthenticationUtils.getUserName();
+            this.updatedBy = AuthenticationUtils.getUserPk();
         }
     }
 }
