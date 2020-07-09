@@ -87,6 +87,8 @@ import {
   axiosInstance,
   getVariableApi,
 } from '@/utils/apis';
+import { alertError, alertSuccess } from '@/utils/alerts';
+import _ from 'lodash';
 
 const pbkdf2 = require('pbkdf2');
 
@@ -125,6 +127,10 @@ export default class extends Vue {
         id: this.id,
         password: pbkdf2Password,
       });
+      if (!_.startsWith(response.data.code, `S`)) {
+        alertError(response.data.message);
+        return;
+      }
       this.$store.commit('saveToken', response.data.data);
       this.$toasted.clear();
       await this.$router.push('/');
