@@ -87,7 +87,6 @@ import {
   axiosInstance,
   getVariableApi,
 } from '@/utils/apis';
-import { alertError } from '@/utils/alerts';
 
 const pbkdf2 = require('pbkdf2');
 
