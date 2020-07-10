@@ -26,6 +26,12 @@ public class AuthController {
         return Result.ok(JwtTokenProvider.getAuthentication(token).getPrincipal());
     }
 
+    @PostMapping(value = "/initPassword")
+    ResponseEntity<ApiResult> initPassword(@RequestBody final TableMemberVO tableMemberVO) {
+        this.authService.initPassword(tableMemberVO.getId(), tableMemberVO.getPassword());
+        return Result.ok();
+    }
+
     @DeleteMapping(value = "/logout")
     public void logout() {
         this.authService.logout();

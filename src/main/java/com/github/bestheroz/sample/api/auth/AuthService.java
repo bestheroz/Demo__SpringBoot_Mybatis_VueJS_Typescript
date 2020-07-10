@@ -8,6 +8,7 @@ import com.github.bestheroz.standard.common.exception.BusinessException;
 import com.github.bestheroz.standard.common.exception.ExceptionCode;
 import com.github.bestheroz.standard.common.util.AuthenticationUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -48,8 +49,15 @@ public class AuthService implements UserDetailsService {
         }
 
         final TableMemberVO tableMemberVO = one.get();
+
+        // 2. 패스워드를 생성한 적이 없으면
+        if (StringUtils.isEmpty(tableMemberVO.getPassword())) {
+            log.info(ExceptionCode.SUCCESS_TRY_NEW_PASSWORD.toString());
+            throw new BusinessException(ExceptionCode.SUCCESS_TRY_NEW_PASSWORD);
+        }
+
         final Pbkdf2PasswordEncoder pbkdf2PasswordEncoder = new Pbkdf2PasswordEncoder();
-        // 2. 패스워드가 틀리면
+        // 3. 패스워드가 틀리면
         if (!pbkdf2PasswordEncoder.matches(tableMemberVO.getPassword(), pbkdf2PasswordEncoder.encode(password))) {
             tableMemberVO.setLoginFailCnt(tableMemberVO.getLoginFailCnt() + 1);
             this.tableMemberRepository.plusLoginFailCnt(tableMemberVO.getId());
@@ -57,13 +65,13 @@ public class AuthService implements UserDetailsService {
             throw new BusinessException(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER);
         }
 
-        // 3. LOGIN_FAIL_CNT가 5회 이상 인가
+        // 4. LOGIN_FAIL_CNT가 5회 이상 인가
         if (tableMemberVO.getLoginFailCnt() >= 5) {
             log.warn(ExceptionCode.FAIL_LOGIN_FAIL_CNT.toString());
             throw new BusinessException(ExceptionCode.FAIL_LOGIN_FAIL_CNT);
         }
 
-        // 4. 계정 차단된 상태인가
+        // 5. 계정 차단된 상태인가
         if (!tableMemberVO.isAvailable()) {
             log.warn(ExceptionCode.FAIL_LOGIN_CLOSED.toString());
             throw new BusinessException(ExceptionCode.FAIL_LOGIN_CLOSED);
@@ -87,5 +95,25 @@ public class AuthService implements UserDetailsService {
             tableMemberVO.setToken(null);
             this.tableMemberRepository.save(tableMemberVO);
         }
+    }
+
+    void initPassword(final String id, final String password) {
+        final Optional<TableMemberVO> one = this.tableMemberRepository.findById(id);
+        // 로그인 관문
+        // 1. 유저가 없으면
+        if (one.isEmpty()) {
+            log.warn(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER.toString());
+            throw new BusinessException(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER);
+        }
+
+        final TableMemberVO tableMemberVO = one.get();
+
+        if (StringUtils.isNotEmpty(tableMemberVO.getPassword())) {
+            log.warn(ExceptionCode.FAIL_INVALID_REQUEST.toString());
+            throw new BusinessException(ExceptionCode.FAIL_INVALID_REQUEST);
+        }
+
+        tableMemberVO.setPassword(password);
+        this.tableMemberRepository.save(tableMemberVO);
     }
 }

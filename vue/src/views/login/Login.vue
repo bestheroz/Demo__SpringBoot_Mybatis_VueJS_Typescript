@@ -76,6 +76,7 @@
         </v-card>
       </v-slide-y-transition>
     </v-row>
+    <new-password-dialog :id="id" :dialog.sync="dialog" />
   </v-container>
 </template>
 
@@ -89,16 +90,18 @@ import {
 } from '@/utils/apis';
 import { alertError } from '@/utils/alerts';
 import _ from 'lodash';
+import NewPasswordDialog from '@/views/login/components/NewPasswordDialog.vue';
 
 const pbkdf2 = require('pbkdf2');
 
-@Component({ name: 'Login' })
+@Component({ name: 'Login', components: { NewPasswordDialog } })
 export default class extends Vue {
   id: string | null = null;
   password: string | null = null;
   show1: boolean = false;
   title: string | null = null;
   loading: boolean = false;
+  dialog: boolean = false;
 
   async mounted() {
     if (this.$route.query.login === 'need') {
@@ -127,7 +130,9 @@ export default class extends Vue {
         id: this.id,
         password: pbkdf2Password,
       });
-      if (_.startsWith(response.data.code, `S`)) {
+      if (response.data.code === `S002`) {
+        this.dialog = true;
+      } else if (_.startsWith(response.data.code, `S`)) {
         this.$store.commit('saveToken', response.data.data);
         this.$toasted.clear();
         await this.$router.push('/');
