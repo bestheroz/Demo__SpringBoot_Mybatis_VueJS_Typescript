@@ -1,7 +1,6 @@
 INSERT
 INTO MEMBER
 (ID,
- PASSWORD,
  NAME,
  AUTHORITY,
  LOGIN_FAIL_CNT,
@@ -12,7 +11,6 @@ INTO MEMBER
  UPDATED_BY,
  UPDATED)
 VALUES ('developer',
-        '�ޤ�o%PO�8�.�9�+�Xڹ1����n�ח',
         '개발자',
         999,
         0,
@@ -53,7 +51,6 @@ VALUES ('1',
 INSERT
 INTO MEMBER
 (ID,
- PASSWORD,
  NAME,
  AUTHORITY,
  LOGIN_FAIL_CNT,
@@ -64,7 +61,6 @@ INTO MEMBER
  UPDATED_BY,
  UPDATED)
 VALUES ('guest',
-        '�ޤ�o%PO�8�.�9�+�Xڹ1����n�ח',
         '게스트',
         100,
         0,
@@ -160,7 +156,7 @@ SELECT '메뉴권한관리',
        'P',
        ID,
        120,
-       '/admin/menu/authority',
+       '/admin/menuAuthority',
        'developer',
        SYSDATE,
        'developer',

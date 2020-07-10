@@ -183,6 +183,7 @@ export default class extends Vue {
     this.loading = false;
     if (_.startsWith(response.code, `S`)) {
       this.syncedDialog = false;
+      Vue.$storage.remove(`code__${this.editItem.codeGroup}`);
       this.$emit('finished');
     }
   }
@@ -197,6 +198,7 @@ export default class extends Vue {
       });
       this.loading = false;
       if (_.startsWith(response.code, `S`)) {
+        Vue.$storage.remove(`code__${this.editItem.codeGroup}`);
         this.$emit('finished');
       }
     }

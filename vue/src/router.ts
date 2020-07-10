@@ -22,7 +22,7 @@ const routes = () => {
       component: () => import('@/views/admin/menu/Menu.vue'),
     },
     {
-      path: 'menu/authority',
+      path: 'menuAuthority',
       component: () => import('@/views/admin/menuauthority/MenuAuthority.vue'),
     },
     {
