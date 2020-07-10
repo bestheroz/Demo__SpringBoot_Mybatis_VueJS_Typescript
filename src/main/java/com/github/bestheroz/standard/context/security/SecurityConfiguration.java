@@ -19,7 +19,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     public static final String[] PUBLIC = new String[]{
-            "/error", "/api/auth/**", "/api/variables/**", "/actuator/**"};
+            "/login", "/error", "/api/auth/**", "/api/variables/**", "/actuator/**"};
 
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
@@ -33,14 +33,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilter(this.authenticationManagerBean()), UsernamePasswordAuthenticationFilter.class)
                 .formLogin()
-                .loginPage("/login")
+                .loginPage("/login").permitAll()
                 .and()
                 .csrf().disable().cors();
     }
 
     @Override
     public void configure(final WebSecurity web) {
-        web.ignoring().antMatchers("/static/**", "/js/**", "/css/**", "/images/**", "/favicon.ico");
+        web.ignoring().antMatchers("/static/**", "/**/*.js", "/**/*.css", "/**/*.html", "/images/**", "/fonts/**", "/favicon.*", "/manifest.json");
     }
 
     @Bean
