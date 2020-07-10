@@ -87,7 +87,7 @@ import {
   axiosInstance,
   getVariableApi,
 } from '@/utils/apis';
-import { alertError, alertSuccess } from '@/utils/alerts';
+import { alertError } from '@/utils/alerts';
 import _ from 'lodash';
 
 const pbkdf2 = require('pbkdf2');
@@ -120,20 +120,20 @@ export default class extends Vue {
         .toString();
       const response = await axiosInstance.post<
         ApiDataResult<{
-          id: string;
-          password: string;
+          accessToken: string;
+          refreshToken: string;
         }>
       >(`api/auth/login`, {
         id: this.id,
         password: pbkdf2Password,
       });
-      if (!_.startsWith(response.data.code, `S`)) {
+      if (_.startsWith(response.data.code, `S`)) {
+        this.$store.commit('saveToken', response.data.data);
+        this.$toasted.clear();
+        await this.$router.push('/');
+      } else {
         alertError(response.data.message);
-        return;
       }
-      this.$store.commit('saveToken', response.data.data);
-      this.$toasted.clear();
-      await this.$router.push('/');
     } catch (e) {
       alertAxiosError(e);
     }
