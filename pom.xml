@@ -198,7 +198,7 @@
                 <configuration>
                     <filesets>
                         <fileset>
-                            <directory>${basedir}/src/main/resources/static/static</directory>
+                            <directory>${basedir}/src/main/resources/static</directory>
                         </fileset>
                     </filesets>
                 </configuration>
