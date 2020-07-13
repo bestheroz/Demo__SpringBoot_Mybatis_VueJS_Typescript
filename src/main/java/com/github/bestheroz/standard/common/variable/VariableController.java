@@ -4,24 +4,22 @@ import com.github.bestheroz.standard.common.response.ApiResult;
 import com.github.bestheroz.standard.common.response.Result;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 @RestController
-@Configuration
 @RequestMapping("api/variables")
 @ConfigurationProperties(prefix = "variable")
 @Setter
 public class VariableController {
-    private String appTitle;
+    private Map<String, String> app;
 
     @GetMapping("title")
-    @Cacheable(value = "appTitleCache")
-    public ResponseEntity<ApiResult> getAppTitle() {
-        return Result.ok(this.appTitle);
+    public ResponseEntity<ApiResult> getTitle() {
+        return Result.ok(this.app.get("title"));
     }
 }
