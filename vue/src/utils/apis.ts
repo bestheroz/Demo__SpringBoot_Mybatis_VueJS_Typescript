@@ -182,14 +182,14 @@ export async function getCodeListApi<SelectItem>(
   }
 }
 
-export async function getVariableApi<String>(
+export async function getVariableApi<T = string>(
   variable: string,
-): Promise<string | null> {
+): Promise<T | null> {
   if (Vue.$storage.has(`variable__${variable}`)) {
     return Vue.$storage.get(`variable__${variable}`);
   } else {
     try {
-      const response = await axiosInstance.get<ApiDataResult<string>>(
+      const response = await axiosInstance.get<ApiDataResult<T>>(
         `api/variables/${variable}`,
       );
       const result = response.data.data;
