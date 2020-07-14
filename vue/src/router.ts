@@ -4,6 +4,7 @@ import store from '@/store';
 
 Vue.use(Router);
 
+// @ts-ignore
 const requireAuth = () => async (to: any, from: any, next: any) => {
   if (Vue.$storage.has('accessToken') && Vue.$storage.has('refreshToken')) {
     return next();
