@@ -30,10 +30,10 @@ public class AdminMenuAuthorityController {
     @PutMapping(value = "{authority}")
     @CacheEvict(value = "drawerCache", key = "#authority")
     public ResponseEntity<ApiResult> save(@PathVariable("authority") final Integer authority, @RequestBody final Map<String, String> payload) {
-        final TableMenuAuthorityVO TableMenuAuthorityVO = new TableMenuAuthorityVO();
-        TableMenuAuthorityVO.setAuthority(authority);
-        TableMenuAuthorityVO.setMenuIdList(Arrays.stream(StringUtils.split(payload.get("menuIdList"), ",")).map(item -> "^|" + item + ",").collect(Collectors.joining(StringUtils.EMPTY)));
-        this.tableMenuAuthorityRepository.save(TableMenuAuthorityVO);
+        final TableMenuAuthorityVO tableMenuAuthorityVO = new TableMenuAuthorityVO();
+        tableMenuAuthorityVO.setAuthority(authority);
+        tableMenuAuthorityVO.setMenuIdList(Arrays.stream(StringUtils.split(payload.get("menuIdList"), ",")).map(item -> "^|" + item + ",").collect(Collectors.joining(StringUtils.EMPTY)));
+        this.tableMenuAuthorityRepository.save(tableMenuAuthorityVO);
         return Result.ok();
     }
 }
