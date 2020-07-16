@@ -17,7 +17,11 @@
     "paths": {
       "@/*": ["src/*"]
     },
-    "lib": ["esnext", "dom", "dom.iterable", "scripthost"]
+    "lib": ["esnext", "dom", "dom.iterable", "scripthost"],
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "pretty": true,
+    "removeComments": true
   },
   "include": [
     "src/**/*.ts",

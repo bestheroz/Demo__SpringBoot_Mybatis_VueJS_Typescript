@@ -12,10 +12,12 @@ export default new Vuex.Store({
     logoutTime: new Date().getTime() + 2 * 3600 * 1000,
   },
   mutations: {
+    // @ts-ignore
     saveToken(state, token: { accessToken: string; refreshToken: string }) {
       Vue.$storage.set('accessToken', token.accessToken);
       Vue.$storage.set('refreshToken', token.refreshToken);
     },
+    // @ts-ignore
     saveUserVO(state, loginVO: TableMemberVO) {
       Vue.$storage.set('authority', loginVO.authority);
       Vue.$storage.set('timeout', loginVO.timeout);
@@ -30,6 +32,7 @@ export default new Vuex.Store({
       Vue.$storage.clear();
       await router.replace('/login');
     },
+    // @ts-ignore
     async error(state, statsCode) {
       if (
         !['/', '/login', '/error', '/error/403', '/error/404'].includes(
