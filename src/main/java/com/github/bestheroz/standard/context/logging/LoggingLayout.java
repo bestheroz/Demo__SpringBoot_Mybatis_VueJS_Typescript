@@ -14,7 +14,7 @@ public class LoggingLayout extends LayoutBase<ILoggingEvent> {
     public String doLayout(final ILoggingEvent event) {
         final StringBuffer sbuf = new StringBuffer(1024);
 
-        if (StringUtils.endsWith(event.getLoggerName(), "TraceLoggingInAOP")) {
+        if (StringUtils.endsWithAny(event.getLoggerName(), "TraceLoggingInAOP", "JwtAuthenticationFilter")) {
             if (StringUtils.equals(event.getLevel().levelStr, "WARN") && event.getCallerData()[0].getLineNumber() == 49) {
                 this.getExceptionMessage(event, sbuf);
             } else {
