@@ -78,17 +78,15 @@ INTO MENU
  PARENT_ID,
  DISPLAY_ORDER,
  URL,
- REMARK1,
  CREATED_BY,
  CREATED,
  UPDATED_BY,
  UPDATED)
-VALUES ('///',
+VALUES ('///최상위(삭제하지마세요.)',
         'G',
         0,
         1,
         '/',
-        '최상위(삭제하지마세요.)',
         'developer',
         SYSDATE,
         'developer',
@@ -115,7 +113,7 @@ SELECT '관리자',
        'developer',
        SYSDATE
 FROM MENU
-WHERE NAME = '///';
+WHERE NAME = '///최상위(삭제하지마세요.)';
 
 INSERT
 INTO MENU
@@ -231,7 +229,7 @@ SELECT '만든이',
        'developer',
        SYSDATE
 FROM MENU
-WHERE NAME = '///';
+WHERE NAME = '///최상위(삭제하지마세요.)';
 
 INSERT
 INTO MENU
@@ -301,7 +299,7 @@ SELECT '메뉴그룹1',
        'developer',
        SYSDATE
 FROM MENU
-WHERE NAME = '///';
+WHERE NAME = '///최상위(삭제하지마세요.)';
 
 INSERT
 INTO MENU
@@ -367,7 +365,7 @@ SELECT '메뉴그룹2',
        'developer',
        SYSDATE
 FROM MENU
-WHERE NAME = '///';
+WHERE NAME = '///최상위(삭제하지마세요.)';
 
 INSERT
 INTO MENU
@@ -433,7 +431,7 @@ SELECT '메뉴그룹3',
        'developer',
        SYSDATE
 FROM MENU
-WHERE NAME = '///';
+WHERE NAME = '///최상위(삭제하지마세요.)';
 
 INSERT
 INTO MENU

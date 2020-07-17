@@ -26,5 +26,4 @@ public class TableMenuVO extends AbstractCreatedUpdateVO implements Serializable
     private Integer displayOrder;
     private String url;
     private String icon;
-    private String remark1;
 }
