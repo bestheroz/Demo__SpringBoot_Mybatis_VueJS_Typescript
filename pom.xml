@@ -23,7 +23,11 @@
         <tika-version>1.24.1</tika-version>
         <poi-version>4.1.2</poi-version>
         <sentry-version>1.7.30</sentry-version>
+        <h2-version>1.4.200</h2-version>
         <exec-maven-plugin-version>3.0.0</exec-maven-plugin-version>
+        <maven-resources-plugin-version>3.1.0</maven-resources-plugin-version>
+        <maven-clean-plugin-version>3.1.0</maven-clean-plugin-version>
+        <maven-compiler-plugin-version>3.8.1</maven-compiler-plugin-version>
     </properties>
 
     <dependencies>
@@ -112,16 +116,17 @@
             <version>${sentry-version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>${h2-version}</version>
+        </dependency>
+
+
         <!-- 여기까지 표준프레임워크에서 정의한 library -->
         <!-- 여기까지 표준프레임워크에서 정의한 library -->
         <!-- 여기까지 표준프레임워크에서 정의한 library -->
 
-        <!-- 임시 DB h2 -->
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <version>1.4.200</version>
-        </dependency>
 
         <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
     </dependencies>
@@ -175,6 +180,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
+                <version>${maven-resources-plugin-version}</version>
                 <executions>
                     <execution>
                         <id>copy front-end to target</id>
@@ -186,7 +192,7 @@
                             <outputDirectory>${basedir}/target/classes/static</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>vue/dist</directory>
+                                    <directory>${basedir}/vue/dist</directory>
                                 </resource>
                             </resources>
                         </configuration>
@@ -195,10 +201,14 @@
             </plugin>
             <plugin>
                 <artifactId>maven-clean-plugin</artifactId>
+                <version>${maven-clean-plugin-version}</version>
                 <configuration>
                     <filesets>
                         <fileset>
                             <directory>${basedir}/src/main/resources/static</directory>
+                        </fileset>
+                        <fileset>
+                            <directory>${basedir}/vue/dist</directory>
                         </fileset>
                     </filesets>
                 </configuration>
@@ -206,6 +216,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin-version}</version>
                 <configuration>
                     <source>${java-version}</source>
                     <target>${java-version}</target>
