@@ -32,9 +32,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilter(this.authenticationManagerBean()), UsernamePasswordAuthenticationFilter.class)
-                .formLogin()
-                .loginPage("/login").permitAll()
-                .and()
+//                .formLogin()
+//                .loginPage("/login").permitAll()
+//                .and()
                 .csrf().disable().cors();
     }
 
