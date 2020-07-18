@@ -17,5 +17,4 @@ public class TableCodeGroupVO extends AbstractCreatedUpdateVO implements Seriali
     @Id
     private String codeGroup;
     private String name;
-    private String remark1;
 }

@@ -62,7 +62,6 @@ export interface TableMenuVO {
   displayOrder?: number | null;
   icon?: string | null;
   url?: string | null;
-  remark1?: string | null;
   created?: Date | null;
   createdBy?: string | null;
   updated?: Date | null;
@@ -81,7 +80,6 @@ export interface TableMenuVO {
 export interface TableCodeGroupVO {
   codeGroup?: string | null;
   name?: string | null;
-  remark1?: string | null;
   created?: Date | null;
   createdBy?: string | null;
   updated?: Date | null;
@@ -95,7 +93,6 @@ export interface TableCodeVO {
   available?: boolean | null;
   displayOrder?: number | null;
   authority?: number | null;
-  remark1?: string | null;
   created?: Date | null;
   createdBy?: string | null;
   updated?: Date | null;

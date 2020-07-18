@@ -3,9 +3,8 @@ package com.github.bestheroz.sample.api.admin.menu;
 import com.github.bestheroz.sample.api.entity.menuauthority.TableMenuAuthorityRepository;
 import com.github.bestheroz.sample.api.entity.menuauthority.TableMenuAuthorityVO;
 import com.github.bestheroz.sample.api.menu.MenuService;
-import com.github.bestheroz.sample.api.menu.MenuVO;
+import com.github.bestheroz.standard.common.util.MapperUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -21,11 +20,9 @@ public class AdminMenuAuthorityService {
     public List<AdminMenuAuthorityVO> getList(final Integer authority) {
         final List<AdminMenuAuthorityVO> result = new ArrayList<>();
         final Optional<TableMenuAuthorityVO> tableMenuAuthorityVO = this.tableMenuAuthorityRepository.findById(authority);
-        final List<MenuVO> menuList = this.menuService.getMenuList();
         final boolean present = tableMenuAuthorityVO.isPresent();
-        menuList.forEach(item -> {
-            final AdminMenuAuthorityVO adminMenuAuthorityVO = new AdminMenuAuthorityVO();
-            BeanUtils.copyProperties(item, adminMenuAuthorityVO);
+        this.menuService.getMenuList().forEach(item -> {
+            final AdminMenuAuthorityVO adminMenuAuthorityVO = MapperUtils.toObject(item, AdminMenuAuthorityVO.class);
             if (present) {
                 adminMenuAuthorityVO.setChecked(item.getId().equals(1) || StringUtils.contains(tableMenuAuthorityVO.get().getMenuIdList(), "^|" + item.getId() + ","));
             }

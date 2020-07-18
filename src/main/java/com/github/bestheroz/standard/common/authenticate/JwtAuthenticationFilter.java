@@ -24,6 +24,7 @@ import java.util.Optional;
 @Slf4j
 public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
     private static final String REQUEST_COMPLETE_EXECUTE_TIME_INCLUDE_JSP = "{} ....... Request Complete Execute Time ....... : {}";
+    private static final String REQUEST_PARAMETERS = "<{}>{}";
 
     public JwtAuthenticationFilter(final AuthenticationManager authenticationManager) {
         super(authenticationManager);
@@ -32,6 +33,7 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
     @Override
     protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response, final FilterChain chain)
             throws IOException, ServletException {
+        log.info(REQUEST_PARAMETERS, request.getMethod(), new UrlPathHelper().getPathWithinApplication(request));
         final StopWatch stopWatch = new StopWatch();
         stopWatch.start();
 
@@ -40,6 +42,7 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
         final String requestURI = (request).getRequestURI();
         final Optional<String> first = Arrays.stream(SecurityConfiguration.PUBLIC).map(item -> item.replace("*", "")).filter(requestURI::startsWith).findFirst();
         if (StringUtils.isAnyEmpty(token, refreshToken) && first.isEmpty()) {
+            log.debug("non token");
             (response).sendError(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
@@ -48,23 +51,28 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
                 try {
                     SecurityContextHolder.getContext().setAuthentication(JwtTokenProvider.getAuthentication(token));
                 } catch (final UsernameNotFoundException e) {
+                    log.debug("invalid token");
                     (response).sendError(HttpServletResponse.SC_UNAUTHORIZED);
                     return;
                 }
             } else if (JwtTokenProvider.validateRefreshToken(token, refreshToken)) {
                 final Optional<TableMemberVO> one = AccessBeanUtils.getBean(TableMemberRepository.class).findByToken(refreshToken);
-                if (one.isPresent()) {
-                    final TableMemberVO tableMemberVO = one.get();
-                    final String newAccessToken = JwtTokenProvider.createAccessToken(tableMemberVO.getId());
-                    final String newRefreshToken = JwtTokenProvider.createRefreshToken(tableMemberVO.getId(), newAccessToken);
-                    tableMemberVO.setToken(newRefreshToken);
-                    SecurityContextHolder.getContext().setAuthentication(JwtTokenProvider.getAuthentication(newAccessToken));
-                    AccessBeanUtils.getBean(TableMemberRepository.class).save(tableMemberVO);
-                    (response).addHeader("accessToken", newAccessToken);
-                    (response).addHeader("refreshToken", newRefreshToken);
+                if (one.isEmpty()) {
+                    log.debug("invalid refresh-token");
                     (response).sendError(HttpServletResponse.SC_UNAUTHORIZED);
                     return;
                 }
+                final TableMemberVO tableMemberVO = one.get();
+                final String newAccessToken = JwtTokenProvider.createAccessToken(tableMemberVO.getId());
+                final String newRefreshToken = JwtTokenProvider.createRefreshToken(tableMemberVO.getId(), newAccessToken);
+                tableMemberVO.setToken(newRefreshToken);
+                SecurityContextHolder.getContext().setAuthentication(JwtTokenProvider.getAuthentication(newAccessToken));
+                AccessBeanUtils.getBean(TableMemberRepository.class).save(tableMemberVO);
+                log.debug("refresh token");
+                (response).addHeader("accessToken", newAccessToken);
+                (response).addHeader("refreshToken", newRefreshToken);
+                (response).sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                return;
             }
         }
         chain.doFilter(request, response);

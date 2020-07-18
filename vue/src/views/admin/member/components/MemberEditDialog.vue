@@ -65,6 +65,15 @@
                 </ValidationProvider>
               </v-col>
               <v-col cols="12" md="4">
+                <v-switch
+                  v-model="editItem.available"
+                  :label="editItem.available | getSwitchLabel"
+                />
+              </v-col>
+              <v-col cols="12" md="8" class="pa-0">
+                <datetime-picker :date="editItem.expired" day-label="만료일" />
+              </v-col>
+              <v-col cols="12" md="4">
                 <ValidationProvider
                   name="세션타임아웃시간"
                   rules="required|numeric"
@@ -77,15 +86,6 @@
                     clearable
                   />
                 </ValidationProvider>
-              </v-col>
-              <v-col cols="12" md="8" class="pa-0">
-                <datetime-picker :date="editItem.expired" day-label="만료일" />
-              </v-col>
-              <v-col cols="12" md="4">
-                <v-switch
-                  v-model="editItem.available"
-                  :label="editItem.available | getSwitchLabel"
-                />
               </v-col>
               <v-col cols="12" md="4">
                 <ValidationProvider

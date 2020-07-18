@@ -2,7 +2,7 @@ package com.github.bestheroz.sample.api.menu;
 
 import com.github.bestheroz.sample.api.entity.menu.TableMenuRepository;
 import com.github.bestheroz.sample.api.entity.menu.TableMenuVO;
-import org.springframework.beans.BeanUtils;
+import com.github.bestheroz.standard.common.util.MapperUtils;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -48,8 +48,7 @@ public class MenuService {
     }
 
     private MenuVO convertTableMenuVOToMenuVO(final TableMenuVO vo, final Integer level) {
-        final MenuVO menuVO = new MenuVO();
-        BeanUtils.copyProperties(vo, menuVO);
+        final MenuVO menuVO = MapperUtils.toObject(vo, MenuVO.class);
         menuVO.setLevel(level);
         return menuVO;
     }
