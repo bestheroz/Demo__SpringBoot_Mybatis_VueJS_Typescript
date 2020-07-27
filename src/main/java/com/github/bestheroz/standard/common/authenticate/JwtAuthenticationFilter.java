@@ -63,8 +63,8 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
                     return;
                 }
                 final TableMemberVO tableMemberVO = one.get();
-                final String newAccessToken = JwtTokenProvider.createAccessToken(tableMemberVO.getId());
-                final String newRefreshToken = JwtTokenProvider.createRefreshToken(tableMemberVO.getId(), newAccessToken);
+                final String newAccessToken = JwtTokenProvider.createAccessToken(tableMemberVO);
+                final String newRefreshToken = JwtTokenProvider.createRefreshToken(tableMemberVO, newAccessToken);
                 tableMemberVO.setToken(newRefreshToken);
                 SecurityContextHolder.getContext().setAuthentication(JwtTokenProvider.getAuthentication(newAccessToken));
                 AccessBeanUtils.getBean(TableMemberRepository.class).save(tableMemberVO);

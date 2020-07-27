@@ -1,9 +1,11 @@
 package com.github.bestheroz.standard.common.authenticate;
 
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTCreator;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.github.bestheroz.sample.api.auth.AuthService;
+import com.github.bestheroz.sample.api.entity.member.TableMemberVO;
 import com.github.bestheroz.standard.common.exception.BusinessException;
 import com.github.bestheroz.standard.common.util.AccessBeanUtils;
 import lombok.experimental.UtilityClass;
@@ -25,21 +27,27 @@ public class JwtTokenProvider {
     private final Long expiresAtAccessToken = 300L;
     private final Long expiresAtRefreshToken = 86400L;
 
-    public String createAccessToken(final String userPk) {
-        Assert.hasText(userPk, "userPk parameter must not be empty or null");
-        return JWT.create().withClaim("userPk", userPk).withExpiresAt(Date.from(OffsetDateTime.now().plusSeconds(expiresAtAccessToken.intValue()).toInstant())).sign(ALGORITHM);
+    public String createAccessToken(final TableMemberVO userVO) {
+        return getJWTCreator(userVO).withExpiresAt(Date.from(OffsetDateTime.now().plusSeconds(expiresAtAccessToken.intValue()).toInstant())).sign(ALGORITHM);
     }
 
-    public String createRefreshToken(final String userPk, final String accessToken) {
-        Assert.hasText(userPk, "userPk parameter must not be empty or null");
-        return JWT.create().withClaim("userPk", userPk).withClaim("accessToken", accessToken)
+    public String createRefreshToken(final TableMemberVO userVO, final String accessToken) {
+        return getJWTCreator(userVO).withClaim("accessToken", accessToken)
                 .withExpiresAt(Date.from(OffsetDateTime.now().plusSeconds(expiresAtRefreshToken.intValue()).toInstant()))
                 .sign(ALGORITHM);
     }
 
+    private JWTCreator.Builder getJWTCreator(final TableMemberVO userVO) {
+        Assert.notNull(userVO, "userVO parameter must not be empty or null");
+        Assert.hasText(userVO.getId(), "userPk parameter must not be empty or null");
+        Assert.hasText(userVO.getName(), "userName parameter must not be empty or null");
+        Assert.notNull(userVO.getAuthority(), "userAuthority parameter must not be empty or null");
+        return JWT.create().withClaim("userPk", userVO.getId()).withClaim("userName", userVO.getName()).withClaim("userAuthority", userVO.getAuthority());
+    }
+
     public Authentication getAuthentication(final String token) {
         Assert.hasText(token, "token parameter must not be empty or null");
-        final UserDetails userDetails = AccessBeanUtils.getBean(AuthService.class).loadUserByUsername(getUserPk(token));
+        final UserDetails userDetails = AccessBeanUtils.getBean(AuthService.class).getUserDetails(getUserPk(token), getUserName(token), getUserAuthority(token));
         return new UsernamePasswordAuthenticationToken(userDetails, StringUtils.EMPTY, userDetails.getAuthorities());
     }
 
@@ -47,6 +55,26 @@ public class JwtTokenProvider {
         Assert.hasText(token, "token parameter must not be empty or null");
         try {
             return JWT.require(ALGORITHM).acceptExpiresAt(expiresAtAccessToken).build().verify(token).getClaims().get("userPk").asString();
+        } catch (final JWTVerificationException | NullPointerException e) {
+            log.warn(BusinessException.FAIL_TRY_LOGIN_FIRST.toString());
+            throw BusinessException.FAIL_TRY_LOGIN_FIRST;
+        }
+    }
+
+    public String getUserName(final String token) {
+        Assert.hasText(token, "token parameter must not be empty or null");
+        try {
+            return JWT.require(ALGORITHM).acceptExpiresAt(expiresAtAccessToken).build().verify(token).getClaims().get("userName").asString();
+        } catch (final JWTVerificationException | NullPointerException e) {
+            log.warn(BusinessException.FAIL_TRY_LOGIN_FIRST.toString());
+            throw BusinessException.FAIL_TRY_LOGIN_FIRST;
+        }
+    }
+
+    public Integer getUserAuthority(final String token) {
+        Assert.hasText(token, "token parameter must not be empty or null");
+        try {
+            return JWT.require(ALGORITHM).acceptExpiresAt(expiresAtAccessToken).build().verify(token).getClaims().get("userAuthority").asInt();
         } catch (final JWTVerificationException | NullPointerException e) {
             log.warn(BusinessException.FAIL_TRY_LOGIN_FIRST.toString());
             throw BusinessException.FAIL_TRY_LOGIN_FIRST;

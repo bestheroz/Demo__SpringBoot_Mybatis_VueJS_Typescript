@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -29,14 +30,22 @@ public class AuthService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
-        if (org.springframework.util.StringUtils.isEmpty(username)) {
+        if (StringUtils.isEmpty(username)) {
             throw new UsernameNotFoundException("No user found");
         }
         final Optional<TableMemberVO> oTableMemberVO = this.tableMemberRepository.findById(username);
         if (oTableMemberVO.isEmpty()) {
             throw new UsernameNotFoundException("No user found by `" + username + "`");
         }
-        return new UserVO(oTableMemberVO.get());
+        final TableMemberVO tableMemberVO = oTableMemberVO.get();
+        return new UserVO(tableMemberVO.getId(), tableMemberVO.getName(), tableMemberVO.getAuthority());
+    }
+
+    public UserDetails getUserDetails(final String id, final String name, final Integer authority) throws UsernameNotFoundException {
+        if (StringUtils.isAnyEmpty(id, name) || authority == null) {
+            throw new UsernameNotFoundException("No user found");
+        }
+        return new UserVO(id, name, authority);
     }
 
     Map<String, String> login(final String id, final String password) {
@@ -72,14 +81,14 @@ public class AuthService implements UserDetailsService {
         }
 
         // 5. 계정 차단된 상태인가
-        if (!tableMemberVO.isAvailable()) {
+        if (!tableMemberVO.isAvailable() || tableMemberVO.getExpired().toEpochMilli() < Instant.now().toEpochMilli()) {
             log.warn(ExceptionCode.FAIL_LOGIN_CLOSED.toString());
             throw new BusinessException(ExceptionCode.FAIL_LOGIN_CLOSED);
         }
 
         tableMemberVO.setLoginFailCnt(0);
-        final String accessToken = JwtTokenProvider.createAccessToken(tableMemberVO.getId());
-        final String refreshToken = JwtTokenProvider.createRefreshToken(tableMemberVO.getId(), accessToken);
+        final String accessToken = JwtTokenProvider.createAccessToken(tableMemberVO);
+        final String refreshToken = JwtTokenProvider.createRefreshToken(tableMemberVO, accessToken);
         tableMemberVO.setToken(refreshToken);
         this.tableMemberRepository.save(tableMemberVO);
         final Map<String, String> result = new HashMap<>();
