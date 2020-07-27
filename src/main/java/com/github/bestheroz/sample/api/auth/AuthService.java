@@ -39,7 +39,7 @@ public class AuthService implements UserDetailsService {
             throw new UsernameNotFoundException("No user found by `" + username + "`");
         }
         final TableMemberEntity tableMemberEntity = oTableMemberVO.get();
-        return new UserVO(tableMemberEntity.getId(), tableMemberEntity.getName(), tableMemberEntity.getAuthority(), tableMemberEntity.getTimeout(), tableMemberEntity.getToken());
+        return new UserVO(tableMemberEntity.getId(), tableMemberEntity.getName(), tableMemberEntity.getAuthority(), tableMemberEntity.getTimeout());
     }
 
     Map<String, String> login(final String id, final String password) {

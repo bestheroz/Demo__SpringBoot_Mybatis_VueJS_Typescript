@@ -41,8 +41,8 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
 
         final String token = JwtTokenProvider.resolveAccessToken(request);
         final String refreshToken = JwtTokenProvider.resolveRefreshToken(request);
-        final Optional<String> first = Arrays.stream(SecurityConfiguration.PUBLIC).map(item -> item.replace("*", "")).filter(requestURI::startsWith).findFirst();
-        if (StringUtils.isAnyEmpty(token, refreshToken) && first.isEmpty()) {
+        final Optional<String> publicPages = Arrays.stream(SecurityConfiguration.PUBLIC).map(item -> item.replace("*", "")).filter(requestURI::startsWith).findFirst();
+        if (StringUtils.isAnyEmpty(token, refreshToken) && publicPages.isEmpty()) {
             log.debug("non token");
             (response).sendError(HttpServletResponse.SC_UNAUTHORIZED);
             return;
