@@ -1,6 +1,6 @@
 package com.github.bestheroz.sample.api.entity.menu;
 
-import com.github.bestheroz.sample.api.entity.AbstractCreatedUpdateVO;
+import com.github.bestheroz.sample.api.entity.AbstractCreatedUpdateEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -17,7 +17,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "MENU")
-public class TableMenuVO extends AbstractCreatedUpdateVO implements Serializable {
+public class TableMenuEntity extends AbstractCreatedUpdateEntity implements Serializable {
     private static final long serialVersionUID = 2658557582464222508L;
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY) private Integer id;
     private String name;

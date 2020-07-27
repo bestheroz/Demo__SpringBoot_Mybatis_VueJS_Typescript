@@ -1,6 +1,6 @@
 package com.github.bestheroz.sample.api.entity.member;
 
-import com.github.bestheroz.sample.api.entity.AbstractCreatedUpdateVO;
+import com.github.bestheroz.sample.api.entity.AbstractCreatedUpdateEntity;
 import lombok.*;
 
 import javax.persistence.Entity;
@@ -14,7 +14,7 @@ import java.time.Instant;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity(name = "MEMBER")
-public class TableMemberVO extends AbstractCreatedUpdateVO implements Serializable {
+public class TableMemberEntity extends AbstractCreatedUpdateEntity implements Serializable {
     private static final long serialVersionUID = 7280716056600887400L;
     @Id
     private String id;

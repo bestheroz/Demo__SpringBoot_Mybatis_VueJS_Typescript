@@ -4,10 +4,8 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTCreator;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.github.bestheroz.sample.api.auth.AuthService;
-import com.github.bestheroz.sample.api.entity.member.TableMemberVO;
 import com.github.bestheroz.standard.common.exception.BusinessException;
-import com.github.bestheroz.standard.common.util.AccessBeanUtils;
+import com.github.bestheroz.standard.common.util.MapperUtils;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -27,27 +25,28 @@ public class JwtTokenProvider {
     private final Long expiresAtAccessToken = 300L;
     private final Long expiresAtRefreshToken = 86400L;
 
-    public String createAccessToken(final TableMemberVO userVO) {
+    public String createAccessToken(final UserVO userVO) {
         return getJWTCreator(userVO).withExpiresAt(Date.from(OffsetDateTime.now().plusSeconds(expiresAtAccessToken.intValue()).toInstant())).sign(ALGORITHM);
     }
 
-    public String createRefreshToken(final TableMemberVO userVO, final String accessToken) {
+    public String createRefreshToken(final UserVO userVO, final String accessToken) {
         return getJWTCreator(userVO).withClaim("accessToken", accessToken)
                 .withExpiresAt(Date.from(OffsetDateTime.now().plusSeconds(expiresAtRefreshToken.intValue()).toInstant()))
                 .sign(ALGORITHM);
     }
 
-    private JWTCreator.Builder getJWTCreator(final TableMemberVO userVO) {
+    private JWTCreator.Builder getJWTCreator(final UserVO userVO) {
         Assert.notNull(userVO, "userVO parameter must not be empty or null");
         Assert.hasText(userVO.getId(), "userPk parameter must not be empty or null");
         Assert.hasText(userVO.getName(), "userName parameter must not be empty or null");
-        Assert.notNull(userVO.getAuthority(), "userAuthority parameter must not be empty or null");
-        return JWT.create().withClaim("userPk", userVO.getId()).withClaim("userName", userVO.getName()).withClaim("userAuthority", userVO.getAuthority());
+        Assert.notNull(userVO.getAuthority(), "authority parameter must not be empty or null");
+        return JWT.create().withClaim("userPk", userVO.getId()).withClaim("userVO", MapperUtils.toString(userVO));
     }
 
     public Authentication getAuthentication(final String token) {
         Assert.hasText(token, "token parameter must not be empty or null");
-        final UserDetails userDetails = AccessBeanUtils.getBean(AuthService.class).getUserDetails(getUserPk(token), getUserName(token), getUserAuthority(token));
+        final UserVO userVO = getUserVO(token);
+        final UserDetails userDetails = new UserVO(getUserPk(token), userVO.getName(), userVO.getAuthority(), userVO.getTimeout(), userVO.getToken());
         return new UsernamePasswordAuthenticationToken(userDetails, StringUtils.EMPTY, userDetails.getAuthorities());
     }
 
@@ -61,20 +60,10 @@ public class JwtTokenProvider {
         }
     }
 
-    public String getUserName(final String token) {
+    public UserVO getUserVO(final String token) {
         Assert.hasText(token, "token parameter must not be empty or null");
         try {
-            return JWT.require(ALGORITHM).acceptExpiresAt(expiresAtAccessToken).build().verify(token).getClaims().get("userName").asString();
-        } catch (final JWTVerificationException | NullPointerException e) {
-            log.warn(BusinessException.FAIL_TRY_LOGIN_FIRST.toString());
-            throw BusinessException.FAIL_TRY_LOGIN_FIRST;
-        }
-    }
-
-    public Integer getUserAuthority(final String token) {
-        Assert.hasText(token, "token parameter must not be empty or null");
-        try {
-            return JWT.require(ALGORITHM).acceptExpiresAt(expiresAtAccessToken).build().verify(token).getClaims().get("userAuthority").asInt();
+            return MapperUtils.toObject(JWT.require(ALGORITHM).acceptExpiresAt(expiresAtAccessToken).build().verify(token).getClaims().get("userVO").asString(), UserVO.class);
         } catch (final JWTVerificationException | NullPointerException e) {
             log.warn(BusinessException.FAIL_TRY_LOGIN_FIRST.toString());
             throw BusinessException.FAIL_TRY_LOGIN_FIRST;

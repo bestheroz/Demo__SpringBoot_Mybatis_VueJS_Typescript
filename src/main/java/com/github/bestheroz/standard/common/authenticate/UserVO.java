@@ -18,6 +18,8 @@ public class UserVO implements UserDetails, Serializable {
     private String id;
     private String name;
     private Integer authority;
+    private Integer timeout;
+    private String token;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

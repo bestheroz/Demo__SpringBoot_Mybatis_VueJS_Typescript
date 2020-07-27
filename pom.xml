@@ -19,6 +19,7 @@
         <lombok-version>1.18.12</lombok-version>
         <java-jwt-version>3.10.3</java-jwt-version>
         <commons-lang3-version>3.11</commons-lang3-version>
+        <gson-version>2.8.6</gson-version>
         <commons-io-version>2.7</commons-io-version>
         <tika-version>1.24.1</tika-version>
         <poi-version>4.1.2</poi-version>
@@ -34,6 +35,13 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+            <!-- Exclude the default Jackson dependency -->
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-json</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -84,6 +92,12 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>${commons-lang3-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>${gson-version}</version>
         </dependency>
 
         <!-- 파일 검증(확장자, MimeType) -->
