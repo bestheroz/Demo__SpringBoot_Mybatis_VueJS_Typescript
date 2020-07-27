@@ -23,7 +23,7 @@ import java.time.OffsetDateTime;
 public class JwtTokenProvider {
     private final Algorithm ALGORITHM = Algorithm.HMAC512("secret");
     private final Long expiresAtAccessToken = 300L;
-    private final Long expiresAtRefreshToken = 86400L;
+    private final Long expiresAtRefreshToken = 7200L;
 
     public String createAccessToken(final UserVO userVO) {
         return getJWTCreator(userVO).withExpiresAt(Date.from(OffsetDateTime.now().plusSeconds(expiresAtAccessToken.intValue()).toInstant())).sign(ALGORITHM);
