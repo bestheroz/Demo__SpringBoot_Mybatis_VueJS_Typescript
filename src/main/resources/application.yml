@@ -23,7 +23,7 @@ spring:
     converters:
       preferred-json-mapper: gson
   autoconfigure:
-    exclude: org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration
+    exclude: org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration
 server:
   compression:
     enabled: true
