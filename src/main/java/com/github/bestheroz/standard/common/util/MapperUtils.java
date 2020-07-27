@@ -13,11 +13,10 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Type;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Slf4j
 @UtilityClass
@@ -69,7 +68,12 @@ public class MapperUtils {
     }
 
     public <T> List<T> toArrayList(final Object source, final Class<T> targetType) {
-        return Stream.of(MapperUtils.toJsonArray(source).iterator()).map(item -> MapperUtils.toObject(item, targetType)).collect(Collectors.toList());
+        final JsonArray array = MapperUtils.toObject(source, JsonArray.class);
+        final List<T> lst = new ArrayList<>();
+        for (final JsonElement json : array) {
+            lst.add(MapperUtils.toObject(json, targetType));
+        }
+        return lst;
     }
 
     public Gson getGsonObject() {
