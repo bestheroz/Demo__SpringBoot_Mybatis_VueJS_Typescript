@@ -16,6 +16,6 @@ public class RootController implements ErrorController {
 
     @Override
     public String getErrorPath() {
-        return "/error";
+        return null;
     }
 }

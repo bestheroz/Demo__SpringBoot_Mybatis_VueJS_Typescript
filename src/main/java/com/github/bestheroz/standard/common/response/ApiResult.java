@@ -22,13 +22,13 @@ public class ApiResult extends HashMap<String, Object> {
 
     public static ApiResult ok(final Object data) {
         final ApiResult apiResult = ApiResult.code(ExceptionCode.SUCCESS_NORMAL);
-        apiResult.put(DATA_KEY, MapperUtils.toJsonNode(data));
+        apiResult.put(DATA_KEY, MapperUtils.toJsonElement(data));
         return apiResult;
     }
 
     public static ApiResult ok(final Object data, final Integer paginationTotalLength) {
         final ApiResult apiResult = ApiResult.code(ExceptionCode.SUCCESS_NORMAL);
-        apiResult.put(DATA_KEY, MapperUtils.toJsonNode(data));
+        apiResult.put(DATA_KEY, MapperUtils.toJsonElement(data));
         apiResult.put(PAGINATION_TOTAL_LENGTH_KEY, paginationTotalLength);
         return apiResult;
     }

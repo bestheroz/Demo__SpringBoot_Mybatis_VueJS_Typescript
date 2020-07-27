@@ -1,7 +1,7 @@
 package com.github.bestheroz.sample.api.admin.codegroup;
 
+import com.github.bestheroz.sample.api.entity.codegroup.TableCodeGroupEntity;
 import com.github.bestheroz.sample.api.entity.codegroup.TableCodeGroupRepository;
-import com.github.bestheroz.sample.api.entity.codegroup.TableCodeGroupVO;
 import com.github.bestheroz.standard.common.response.ApiResult;
 import com.github.bestheroz.standard.common.response.Result;
 import lombok.extern.slf4j.Slf4j;
@@ -28,15 +28,15 @@ public class AdminCodeGroupController {
     }
 
     @PostMapping
-    ResponseEntity<ApiResult> post(@RequestBody final TableCodeGroupVO tableCodeGroupVO) {
-        this.tableCodeGroupRepository.save(tableCodeGroupVO);
+    ResponseEntity<ApiResult> post(@RequestBody final TableCodeGroupEntity tableCodeGroupEntity) {
+        this.tableCodeGroupRepository.save(tableCodeGroupEntity);
         return Result.ok();
     }
 
     @PatchMapping(value = "{codeGroup}")
-    ResponseEntity<ApiResult> patch(@PathVariable(value = "codeGroup") final String codeGroup, @RequestBody final TableCodeGroupVO tableCodeGroupVO) {
-        tableCodeGroupVO.setCodeGroup(codeGroup);
-        this.tableCodeGroupRepository.save(tableCodeGroupVO);
+    ResponseEntity<ApiResult> patch(@PathVariable(value = "codeGroup") final String codeGroup, @RequestBody final TableCodeGroupEntity tableCodeGroupEntity) {
+        tableCodeGroupEntity.setCodeGroup(codeGroup);
+        this.tableCodeGroupRepository.save(tableCodeGroupEntity);
         return Result.ok();
     }
 

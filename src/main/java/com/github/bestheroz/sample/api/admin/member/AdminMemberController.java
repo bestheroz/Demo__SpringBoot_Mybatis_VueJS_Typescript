@@ -1,7 +1,7 @@
 package com.github.bestheroz.sample.api.admin.member;
 
+import com.github.bestheroz.sample.api.entity.member.TableMemberEntity;
 import com.github.bestheroz.sample.api.entity.member.TableMemberRepository;
-import com.github.bestheroz.sample.api.entity.member.TableMemberVO;
 import com.github.bestheroz.standard.common.response.ApiResult;
 import com.github.bestheroz.standard.common.response.Result;
 import lombok.extern.slf4j.Slf4j;
@@ -29,16 +29,16 @@ public class AdminMemberController {
 
     @PostMapping
     @CacheEvict(value = "memberCache")
-    public ResponseEntity<ApiResult> insert(@RequestBody final TableMemberVO tableMemberVO) {
-        this.tableMemberRepository.save(tableMemberVO);
+    public ResponseEntity<ApiResult> insert(@RequestBody final TableMemberEntity tableMemberEntity) {
+        this.tableMemberRepository.save(tableMemberEntity);
         return Result.ok();
     }
 
     @PatchMapping(value = "{id}")
     @CacheEvict(value = "memberCache")
-    public ResponseEntity<ApiResult> update(@PathVariable(value = "id") final String id, @RequestBody final TableMemberVO tableMemberVO) {
-        tableMemberVO.setId(id);
-        this.tableMemberRepository.save(tableMemberVO);
+    public ResponseEntity<ApiResult> update(@PathVariable(value = "id") final String id, @RequestBody final TableMemberEntity tableMemberEntity) {
+        tableMemberEntity.setId(id);
+        this.tableMemberRepository.save(tableMemberEntity);
         return Result.ok();
     }
 }

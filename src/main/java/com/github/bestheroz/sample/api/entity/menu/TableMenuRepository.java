@@ -8,13 +8,13 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface TableMenuRepository extends CrudRepository<TableMenuVO, Integer> {
+public interface TableMenuRepository extends CrudRepository<TableMenuEntity, Integer> {
 
     @Query(value = "SELECT M.*\n" +
             "FROM MENU M\n" +
             "WHERE M.ID = 1\n" +
             "ORDER BY M.DISPLAY_ORDER, M.NAME", nativeQuery = true)
-    List<TableMenuVO> getMenuListLevel1();
+    List<TableMenuEntity> getMenuListLevel1();
 
     @Query(value = "SELECT M.*\n" +
             "FROM MENU M\n" +
@@ -22,13 +22,13 @@ public interface TableMenuRepository extends CrudRepository<TableMenuVO, Integer
             "WHERE M.PARENT_ID = 1\n" +
             "  AND MA.AUTHORITY = :authority\n" +
             "ORDER BY M.DISPLAY_ORDER, M.NAME", nativeQuery = true)
-    List<TableMenuVO> getMenuListLevel2(@Param("authority") Integer authority);
+    List<TableMenuEntity> getMenuListLevel2(@Param("authority") Integer authority);
 
     @Query(value = "SELECT M.*\n" +
             "FROM MENU M\n" +
             "WHERE M.PARENT_ID = 1\n" +
             "ORDER BY M.DISPLAY_ORDER, M.NAME", nativeQuery = true)
-    List<TableMenuVO> getMenuListLevel2();
+    List<TableMenuEntity> getMenuListLevel2();
 
     @Query(value = "SELECT M2.*\n" +
             "FROM MENU M\n" +
@@ -38,7 +38,7 @@ public interface TableMenuRepository extends CrudRepository<TableMenuVO, Integer
             "    AND MA.AUTHORITY = :authority\n" +
             "    AND M2.PARENT_ID = :parentId\n" +
             "ORDER BY M2.DISPLAY_ORDER, M2.NAME", nativeQuery = true)
-    List<TableMenuVO> getMenuListLevel3(@Param("authority") Integer authority, @Param("parentId") Integer parentId);
+    List<TableMenuEntity> getMenuListLevel3(@Param("authority") Integer authority, @Param("parentId") Integer parentId);
 
     @Query(value = "SELECT M2.*\n" +
             "FROM MENU M\n" +
@@ -46,5 +46,5 @@ public interface TableMenuRepository extends CrudRepository<TableMenuVO, Integer
             "    AND M.PARENT_ID = 1\n" +
             "    AND M2.PARENT_ID = :parentId\n" +
             "ORDER BY M2.DISPLAY_ORDER, M2.NAME", nativeQuery = true)
-    List<TableMenuVO> getMenuListLevel3(@Param("parentId") Integer parentId);
+    List<TableMenuEntity> getMenuListLevel3(@Param("parentId") Integer parentId);
 }

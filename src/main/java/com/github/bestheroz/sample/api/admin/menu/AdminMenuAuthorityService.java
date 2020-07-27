@@ -1,7 +1,7 @@
 package com.github.bestheroz.sample.api.admin.menu;
 
+import com.github.bestheroz.sample.api.entity.menuauthority.TableMenuAuthorityEntity;
 import com.github.bestheroz.sample.api.entity.menuauthority.TableMenuAuthorityRepository;
-import com.github.bestheroz.sample.api.entity.menuauthority.TableMenuAuthorityVO;
 import com.github.bestheroz.sample.api.menu.MenuService;
 import com.github.bestheroz.standard.common.util.MapperUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -19,7 +19,7 @@ public class AdminMenuAuthorityService {
 
     public List<AdminMenuAuthorityVO> getList(final Integer authority) {
         final List<AdminMenuAuthorityVO> result = new ArrayList<>();
-        final Optional<TableMenuAuthorityVO> tableMenuAuthorityVO = this.tableMenuAuthorityRepository.findById(authority);
+        final Optional<TableMenuAuthorityEntity> tableMenuAuthorityVO = this.tableMenuAuthorityRepository.findById(authority);
         final boolean present = tableMenuAuthorityVO.isPresent();
         this.menuService.getMenuList().forEach(item -> {
             final AdminMenuAuthorityVO adminMenuAuthorityVO = MapperUtils.toObject(item, AdminMenuAuthorityVO.class);
