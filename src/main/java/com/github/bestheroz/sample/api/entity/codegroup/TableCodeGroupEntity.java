@@ -1,6 +1,6 @@
 package com.github.bestheroz.sample.api.entity.codegroup;
 
-import com.github.bestheroz.sample.api.entity.AbstractCreatedUpdateVO;
+import com.github.bestheroz.sample.api.entity.AbstractCreatedUpdateEntity;
 import lombok.*;
 
 import javax.persistence.Entity;
@@ -12,7 +12,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity(name = "CODE_GROUP")
-public class TableCodeGroupVO extends AbstractCreatedUpdateVO implements Serializable {
+public class TableCodeGroupEntity extends AbstractCreatedUpdateEntity implements Serializable {
     private static final long serialVersionUID = 5295387617727505308L;
     @Id
     private String codeGroup;

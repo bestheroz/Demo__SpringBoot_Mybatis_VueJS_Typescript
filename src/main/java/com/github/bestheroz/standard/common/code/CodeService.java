@@ -1,7 +1,7 @@
 package com.github.bestheroz.standard.common.code;
 
+import com.github.bestheroz.sample.api.entity.code.TableCodeEntity;
 import com.github.bestheroz.sample.api.entity.code.TableCodeRepository;
-import com.github.bestheroz.sample.api.entity.code.TableCodeVO;
 import com.github.bestheroz.standard.common.util.AuthenticationUtils;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,7 @@ public class CodeService {
     }
 
     @Cacheable(value = "codeCache", key = "#codeGroup")
-    public List<TableCodeVO> getCodeVOList(final String codeGroup) {
+    public List<TableCodeEntity> getCodeVOList(final String codeGroup) {
         return this.tableCodeRepository.findByCodeGroup(codeGroup);
     }
 }

@@ -12,8 +12,9 @@
                 <fileNamePattern>${LOG_DIR}/debuglog-%d{yyyy-MM-dd}.log</fileNamePattern>
                 <maxHistory>10</maxHistory>
             </rollingPolicy>
-            <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
-                <layout class="com.github.bestheroz.standard.context.logging.LoggingLayout"/>
+            <withJansi>true</withJansi>
+            <encoder>
+                <pattern>%d{HH:mm:ss.SSS} [%thread] %highlight(%-5level) %cyan(%logger{1}.%method\(%line\)) - %msg %n</pattern>
             </encoder>
         </appender>
         <appender name="ERR_FILE_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
@@ -26,15 +27,17 @@
                 <fileNamePattern>${LOG_DIR}/errlog-%d{yyyy-MM-dd}.log</fileNamePattern>
                 <maxHistory>10</maxHistory>
             </rollingPolicy>
+            <withJansi>true</withJansi>
             <encoder>
-                <pattern>%d{HH:mm:ss.SSS} [%-5level] %logger.%method\(%line\) === %msg%n</pattern>
+                <pattern>%d{HH:mm:ss.SSS} [%thread] %highlight(%-5level) %cyan(%logger{1}.%method\(%line\)) - %msg %n</pattern>
             </encoder>
         </appender>
     </springProfile>
     <springProfile name="local">
         <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-            <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
-                <layout class="com.github.bestheroz.standard.context.logging.LoggingLayout"/>
+            <withJansi>true</withJansi>
+            <encoder>
+                <pattern>%d{HH:mm:ss.SSS} [%thread] %highlight(%-5level) %cyan(%logger{1}.%method\(%line\)) - %msg %n</pattern>
             </encoder>
         </appender>
     </springProfile>

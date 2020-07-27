@@ -6,8 +6,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface TableCodeRepository extends CrudRepository<TableCodeVO, TableCodeVOId> {
-    List<TableCodeVO> findByCodeGroup(String id);
+public interface TableCodeRepository extends CrudRepository<TableCodeEntity, TableCodeEntityId> {
+    List<TableCodeEntity> findByCodeGroup(String id);
 
     void deleteByCodeGroup(String id);
 }

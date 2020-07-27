@@ -11,7 +11,7 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class TableCodeVOId implements Serializable {
+public class TableCodeEntityId implements Serializable {
     private static final long serialVersionUID = -4897596840013190393L;
     @Id private String codeGroup;
     @Id private String code;

@@ -1,93 +1,102 @@
 package com.github.bestheroz.standard.common.util;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.github.bestheroz.standard.common.exception.BusinessException;
 import com.github.bestheroz.standard.common.exception.ExceptionCode;
-import com.github.bestheroz.standard.common.util.serializer.InstantDeserializer;
-import com.github.bestheroz.standard.common.util.serializer.InstantSerializer;
+import com.github.bestheroz.standard.common.util.adapter.InstantDeserializerTypeAdapter;
+import com.github.bestheroz.standard.common.util.adapter.InstantSerializerTypeAdapter;
+import com.github.bestheroz.standard.common.util.adapter.MapDeserializerTypeAdapter;
+import com.google.gson.*;
+import com.google.gson.internal.LinkedTreeMap;
+import com.google.gson.reflect.TypeToken;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tika.utils.ExceptionUtils;
 
-import java.io.IOException;
+import java.lang.reflect.Type;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Slf4j
 @UtilityClass
 public class MapperUtils {
-    private ObjectMapper OBJECT_MAPPER = null;
+    private final Gson GSON_INSTANCE = new GsonBuilder().registerTypeAdapter(Instant.class, new InstantDeserializerTypeAdapter()).registerTypeAdapter(Instant.class, new InstantSerializerTypeAdapter())
+            .registerTypeAdapter(Map.class, new MapDeserializerTypeAdapter()).registerTypeAdapter(HashMap.class, new MapDeserializerTypeAdapter())
+            .registerTypeAdapter(LinkedTreeMap.class, new MapDeserializerTypeAdapter()).disableHtmlEscaping().create();
 
-    public <T> T toObject(final Object content, final Class<T> returnType) {
-        try {
-            return getObjectMapper().readValue(toByte(content), returnType);
-        } catch (final IOException e) {
-            log.warn(ExceptionUtils.getStackTrace(e));
+    public <T> T toObject(final Object source, final Class<T> targetType) {
+        return GSON_INSTANCE.fromJson(toJsonElement(source), targetType);
+    }
+
+    public <T> T toObject(final Object source, final Type targetType) {
+        return GSON_INSTANCE.fromJson(toJsonElement(source), targetType);
+    }
+
+    public JsonArray toJsonArray(final Object source) {
+        return getCollectionTypeCatchException(source, JsonArray.class);
+    }
+
+    public JsonObject toJsonObject(final Object source) {
+        return getCollectionTypeCatchException(source, JsonObject.class);
+    }
+
+    public Map<String, Object> toHashMap(final Object source) {
+        return toObject(getCollectionTypeCatchException(source, JsonObject.class), new TypeToken<HashMap<String, Object>>() {
+        }.getType());
+    }
+
+    public JsonPrimitive toJsonPrimitive(final Object source) {
+        return toJsonElement(source).getAsJsonPrimitive();
+    }
+
+    public JsonElement toJsonElement(final Object source) {
+        if (source instanceof String) {
+            try {
+                return JsonParser.parseString((String) source);
+            } catch (final Throwable e) {
+                // ignored
+                return GSON_INSTANCE.toJsonTree(source);
+            }
+        } else {
+            return GSON_INSTANCE.toJsonTree(source);
+        }
+    }
+
+    public String toString(final Object source) {
+        return GSON_INSTANCE.toJson(source);
+    }
+
+    public <T> List<T> toArrayList(final Object source, final Class<T> targetType) {
+        final JsonArray array = MapperUtils.toObject(source, JsonArray.class);
+        final List<T> lst = new ArrayList<>();
+        for (final JsonElement json : array) {
+            lst.add(MapperUtils.toObject(json, targetType));
+        }
+        return lst;
+    }
+
+    public Gson getGsonObject() {
+        return GSON_INSTANCE;
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> T getCollectionTypeCatchException(final Object source, final Class<T> targetType) {
+        final JsonElement jsonElement = toJsonElement(source);
+        if (jsonElement.isJsonPrimitive()) {
+            log.warn(jsonElement.toString());
+            log.warn(ExceptionCode.ERROR_TRANSFORM_DATA.toString());
             throw new BusinessException(ExceptionCode.ERROR_TRANSFORM_DATA);
+        } else if (jsonElement.isJsonNull()) {
+            if (targetType == JsonObject.class) {
+                return (T) new JsonObject();
+            } else if (targetType == JsonArray.class) {
+                return (T) new JsonArray();
+            } else if (targetType == Map.class) {
+                return (T) new HashMap<String, Object>();
+            }
         }
-    }
 
-    public Map<String, Object> toMap(final Object content) {
-        try {
-            return content instanceof Map ? (Map) content : getObjectMapper().readValue(toByte(content), new TypeReference<Map<String, Object>>() {
-            });
-        } catch (final IOException e) {
-            log.warn(ExceptionUtils.getStackTrace(e));
-            throw new BusinessException(ExceptionCode.ERROR_TRANSFORM_DATA);
-        }
+        return toObject(jsonElement, targetType);
     }
-
-    public String toString(final Object content) {
-        try {
-            return content instanceof String ? (String) content : getObjectMapper().writeValueAsString(content);
-        } catch (final JsonProcessingException e) {
-            log.warn(ExceptionUtils.getStackTrace(e));
-            throw new BusinessException(ExceptionCode.ERROR_TRANSFORM_DATA);
-        }
-    }
-
-    public byte[] toByte(final Object content) {
-        try {
-            return content instanceof byte[] ? (byte[]) content : getObjectMapper().writeValueAsBytes(content);
-        } catch (final JsonProcessingException e) {
-            log.warn(ExceptionUtils.getStackTrace(e));
-            throw new BusinessException(ExceptionCode.ERROR_TRANSFORM_DATA);
-        }
-    }
-
-    public JsonNode toJsonNode(final Object content) {
-        try {
-            return content instanceof JsonNode ? (JsonNode) content : getObjectMapper().readTree(toByte(content));
-        } catch (final IOException e) {
-            log.warn(ExceptionUtils.getStackTrace(e));
-            throw new BusinessException(ExceptionCode.ERROR_TRANSFORM_DATA);
-        }
-    }
-
-    public <T> List<T> toArrayList(final Object content, final Class<T> returnType) {
-        try {
-            return getObjectMapper().readValue(toByte(content), TypeFactory.defaultInstance().constructCollectionType(List.class, returnType));
-        } catch (final IOException e) {
-            log.warn(ExceptionUtils.getStackTrace(e));
-            throw new BusinessException(ExceptionCode.ERROR_TRANSFORM_DATA);
-        }
-    }
-
-    public ObjectMapper getObjectMapper() {
-        if (OBJECT_MAPPER == null) {
-            final SimpleModule module = new SimpleModule();
-            module.addSerializer(Instant.class, new InstantSerializer());
-            module.addDeserializer(Instant.class, new InstantDeserializer());
-            OBJECT_MAPPER = new ObjectMapper().registerModule(module).configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        }
-        return OBJECT_MAPPER;
-    }
-
 }

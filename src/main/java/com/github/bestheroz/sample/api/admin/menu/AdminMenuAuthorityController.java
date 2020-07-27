@@ -1,7 +1,7 @@
 package com.github.bestheroz.sample.api.admin.menu;
 
+import com.github.bestheroz.sample.api.entity.menuauthority.TableMenuAuthorityEntity;
 import com.github.bestheroz.sample.api.entity.menuauthority.TableMenuAuthorityRepository;
-import com.github.bestheroz.sample.api.entity.menuauthority.TableMenuAuthorityVO;
 import com.github.bestheroz.standard.common.response.ApiResult;
 import com.github.bestheroz.standard.common.response.Result;
 import lombok.extern.slf4j.Slf4j;
@@ -30,10 +30,10 @@ public class AdminMenuAuthorityController {
     @PutMapping(value = "{authority}")
     @CacheEvict(value = "drawerCache", key = "#authority")
     public ResponseEntity<ApiResult> save(@PathVariable("authority") final Integer authority, @RequestBody final Map<String, String> payload) {
-        final TableMenuAuthorityVO tableMenuAuthorityVO = new TableMenuAuthorityVO();
-        tableMenuAuthorityVO.setAuthority(authority);
-        tableMenuAuthorityVO.setMenuIdList(Arrays.stream(StringUtils.split(payload.get("menuIdList"), ",")).map(item -> "^|" + item + ",").collect(Collectors.joining(StringUtils.EMPTY)));
-        this.tableMenuAuthorityRepository.save(tableMenuAuthorityVO);
+        final TableMenuAuthorityEntity tableMenuAuthorityEntity = new TableMenuAuthorityEntity();
+        tableMenuAuthorityEntity.setAuthority(authority);
+        tableMenuAuthorityEntity.setMenuIdList(Arrays.stream(StringUtils.split(payload.get("menuIdList"), ",")).map(item -> "^|" + item + ",").collect(Collectors.joining(StringUtils.EMPTY)));
+        this.tableMenuAuthorityRepository.save(tableMenuAuthorityEntity);
         return Result.ok();
     }
 }

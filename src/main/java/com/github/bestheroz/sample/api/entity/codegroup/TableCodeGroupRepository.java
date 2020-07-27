@@ -4,5 +4,5 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface TableCodeGroupRepository extends CrudRepository<TableCodeGroupVO, String> {
+public interface TableCodeGroupRepository extends CrudRepository<TableCodeGroupEntity, String> {
 }

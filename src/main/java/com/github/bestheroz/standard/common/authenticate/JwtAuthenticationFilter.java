@@ -1,8 +1,9 @@
 package com.github.bestheroz.standard.common.authenticate;
 
+import com.github.bestheroz.sample.api.entity.member.TableMemberEntity;
 import com.github.bestheroz.sample.api.entity.member.TableMemberRepository;
-import com.github.bestheroz.sample.api.entity.member.TableMemberVO;
 import com.github.bestheroz.standard.common.util.AccessBeanUtils;
+import com.github.bestheroz.standard.common.util.MapperUtils;
 import com.github.bestheroz.standard.context.security.SecurityConfiguration;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -33,15 +34,15 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
     @Override
     protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response, final FilterChain chain)
             throws IOException, ServletException {
-        log.info(REQUEST_PARAMETERS, request.getMethod(), new UrlPathHelper().getPathWithinApplication(request));
+        final String requestURI = new UrlPathHelper().getPathWithinApplication(request);
+        log.info(REQUEST_PARAMETERS, request.getMethod(), requestURI);
         final StopWatch stopWatch = new StopWatch();
         stopWatch.start();
 
         final String token = JwtTokenProvider.resolveAccessToken(request);
         final String refreshToken = JwtTokenProvider.resolveRefreshToken(request);
-        final String requestURI = (request).getRequestURI();
-        final Optional<String> first = Arrays.stream(SecurityConfiguration.PUBLIC).map(item -> item.replace("*", "")).filter(requestURI::startsWith).findFirst();
-        if (StringUtils.isAnyEmpty(token, refreshToken) && first.isEmpty()) {
+        final Optional<String> publicPages = Arrays.stream(SecurityConfiguration.PUBLIC).map(item -> item.replace("*", "")).filter(requestURI::startsWith).findFirst();
+        if (StringUtils.isAnyEmpty(token, refreshToken) && publicPages.isEmpty()) {
             log.debug("non token");
             (response).sendError(HttpServletResponse.SC_UNAUTHORIZED);
             return;
@@ -56,18 +57,19 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
                     return;
                 }
             } else if (JwtTokenProvider.validateRefreshToken(token, refreshToken)) {
-                final Optional<TableMemberVO> one = AccessBeanUtils.getBean(TableMemberRepository.class).findByToken(refreshToken);
+                final Optional<TableMemberEntity> one = AccessBeanUtils.getBean(TableMemberRepository.class).findByToken(refreshToken);
                 if (one.isEmpty()) {
                     log.debug("invalid refresh-token");
                     (response).sendError(HttpServletResponse.SC_UNAUTHORIZED);
                     return;
                 }
-                final TableMemberVO tableMemberVO = one.get();
-                final String newAccessToken = JwtTokenProvider.createAccessToken(tableMemberVO.getId());
-                final String newRefreshToken = JwtTokenProvider.createRefreshToken(tableMemberVO.getId(), newAccessToken);
-                tableMemberVO.setToken(newRefreshToken);
+                final TableMemberEntity tableMemberEntity = one.get();
+                final UserVO userVO = MapperUtils.toObject(tableMemberEntity, UserVO.class);
+                final String newAccessToken = JwtTokenProvider.createAccessToken(userVO);
+                final String newRefreshToken = JwtTokenProvider.createRefreshToken(userVO, newAccessToken);
+                tableMemberEntity.setToken(newRefreshToken);
                 SecurityContextHolder.getContext().setAuthentication(JwtTokenProvider.getAuthentication(newAccessToken));
-                AccessBeanUtils.getBean(TableMemberRepository.class).save(tableMemberVO);
+                AccessBeanUtils.getBean(TableMemberRepository.class).save(tableMemberEntity);
                 log.debug("refresh token");
                 (response).addHeader("accessToken", newAccessToken);
                 (response).addHeader("refreshToken", newRefreshToken);
@@ -77,6 +79,6 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
         }
         chain.doFilter(request, response);
         stopWatch.stop();
-        log.info(REQUEST_COMPLETE_EXECUTE_TIME_INCLUDE_JSP, new UrlPathHelper().getPathWithinApplication(request), stopWatch.toString());
+        log.info(REQUEST_COMPLETE_EXECUTE_TIME_INCLUDE_JSP, requestURI, stopWatch.toString());
     }
 }

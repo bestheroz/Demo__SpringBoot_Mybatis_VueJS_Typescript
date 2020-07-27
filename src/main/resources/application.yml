@@ -18,6 +18,12 @@ spring:
     properties:
       hibernate:
         format_sql: true
+    open-in-view: false
+  mvc:
+    converters:
+      preferred-json-mapper: gson
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration
 server:
   compression:
     enabled: true

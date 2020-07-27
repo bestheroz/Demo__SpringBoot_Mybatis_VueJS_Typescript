@@ -1,6 +1,6 @@
 package com.github.bestheroz.sample.api.auth;
 
-import com.github.bestheroz.sample.api.entity.member.TableMemberVO;
+import com.github.bestheroz.sample.api.entity.member.TableMemberEntity;
 import com.github.bestheroz.standard.common.authenticate.JwtTokenProvider;
 import com.github.bestheroz.standard.common.response.ApiResult;
 import com.github.bestheroz.standard.common.response.Result;
@@ -17,8 +17,8 @@ public class AuthController {
 
     @PostMapping(value = "/login")
     @ResponseBody
-    ResponseEntity<ApiResult> login(@RequestBody final TableMemberVO tableMemberVO) {
-        return Result.ok(this.authService.login(tableMemberVO.getId(), tableMemberVO.getPassword()));
+    ResponseEntity<ApiResult> login(@RequestBody final TableMemberEntity tableMemberEntity) {
+        return Result.ok(this.authService.login(tableMemberEntity.getId(), tableMemberEntity.getPassword()));
     }
 
     @GetMapping(value = "/me")
@@ -27,8 +27,8 @@ public class AuthController {
     }
 
     @PostMapping(value = "/initPassword")
-    ResponseEntity<ApiResult> initPassword(@RequestBody final TableMemberVO tableMemberVO) {
-        this.authService.initPassword(tableMemberVO.getId(), tableMemberVO.getPassword());
+    ResponseEntity<ApiResult> initPassword(@RequestBody final TableMemberEntity tableMemberEntity) {
+        this.authService.initPassword(tableMemberEntity.getId(), tableMemberEntity.getPassword());
         return Result.ok();
     }
 
