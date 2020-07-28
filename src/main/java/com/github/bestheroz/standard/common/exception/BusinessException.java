@@ -64,13 +64,7 @@ public class BusinessException extends RuntimeException {
     }
 
     public boolean isContains(final Set<ExceptionCode> sets) {
-        final boolean result = false;
-        for (final ExceptionCode exceptionCode : sets) {
-            if (this.isEquals(exceptionCode)) {
-                return true;
-            }
-        }
-        return result;
+        return sets.stream().anyMatch(this::isEquals);
     }
 
     public boolean isNoDataSuccess() {

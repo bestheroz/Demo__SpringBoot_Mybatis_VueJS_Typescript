@@ -1,4 +1,4 @@
-package com.github.bestheroz.standard.context.logging;
+package com.github.bestheroz.standard.context.log;
 
 import com.github.bestheroz.standard.common.util.MapperUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -14,28 +14,28 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.stereotype.Component;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Configuration
 @EnableAspectJAutoProxy
 @Aspect
 @Component
-public class TraceLoggingInAOP {
+public class TraceLogger {
     private static final String STR_CLASS_METHOD = "{0}.{1}({2})";
     private static final String STR_START_EXECUTE_TIME = "{} START ....... Execute Time ....... : {}";
     private static final String STR_END_EXECUTE_TIME = "{} E N D ....... Execute Time ....... : {} - return Value({}) : {}";
 
-    @Around("execution(* com.github.bestheroz..*Controller.*(..)) || execution(* com.github.bestheroz..*Service.*(..)) " +
-            "|| execution(* com.github.bestheroz..*Repository.*(..))")
-    public Object doLoggingAround(final ProceedingJoinPoint pjp) throws Throwable {
+    @Around("execution(public * com.github.bestheroz..*Controller.*(..)) || execution(public * com.github.bestheroz..*Service.*(..)) " +
+            "|| execution(public * com.github.bestheroz..*Repository.*(..)) || execution(public * com.github.bestheroz..*DAO.*(..))")
+    public Object writeLog(final ProceedingJoinPoint pjp) throws Throwable {
         final Object retVal;
 
         final Class<?> targetClass = pjp.getTarget().getClass();
         final String formatClassMethod = MessageFormat.format(STR_CLASS_METHOD,
                 StringUtils.startsWith(targetClass.getSimpleName(), "$Proxy") ? targetClass.getInterfaces()[0].getSimpleName() : targetClass.getSimpleName(), pjp.getSignature().getName(),
-                this.getArgumentNames(pjp.getArgs()));
+                Arrays.stream(pjp.getArgs()).map(item -> item.getClass().getSimpleName()).collect(Collectors.joining(", ")));
         try {
             final StopWatch stopWatch = new StopWatch();
             stopWatch.start();
@@ -53,13 +53,4 @@ public class TraceLoggingInAOP {
         return retVal;
     }
 
-    private String getArgumentNames(final Object[] obj) {
-        final List<String> list = new ArrayList<>();
-        for (final Object element : obj) {
-            if (element != null) {
-                list.add(element.getClass().getSimpleName());
-            }
-        }
-        return StringUtils.join(list, ", ");
-    }
 }
