@@ -9,7 +9,7 @@ import java.time.Instant;
 
 @Converter(autoApply = true)
 @Slf4j
-public class InstantToDateConverter implements AttributeConverter<Instant, Timestamp> {
+public class InstantBetweenTimestampConverter implements AttributeConverter<Instant, Timestamp> {
     @Override
     public Timestamp convertToDatabaseColumn(final Instant locDate) {
         return locDate == null ? null : Timestamp.from(locDate);
@@ -17,6 +17,6 @@ public class InstantToDateConverter implements AttributeConverter<Instant, Times
 
     @Override
     public Instant convertToEntityAttribute(final Timestamp sqlDate) {
-        return sqlDate.toInstant();
+        return sqlDate == null ? null : sqlDate.toInstant();
     }
 }
