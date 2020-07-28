@@ -1,7 +1,7 @@
 import axios, { AxiosError } from 'axios';
 import _ from 'lodash';
 import store from '@/store';
-import { alertError, alertSuccess } from '@/utils/alerts';
+import { alertError, alertSuccess, alertWarning } from '@/utils/alerts';
 import envs from '@/constants/envs';
 import Vue from 'vue';
 
@@ -31,6 +31,10 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   async function (error: AxiosError) {
+    if (error.message === 'Network Error') {
+      alertWarning('Service Unavailable');
+      return;
+    }
     if (error.response) {
       if (error.response.status === 401) {
         if (
