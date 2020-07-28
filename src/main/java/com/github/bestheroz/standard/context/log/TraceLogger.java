@@ -35,7 +35,12 @@ public class TraceLogger {
         final Class<?> targetClass = pjp.getTarget().getClass();
         final String formatClassMethod = MessageFormat.format(STR_CLASS_METHOD,
                 StringUtils.startsWith(targetClass.getSimpleName(), "$Proxy") ? targetClass.getInterfaces()[0].getSimpleName() : targetClass.getSimpleName(), pjp.getSignature().getName(),
-                Arrays.stream(pjp.getArgs()).map(item -> item.getClass().getSimpleName()).collect(Collectors.joining(", ")));
+                Arrays.stream(pjp.getArgs()).map(item -> {
+                    if (item != null) {
+                        return item.getClass().getSimpleName();
+                    }
+                    return "";
+                }).collect(Collectors.joining(", ")));
         try {
             final StopWatch stopWatch = new StopWatch();
             stopWatch.start();
