@@ -7,7 +7,7 @@ import java.util.List;
 
 @Repository
 public interface TableCodeRepository extends CrudRepository<TableCodeEntity, TableCodeEntityId> {
-    List<TableCodeEntity> findByCodeGroup(String id);
+    List<TableCodeEntity> findAllByCodeGroup(String id);
 
     void deleteByCodeGroup(String id);
 }

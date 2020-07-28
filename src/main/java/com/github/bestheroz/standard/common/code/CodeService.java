@@ -22,6 +22,6 @@ public class CodeService {
 
     @Cacheable(value = "codeCache", key = "#codeGroup")
     public List<TableCodeEntity> getCodeVOList(final String codeGroup) {
-        return this.tableCodeRepository.findByCodeGroup(codeGroup);
+        return this.tableCodeRepository.findAllByCodeGroup(codeGroup);
     }
 }

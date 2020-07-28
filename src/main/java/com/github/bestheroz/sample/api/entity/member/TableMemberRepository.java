@@ -17,9 +17,4 @@ public interface TableMemberRepository extends CrudRepository<TableMemberEntity,
     @Modifying
     @Transactional
     void plusLoginFailCnt(@Param("id") String id);
-
-    @Query(value = "UPDATE MEMBER SET TOKEN = NULL WHERE ID = :id", nativeQuery = true)
-    @Modifying
-    @Transactional
-    void updateTokenNull(@Param("id") String id);
 }

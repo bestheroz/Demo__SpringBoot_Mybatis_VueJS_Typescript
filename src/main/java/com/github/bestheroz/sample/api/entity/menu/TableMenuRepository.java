@@ -14,7 +14,7 @@ public interface TableMenuRepository extends CrudRepository<TableMenuEntity, Int
             "FROM MENU M\n" +
             "WHERE M.ID = 1\n" +
             "ORDER BY M.DISPLAY_ORDER, M.NAME", nativeQuery = true)
-    List<TableMenuEntity> getMenuListLevel1();
+    List<TableMenuEntity> findAllByLevel1();
 
     @Query(value = "SELECT M.*\n" +
             "FROM MENU M\n" +
@@ -22,13 +22,13 @@ public interface TableMenuRepository extends CrudRepository<TableMenuEntity, Int
             "WHERE M.PARENT_ID = 1\n" +
             "  AND MA.AUTHORITY = :authority\n" +
             "ORDER BY M.DISPLAY_ORDER, M.NAME", nativeQuery = true)
-    List<TableMenuEntity> getMenuListLevel2(@Param("authority") Integer authority);
+    List<TableMenuEntity> findAllByLevel2AndAuthority(@Param("authority") Integer authority);
 
     @Query(value = "SELECT M.*\n" +
             "FROM MENU M\n" +
             "WHERE M.PARENT_ID = 1\n" +
             "ORDER BY M.DISPLAY_ORDER, M.NAME", nativeQuery = true)
-    List<TableMenuEntity> getMenuListLevel2();
+    List<TableMenuEntity> findAllByLevel2();
 
     @Query(value = "SELECT M2.*\n" +
             "FROM MENU M\n" +
@@ -38,7 +38,7 @@ public interface TableMenuRepository extends CrudRepository<TableMenuEntity, Int
             "    AND MA.AUTHORITY = :authority\n" +
             "    AND M2.PARENT_ID = :parentId\n" +
             "ORDER BY M2.DISPLAY_ORDER, M2.NAME", nativeQuery = true)
-    List<TableMenuEntity> getMenuListLevel3(@Param("authority") Integer authority, @Param("parentId") Integer parentId);
+    List<TableMenuEntity> findAllByLevel3AndAuthorityAndParentId(@Param("authority") Integer authority, @Param("parentId") Integer parentId);
 
     @Query(value = "SELECT M2.*\n" +
             "FROM MENU M\n" +
@@ -46,5 +46,5 @@ public interface TableMenuRepository extends CrudRepository<TableMenuEntity, Int
             "    AND M.PARENT_ID = 1\n" +
             "    AND M2.PARENT_ID = :parentId\n" +
             "ORDER BY M2.DISPLAY_ORDER, M2.NAME", nativeQuery = true)
-    List<TableMenuEntity> getMenuListLevel3(@Param("parentId") Integer parentId);
+    List<TableMenuEntity> findAllByLevel3AndParentId(@Param("parentId") Integer parentId);
 }

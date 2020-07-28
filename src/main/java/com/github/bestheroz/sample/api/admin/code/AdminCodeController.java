@@ -20,7 +20,7 @@ public class AdminCodeController {
 
     @GetMapping(value = "{codeGroup}")
     ResponseEntity<ApiResult> getList(@PathVariable(value = "codeGroup") final String codeGroup) {
-        return Result.ok(this.tableCodeRepository.findByCodeGroup(codeGroup));
+        return Result.ok(this.tableCodeRepository.findAllByCodeGroup(codeGroup));
     }
 
     @GetMapping(value = "{codeGroup}/{code}")
