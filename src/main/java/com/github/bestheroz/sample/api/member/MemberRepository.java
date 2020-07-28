@@ -11,7 +11,8 @@ import java.util.List;
 
 @Repository
 public interface MemberRepository extends CrudRepository<CodeVO, String> {
+    @Override
     @Query(value = "SELECT M.ID AS VALUE, M.NAME AS TEXT FROM MEMBER M ORDER BY M.ID ASC", nativeQuery = true)
     @Cacheable(value = "memberCache")
-    List<CodeVO> getMemberList() throws BusinessException;
+    List<CodeVO> findAll() throws BusinessException;
 }

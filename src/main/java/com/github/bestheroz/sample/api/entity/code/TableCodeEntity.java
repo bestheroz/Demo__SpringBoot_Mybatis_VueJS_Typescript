@@ -1,7 +1,10 @@
 package com.github.bestheroz.sample.api.entity.code;
 
 import com.github.bestheroz.sample.api.entity.AbstractCreatedUpdateEntity;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -11,7 +14,7 @@ import java.io.Serializable;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @Entity(name = "CODE")
 @IdClass(TableCodeEntityId.class)
 public class TableCodeEntity extends AbstractCreatedUpdateEntity implements Serializable {

@@ -1,6 +1,5 @@
 package com.github.bestheroz.sample.api.entity.code;
 
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,7 +9,7 @@ import java.io.Serializable;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 public class TableCodeEntityId implements Serializable {
     private static final long serialVersionUID = -4897596840013190393L;
     @Id private String codeGroup;

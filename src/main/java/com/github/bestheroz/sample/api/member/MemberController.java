@@ -16,6 +16,6 @@ public class MemberController {
 
     @GetMapping
     ResponseEntity<ApiResult> getList() {
-        return Result.ok(this.memberRepository.getMemberList());
+        return Result.ok(this.memberRepository.findAll());
     }
 }
