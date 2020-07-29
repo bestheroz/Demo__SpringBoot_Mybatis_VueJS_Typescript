@@ -12,7 +12,7 @@
     "@sweetalert2/theme-dark": "^3.2.0",
     "@types/lodash": "^4.14.158",
     "axios": "^0.19.2",
-    "dayjs": "^1.8.30",
+    "dayjs": "^1.8.31",
     "fibers": "^5.0.0",
     "lru-cache": "^6.0.0",
     "pbkdf2": "^3.1.1",
