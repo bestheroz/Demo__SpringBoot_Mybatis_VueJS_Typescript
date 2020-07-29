@@ -14,6 +14,7 @@ import org.springframework.lang.Nullable;
 
 import java.lang.reflect.Field;
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -141,14 +142,20 @@ public class SqlCommand {
         return sql.toString();
     }
 
-    public <T> String findById(@NonNull final T vo, @NonNull final Set<String> whereKeys) {
-        this.verifyWhereKey(whereKeys, MapperUtils.toHashMap(vo));
-        final SQL sql = new SQL();
-        this.getSelectSql(sql, vo.getClass().getDeclaredFields());
-        sql.FROM(getTableName(vo.getClass().getSimpleName()));
-        this.getWhereSql(vo, whereKeys, sql);
-        log.debug(sql.toString());
-        return sql.toString();
+    public <T> String findById(final Class<T> targetType, final Object id) {
+        log.debug("{}", targetType);
+        log.debug("{}", id);
+        log.debug("{}", this.getClass().getSuperclass().getName());
+        Arrays.stream(this.getClass().getMethods()).filter(item -> item.getName().equals(SELECT_ONE)).findFirst().ifPresent(item -> log.debug("{}", item.getReturnType()));
+//        log.debug("{}", this.getClass().getDeclaredMethod(SELECT_ONE).getReturnType());
+//        this.verifyWhereKey(whereKeys, MapperUtils.toHashMap(vo));
+//        final SQL sql = new SQL();
+//        this.getSelectSql(sql, vo.getClass().getDeclaredFields());
+//        sql.FROM(getTableName(vo.getClass().getSimpleName()));
+//        this.getWhereSql(vo, whereKeys, sql);
+//        log.debug(sql.toString());
+//        return sql.toString();
+        return "";
     }
 
     public <T> String save(@NonNull final T vo) {
