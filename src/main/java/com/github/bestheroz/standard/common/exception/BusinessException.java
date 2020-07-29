@@ -18,10 +18,11 @@ import java.util.Set;
 @Getter
 public class BusinessException extends RuntimeException {
     public static final BusinessException SUCCESS_NORMAL = new BusinessException(ExceptionCode.SUCCESS_NORMAL);
-    public static final BusinessException FAIL_SYSTEM = new BusinessException(ExceptionCode.ERROR_SYSTEM_ERROR);
+    public static final BusinessException ERROR_SYSTEM = new BusinessException(ExceptionCode.ERROR_SYSTEM);
     public static final BusinessException FAIL_INVALID_REQUEST = new BusinessException(ExceptionCode.FAIL_INVALID_REQUEST);
     public static final BusinessException FAIL_INVALID_PARAMETER = new BusinessException(ExceptionCode.FAIL_INVALID_PARAMETER);
     public static final BusinessException FAIL_TRY_LOGIN_FIRST = new BusinessException(ExceptionCode.FAIL_TRY_LOGIN_FIRST);
+    public static final BusinessException FAIL_NO_DATA_SUCCESS = new BusinessException(ExceptionCode.FAIL_NO_DATA_SUCCESS);
     private static final long serialVersionUID = -6837907198565524472L;
     private ApiResult apiResult = Result.ok().getBody();
 
@@ -56,7 +57,7 @@ public class BusinessException extends RuntimeException {
         } else if (e instanceof FileNotFoundException) {
             return ExceptionCode.ERROR_FILE_NOT_FOUND;
         }
-        return ExceptionCode.ERROR_SYSTEM_ERROR;
+        return ExceptionCode.ERROR_SYSTEM;
     }
 
     public boolean isEquals(final ExceptionCode exceptionCode) {

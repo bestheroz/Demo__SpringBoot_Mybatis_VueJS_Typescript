@@ -28,7 +28,7 @@ public class Result {
     }
 
     public static ResponseEntity<ApiResult> error() {
-        return ResponseEntity.ok(ApiResult.code(ExceptionCode.ERROR_SYSTEM_ERROR));
+        return ResponseEntity.ok(ApiResult.code(ExceptionCode.ERROR_SYSTEM));
     }
 
     public static ResponseEntity<ApiResult> error(final ExceptionCode exceptionCode) {

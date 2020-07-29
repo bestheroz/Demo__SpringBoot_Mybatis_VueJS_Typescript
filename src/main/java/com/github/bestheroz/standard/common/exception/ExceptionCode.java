@@ -8,7 +8,7 @@ public enum ExceptionCode {
     SUCCESS_TRY_NEW_PASSWORD("S002", "패스워드 초기화"),
 
 
-    ERROR_SYSTEM_ERROR("E000", "시스템에러"),
+    ERROR_SYSTEM("E000", "시스템에러"),
 
     ERROR_FILE_NOT_FOUND("E001", "파일이 존재하지 않습니다."),
 

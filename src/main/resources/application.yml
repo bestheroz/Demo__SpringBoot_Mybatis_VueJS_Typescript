@@ -10,15 +10,6 @@ spring:
       max-file-size: 20MB
       max-request-size: 10MB
       file-size-threshold: 0
-  jpa:
-    show-sql: true
-    hibernate:
-      ddl-auto: none
-    generate-ddl: false
-    properties:
-      hibernate:
-        format_sql: true
-    open-in-view: false
   mvc:
     converters:
       preferred-json-mapper: gson
@@ -46,14 +37,6 @@ server:
 #    web:
 #      exposure:
 #        include: shutdown
-logging:
-  level:
-    org:
-      hibernate:
-        type:
-          descriptor:
-            sql:
-              BasicBinder: trace
 ---
 spring:
   profiles: local
