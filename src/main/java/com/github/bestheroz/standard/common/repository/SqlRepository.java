@@ -3,30 +3,45 @@ package com.github.bestheroz.standard.common.repository;
 import org.apache.ibatis.annotations.DeleteProvider;
 import org.apache.ibatis.annotations.InsertProvider;
 import org.apache.ibatis.annotations.SelectProvider;
-import org.springframework.core.GenericTypeResolver;
+import org.apache.ibatis.annotations.UpdateProvider;
 
-import java.util.Objects;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
-public interface SqlRepository<T, ID> {
+public interface SqlRepository<T> {
 
-    @SelectProvider(type = SqlCommand.class, method = SqlCommand.SELECT)
-    Iterable<T> findAll();
+    @SelectProvider(type = SqlCommand.class, method = SqlCommand.SELECT_ITEMS)
+    Iterable<T> getItems(Class<T> tClass);
 
-    default Optional<T> findById(final ID id) {
-        return findBy((Class<T>) Objects.requireNonNull(GenericTypeResolver.resolveTypeArguments(getClass(), SqlRepository.class))[0], id);
-    }
+    @SelectProvider(type = SqlCommand.class, method = SqlCommand.SELECT_ITEMS_WITH_ORDER)
+    Iterable<T> getItemsWithOrder(Class<T> tClass, final Set<String> orderByConditions);
 
-    @SelectProvider(type = SqlCommand.class, method = SqlCommand.COUNT)
-    int count();
+    @SelectProvider(type = SqlCommand.class, method = SqlCommand.SELECT_ITEMS_BY_KEY)
+    Iterable<T> getItemsByKey(Class<T> tClass, final Map<String, Object> whereConditions);
 
-    @InsertProvider(type = SqlCommand.class, method = SqlCommand.SAVE)
+    @SelectProvider(type = SqlCommand.class, method = SqlCommand.SELECT_ITEMS_BY_KEY_WITH_ORDER)
+    Iterable<T> getItemsByKeyWithOrder(Class<T> tClass, final Map<String, Object> whereConditions, Set<String> orderByConditions);
+
+    @SelectProvider(type = SqlCommand.class, method = SqlCommand.SELECT_ITEM)
+    Optional<T> getItem(Class<T> tClass, final Map<String, Object> whereConditions);
+
+    @SelectProvider(type = SqlCommand.class, method = SqlCommand.COUNT_ALL)
+    int countAll(Class<T> tClass);
+
+    @SelectProvider(type = SqlCommand.class, method = SqlCommand.COUNT_BY_KEY)
+    int countByKey(Class<T> tClass, final Map<String, Object> whereConditions);
+
+    @InsertProvider(type = SqlCommand.class, method = SqlCommand.INSERT)
         // @SelectKey(statement = "SELECT SEQSEQSEQSEQ.NEXTVAL FROM DUAL", keyProperty = "seq", before = true, resultType = Long.class)
-    <T> void save(final T vo);
+    void insert(final T entity);
 
-    @DeleteProvider(type = SqlCommand.class, method = SqlCommand.DELETE)
-    <T> void deleteById(ID id);
+    @UpdateProvider(type = SqlCommand.class, method = SqlCommand.UPDATE_BY_KEY)
+    void update(final T entity, final Map<String, Object> whereConditions);
 
-    @SelectProvider(type = SqlCommand.class, method = SqlCommand.SELECT_ONE)
-    Optional<T> findBy(Class<T> targetType, ID id);
+    @UpdateProvider(type = SqlCommand.class, method = SqlCommand.UPDATE_MAP_BY_KEY)
+    void updateMap(final Class<T> tClass, final Map<String, Object> updateMap, final Map<String, Object> whereConditions);
+
+    @DeleteProvider(type = SqlCommand.class, method = SqlCommand.DELETE_BY_KEY)
+    void delete(Class<T> tClass, final Map<String, Object> whereConditions);
 }

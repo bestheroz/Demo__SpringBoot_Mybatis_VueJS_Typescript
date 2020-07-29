@@ -12,9 +12,8 @@ import java.util.List;
 
 @Mapper
 @Repository
-public interface MemberRepository extends SqlRepository<CodeVO, String> {
-    @Override
+public interface MemberRepository extends SqlRepository<CodeVO> {
     @Select(value = "SELECT M.ID AS VALUE, M.NAME AS TEXT FROM MEMBER M ORDER BY M.ID ASC")
     @Cacheable(value = "memberCache")
-    List<CodeVO> findAll() throws BusinessException;
+    List<CodeVO> getCodeItems() throws BusinessException;
 }

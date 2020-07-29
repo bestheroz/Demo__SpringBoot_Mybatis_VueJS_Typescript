@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Mapper
 @Repository
-public interface TableMenuAuthorityRepository extends SqlRepository<TableMenuAuthorityEntity, Integer> {
+public interface TableMenuAuthorityRepository extends SqlRepository<TableMenuAuthorityEntity> {
 }

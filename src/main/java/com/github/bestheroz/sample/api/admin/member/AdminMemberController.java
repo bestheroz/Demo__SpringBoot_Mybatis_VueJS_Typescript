@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -18,27 +19,34 @@ public class AdminMemberController {
     @Resource private TableMemberRepository tableMemberRepository;
 
     @GetMapping
-    ResponseEntity<ApiResult> getList() {
-        return Result.ok(this.tableMemberRepository.findAll());
+    ResponseEntity<ApiResult> getItems() {
+        return Result.ok(this.tableMemberRepository.getItems(TableMemberEntity.class));
     }
 
     @GetMapping(value = "{id}")
-    ResponseEntity<ApiResult> getOne(@PathVariable(value = "id") final String id) {
-        return Result.ok(this.tableMemberRepository.findById(id));
+    ResponseEntity<ApiResult> getItem(@PathVariable(value = "id") final String id) {
+        return Result.ok(this.tableMemberRepository.getItem(TableMemberEntity.class, Map.of("id", id)));
     }
 
     @PostMapping
     @CacheEvict(value = "memberCache")
     public ResponseEntity<ApiResult> insert(@RequestBody final TableMemberEntity tableMemberEntity) {
-        this.tableMemberRepository.save(tableMemberEntity);
+        this.tableMemberRepository.insert(tableMemberEntity);
         return Result.ok();
     }
 
     @PatchMapping(value = "{id}")
     @CacheEvict(value = "memberCache")
     public ResponseEntity<ApiResult> update(@PathVariable(value = "id") final String id, @RequestBody final TableMemberEntity tableMemberEntity) {
-        tableMemberEntity.setId(id);
-        this.tableMemberRepository.save(tableMemberEntity);
+        // TODO: 화면에서 받은걸 그냥 update 하면 특정 컬럼의 데이터가 지워질 수 있다.
+        this.tableMemberRepository.update(tableMemberEntity, Map.of("id", id));
+        return Result.ok();
+    }
+
+    @DeleteMapping(value = "{id}")
+    @CacheEvict(value = "memberCache")
+    public ResponseEntity<ApiResult> delete(@PathVariable(value = "id") final String id) {
+        this.tableMemberRepository.delete(TableMemberEntity.class, Map.of("id", id));
         return Result.ok();
     }
 }

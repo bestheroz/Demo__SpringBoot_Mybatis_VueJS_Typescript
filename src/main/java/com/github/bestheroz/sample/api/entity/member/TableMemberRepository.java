@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @Mapper
 @Repository
-public interface TableMemberRepository extends SqlRepository<TableMemberEntity, String> {
+public interface TableMemberRepository extends SqlRepository<TableMemberEntity> {
     Optional<TableMemberEntity> findByToken(String token);
 
     @Select(value = "UPDATE MEMBER SET LOGIN_FAIL_CNT = LOGIN_FAIL_CNT + 1 WHERE ID = #{id, jdbcType=VARCHAR}")

@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -69,7 +70,7 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
                 final String newRefreshToken = JwtTokenProvider.createRefreshToken(userVO, newAccessToken);
                 tableMemberEntity.setToken(newRefreshToken);
                 SecurityContextHolder.getContext().setAuthentication(JwtTokenProvider.getAuthentication(newAccessToken));
-                AccessBeanUtils.getBean(TableMemberRepository.class).save(tableMemberEntity);
+                AccessBeanUtils.getBean(TableMemberRepository.class).updateMap(TableMemberEntity.class, Map.of("token", newRefreshToken), Map.of("id", tableMemberEntity.getId()));
                 log.debug("refresh token");
                 (response).addHeader("accessToken", newAccessToken);
                 (response).addHeader("refreshToken", newRefreshToken);

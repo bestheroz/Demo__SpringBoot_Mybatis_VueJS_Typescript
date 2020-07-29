@@ -25,10 +25,7 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
-import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -65,8 +62,8 @@ public class DbTableVOCheckerContext {
 
     @Autowired(required = false)
     public void validDbTableVO(final SqlSession sqlSession) {
-        final Optional<TableCodeGroupEntity> use_yn = AccessBeanUtils.getBean(TableCodeGroupRepository.class).findById("USE_YN");
-        use_yn.ifPresent(tableCodeGroupEntity -> AccessBeanUtils.getBean(TableCodeGroupRepository.class).save(tableCodeGroupEntity));
+        final Optional<TableCodeGroupEntity> use_yn = AccessBeanUtils.getBean(TableCodeGroupRepository.class).getItem(TableCodeGroupEntity.class, Map.of("codeGroup", "MENU_TYPE"));
+        use_yn.ifPresent(tableCodeGroupEntity -> AccessBeanUtils.getBean(TableCodeGroupRepository.class).update(tableCodeGroupEntity, Map.of("codeGroup", "MENU_TYPE")));
 
         try (final Statement stmt = new SqlSessionFactoryBuilder().build(sqlSession.getConfiguration()).openSession().getConnection().createStatement()) {
             final Set<Class<?>> targetClassList = DbTableVOCheckerContext.findMyTypes();

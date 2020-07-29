@@ -9,13 +9,13 @@ import java.util.List;
 
 @Mapper
 @Repository
-public interface TableMenuRepository extends SqlRepository<TableMenuEntity, Integer> {
+public interface TableMenuRepository extends SqlRepository<TableMenuEntity> {
 
     @Select(value = "SELECT M.*\n" +
             "FROM MENU M\n" +
             "WHERE M.ID = 1\n" +
             "ORDER BY M.DISPLAY_ORDER, M.NAME")
-    List<TableMenuEntity> findAllByLevel1();
+    List<TableMenuEntity> getItemsByLevel1();
 
     @Select(value = "SELECT M.*\n" +
             "FROM MENU M\n" +
@@ -23,13 +23,13 @@ public interface TableMenuRepository extends SqlRepository<TableMenuEntity, Inte
             "WHERE M.PARENT_ID = 1\n" +
             "  AND MA.AUTHORITY = :authority\n" +
             "ORDER BY M.DISPLAY_ORDER, M.NAME")
-    List<TableMenuEntity> findAllByLevel2AndAuthority(Integer authority);
+    List<TableMenuEntity> getItemsByLevel2AndAuthority(Integer authority);
 
     @Select(value = "SELECT M.*\n" +
             "FROM MENU M\n" +
             "WHERE M.PARENT_ID = 1\n" +
             "ORDER BY M.DISPLAY_ORDER, M.NAME")
-    List<TableMenuEntity> findAllByLevel2();
+    List<TableMenuEntity> getItemsByLevel2();
 
     @Select(value = "SELECT M2.*\n" +
             "FROM MENU M\n" +
@@ -39,7 +39,7 @@ public interface TableMenuRepository extends SqlRepository<TableMenuEntity, Inte
             "    AND MA.AUTHORITY = :authority\n" +
             "    AND M2.PARENT_ID = :parentId\n" +
             "ORDER BY M2.DISPLAY_ORDER, M2.NAME")
-    List<TableMenuEntity> findAllByLevel3AndAuthorityAndParentId(Integer authority, Integer parentId);
+    List<TableMenuEntity> getItemsByLevel3AndAuthorityAndParentId(Integer authority, Integer parentId);
 
     @Select(value = "SELECT M2.*\n" +
             "FROM MENU M\n" +
@@ -47,5 +47,5 @@ public interface TableMenuRepository extends SqlRepository<TableMenuEntity, Inte
             "    AND M.PARENT_ID = 1\n" +
             "    AND M2.PARENT_ID = :parentId\n" +
             "ORDER BY M2.DISPLAY_ORDER, M2.NAME")
-    List<TableMenuEntity> findAllByLevel3AndParentId(Integer parentId);
+    List<TableMenuEntity> getItemsByLevel3AndParentId(Integer parentId);
 }

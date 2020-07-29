@@ -3,11 +3,14 @@ package com.github.bestheroz.standard.common.code;
 import com.github.bestheroz.sample.api.entity.code.TableCodeEntity;
 import com.github.bestheroz.sample.api.entity.code.TableCodeRepository;
 import com.github.bestheroz.standard.common.util.AuthenticationUtils;
+import org.apache.commons.compress.utils.Lists;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,6 +25,6 @@ public class CodeService {
 
     @Cacheable(value = "codeCache", key = "#codeGroup")
     public List<TableCodeEntity> getCodeVOList(final String codeGroup) {
-        return this.tableCodeRepository.findAllByCodeGroup(codeGroup);
+        return Lists.newArrayList(this.tableCodeRepository.getItemsByKeyWithOrder(TableCodeEntity.class, Map.of("codeGroup", codeGroup), Set.of("displayOrder")).iterator());
     }
 }
