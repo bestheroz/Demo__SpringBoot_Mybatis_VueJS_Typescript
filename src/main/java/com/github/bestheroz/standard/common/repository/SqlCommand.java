@@ -91,7 +91,6 @@ public class SqlCommand {
     }
 
     private void getWhereSql(final SQL sql, final Map<String, Object> whereConditions, final int entityPosition) {
-        // TODO: 조건값 카멜 검열해야 하는가?
         whereConditions.forEach((key, value) -> {
             if (ENCRYPTED_COLUMN_LIST.contains(key)) {
                 sql.WHERE(MessageFormat.format(WHERE_BIND_ENCRYPTED_STRING, this.getCamelCaseToSnakeCase(key), key, this.getJdbcType(value), entityPosition));
@@ -130,7 +129,7 @@ public class SqlCommand {
         this.getSelectSql(sql, tClass.getDeclaredFields());
         sql.FROM(getTableName(tClass.getSimpleName()));
         this.getWhereSql(sql, whereConditions, 2);
-        orderByConditions.forEach(sql::ORDER_BY);
+        orderByConditions.forEach(columns -> sql.ORDER_BY(getCamelCaseToSnakeCase(columns)));
         log.debug(sql.toString());
         return sql.toString();
     }

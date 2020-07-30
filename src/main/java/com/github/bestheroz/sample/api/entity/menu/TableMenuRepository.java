@@ -21,7 +21,7 @@ public interface TableMenuRepository extends SqlRepository<TableMenuEntity> {
             "FROM MENU M\n" +
             "         JOIN MENU_AUTHORITY MA ON INSTR(MA.MENU_ID_LIST, CONCAT('^|', M.ID, ',')) > 0\n" +
             "WHERE M.PARENT_ID = 1\n" +
-            "  AND MA.AUTHORITY = :authority\n" +
+            "  AND MA.AUTHORITY = #{authority, jdbcType=INTEGER}\n" +
             "ORDER BY M.DISPLAY_ORDER, M.NAME")
     List<TableMenuEntity> getItemsByLevel2AndAuthority(Integer authority);
 
@@ -36,8 +36,8 @@ public interface TableMenuRepository extends SqlRepository<TableMenuEntity> {
             "         JOIN MENU M2 ON M2.PARENT_ID = M.ID\n" +
             "         JOIN MENU_AUTHORITY MA ON INSTR(MA.MENU_ID_LIST, CONCAT('^|', M2.ID, ',')) > 0\n" +
             "    AND M.PARENT_ID = 1\n" +
-            "    AND MA.AUTHORITY = :authority\n" +
-            "    AND M2.PARENT_ID = :parentId\n" +
+            "    AND MA.AUTHORITY = #{authority, jdbcType=INTEGER}\n" +
+            "    AND M2.PARENT_ID = #{parentId, jdbcType=INTEGER}\n" +
             "ORDER BY M2.DISPLAY_ORDER, M2.NAME")
     List<TableMenuEntity> getItemsByLevel3AndAuthorityAndParentId(Integer authority, Integer parentId);
 
@@ -45,7 +45,7 @@ public interface TableMenuRepository extends SqlRepository<TableMenuEntity> {
             "FROM MENU M\n" +
             "         JOIN MENU M2 ON M2.PARENT_ID = M.ID\n" +
             "    AND M.PARENT_ID = 1\n" +
-            "    AND M2.PARENT_ID = :parentId\n" +
+            "    AND M2.PARENT_ID = #{parentId, jdbcType=INTEGER}\n" +
             "ORDER BY M2.DISPLAY_ORDER, M2.NAME")
     List<TableMenuEntity> getItemsByLevel3AndParentId(Integer parentId);
 }

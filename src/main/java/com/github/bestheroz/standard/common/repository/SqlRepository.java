@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.InsertProvider;
 import org.apache.ibatis.annotations.SelectProvider;
 import org.apache.ibatis.annotations.UpdateProvider;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -12,16 +13,16 @@ import java.util.Set;
 public interface SqlRepository<T> {
 
     @SelectProvider(type = SqlCommand.class, method = SqlCommand.SELECT_ITEMS)
-    Iterable<T> getItems(Class<T> tClass);
+    List<T> getItems(Class<T> tClass);
 
     @SelectProvider(type = SqlCommand.class, method = SqlCommand.SELECT_ITEMS_WITH_ORDER)
-    Iterable<T> getItemsWithOrder(Class<T> tClass, final Set<String> orderByConditions);
+    List<T> getItemsWithOrder(Class<T> tClass, final Set<String> orderByConditions);
 
     @SelectProvider(type = SqlCommand.class, method = SqlCommand.SELECT_ITEMS_BY_KEY)
-    Iterable<T> getItemsByKey(Class<T> tClass, final Map<String, Object> whereConditions);
+    List<T> getItemsByKey(Class<T> tClass, final Map<String, Object> whereConditions);
 
     @SelectProvider(type = SqlCommand.class, method = SqlCommand.SELECT_ITEMS_BY_KEY_WITH_ORDER)
-    Iterable<T> getItemsByKeyWithOrder(Class<T> tClass, final Map<String, Object> whereConditions, Set<String> orderByConditions);
+    List<T> getItemsByKeyWithOrder(Class<T> tClass, final Map<String, Object> whereConditions, Set<String> orderByConditions);
 
     @SelectProvider(type = SqlCommand.class, method = SqlCommand.SELECT_ITEM)
     Optional<T> getItem(Class<T> tClass, final Map<String, Object> whereConditions);

@@ -58,7 +58,7 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
                     return;
                 }
             } else if (JwtTokenProvider.validateRefreshToken(token, refreshToken)) {
-                final Optional<TableMemberEntity> one = AccessBeanUtils.getBean(TableMemberRepository.class).findByToken(refreshToken);
+                final Optional<TableMemberEntity> one = AccessBeanUtils.getBean(TableMemberRepository.class).getItem(TableMemberEntity.class, Map.of("token", refreshToken));
                 if (one.isEmpty()) {
                     log.debug("invalid refresh-token");
                     (response).sendError(HttpServletResponse.SC_UNAUTHORIZED);
