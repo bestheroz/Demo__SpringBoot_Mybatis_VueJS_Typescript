@@ -1,9 +1,6 @@
 package com.github.bestheroz.standard.context.db.checker;
 
-import com.github.bestheroz.sample.api.entity.codegroup.TableCodeGroupEntity;
-import com.github.bestheroz.sample.api.entity.codegroup.TableCodeGroupRepository;
 import com.github.bestheroz.standard.common.repository.SqlCommand;
-import com.github.bestheroz.standard.common.util.AccessBeanUtils;
 import com.google.common.base.CaseFormat;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -22,10 +19,13 @@ import org.springframework.util.ClassUtils;
 import org.springframework.util.SystemPropertyUtils;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
-import java.util.*;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -62,15 +62,10 @@ public class DbTableVOCheckerContext {
 
     @Autowired(required = false)
     public void validDbTableVO(final SqlSession sqlSession) {
-        final Optional<TableCodeGroupEntity> use_yn = AccessBeanUtils.getBean(TableCodeGroupRepository.class).getItem(TableCodeGroupEntity.class, Map.of("codeGroup", "MENU_TYPE"));
-        use_yn.ifPresent(tableCodeGroupEntity -> AccessBeanUtils.getBean(TableCodeGroupRepository.class).update(tableCodeGroupEntity, Map.of("codeGroup", "MENU_TYPE")));
-
         try (final Statement stmt = new SqlSessionFactoryBuilder().build(sqlSession.getConfiguration()).openSession().getConnection().createStatement()) {
             final Set<Class<?>> targetClassList = DbTableVOCheckerContext.findMyTypes();
             for (final Class<?> class1 : targetClassList) {
-                log.debug("{}", class1.getSimpleName());
                 final String tableName = SqlCommand.getTableName(class1.getSimpleName());
-                log.debug(tableName);
                 try (final ResultSet rs = stmt.executeQuery("SELECT * FROM " + tableName + " LIMIT 0")) {
                     final ResultSetMetaData metaInfo = rs.getMetaData();
                     final String className = class1.getSimpleName();
@@ -78,8 +73,8 @@ public class DbTableVOCheckerContext {
                     boolean isInvalid = false;
                     // 1. VO변수 개수 == 테이블 컬럼 개수 체크
                     final Set<String> fieldsSet =
-                            Stream.concat(Arrays.stream(class1.getSuperclass().getDeclaredFields()).map(item -> item.getName()), Arrays.stream(class1.getDeclaredFields()).map(item -> item.getName()))
-                                    .filter(item -> !"serialVersionUID".equalsIgnoreCase(item)).distinct().collect(Collectors.toSet());
+                            Stream.concat(Arrays.stream(class1.getSuperclass().getDeclaredFields()), Arrays.stream(class1.getDeclaredFields())).map(Field::getName).distinct()
+                                    .filter(item -> !"serialVersionUID".equalsIgnoreCase(item)).collect(Collectors.toSet());
                     final long fieldSize = fieldsSet.size();
                     if (metaInfo.getColumnCount() != fieldSize) {
                         log.warn("{} VO 필드 개수({}) != ({}){} 테이블 컬럼 개수", className, fieldSize, tableName, metaInfo.getColumnCount());

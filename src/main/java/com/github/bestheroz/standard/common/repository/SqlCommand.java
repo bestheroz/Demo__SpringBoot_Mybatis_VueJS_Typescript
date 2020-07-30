@@ -17,6 +17,7 @@ import java.time.Instant;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
 
 @Slf4j
 public class SqlCommand {
@@ -39,7 +40,7 @@ public class SqlCommand {
     public static final Set<String> DOUBLE_JAVA_TYPE_SET = Set.of("Double");
     public static final Set<String> TIMESTAMP_JAVA_TYPE_SET = Set.of("Instant");
     public static final Set<String> BLOB_JAVA_TYPE_SET = Set.of("Byte[]");
-    public static final Set<String> BOOLEAN_JAVA_TYPE_SET = Set.of("Boolean");
+    public static final Set<String> BOOLEAN_JAVA_TYPE_SET = Set.of("Boolean", "boolean");
     // 참고용: 각VO에 암호화 컬럼 정의 방법
     private static final Set<String> ENCRYPTED_COLUMN_LIST = Set.of("empnm", "smsphone");
     private static final String TABLE_COLUMN_NAME_CREATED_BY = "CREATED_BY";
@@ -55,11 +56,11 @@ public class SqlCommand {
     private static final String SELECT_ENCRYPTED_STRING = "FNC_GET_DECRYPT ({0}) AS {0}";
     private static final String INSERT_BIND_STRING = "#'{'{0}{1}'}'";
     private static final String INSERT_BIND_ENCRYPTED_STRING = "FNC_GET_ENCRYPT (#'{'{1}{2}'}')";
-    private static final String SET_BIND_STRING = "{0} = #'{'param1.{1}{2}'}'";
+    private static final String SET_BIND_STRING = "{0} = #'{'param{3}.{1}{2}'}'";
     private static final String SET_UPDATED_BY_BIND_STRING = "{0} = ''{1}''";
-    private static final String SET_BIND_ENCRYPTED_STRING = "{0} = FNC_GET_ENCRYPT (#'{'param1.{1}{2}'}')";
-    private static final String WHERE_BIND_STRING = "{0} = #'{'param2.{1}{2}'}'";
-    private static final String WHERE_BIND_ENCRYPTED_STRING = "{0} = FNC_GET_ENCRYPT (#'{'param1.{1}{2}'}')";
+    private static final String SET_BIND_ENCRYPTED_STRING = "{0} = FNC_GET_ENCRYPT (#'{'param{3}.{1}{2}'}')";
+    private static final String WHERE_BIND_STRING = "{0} = #'{'param{3}.{1}{2}'}'";
+    private static final String WHERE_BIND_ENCRYPTED_STRING = "{0} = FNC_GET_ENCRYPT (#'{'param{3}.{1}{2}'}')";
 
     public static String getTableName(final String javaClassName) {
         String tableName = CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, StringUtils.substringBetween(javaClassName, "Table", "Entity"));
@@ -70,11 +71,11 @@ public class SqlCommand {
     }
 
     private void getSelectSql(final SQL sql, final Field[] fields) {
-        Arrays.stream(fields).filter(field -> !EXCLUDE_FIELD_SET.contains(this.getCamelCaseToSnakeCase(field.getName())))
-                .forEach(field -> {
-                    final String javaFieldName = field.getName();
-                    final String dbColumnName = this.getCamelCaseToSnakeCase(javaFieldName);
-                    if (ENCRYPTED_COLUMN_LIST.contains(javaFieldName)) {
+        Arrays.stream(fields).map(Field::getName).distinct()
+                .filter(fieldName -> !EXCLUDE_FIELD_SET.contains(fieldName))
+                .forEach(fieldName -> {
+                    final String dbColumnName = this.getCamelCaseToSnakeCase(fieldName);
+                    if (ENCRYPTED_COLUMN_LIST.contains(fieldName)) {
                         sql.SELECT(MessageFormat.format(SELECT_ENCRYPTED_STRING, dbColumnName));
                     } else {
                         sql.SELECT(dbColumnName);
@@ -89,15 +90,13 @@ public class SqlCommand {
         }
     }
 
-    private void getWhereSql(final SQL sql, final Map<String, Object> whereConditions) {
+    private void getWhereSql(final SQL sql, final Map<String, Object> whereConditions, final int entityPosition) {
         // TODO: 조건값 카멜 검열해야 하는가?
         whereConditions.forEach((key, value) -> {
-            log.debug(key);
-            log.debug("{}", value);
             if (ENCRYPTED_COLUMN_LIST.contains(key)) {
-                sql.WHERE(MessageFormat.format(WHERE_BIND_ENCRYPTED_STRING, this.getCamelCaseToSnakeCase(key), key, this.getJdbcType(value)));
+                sql.WHERE(MessageFormat.format(WHERE_BIND_ENCRYPTED_STRING, this.getCamelCaseToSnakeCase(key), key, this.getJdbcType(value), entityPosition));
             } else {
-                sql.WHERE(MessageFormat.format(WHERE_BIND_STRING, this.getCamelCaseToSnakeCase(key), key, this.getJdbcType(value)));
+                sql.WHERE(MessageFormat.format(WHERE_BIND_STRING, this.getCamelCaseToSnakeCase(key), key, this.getJdbcType(value), entityPosition));
             }
         });
     }
@@ -109,7 +108,7 @@ public class SqlCommand {
     public <T> String countByKey(final Class<T> tClass, final Map<String, Object> whereConditions) {
         final SQL sql = new SQL();
         sql.SELECT("COUNT(1) AS CNT").FROM(getTableName(tClass.getSimpleName()));
-        this.getWhereSql(sql, whereConditions);
+        this.getWhereSql(sql, whereConditions, 2);
         log.debug(sql.toString());
         return sql.toString();
     }
@@ -130,7 +129,7 @@ public class SqlCommand {
         final SQL sql = new SQL();
         this.getSelectSql(sql, tClass.getDeclaredFields());
         sql.FROM(getTableName(tClass.getSimpleName()));
-        this.getWhereSql(sql, whereConditions);
+        this.getWhereSql(sql, whereConditions, 2);
         orderByConditions.forEach(sql::ORDER_BY);
         log.debug(sql.toString());
         return sql.toString();
@@ -156,9 +155,9 @@ public class SqlCommand {
                     }
                 });
 
-        Arrays.stream(entity.getClass().getDeclaredFields()).filter(item -> !EXCLUDE_FIELD_SET.contains(CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, item.getName())))
-                .forEach(item -> {
-                    final String javaFieldName = item.getName();
+        Stream.concat(Arrays.stream(entity.getClass().getSuperclass().getDeclaredFields()), Arrays.stream(entity.getClass().getDeclaredFields())).map(Field::getName).distinct()
+                .filter(item -> !EXCLUDE_FIELD_SET.contains(CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, item)))
+                .forEach(javaFieldName -> {
                     if (StringUtils.equals(javaFieldName, VARIABLE_NAME_CREATED)) {
                         sql.VALUES(TABLE_COLUMN_NAME_CREATED, SYSDATE);
                     } else if (StringUtils.equals(javaFieldName, VARIABLE_NAME_UPDATED)) {
@@ -175,39 +174,39 @@ public class SqlCommand {
     }
 
     public <T> String updateByKey(final T entity, final Map<String, Object> whereConditions) {
-        final Map<String, Object> param = MapperUtils.toHashMap(entity);
         this.verifyWhereKey(whereConditions);
 
         final SQL sql = new SQL();
         sql.UPDATE(getTableName(entity.getClass().getSimpleName()));
-
-        Arrays.stream(entity.getClass().getDeclaredFields()).filter(field -> !EXCLUDE_FIELD_SET.contains(this.getCamelCaseToSnakeCase(field.getName())))
-                .filter(field -> !StringUtils.equalsAny(this.getCamelCaseToSnakeCase(field.getName()), VARIABLE_NAME_CREATED_BY, VARIABLE_NAME_CREATED, VARIABLE_NAME_UPDATED, VARIABLE_NAME_UPDATED_BY
+        final Map<String, Object> param = MapperUtils.toHashMap(entity);
+        Arrays.stream(entity.getClass().getDeclaredFields()).map(Field::getName).distinct()
+                .filter(fieldName -> !EXCLUDE_FIELD_SET.contains(fieldName))
+                .filter(fieldName -> !StringUtils.equalsAny(fieldName, VARIABLE_NAME_CREATED_BY, VARIABLE_NAME_CREATED, VARIABLE_NAME_UPDATED, VARIABLE_NAME_UPDATED_BY
                 ))
-                .filter(field -> !whereConditions.containsKey(this.getCamelCaseToSnakeCase(field.getName())))
-                .forEach(field -> {
-                    final String javaFieldName = field.getName();
+                .filter(fieldName -> !whereConditions.containsKey(fieldName))
+                .forEach(javaFieldName -> {
                     if (ENCRYPTED_COLUMN_LIST.contains(javaFieldName)) {
-                        sql.SET(MessageFormat.format(SET_BIND_ENCRYPTED_STRING, this.getCamelCaseToSnakeCase(javaFieldName), javaFieldName, this.getJdbcType(whereConditions.get(field.getName()))));
+                        sql.SET(MessageFormat.format(SET_BIND_ENCRYPTED_STRING, this.getCamelCaseToSnakeCase(javaFieldName), javaFieldName, this.getJdbcType(param.get(javaFieldName)), 1));
                     } else {
-                        sql.SET(MessageFormat.format(SET_BIND_STRING, this.getCamelCaseToSnakeCase(javaFieldName), javaFieldName, this.getJdbcType(whereConditions.get(field.getName()))));
+                        sql.SET(MessageFormat.format(SET_BIND_STRING, this.getCamelCaseToSnakeCase(javaFieldName), javaFieldName, this.getJdbcType(param.get(javaFieldName)), 1));
                     }
                 });
 
         whereConditions.forEach((key, value) -> {
             final String dbColumnName = this.getCamelCaseToSnakeCase(key);
             if (ENCRYPTED_COLUMN_LIST.contains(key)) {
-                sql.WHERE(MessageFormat.format(WHERE_BIND_ENCRYPTED_STRING, dbColumnName, key, this.getJdbcType(value)));
+                sql.WHERE(MessageFormat.format(WHERE_BIND_ENCRYPTED_STRING, dbColumnName, key, this.getJdbcType(value), 1));
             } else {
-                sql.WHERE(MessageFormat.format(WHERE_BIND_STRING, dbColumnName, key, this.getJdbcType(value)));
+                sql.WHERE(MessageFormat.format(WHERE_BIND_STRING, dbColumnName, key, this.getJdbcType(value), 1));
             }
         });
 
-        Arrays.stream(entity.getClass().getDeclaredFields()).filter(field -> StringUtils.equalsAny(this.getCamelCaseToSnakeCase(field.getName()), VARIABLE_NAME_UPDATED, VARIABLE_NAME_UPDATED_BY))
-                .forEach(field -> {
-                    if (StringUtils.equals(this.getCamelCaseToSnakeCase(field.getName()), VARIABLE_NAME_UPDATED)) {
+        Stream.concat(Arrays.stream(entity.getClass().getSuperclass().getDeclaredFields()), Arrays.stream(entity.getClass().getDeclaredFields())).map(Field::getName).distinct()
+                .filter(fieldName -> StringUtils.equalsAny(fieldName, VARIABLE_NAME_UPDATED, VARIABLE_NAME_UPDATED_BY))
+                .forEach(fieldName -> {
+                    if (StringUtils.equals(fieldName, VARIABLE_NAME_UPDATED)) {
                         sql.SET(TABLE_COLUMN_NAME_UPDATED + " = " + SYSDATE);
-                    } else if (StringUtils.equals(this.getCamelCaseToSnakeCase(field.getName()), VARIABLE_NAME_UPDATED_BY)) {
+                    } else if (StringUtils.equals(fieldName, VARIABLE_NAME_UPDATED_BY)) {
                         sql.SET(MessageFormat.format(SET_UPDATED_BY_BIND_STRING, TABLE_COLUMN_NAME_UPDATED_BY, AuthenticationUtils.getUserPk()));
                     }
                 });
@@ -224,30 +223,29 @@ public class SqlCommand {
 
         final SQL sql = new SQL();
         sql.UPDATE(getTableName(tClass.getClass().getSimpleName()));
-
-        updateMap.entrySet().stream().forEach(entry -> {
-            final String javaFieldName = entry.getKey();
+        updateMap.forEach((javaFieldName, value) -> {
             if (ENCRYPTED_COLUMN_LIST.contains(javaFieldName)) {
-                sql.SET(MessageFormat.format(SET_BIND_ENCRYPTED_STRING, this.getCamelCaseToSnakeCase(javaFieldName), javaFieldName, this.getJdbcType(whereConditions.get(entry.getValue()))));
+                sql.SET(MessageFormat.format(SET_BIND_ENCRYPTED_STRING, this.getCamelCaseToSnakeCase(javaFieldName), javaFieldName, this.getJdbcType(value), 2));
             } else {
-                sql.SET(MessageFormat.format(SET_BIND_STRING, this.getCamelCaseToSnakeCase(javaFieldName), javaFieldName, this.getJdbcType(whereConditions.get(entry.getValue()))));
+                sql.SET(MessageFormat.format(SET_BIND_STRING, this.getCamelCaseToSnakeCase(javaFieldName), javaFieldName, this.getJdbcType(value), 2));
             }
         });
 
         whereConditions.forEach((key, value) -> {
             final String dbColumnName = this.getCamelCaseToSnakeCase(key);
             if (ENCRYPTED_COLUMN_LIST.contains(key)) {
-                sql.WHERE(MessageFormat.format(WHERE_BIND_ENCRYPTED_STRING, dbColumnName, key, this.getJdbcType(value)));
+                sql.WHERE(MessageFormat.format(WHERE_BIND_ENCRYPTED_STRING, dbColumnName, key, this.getJdbcType(value), 2));
             } else {
-                sql.WHERE(MessageFormat.format(WHERE_BIND_STRING, dbColumnName, key, this.getJdbcType(value)));
+                sql.WHERE(MessageFormat.format(WHERE_BIND_STRING, dbColumnName, key, this.getJdbcType(value), 2));
             }
         });
 
-        Arrays.stream(tClass.getDeclaredFields()).filter(field -> StringUtils.equalsAny(this.getCamelCaseToSnakeCase(field.getName()), VARIABLE_NAME_UPDATED, VARIABLE_NAME_UPDATED_BY))
-                .forEach(field -> {
-                    if (StringUtils.equals(this.getCamelCaseToSnakeCase(field.getName()), VARIABLE_NAME_UPDATED)) {
+        Stream.concat(Arrays.stream(tClass.getSuperclass().getDeclaredFields()), Arrays.stream(tClass.getDeclaredFields())).map(Field::getName).distinct()
+                .filter(fieldName -> StringUtils.equalsAny(fieldName, VARIABLE_NAME_UPDATED, VARIABLE_NAME_UPDATED_BY))
+                .forEach(fieldName -> {
+                    if (StringUtils.equals(fieldName, VARIABLE_NAME_UPDATED)) {
                         sql.SET(TABLE_COLUMN_NAME_UPDATED + " = " + SYSDATE);
-                    } else if (StringUtils.equals(this.getCamelCaseToSnakeCase(field.getName()), VARIABLE_NAME_UPDATED_BY)) {
+                    } else if (StringUtils.equals(fieldName, VARIABLE_NAME_UPDATED_BY)) {
                         sql.SET(MessageFormat.format(SET_UPDATED_BY_BIND_STRING, TABLE_COLUMN_NAME_UPDATED_BY, AuthenticationUtils.getUserPk()));
                     }
                 });
@@ -263,7 +261,7 @@ public class SqlCommand {
         verifyWhereKey(whereConditions);
         final SQL sql = new SQL();
         sql.DELETE_FROM(getTableName(tClass.getSimpleName()));
-        this.getWhereSql(sql, whereConditions);
+        this.getWhereSql(sql, whereConditions, 2);
         if (!StringUtils.containsIgnoreCase(sql.toString(), "WHERE ")) {
             log.warn("Not Found 'WHERE'");
             throw BusinessException.ERROR_SYSTEM;
@@ -276,7 +274,7 @@ public class SqlCommand {
         return CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, javaFileName);
     }
 
-    private <T> String getJdbcType(@NonNull final Object object) {
+    private <T> String getJdbcType(final Object object) {
         final String jdbcType;
         if (object instanceof String || object instanceof Character) {
             jdbcType = ", jdbcType=VARCHAR";
@@ -294,6 +292,8 @@ public class SqlCommand {
             jdbcType = ", jdbcType=BOOLEAN";
         } else if (object instanceof Byte[]) {
             jdbcType = ", jdbcType=BLOB";
+        } else if (object == null) {
+            jdbcType = ", jdbcType=NULL";
         } else {
             jdbcType = "";
             log.warn("케이스 빠짐 {}", object.getClass().getSimpleName());

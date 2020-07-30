@@ -162,13 +162,6 @@
         <!-- 여기까지 표준프레임워크에서 정의한 library -->
         <!-- 여기까지 표준프레임워크에서 정의한 library -->
 
-        <dependency>
-            <groupId>javax.persistence</groupId>
-            <artifactId>javax.persistence-api</artifactId>
-            <version>2.2</version>
-        </dependency>
-
-
     </dependencies>
 
     <build>
