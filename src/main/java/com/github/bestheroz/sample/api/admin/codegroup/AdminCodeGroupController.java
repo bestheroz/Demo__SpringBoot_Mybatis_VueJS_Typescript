@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -18,25 +19,24 @@ public class AdminCodeGroupController {
     @Resource private AdminCodeGroupService adminCodeGroupService;
 
     @GetMapping
-    ResponseEntity<ApiResult> getList() {
-        return Result.ok(this.tableCodeGroupRepository.findAll());
+    ResponseEntity<ApiResult> getItems() {
+        return Result.ok(this.tableCodeGroupRepository.getItems(TableCodeGroupEntity.class));
     }
 
     @GetMapping(value = "{codeGroup}")
-    ResponseEntity<ApiResult> getOne(@PathVariable(value = "codeGroup", required = false) final String codeGroup) {
-        return Result.ok(this.tableCodeGroupRepository.findById(codeGroup));
+    ResponseEntity<ApiResult> getItem(@PathVariable(value = "codeGroup", required = false) final String codeGroup) {
+        return Result.ok(this.tableCodeGroupRepository.getItem(TableCodeGroupEntity.class, Map.of("codeGroup", codeGroup)));
     }
 
     @PostMapping
     ResponseEntity<ApiResult> post(@RequestBody final TableCodeGroupEntity tableCodeGroupEntity) {
-        this.tableCodeGroupRepository.save(tableCodeGroupEntity);
+        this.tableCodeGroupRepository.insert(tableCodeGroupEntity);
         return Result.ok();
     }
 
     @PatchMapping(value = "{codeGroup}")
     ResponseEntity<ApiResult> patch(@PathVariable(value = "codeGroup") final String codeGroup, @RequestBody final TableCodeGroupEntity tableCodeGroupEntity) {
-        tableCodeGroupEntity.setCodeGroup(codeGroup);
-        this.tableCodeGroupRepository.save(tableCodeGroupEntity);
+        this.tableCodeGroupRepository.update(tableCodeGroupEntity, Map.of("codeGroup", codeGroup));
         return Result.ok();
     }
 

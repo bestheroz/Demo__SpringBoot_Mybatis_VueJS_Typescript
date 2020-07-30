@@ -19,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.time.Instant;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -34,7 +33,7 @@ public class AuthService implements UserDetailsService {
         if (StringUtils.isEmpty(username)) {
             throw new UsernameNotFoundException("No user found");
         }
-        final Optional<TableMemberEntity> oTableMemberVO = this.tableMemberRepository.findById(username);
+        final Optional<TableMemberEntity> oTableMemberVO = this.tableMemberRepository.getItem(TableMemberEntity.class, Map.of("id", username));
         if (oTableMemberVO.isEmpty()) {
             throw new UsernameNotFoundException("No user found by `" + username + "`");
         }
@@ -43,7 +42,7 @@ public class AuthService implements UserDetailsService {
     }
 
     Map<String, String> login(final String id, final String password) {
-        final Optional<TableMemberEntity> one = this.tableMemberRepository.findById(id);
+        final Optional<TableMemberEntity> one = this.tableMemberRepository.getItem(TableMemberEntity.class, Map.of("id", id));
         // 로그인 관문
         // 1. 유저가 없으면
         if (one.isEmpty()) {
@@ -84,25 +83,16 @@ public class AuthService implements UserDetailsService {
         final UserVO userVO = MapperUtils.toObject(tableMemberEntity, UserVO.class);
         final String accessToken = JwtTokenProvider.createAccessToken(userVO);
         final String refreshToken = JwtTokenProvider.createRefreshToken(userVO, accessToken);
-        tableMemberEntity.setToken(refreshToken);
-        this.tableMemberRepository.save(tableMemberEntity);
-        final Map<String, String> result = new HashMap<>();
-        result.put("accessToken", accessToken);
-        result.put("refreshToken", refreshToken);
-        return result;
+        this.tableMemberRepository.updateMap(TableMemberEntity.class, Map.of("token", refreshToken), Map.of("id", id));
+        return Map.of("accessToken", accessToken, "refreshToken", refreshToken);
     }
 
     void logout() {
-        final Optional<TableMemberEntity> one = this.tableMemberRepository.findById(AuthenticationUtils.getUserPk());
-        if (one.isPresent()) {
-            final TableMemberEntity tableMemberEntity = one.get();
-            tableMemberEntity.setToken(null);
-            this.tableMemberRepository.save(tableMemberEntity);
-        }
+        this.tableMemberRepository.updateMap(TableMemberEntity.class, Map.of("token", ""), Map.of("id", AuthenticationUtils.getUserPk()));
     }
 
     void initPassword(final String id, final String password) {
-        final Optional<TableMemberEntity> one = this.tableMemberRepository.findById(id);
+        final Optional<TableMemberEntity> one = this.tableMemberRepository.getItem(TableMemberEntity.class, Map.of("id", id));
         // 로그인 관문
         // 1. 유저가 없으면
         if (one.isEmpty()) {
@@ -111,13 +101,11 @@ public class AuthService implements UserDetailsService {
         }
 
         final TableMemberEntity tableMemberEntity = one.get();
-
         if (StringUtils.isNotEmpty(tableMemberEntity.getPassword())) {
             log.warn(ExceptionCode.FAIL_INVALID_REQUEST.toString());
             throw new BusinessException(ExceptionCode.FAIL_INVALID_REQUEST);
         }
 
-        tableMemberEntity.setPassword(password);
-        this.tableMemberRepository.save(tableMemberEntity);
+        this.tableMemberRepository.updateMap(TableMemberEntity.class, Map.of("password", password), Map.of("id", id));
     }
 }

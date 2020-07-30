@@ -20,7 +20,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
@@ -41,40 +43,43 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
 
         final String token = JwtTokenProvider.resolveAccessToken(request);
         final String refreshToken = JwtTokenProvider.resolveRefreshToken(request);
+        log.debug("{}", Arrays.stream(SecurityConfiguration.PUBLIC).map(item -> item.replace("*", "")).collect(Collectors.joining(",")));
         final Optional<String> publicPages = Arrays.stream(SecurityConfiguration.PUBLIC).map(item -> item.replace("*", "")).filter(requestURI::startsWith).findFirst();
-        if (StringUtils.isAnyEmpty(token, refreshToken) && publicPages.isEmpty()) {
-            log.debug("non token");
-            (response).sendError(HttpServletResponse.SC_UNAUTHORIZED);
-            return;
-        }
-        if (token != null) {
-            if (JwtTokenProvider.validateAccessToken(token)) {
-                try {
-                    SecurityContextHolder.getContext().setAuthentication(JwtTokenProvider.getAuthentication(token));
-                } catch (final UsernameNotFoundException e) {
-                    log.debug("invalid token");
-                    (response).sendError(HttpServletResponse.SC_UNAUTHORIZED);
-                    return;
-                }
-            } else if (JwtTokenProvider.validateRefreshToken(token, refreshToken)) {
-                final Optional<TableMemberEntity> one = AccessBeanUtils.getBean(TableMemberRepository.class).findByToken(refreshToken);
-                if (one.isEmpty()) {
-                    log.debug("invalid refresh-token");
-                    (response).sendError(HttpServletResponse.SC_UNAUTHORIZED);
-                    return;
-                }
-                final TableMemberEntity tableMemberEntity = one.get();
-                final UserVO userVO = MapperUtils.toObject(tableMemberEntity, UserVO.class);
-                final String newAccessToken = JwtTokenProvider.createAccessToken(userVO);
-                final String newRefreshToken = JwtTokenProvider.createRefreshToken(userVO, newAccessToken);
-                tableMemberEntity.setToken(newRefreshToken);
-                SecurityContextHolder.getContext().setAuthentication(JwtTokenProvider.getAuthentication(newAccessToken));
-                AccessBeanUtils.getBean(TableMemberRepository.class).save(tableMemberEntity);
-                log.debug("refresh token");
-                (response).addHeader("accessToken", newAccessToken);
-                (response).addHeader("refreshToken", newRefreshToken);
+        if (publicPages.isEmpty()) {
+            if (StringUtils.isAnyEmpty(token, refreshToken)) {
+                log.debug("non token");
                 (response).sendError(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
+            }
+            if (token != null) {
+                if (JwtTokenProvider.validateAccessToken(token)) {
+                    try {
+                        SecurityContextHolder.getContext().setAuthentication(JwtTokenProvider.getAuthentication(token));
+                    } catch (final UsernameNotFoundException e) {
+                        log.debug("invalid token");
+                        (response).sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                        return;
+                    }
+                } else if (JwtTokenProvider.validateRefreshToken(token, refreshToken)) {
+                    final Optional<TableMemberEntity> one = AccessBeanUtils.getBean(TableMemberRepository.class).getItem(TableMemberEntity.class, Map.of("token", refreshToken));
+                    if (one.isEmpty()) {
+                        log.debug("invalid refresh-token");
+                        (response).sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                        return;
+                    }
+                    final TableMemberEntity tableMemberEntity = one.get();
+                    final UserVO userVO = MapperUtils.toObject(tableMemberEntity, UserVO.class);
+                    final String newAccessToken = JwtTokenProvider.createAccessToken(userVO);
+                    final String newRefreshToken = JwtTokenProvider.createRefreshToken(userVO, newAccessToken);
+                    tableMemberEntity.setToken(newRefreshToken);
+                    SecurityContextHolder.getContext().setAuthentication(JwtTokenProvider.getAuthentication(newAccessToken));
+                    AccessBeanUtils.getBean(TableMemberRepository.class).updateMap(TableMemberEntity.class, Map.of("token", newRefreshToken), Map.of("id", tableMemberEntity.getId()));
+                    log.debug("refresh token");
+                    (response).addHeader("accessToken", newAccessToken);
+                    (response).addHeader("refreshToken", newRefreshToken);
+                    (response).sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                    return;
+                }
             }
         }
         chain.doFilter(request, response);

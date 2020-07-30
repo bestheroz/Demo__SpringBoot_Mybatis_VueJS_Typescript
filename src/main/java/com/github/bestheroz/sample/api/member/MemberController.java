@@ -15,7 +15,7 @@ public class MemberController {
     @Resource private MemberRepository memberRepository;
 
     @GetMapping
-    ResponseEntity<ApiResult> getList() {
-        return Result.ok(this.memberRepository.getMemberList());
+    ResponseEntity<ApiResult> getItems() {
+        return Result.ok(this.memberRepository.getCodeItems());
     }
 }
