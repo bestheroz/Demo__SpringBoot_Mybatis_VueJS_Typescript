@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,6 +24,6 @@ public class CodeService {
 
     @Cacheable(value = "codeCache", key = "#codeGroup")
     public List<TableCodeEntity> getCodeVOList(final String codeGroup) {
-        return this.tableCodeRepository.findAllByCodeGroup(codeGroup);
+        return this.tableCodeRepository.getItemsByKeyWithOrder(TableCodeEntity.class, Map.of("codeGroup", codeGroup), Set.of("displayOrder"));
     }
 }

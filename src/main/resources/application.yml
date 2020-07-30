@@ -10,20 +10,16 @@ spring:
       max-file-size: 20MB
       max-request-size: 10MB
       file-size-threshold: 0
-  jpa:
-    show-sql: true
-    hibernate:
-      ddl-auto: none
-    generate-ddl: false
-    properties:
-      hibernate:
-        format_sql: true
-    open-in-view: false
   mvc:
     converters:
       preferred-json-mapper: gson
   autoconfigure:
     exclude: org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration
+mybatis:
+  mapper-locations: classpath:**/*Mapper.xml
+  type-aliases-super-type: java.io.Serializable
+  type-aliases-package: com.github.bestheroz
+  config-location: classpath:mybatis-config.xml
 server:
   compression:
     enabled: true
@@ -46,14 +42,6 @@ server:
 #    web:
 #      exposure:
 #        include: shutdown
-logging:
-  level:
-    org:
-      hibernate:
-        type:
-          descriptor:
-            sql:
-              BasicBinder: trace
 ---
 spring:
   profiles: local
@@ -66,7 +54,7 @@ server:
   port: 8080
 variable:
   app:
-    title: My SpringBoot + JPA + VueJs + Typescript
+    title: My SpringBoot + Mybatis + VueJs + Typescript
 ---
 spring:
   profiles: dev
@@ -74,8 +62,8 @@ spring:
     hikari:
       username:
       password:
-      driver-class-name: org.gjt.mm.mysql.Driver
-      jdbc-url: jdbc:mysql://127.0.0.1:3306/dbname?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&&zeroDateTimeBehavior=convertToNull;
+      driver-class-name: org.jdbcdslog.DriverLoggingProxy
+      jdbc-url: jdbc:jdbcdslog:mysql://127.0.0.1:3306/dbname?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&&zeroDateTimeBehavior=convertToNull;targetDriver=org.gjt.mm.mysql.Driver
 server:
   port: 8080
 variable:
@@ -88,8 +76,8 @@ spring:
     hikari:
       username:
       password:
-      driver-class-name: org.gjt.mm.mysql.Driver
-      jdbc-url: jdbc:mysql://127.0.0.1:3306/dbname?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&&zeroDateTimeBehavior=convertToNull;
+      driver-class-name: org.jdbcdslog.DriverLoggingProxy
+      jdbc-url: jdbc:jdbcdslog:mysql://127.0.0.1:3306/dbname?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&&zeroDateTimeBehavior=convertToNull;targetDriver=org.gjt.mm.mysql.Driver
 server:
   port:
 variable:

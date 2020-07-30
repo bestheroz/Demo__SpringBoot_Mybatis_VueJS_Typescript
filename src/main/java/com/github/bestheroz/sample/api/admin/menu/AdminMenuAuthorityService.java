@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -17,18 +18,15 @@ public class AdminMenuAuthorityService {
     @Resource private MenuService menuService;
     @Resource private TableMenuAuthorityRepository tableMenuAuthorityRepository;
 
-    public List<AdminMenuAuthorityVO> getList(final Integer authority) {
+    public List<AdminMenuAuthorityVO> getItems(final Integer authority) {
         final List<AdminMenuAuthorityVO> result = new ArrayList<>();
-        final Optional<TableMenuAuthorityEntity> tableMenuAuthorityVO = this.tableMenuAuthorityRepository.findById(authority);
-        final boolean present = tableMenuAuthorityVO.isPresent();
+        final Optional<TableMenuAuthorityEntity> tableMenuAuthorityVO = this.tableMenuAuthorityRepository.getItem(TableMenuAuthorityEntity.class, Map.of("authority", authority));
+        final String menuIdList = tableMenuAuthorityVO.orElseGet(TableMenuAuthorityEntity::new).getMenuIdList();
         this.menuService.getMenuList().forEach(item -> {
             final AdminMenuAuthorityVO adminMenuAuthorityVO = MapperUtils.toObject(item, AdminMenuAuthorityVO.class);
-            if (present) {
-                adminMenuAuthorityVO.setChecked(item.getId().equals(1) || StringUtils.contains(tableMenuAuthorityVO.get().getMenuIdList(), "^|" + item.getId() + ","));
-            }
+            adminMenuAuthorityVO.setChecked(item.getId().equals(1) || StringUtils.contains(menuIdList, "^|" + item.getId() + ","));
             result.add(adminMenuAuthorityVO);
         });
-        result.get(0).setChecked(true);
         return result;
     }
 }

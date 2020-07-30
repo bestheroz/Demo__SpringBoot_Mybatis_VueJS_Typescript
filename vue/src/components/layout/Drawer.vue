@@ -84,7 +84,7 @@ export default class extends Vue {
 
   popupWindow(url: string) {
     window.open(
-      `${url.indexOf('http') === 0 ? '' : '#'}${url}`,
+      url,
       '_blank',
       // 'location=false,menubar=false,scrollbars=true,status=false,toolbar=false',
     );

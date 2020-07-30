@@ -1,13 +1,10 @@
 package com.github.bestheroz.sample.api.entity.code;
 
-import org.springframework.data.repository.CrudRepository;
+import com.github.bestheroz.standard.common.mybatis.SqlRepository;
+import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
+@Mapper
 @Repository
-public interface TableCodeRepository extends CrudRepository<TableCodeEntity, TableCodeEntityId> {
-    List<TableCodeEntity> findAllByCodeGroup(String id);
-
-    void deleteByCodeGroup(String id);
+public interface TableCodeRepository extends SqlRepository<TableCodeEntity> {
 }

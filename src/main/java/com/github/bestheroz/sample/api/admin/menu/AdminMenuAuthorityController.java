@@ -23,17 +23,17 @@ public class AdminMenuAuthorityController {
     @Resource private AdminMenuAuthorityService adminMenuAuthorityService;
 
     @GetMapping("{authority}")
-    ResponseEntity<ApiResult> getList(@PathVariable("authority") final Integer authority) {
-        return Result.ok(this.adminMenuAuthorityService.getList(authority));
+    ResponseEntity<ApiResult> getItems(@PathVariable("authority") final Integer authority) {
+        return Result.ok(this.adminMenuAuthorityService.getItems(authority));
     }
 
     @PutMapping(value = "{authority}")
     @CacheEvict(value = "drawerCache", key = "#authority")
     public ResponseEntity<ApiResult> save(@PathVariable("authority") final Integer authority, @RequestBody final Map<String, String> payload) {
-        final TableMenuAuthorityEntity tableMenuAuthorityEntity = new TableMenuAuthorityEntity();
-        tableMenuAuthorityEntity.setAuthority(authority);
-        tableMenuAuthorityEntity.setMenuIdList(Arrays.stream(StringUtils.split(payload.get("menuIdList"), ",")).map(item -> "^|" + item + ",").collect(Collectors.joining(StringUtils.EMPTY)));
-        this.tableMenuAuthorityRepository.save(tableMenuAuthorityEntity);
+        final String menuIdList = Arrays.stream(StringUtils.split(payload.get("menuIdList"), ",")).map(item -> "^|" + item + ",").collect(Collectors.joining(StringUtils.EMPTY));
+        this.tableMenuAuthorityRepository.getItem(TableMenuAuthorityEntity.class, Map.of("authority", authority))
+                .ifPresentOrElse(item -> this.tableMenuAuthorityRepository.updateMap(TableMenuAuthorityEntity.class, Map.of("menuIdList", menuIdList), Map.of("authority", authority))
+                        , () -> this.tableMenuAuthorityRepository.insert(new TableMenuAuthorityEntity(authority, menuIdList)));
         return Result.ok();
     }
 }

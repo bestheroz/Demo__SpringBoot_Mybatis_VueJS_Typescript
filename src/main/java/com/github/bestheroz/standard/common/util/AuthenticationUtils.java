@@ -34,6 +34,9 @@ public class AuthenticationUtils {
                 throw BusinessException.FAIL_TRY_LOGIN_FIRST;
             }
             return ((UserVO) authentication.getPrincipal());
+        } catch (final NullPointerException e) {
+            log.warn(BusinessException.FAIL_TRY_LOGIN_FIRST.toString());
+            throw BusinessException.FAIL_TRY_LOGIN_FIRST;
         } catch (final Throwable e) {
             log.warn(ExceptionUtils.getStackTrace(e));
             throw e;
@@ -48,6 +51,9 @@ public class AuthenticationUtils {
                 throw BusinessException.FAIL_TRY_LOGIN_FIRST;
             }
             return username;
+        } catch (final NullPointerException e) {
+            log.warn(BusinessException.FAIL_TRY_LOGIN_FIRST.toString());
+            throw BusinessException.FAIL_TRY_LOGIN_FIRST;
         } catch (final Throwable e) {
             log.warn(ExceptionUtils.getStackTrace(e));
             throw e;
