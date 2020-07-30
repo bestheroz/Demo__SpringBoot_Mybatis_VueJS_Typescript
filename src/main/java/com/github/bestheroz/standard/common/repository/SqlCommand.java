@@ -17,6 +17,7 @@ import java.time.Instant;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Slf4j
@@ -154,19 +155,22 @@ public class SqlCommand {
                     }
                 });
 
-        Stream.concat(Arrays.stream(entity.getClass().getSuperclass().getDeclaredFields()), Arrays.stream(entity.getClass().getDeclaredFields())).map(Field::getName).distinct()
-                .filter(item -> !EXCLUDE_FIELD_SET.contains(CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, item)))
-                .forEach(javaFieldName -> {
-                    if (StringUtils.equals(javaFieldName, VARIABLE_NAME_CREATED)) {
-                        sql.VALUES(TABLE_COLUMN_NAME_CREATED, SYSDATE);
-                    } else if (StringUtils.equals(javaFieldName, VARIABLE_NAME_UPDATED)) {
-                        sql.VALUES(TABLE_COLUMN_NAME_UPDATED, SYSDATE);
-                    } else if (StringUtils.equals(javaFieldName, VARIABLE_NAME_CREATED_BY)) {
-                        sql.VALUES(TABLE_COLUMN_NAME_CREATED_BY, "'" + AuthenticationUtils.getUserPk() + "'");
-                    } else if (StringUtils.equals(javaFieldName, VARIABLE_NAME_UPDATED_BY)) {
-                        sql.VALUES(TABLE_COLUMN_NAME_UPDATED_BY, "'" + AuthenticationUtils.getUserPk() + "'");
-                    }
-                });
+        final Set<String> fieldNames =
+                Stream.concat(Arrays.stream(entity.getClass().getSuperclass().getDeclaredFields()), Arrays.stream(entity.getClass().getDeclaredFields())).map(Field::getName).distinct()
+                        .collect(Collectors.toSet());
+
+        if (fieldNames.contains(VARIABLE_NAME_CREATED)) {
+            sql.VALUES(TABLE_COLUMN_NAME_CREATED, SYSDATE);
+        }
+        if (fieldNames.contains(VARIABLE_NAME_UPDATED)) {
+            sql.VALUES(TABLE_COLUMN_NAME_UPDATED, SYSDATE);
+        }
+        if (fieldNames.contains(VARIABLE_NAME_CREATED_BY)) {
+            sql.VALUES(TABLE_COLUMN_NAME_CREATED_BY, "'" + AuthenticationUtils.getUserPk() + "'");
+        }
+        if (fieldNames.contains(VARIABLE_NAME_UPDATED_BY)) {
+            sql.VALUES(TABLE_COLUMN_NAME_UPDATED_BY, "'" + AuthenticationUtils.getUserPk() + "'");
+        }
 
         log.debug(sql.toString());
         return sql.toString();
@@ -180,8 +184,7 @@ public class SqlCommand {
         final Map<String, Object> param = MapperUtils.toHashMap(entity);
         Arrays.stream(entity.getClass().getDeclaredFields()).map(Field::getName).distinct()
                 .filter(fieldName -> !EXCLUDE_FIELD_SET.contains(fieldName))
-                .filter(fieldName -> !StringUtils.equalsAny(fieldName, VARIABLE_NAME_CREATED_BY, VARIABLE_NAME_CREATED, VARIABLE_NAME_UPDATED, VARIABLE_NAME_UPDATED_BY
-                ))
+                .filter(fieldName -> !StringUtils.equalsAny(fieldName, VARIABLE_NAME_CREATED_BY, VARIABLE_NAME_CREATED, VARIABLE_NAME_UPDATED, VARIABLE_NAME_UPDATED_BY))
                 .filter(fieldName -> !whereConditions.containsKey(fieldName))
                 .forEach(javaFieldName -> {
                     if (ENCRYPTED_COLUMN_LIST.contains(javaFieldName)) {
@@ -200,15 +203,16 @@ public class SqlCommand {
             }
         });
 
-        Stream.concat(Arrays.stream(entity.getClass().getSuperclass().getDeclaredFields()), Arrays.stream(entity.getClass().getDeclaredFields())).map(Field::getName).distinct()
-                .filter(fieldName -> StringUtils.equalsAny(fieldName, VARIABLE_NAME_UPDATED, VARIABLE_NAME_UPDATED_BY))
-                .forEach(fieldName -> {
-                    if (StringUtils.equals(fieldName, VARIABLE_NAME_UPDATED)) {
-                        sql.SET(TABLE_COLUMN_NAME_UPDATED + " = " + SYSDATE);
-                    } else if (StringUtils.equals(fieldName, VARIABLE_NAME_UPDATED_BY)) {
-                        sql.SET(MessageFormat.format(SET_UPDATED_BY_BIND_STRING, TABLE_COLUMN_NAME_UPDATED_BY, AuthenticationUtils.getUserPk()));
-                    }
-                });
+        final Set<String> fieldNames =
+                Stream.concat(Arrays.stream(entity.getClass().getSuperclass().getDeclaredFields()), Arrays.stream(entity.getClass().getDeclaredFields())).map(Field::getName).distinct()
+                        .collect(Collectors.toSet());
+
+        if (fieldNames.contains(VARIABLE_NAME_UPDATED)) {
+            sql.SET(TABLE_COLUMN_NAME_UPDATED + " = " + SYSDATE);
+        }
+        if (fieldNames.contains(VARIABLE_NAME_UPDATED_BY)) {
+            sql.SET(MessageFormat.format(SET_UPDATED_BY_BIND_STRING, TABLE_COLUMN_NAME_UPDATED_BY, AuthenticationUtils.getUserPk()));
+        }
         if (!StringUtils.containsIgnoreCase(sql.toString(), "WHERE ")) {
             log.warn("Not Found 'WHERE'");
             throw BusinessException.ERROR_SYSTEM;
@@ -221,7 +225,7 @@ public class SqlCommand {
         this.verifyWhereKey(whereConditions);
 
         final SQL sql = new SQL();
-        sql.UPDATE(getTableName(tClass.getClass().getSimpleName()));
+        sql.UPDATE(getTableName(tClass.getSimpleName()));
         updateMap.forEach((javaFieldName, value) -> {
             if (ENCRYPTED_COLUMN_LIST.contains(javaFieldName)) {
                 sql.SET(MessageFormat.format(SET_BIND_ENCRYPTED_STRING, this.getCamelCaseToSnakeCase(javaFieldName), javaFieldName, this.getJdbcType(value), 2));
@@ -239,15 +243,16 @@ public class SqlCommand {
             }
         });
 
-        Stream.concat(Arrays.stream(tClass.getSuperclass().getDeclaredFields()), Arrays.stream(tClass.getDeclaredFields())).map(Field::getName).distinct()
-                .filter(fieldName -> StringUtils.equalsAny(fieldName, VARIABLE_NAME_UPDATED, VARIABLE_NAME_UPDATED_BY))
-                .forEach(fieldName -> {
-                    if (StringUtils.equals(fieldName, VARIABLE_NAME_UPDATED)) {
-                        sql.SET(TABLE_COLUMN_NAME_UPDATED + " = " + SYSDATE);
-                    } else if (StringUtils.equals(fieldName, VARIABLE_NAME_UPDATED_BY)) {
-                        sql.SET(MessageFormat.format(SET_UPDATED_BY_BIND_STRING, TABLE_COLUMN_NAME_UPDATED_BY, AuthenticationUtils.getUserPk()));
-                    }
-                });
+        final Set<String> fieldNames =
+                Stream.concat(Arrays.stream(tClass.getSuperclass().getDeclaredFields()), Arrays.stream(tClass.getDeclaredFields())).map(Field::getName).distinct()
+                        .collect(Collectors.toSet());
+
+        if (fieldNames.contains(VARIABLE_NAME_UPDATED)) {
+            sql.SET(TABLE_COLUMN_NAME_UPDATED + " = " + SYSDATE);
+        }
+        if (fieldNames.contains(VARIABLE_NAME_UPDATED_BY)) {
+            sql.SET(MessageFormat.format(SET_UPDATED_BY_BIND_STRING, TABLE_COLUMN_NAME_UPDATED_BY, AuthenticationUtils.getUserPk()));
+        }
         if (!StringUtils.containsIgnoreCase(sql.toString(), "WHERE ")) {
             log.warn("Not Found 'WHERE'");
             throw BusinessException.ERROR_SYSTEM;

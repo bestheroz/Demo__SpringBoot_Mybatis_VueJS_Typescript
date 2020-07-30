@@ -1,6 +1,6 @@
 {
   "name": "vue",
-  "version": "20.04.12",
+  "version": "20.07.30",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve --port 8081",

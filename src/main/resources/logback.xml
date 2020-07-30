@@ -55,7 +55,7 @@
     <logger name="org.jdbcdslog.StatementLogger" level="INFO"/>
     <logger name="org.jdbcdslog.ResultSetLogger" level="INFO"/>
 
-<!--    <logger name="com.github.bestheroz.standard.common.repository.SqlCommand" level="INFO"/>-->
+    <logger name="com.github.bestheroz.standard.common.repository.SqlCommand" level="INFO"/>
 
     <root level="DEBUG">
         <springProfile name="dev">
