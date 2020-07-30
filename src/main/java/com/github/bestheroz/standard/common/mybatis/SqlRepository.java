@@ -1,4 +1,4 @@
-package com.github.bestheroz.standard.common.repository;
+package com.github.bestheroz.standard.common.mybatis;
 
 import org.apache.ibatis.annotations.DeleteProvider;
 import org.apache.ibatis.annotations.InsertProvider;

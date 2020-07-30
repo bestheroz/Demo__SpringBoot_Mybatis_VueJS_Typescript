@@ -16,6 +16,7 @@ import java.util.Map;
 @RequestMapping(value = "api/admin/menus")
 public class AdminMenuController {
     @Resource private MenuService menuService;
+    @Resource private AdminMenuService adminMenuService;
     @Resource private TableMenuRepository tableMenuRepository;
 
     @GetMapping
@@ -49,7 +50,7 @@ public class AdminMenuController {
     @DeleteMapping(value = "{id}")
     @CacheEvict(value = "drawerCache", allEntries = true)
     public ResponseEntity<ApiResult> delete(@PathVariable(value = "id") final Integer id) {
-        this.tableMenuRepository.delete(TableMenuEntity.class, Map.of("id", id));
+        this.adminMenuService.delete(id);
         return Result.ok();
     }
 }

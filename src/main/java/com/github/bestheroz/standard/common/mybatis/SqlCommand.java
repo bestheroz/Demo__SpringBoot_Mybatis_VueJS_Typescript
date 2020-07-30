@@ -1,4 +1,4 @@
-package com.github.bestheroz.standard.common.repository;
+package com.github.bestheroz.standard.common.mybatis;
 
 import com.github.bestheroz.standard.common.exception.BusinessException;
 import com.github.bestheroz.standard.common.exception.ExceptionCode;

@@ -2,7 +2,7 @@ package com.github.bestheroz.sample.api.member;
 
 import com.github.bestheroz.standard.common.code.CodeVO;
 import com.github.bestheroz.standard.common.exception.BusinessException;
-import com.github.bestheroz.standard.common.repository.SqlRepository;
+import com.github.bestheroz.standard.common.mybatis.SqlRepository;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.cache.annotation.Cacheable;

@@ -68,10 +68,6 @@ public class BusinessException extends RuntimeException {
         return sets.stream().anyMatch(this::isEquals);
     }
 
-    public boolean isNoDataSuccess() {
-        return this.isEquals(ExceptionCode.FAIL_NO_DATA_SUCCESS);
-    }
-
     @Override
     public String toString() {
         return this.apiResult.toString();

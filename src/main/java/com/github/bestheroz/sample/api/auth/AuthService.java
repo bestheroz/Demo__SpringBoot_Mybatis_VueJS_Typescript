@@ -19,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.time.Instant;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -84,12 +83,8 @@ public class AuthService implements UserDetailsService {
         final UserVO userVO = MapperUtils.toObject(tableMemberEntity, UserVO.class);
         final String accessToken = JwtTokenProvider.createAccessToken(userVO);
         final String refreshToken = JwtTokenProvider.createRefreshToken(userVO, accessToken);
-        tableMemberEntity.setToken(refreshToken);
-        this.tableMemberRepository.update(tableMemberEntity, Map.of("id", id));
-        final Map<String, String> result = new HashMap<>();
-        result.put("accessToken", accessToken);
-        result.put("refreshToken", refreshToken);
-        return result;
+        this.tableMemberRepository.updateMap(TableMemberEntity.class, Map.of("token", refreshToken), Map.of("id", id));
+        return Map.of("accessToken", accessToken, "refreshToken", refreshToken);
     }
 
     void logout() {

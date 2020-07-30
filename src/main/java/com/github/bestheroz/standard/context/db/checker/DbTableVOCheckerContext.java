@@ -1,6 +1,6 @@
 package com.github.bestheroz.standard.context.db.checker;
 
-import com.github.bestheroz.standard.common.repository.SqlCommand;
+import com.github.bestheroz.standard.common.mybatis.SqlCommand;
 import com.google.common.base.CaseFormat;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
