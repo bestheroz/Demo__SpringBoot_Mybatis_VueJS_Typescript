@@ -3,6 +3,7 @@ package com.github.bestheroz.standard.context.db.checker;
 import com.github.bestheroz.standard.common.mybatis.SqlCommand;
 import com.google.common.base.CaseFormat;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.ibatis.session.SqlSession;
@@ -27,7 +28,6 @@ import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Slf4j
 @Component
@@ -73,7 +73,7 @@ public class DbTableVOCheckerContext {
                     boolean isInvalid = false;
                     // 1. VO변수 개수 == 테이블 컬럼 개수 체크
                     final Set<String> fieldsSet =
-                            Stream.concat(Arrays.stream(class1.getSuperclass().getDeclaredFields()), Arrays.stream(class1.getDeclaredFields())).map(Field::getName).distinct()
+                            Arrays.stream(ArrayUtils.addAll(class1.getSuperclass().getDeclaredFields(), class1.getDeclaredFields())).map(Field::getName).distinct()
                                     .filter(item -> !"serialVersionUID".equalsIgnoreCase(item)).collect(Collectors.toSet());
                     final long fieldSize = fieldsSet.size();
                     if (metaInfo.getColumnCount() != fieldSize) {

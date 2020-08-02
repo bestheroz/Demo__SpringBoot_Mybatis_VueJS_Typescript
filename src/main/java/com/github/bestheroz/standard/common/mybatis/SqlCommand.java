@@ -7,6 +7,7 @@ import com.github.bestheroz.standard.common.util.MapperUtils;
 import com.github.bestheroz.standard.common.util.NullUtils;
 import com.google.common.base.CaseFormat;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.jdbc.SQL;
 import org.springframework.lang.NonNull;
@@ -18,7 +19,6 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Slf4j
 public class SqlCommand {
@@ -127,7 +127,7 @@ public class SqlCommand {
 
     public <T> String getItemsByKeyWithOrder(final Class<T> tClass, final Map<String, Object> whereConditions, final Set<String> orderByConditions) {
         final SQL sql = new SQL();
-        this.getSelectSql(sql, tClass.getDeclaredFields());
+        this.getSelectSql(sql, ArrayUtils.addAll(tClass.getDeclaredFields(), tClass.getSuperclass().getDeclaredFields()));
         sql.FROM(getTableName(tClass.getSimpleName()));
         this.getWhereSql(sql, whereConditions, 2);
         orderByConditions.forEach(columns -> sql.ORDER_BY(getCamelCaseToSnakeCase(columns)));
@@ -156,7 +156,7 @@ public class SqlCommand {
                 });
 
         final Set<String> fieldNames =
-                Stream.concat(Arrays.stream(entity.getClass().getSuperclass().getDeclaredFields()), Arrays.stream(entity.getClass().getDeclaredFields())).map(Field::getName).distinct()
+                Arrays.stream(ArrayUtils.addAll(entity.getClass().getSuperclass().getDeclaredFields(), entity.getClass().getDeclaredFields())).map(Field::getName)
                         .collect(Collectors.toSet());
 
         if (fieldNames.contains(VARIABLE_NAME_CREATED)) {
@@ -204,7 +204,7 @@ public class SqlCommand {
         });
 
         final Set<String> fieldNames =
-                Stream.concat(Arrays.stream(entity.getClass().getSuperclass().getDeclaredFields()), Arrays.stream(entity.getClass().getDeclaredFields())).map(Field::getName).distinct()
+                Arrays.stream(ArrayUtils.addAll(entity.getClass().getSuperclass().getDeclaredFields(), entity.getClass().getDeclaredFields())).map(Field::getName)
                         .collect(Collectors.toSet());
 
         if (fieldNames.contains(VARIABLE_NAME_UPDATED)) {
@@ -244,7 +244,7 @@ public class SqlCommand {
         });
 
         final Set<String> fieldNames =
-                Stream.concat(Arrays.stream(tClass.getSuperclass().getDeclaredFields()), Arrays.stream(tClass.getDeclaredFields())).map(Field::getName).distinct()
+                Arrays.stream(ArrayUtils.addAll(tClass.getSuperclass().getDeclaredFields(), tClass.getDeclaredFields())).map(Field::getName)
                         .collect(Collectors.toSet());
 
         if (fieldNames.contains(VARIABLE_NAME_UPDATED)) {
