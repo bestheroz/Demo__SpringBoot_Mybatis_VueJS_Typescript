@@ -20,8 +20,8 @@ public class AdminMenuAuthorityService {
 
     public List<AdminMenuAuthorityVO> getItems(final Integer authority) {
         final List<AdminMenuAuthorityVO> result = new ArrayList<>();
-        final Optional<TableMenuAuthorityEntity> tableMenuAuthorityVO = this.tableMenuAuthorityRepository.getItem(TableMenuAuthorityEntity.class, Map.of("authority", authority));
-        final String menuIdList = tableMenuAuthorityVO.orElseGet(TableMenuAuthorityEntity::new).getMenuIdList();
+        final Optional<TableMenuAuthorityEntity> oTableMenuAuthorityEntity = this.tableMenuAuthorityRepository.getItem(TableMenuAuthorityEntity.class, Map.of("authority", authority));
+        final String menuIdList = oTableMenuAuthorityEntity.orElseGet(TableMenuAuthorityEntity::new).getMenuIdList();
         this.menuService.getMenuList().forEach(item -> {
             final AdminMenuAuthorityVO adminMenuAuthorityVO = MapperUtils.toObject(item, AdminMenuAuthorityVO.class);
             adminMenuAuthorityVO.setChecked(item.getId().equals(1) || StringUtils.contains(menuIdList, "^|" + item.getId() + ","));
