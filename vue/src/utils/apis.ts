@@ -79,7 +79,7 @@ export async function getListApi<T>(url: string): Promise<ApiDataResult<T>> {
   return response.data;
 }
 
-export async function getDataApi<T>(
+export async function getItemApi<T>(
   url: string,
   id?: number | undefined,
 ): Promise<ApiDataResult<T>> {

@@ -79,7 +79,7 @@ public class ExcelService extends AbstractExcelXView {
             final HashMap jo = listData.get(i);
             for (int j = 0; j < excelVOs.size(); j++) {
                 final String value = (String) jo.get(excelVOs.get(j).getDbColName());
-                if (value != null && StringUtils.isNotEmpty(value)) {
+                if (StringUtils.isNotEmpty(value)) {
                     this.writeColumnData(excelVOs, j, row.createCell(j), value);
                 }
             }

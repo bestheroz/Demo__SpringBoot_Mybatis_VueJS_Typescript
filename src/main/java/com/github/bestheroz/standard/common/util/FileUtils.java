@@ -23,10 +23,7 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @UtilityClass
 public class FileUtils {
@@ -39,7 +36,7 @@ public class FileUtils {
 
     public void deleteDirectory(final File file) {
         forceDelete(file);
-        LOGGER.info("Target for deleting dir : {}", file.getAbsolutePath());
+        this.LOGGER.info("Target for deleting dir : {}", file.getAbsolutePath());
     }
 
     public void deleteDirectory(final String filePath) {
@@ -48,7 +45,7 @@ public class FileUtils {
 
     public void deleteFile(final File file) {
         forceDelete(file);
-        LOGGER.info("Target for deleting file : {}", file.getAbsolutePath());
+        this.LOGGER.info("Target for deleting file : {}", file.getAbsolutePath());
     }
 
     public void deleteFile(final String filePath) {
@@ -59,7 +56,7 @@ public class FileUtils {
         try {
             org.apache.commons.io.FileUtils.forceDelete(file);
         } catch (final IOException e) {
-            LOGGER.warn(ExceptionUtils.getStackTrace(e));
+            this.LOGGER.warn(ExceptionUtils.getStackTrace(e));
             // throw new CommonResponseException(e);
         }
     }
@@ -89,7 +86,7 @@ public class FileUtils {
             }
             return encodedFilename;
         } catch (final UnsupportedEncodingException e) {
-            LOGGER.warn(ExceptionUtils.getStackTrace(e));
+            this.LOGGER.warn(ExceptionUtils.getStackTrace(e));
             throw new BusinessException(e);
         }
     }
@@ -98,7 +95,7 @@ public class FileUtils {
         final String path = RegExUtils.replaceAll(getFileRoot() + filePath, "\\\\", "/").replaceAll("//", "/");
         final File file = org.apache.commons.io.FileUtils.getFile(path);
         if (file.isDirectory() && !StringUtils.endsWith(path, "/")) {
-            LOGGER.warn("{} : {}", path, ExceptionCode.ERROR_DIR_PATH_MUST_ENDS_WITH_SLASH.toString());
+            this.LOGGER.warn("{} : {}", path, ExceptionCode.ERROR_DIR_PATH_MUST_ENDS_WITH_SLASH.toString());
             throw new BusinessException(ExceptionCode.ERROR_DIR_PATH_MUST_ENDS_WITH_SLASH);
         }
         return file;
@@ -107,7 +104,7 @@ public class FileUtils {
     public void checkExistingDirectory(final String dirPath) {
         final String path = RegExUtils.replaceAll(getFileRoot() + dirPath, "\\\\", "/").replaceAll("//", "/");
         if (!StringUtils.endsWith(path, "/")) {
-            LOGGER.warn("{} : {}", path, ExceptionCode.ERROR_DIR_PATH_MUST_ENDS_WITH_SLASH.toString());
+            this.LOGGER.warn("{} : {}", path, ExceptionCode.ERROR_DIR_PATH_MUST_ENDS_WITH_SLASH.toString());
             throw new BusinessException(ExceptionCode.ERROR_DIR_PATH_MUST_ENDS_WITH_SLASH);
         }
         final File file = getFile(path);
@@ -115,7 +112,7 @@ public class FileUtils {
             try {
                 org.apache.commons.io.FileUtils.forceMkdir(file);
             } catch (final IOException e) {
-                LOGGER.warn(ExceptionUtils.getStackTrace(e));
+                this.LOGGER.warn(ExceptionUtils.getStackTrace(e));
                 // ignored
             }
         }
@@ -123,9 +120,9 @@ public class FileUtils {
 
     private String getFileRoot() {
         if (StringUtils.containsIgnoreCase(System.getProperty("os.name"), "win")) {
-            return "C:" + FILE_ROOT_PATH;
+            return "C:" + this.FILE_ROOT_PATH;
         } else {
-            return FILE_ROOT_PATH;
+            return this.FILE_ROOT_PATH;
         }
     }
 
@@ -144,21 +141,22 @@ public class FileUtils {
             final MultipartFile multipartFile = fileMap.get(fileNames.next());
             validateFile(multipartFile);
             final File file = uploadMultipartFile(targetDirPath, multipartFile);
-            LOGGER.info(STR_INFO_MESSAGE, file.getAbsolutePath());
+            this.LOGGER.info(this.STR_INFO_MESSAGE, file.getAbsolutePath());
         }
     }
 
     private File uploadMultipartFile(final String targetDirPath, final MultipartFile multipartFile) {
         final StringBuilder fileName = new StringBuilder(80);
-        fileName.append(OffsetDateTime.now().format(DateUtils.YYYYMMDDHHMMSS)).append(STR_UNDERLINE).append(DigestUtils.md5DigestAsHex(multipartFile.getOriginalFilename().getBytes()));
+        fileName.append(OffsetDateTime.now().format(DateUtils.YYYYMMDDHHMMSS)).append(this.STR_UNDERLINE)
+                .append(DigestUtils.md5DigestAsHex(Objects.requireNonNull(multipartFile.getOriginalFilename()).getBytes()));
         if (StringUtils.isNotEmpty(getExtension(multipartFile))) {
-            fileName.append(STR_DOT).append(getExtension(multipartFile));
+            fileName.append(this.STR_DOT).append(getExtension(multipartFile));
         }
         final File file = getFile(targetDirPath + "/" + fileName);
         try {
             FileCopyUtils.copy(multipartFile.getBytes(), file);
         } catch (final IOException e) {
-            LOGGER.warn(ExceptionUtils.getStackTrace(e));
+            this.LOGGER.warn(ExceptionUtils.getStackTrace(e));
             throw new BusinessException(e);
         }
         return file;
@@ -171,17 +169,17 @@ public class FileUtils {
         validateFile(multipartFile);
         checkExistingDirectory(targetDirPath);
         final File file = uploadMultipartFile(targetDirPath, multipartFile);
-        LOGGER.info(STR_INFO_MESSAGE, file.getAbsolutePath());
+        this.LOGGER.info(this.STR_INFO_MESSAGE, file.getAbsolutePath());
     }
 
     // 업로드 하려는 파일의 검증(MultipartFile 이용)
     public void validateFile(final MultipartFile multipartFile) {
         if (FileType.ILLEGAL.extList.contains(getExtension(multipartFile))) {
-            LOGGER.warn("{}{}", ExceptionCode.FAIL_FILE_SIZE.toString(), multipartFile.getOriginalFilename());
+            this.LOGGER.warn("{}{}", ExceptionCode.FAIL_FILE_SIZE.toString(), multipartFile.getOriginalFilename());
             throw new BusinessException(ExceptionCode.FAIL_FILE_SIZE);
         }
         if (FileType.ILLEGAL.mimeTypeList.contains(getMimeType(multipartFile))) {
-            LOGGER.warn("{}{}", ExceptionCode.FAIL_FILE_MIMETYPE.toString(), multipartFile.getOriginalFilename());
+            this.LOGGER.warn("{}{}", ExceptionCode.FAIL_FILE_MIMETYPE.toString(), multipartFile.getOriginalFilename());
             throw new BusinessException(ExceptionCode.FAIL_FILE_MIMETYPE);
         }
     }
@@ -189,11 +187,11 @@ public class FileUtils {
     // 업로드된 파일의 검증(File 이용)
     public void validateFile(final File file) {
         if (FileType.ILLEGAL.extList.contains(getExtension(file))) {
-            LOGGER.warn("{}{}", ExceptionCode.FAIL_FILE_SIZE.toString(), file.getAbsolutePath());
+            this.LOGGER.warn("{}{}", ExceptionCode.FAIL_FILE_SIZE.toString(), file.getAbsolutePath());
             throw new BusinessException(ExceptionCode.FAIL_FILE_SIZE);
         }
         if (FileType.ILLEGAL.mimeTypeList.contains(getMimeType(file))) {
-            LOGGER.warn("{}{}", ExceptionCode.FAIL_FILE_MIMETYPE.toString(), file.getAbsolutePath());
+            this.LOGGER.warn("{}{}", ExceptionCode.FAIL_FILE_MIMETYPE.toString(), file.getAbsolutePath());
             throw new BusinessException(ExceptionCode.FAIL_FILE_MIMETYPE);
         }
     }
@@ -202,11 +200,11 @@ public class FileUtils {
     public void validateFile(final MultipartFile multipartFile, final FileType fileType) {
         try {
             if (!fileType.extList.contains(getExtension(multipartFile))) {
-                LOGGER.warn("{}{}", ExceptionCode.FAIL_FILE_SIZE.toString(), multipartFile.getOriginalFilename());
+                this.LOGGER.warn("{}{}", ExceptionCode.FAIL_FILE_SIZE.toString(), multipartFile.getOriginalFilename());
                 throw new BusinessException(ExceptionCode.FAIL_FILE_SIZE);
             }
             if (!fileType.mimeTypeList.contains(getMimeType(multipartFile))) {
-                LOGGER.warn("{}{}", ExceptionCode.FAIL_FILE_MIMETYPE.toString(), multipartFile.getOriginalFilename());
+                this.LOGGER.warn("{}{}", ExceptionCode.FAIL_FILE_MIMETYPE.toString(), multipartFile.getOriginalFilename());
                 throw new BusinessException(ExceptionCode.FAIL_FILE_MIMETYPE);
             }
 
@@ -220,11 +218,11 @@ public class FileUtils {
     public void validateFile(final File file, final FileType fileType) {
         try {
             if (!fileType.extList.contains(getExtension(file))) {
-                LOGGER.warn("{}{}", ExceptionCode.FAIL_FILE_SIZE.toString(), file.getAbsolutePath());
+                this.LOGGER.warn("{}{}", ExceptionCode.FAIL_FILE_SIZE.toString(), file.getAbsolutePath());
                 throw new BusinessException(ExceptionCode.FAIL_FILE_SIZE);
             }
             if (!fileType.mimeTypeList.contains(getMimeType(file))) {
-                LOGGER.warn("{}{}", ExceptionCode.FAIL_FILE_MIMETYPE.toString(), file.getAbsolutePath());
+                this.LOGGER.warn("{}{}", ExceptionCode.FAIL_FILE_MIMETYPE.toString(), file.getAbsolutePath());
                 throw new BusinessException(ExceptionCode.FAIL_FILE_MIMETYPE);
             }
 
@@ -276,9 +274,9 @@ public class FileUtils {
             if (multipartFile == null) {
                 return null;
             }
-            return TIKA_INSTANCE.detect(multipartFile.getBytes()).toLowerCase();
+            return this.TIKA_INSTANCE.detect(multipartFile.getBytes()).toLowerCase();
         } catch (final IOException e) {
-            LOGGER.warn(ExceptionUtils.getStackTrace(e));
+            this.LOGGER.warn(ExceptionUtils.getStackTrace(e));
             throw new BusinessException(e);
         }
     }
@@ -288,9 +286,9 @@ public class FileUtils {
             if (file == null) {
                 return null;
             }
-            return TIKA_INSTANCE.detect(file).toLowerCase();
+            return this.TIKA_INSTANCE.detect(file).toLowerCase();
         } catch (final IOException e) {
-            LOGGER.warn(ExceptionUtils.getStackTrace(e));
+            this.LOGGER.warn(ExceptionUtils.getStackTrace(e));
             throw new BusinessException(e);
         }
     }
