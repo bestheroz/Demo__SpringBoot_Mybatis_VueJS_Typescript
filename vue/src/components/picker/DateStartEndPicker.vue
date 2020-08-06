@@ -148,7 +148,7 @@ export default class extends Vue {
   @Watch('startDay', { immediate: true })
   watchStartDayHandler(val: string | number | Date): void {
     if (!val || isNaN(new Date(val).getTime())) {
-      this.$emit('update:start-dt', dayjs().startOf('day').toDate());
+      this.$emit('update:start-day', dayjs().startOf('day').toDate());
       return;
     }
     this.localStartDay = dayjs(val).format('YYYY-MM-DD');
@@ -157,7 +157,7 @@ export default class extends Vue {
   @Watch(`endDay`, { immediate: true })
   watchEndDayHandler(val: string | number | Date): void {
     if (!val || isNaN(new Date(val).getTime())) {
-      this.$emit('update:end-dt', dayjs().endOf('day').toDate());
+      this.$emit('update:end-day', dayjs().endOf('day').toDate());
       return;
     }
     this.localEndDay = dayjs(val).format('YYYY-MM-DD');
