@@ -1,3 +1,9 @@
 {
-  "projectId": "yg2rf4"
+  "projectId": "yg2rf4",
+  "baseUrl": "http://localhost:8081",
+  "env": {
+    "apiHost": "http://localhost:8080",
+    "username": "1",
+    "password": "1"
+  }
 }

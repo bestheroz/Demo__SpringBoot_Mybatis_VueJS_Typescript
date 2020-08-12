@@ -13,6 +13,18 @@ import { getApi } from '@/utils/apis';
 })
 export default class extends Vue {
   async mounted() {
+    if (!Vue.$storage.has('accessToken')) {
+      Vue.$storage.set(
+        'accessToken',
+        window.localStorage.getItem('accessToken'),
+      );
+    }
+    if (!Vue.$storage.has('refreshToken')) {
+      Vue.$storage.set(
+        'refreshToken',
+        window.localStorage.getItem('refreshToken'),
+      );
+    }
     if (!Vue.$storage.has('accessToken') || !Vue.$storage.has('refreshToken')) {
       store.commit('needLogin');
       return;

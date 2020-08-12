@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "baseUrl": "../node_modules",
+    "target": "esnext",
+    "module": "esnext",
+    "lib": ["esnext", "dom"],
+    "types": ["node", "cypress", "cypress-localstorage-commands"]
+  },
+  "include": ["**/*.ts"]
+}

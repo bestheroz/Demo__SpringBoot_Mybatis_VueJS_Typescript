@@ -1,6 +1,6 @@
 describe('로그인 체크', () => {
   it('로그인화면 이동', () => {
-    cy.visit('http://127.0.0.1:8081');
+    cy.visit('/login');
   });
 
   it('아이디 패스워드 입력', () => {
@@ -9,6 +9,13 @@ describe('로그인 체크', () => {
   });
 
   it('로그인 처리', () => {
+    cy.server();
     cy.contains("Let's Go").click();
+  });
+
+  it('로그인 완료 확인', () => {
+    cy.get('.v-toolbar__content i.mdi-timer-sand ')
+      .parent()
+      .should('contain', '시간');
   });
 });

@@ -23,3 +23,27 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
+import 'cypress-localstorage-commands';
+const pbkdf2 = require('pbkdf2');
+Cypress.Commands.add('login', () => {
+  const pbkdf2Password = pbkdf2
+    .pbkdf2Sync(Cypress.env('password'), 'salt', 1, 32, 'sha512')
+    .toString();
+  cy.request({
+    method: 'POST',
+    url: `${Cypress.env('apiHost')}/api/auth/login`,
+    body: {
+      id: Cypress.env('username'),
+      password: pbkdf2Password,
+    },
+  })
+    .its('body')
+    .then((body) => {
+      cy.setLocalStorage('accessToken', body.data.accessToken);
+      cy.setLocalStorage('refreshToken', body.data.refreshToken);
+    })
+    .then(() => {
+      console.log(window.localStorage.getItem('accessToken'));
+      cy.visit('/');
+    });
+});
