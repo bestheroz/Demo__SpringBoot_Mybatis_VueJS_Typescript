@@ -14,6 +14,7 @@ describe('관리자>메뉴관리', () => {
     cy.visit('/admin/menu');
   });
   it('메뉴추가', () => {
+    cy.get('body').click();
     cy.contains('하위메뉴입력').eq(0).click();
   });
 });
