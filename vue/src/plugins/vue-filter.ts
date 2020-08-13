@@ -20,12 +20,15 @@ Vue.filter('formatDate', function (
   }
   return dayjs(value).format('YYYY-MM-DD');
 });
-Vue.filter('formatEmpNm', function (value: string | undefined | null): string {
+Vue.filter('formatMemberNm', function (
+  value: string | undefined | null,
+): string {
   if (value) {
     if (window.localStorage.getItem('memberList')) {
-      return JSON.parse(window.localStorage.getItem('memberList')!).find(
+      const find = JSON.parse(window.localStorage.getItem('memberList')!).find(
         (value1: SelectItem) => value1!.value === value,
-      ).text;
+      );
+      return find ? find.text : '';
     } else {
       return value || '';
     }

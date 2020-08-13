@@ -1,4 +1,4 @@
-describe('로그인 체크', () => {
+describe('로그인', () => {
   it('로그인화면 이동', () => {
     cy.visit('/login');
   });
@@ -18,4 +18,7 @@ describe('로그인 체크', () => {
       .parent()
       .should('contain', '시간');
   });
+});
+describe('로그아웃', () => {
+  // TODO:
 });

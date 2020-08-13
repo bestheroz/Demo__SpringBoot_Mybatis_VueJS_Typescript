@@ -88,7 +88,7 @@
           {{ item.updated | formatDatetime }}
         </template>
         <template v-slot:item.updatedBy="{ item }">
-          {{ item.updatedBy | formatEmpNm }}
+          {{ item.updatedBy | formatMemberNm }}
         </template>
       </v-data-table>
       <member-edit-dialog

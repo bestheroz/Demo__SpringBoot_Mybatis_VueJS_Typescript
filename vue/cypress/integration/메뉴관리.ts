@@ -25,7 +25,7 @@ describe('관리자>메뉴관리, 관리자>메뉴권한관리', () => {
       cy.get('button').contains('저장').click();
     });
     cy.wait('@save');
-    cy.get('button').contains('성공').click();
+    cy.wait(20).get('button').contains('성공').click();
   });
   it('메뉴추가 - 하위메뉴1', () => {
     cy.server();
@@ -47,7 +47,7 @@ describe('관리자>메뉴관리, 관리자>메뉴권한관리', () => {
       cy.get('button').contains('저장').click();
     });
     cy.wait('@save');
-    cy.get('button').contains('성공').click();
+    cy.wait(20).get('button').contains('성공').click();
   });
   it('메뉴추가 - 하위메뉴2', () => {
     cy.server();
@@ -69,7 +69,7 @@ describe('관리자>메뉴관리, 관리자>메뉴권한관리', () => {
       cy.get('button').contains('저장').click();
     });
     cy.wait('@save');
-    cy.get('button').contains('성공').click();
+    cy.wait(20).get('button').contains('성공').click();
   });
   it('추가된 메뉴 - 권한 추가', () => {
     cy.server();
@@ -114,7 +114,7 @@ describe('관리자>메뉴관리, 관리자>메뉴권한관리', () => {
       cy.get('button').contains('저장').click();
     });
     cy.wait('@save');
-    cy.get('button').contains('성공').click();
+    cy.wait(20).get('button').contains('성공').click();
   });
   it('메뉴수정 - 하위메뉴1', () => {
     cy.server();
@@ -138,7 +138,7 @@ describe('관리자>메뉴관리, 관리자>메뉴권한관리', () => {
       cy.get('button').contains('저장').click();
     });
     cy.wait('@save');
-    cy.get('button').contains('성공').click();
+    cy.wait(20).get('button').contains('성공').click();
   });
   it('메뉴수정 - 하위메뉴2', () => {
     cy.server();
@@ -162,7 +162,7 @@ describe('관리자>메뉴관리, 관리자>메뉴권한관리', () => {
       cy.get('button').contains('저장').click();
     });
     cy.wait('@save');
-    cy.get('button').contains('성공').click();
+    cy.wait(20).get('button').contains('성공').click();
   });
   it('수정된 메뉴확인', () => {
     cy.visitHome();
@@ -172,12 +172,12 @@ describe('관리자>메뉴관리, 관리자>메뉴권한관리', () => {
       cy.get('div.v-list-item__title').contains('테스트 하위메뉴2222');
     });
   });
-  it('화면이동', () => {
-    cy.server();
-    cy.route('**/api/admin/menus/').as('getList');
-    cy.visit('/admin/menu');
-    cy.wait('@getList');
-  });
+  // it('화면이동 - 관리자>메뉴관리', () => {
+  //   cy.server();
+  //   cy.route('**/api/admin/menus/').as('getList');
+  //   cy.menu('관리자', '메뉴관리');
+  //   cy.wait('@getList');
+  // });
   it('메뉴삭제 - 하위메뉴2', () => {
     cy.server();
     cy.route('**/api/admin/menus/**').as('delete');
@@ -191,22 +191,7 @@ describe('관리자>메뉴관리, 관리자>메뉴권한관리', () => {
       .click();
     cy.get('button').contains('삭제 하겠습니다').click();
     cy.wait('@delete');
-    cy.get('button').contains('성공').click();
-  });
-  it('메뉴삭제 - 하위메뉴1', () => {
-    cy.server();
-    cy.route('**/api/admin/menus/**').as('delete');
-    cy.get('tr>td>span')
-      .contains('테스트 하위메뉴1')
-      .parent('td')
-      .next('td')
-      .next('td')
-      .children('button')
-      .contains('삭제')
-      .click();
-    cy.get('button').contains('삭제 하겠습니다').click();
-    cy.wait('@delete');
-    cy.get('button').contains('성공').click();
+    cy.wait(20).get('button').contains('성공').click();
   });
   it('메뉴삭제 - 그룹메뉴', () => {
     cy.server();
@@ -221,6 +206,6 @@ describe('관리자>메뉴관리, 관리자>메뉴권한관리', () => {
       .click();
     cy.get('button').contains('삭제 하겠습니다').click();
     cy.wait('@delete');
-    cy.get('button').contains('성공').click();
+    cy.wait(20).get('button').contains('성공').click();
   });
 });

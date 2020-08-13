@@ -89,7 +89,7 @@
             {{ item.authority | getCodeText(AUTHORITY) }}
           </template>
           <template v-slot:item.updatedBy="{ item }">
-            {{ item.updatedBy | formatEmpNm }}
+            {{ item.updatedBy | formatMemberNm }}
           </template>
           <template v-slot:item.updated="{ item }">
             {{ item.updated | formatDatetime }}
