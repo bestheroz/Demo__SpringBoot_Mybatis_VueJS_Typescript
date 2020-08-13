@@ -16,7 +16,7 @@ describe('관리자>메뉴관리, 관리자>메뉴권한관리', () => {
   });
   it('메뉴추가 - 그룹메뉴', () => {
     cy.server();
-    cy.route('**/api/admÍin/menus/').as('save');
+    cy.route('**/api/admin/menus/').as('save');
     cy.get('button').contains('하위메뉴입력').eq(0).click();
     cy.get('div.v-dialog__content--active').within(() => {
       cy.get('label').contains('메뉴명').next().type('테스트 그룹메뉴');
@@ -86,8 +86,7 @@ describe('관리자>메뉴관리, 관리자>메뉴권한관리', () => {
     cy.get('div.v-speed-dial div.v-speed-dial__list button:eq(1)').click();
   });
   it('추가된 메뉴확인', () => {
-    cy.server();
-    cy.visit('/');
+    cy.visitHome();
     cy.get('nav.v-navigation-drawer').within(() => {
       cy.get('div.v-list-item__title').contains('테스트 그룹메뉴').click();
       cy.get('div.v-list-item__title').contains('테스트 하위메뉴1');
@@ -96,7 +95,7 @@ describe('관리자>메뉴관리, 관리자>메뉴권한관리', () => {
   });
   it('메뉴수정 - 그룹메뉴', () => {
     cy.server();
-    cy.route('**/api/admin/menus/*/').as('save');
+    cy.route('**/api/admin/menus/**').as('save');
     cy.get('tr>td>span')
       .contains('테스트 그룹메뉴')
       .parent('td')
@@ -119,7 +118,7 @@ describe('관리자>메뉴관리, 관리자>메뉴권한관리', () => {
   });
   it('메뉴수정 - 하위메뉴1', () => {
     cy.server();
-    cy.route('**/api/admin/menus/*/').as('save');
+    cy.route('**/api/admin/menus/**').as('save');
     cy.get('tr>td>span')
       .contains('테스트 하위메뉴1')
       .parent('td')
@@ -166,8 +165,7 @@ describe('관리자>메뉴관리, 관리자>메뉴권한관리', () => {
     cy.get('button').contains('성공').click();
   });
   it('수정된 메뉴확인', () => {
-    cy.server();
-    cy.visit('/');
+    cy.visitHome();
     cy.get('nav.v-navigation-drawer').within(() => {
       cy.get('div.v-list-item__title').contains('테스트 그룹메뉴0000').click();
       cy.get('div.v-list-item__title').contains('테스트 하위메뉴1111');

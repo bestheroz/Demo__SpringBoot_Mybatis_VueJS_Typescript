@@ -45,8 +45,20 @@ Cypress.Commands.add('login', () => {
       cy.setLocalStorage('refreshToken', body.data.refreshToken);
     })
     .then(() => {
-      cy.visit('/');
+      cy.visitHome();
     });
+});
+Cypress.Commands.add('visitHome', () => {
+  cy.server();
+  cy.route('**/api/auth/me').as('me');
+  cy.route('**/api/menus/drawer').as('drawer');
+  cy.route('**/api/menus').as('menus');
+  cy.route('**/api/admin/members/memberList').as('memberList');
+  cy.visit('/');
+  cy.wait('@me');
+  cy.wait('@drawer');
+  cy.wait('@menus');
+  cy.wait('@memberList');
 });
 Cypress.Commands.add('menu', (menuGroup: string, menu: string) => {
   return cy.get('nav.v-navigation-drawer').within(() => {

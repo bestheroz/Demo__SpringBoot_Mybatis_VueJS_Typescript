@@ -45,7 +45,6 @@ export default class extends Vue {
       return;
     }
     window.localStorage.setItem('menus', JSON.stringify(response3.data));
-    await this.$router.push('/admin/menu');
 
     const response4 = await getApi<SelectItem[]>('admin/members/memberList');
     if (!response4.data) {
