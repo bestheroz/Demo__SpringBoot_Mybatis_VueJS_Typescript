@@ -25,7 +25,9 @@ import { DrawerItem, TableMenuVO } from '@/common/types';
 @Component({ name: 'Viewer' })
 export default class extends Vue {
   mounted() {
-    const items: TableMenuVO[] = this.$storage.get('menus');
+    const items: TableMenuVO[] = JSON.parse(
+      window.localStorage.getItem('menus')!,
+    );
     if (items && items.length > 0) {
       const result = items.find((item) => item.url === this.$route.fullPath);
       !result && this.$store.commit('error', 404);
@@ -34,7 +36,9 @@ export default class extends Vue {
 
   get title() {
     let result: string = '';
-    const items: DrawerItem[] = this.$storage.get('drawer');
+    const items: DrawerItem[] = JSON.parse(
+      window.localStorage.getItem('drawer')!,
+    );
     if (items && items.length > 0) {
       items.forEach((item) => {
         if (this.$route.name) {

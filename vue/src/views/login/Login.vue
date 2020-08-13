@@ -108,7 +108,7 @@ export default class extends Vue {
       this.$toasted.error('로그인이 필요합니다.');
     }
     this.title = await getVariableApi('title');
-    Vue.$storage.clear();
+    window.localStorage.clear();
   }
 
   async login() {

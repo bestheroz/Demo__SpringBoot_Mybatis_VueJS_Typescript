@@ -2,6 +2,7 @@ package com.github.bestheroz.sample.api.admin.member;
 
 import com.github.bestheroz.sample.api.entity.member.TableMemberEntity;
 import com.github.bestheroz.sample.api.entity.member.TableMemberRepository;
+import com.github.bestheroz.standard.common.code.CodeVO;
 import com.github.bestheroz.standard.common.response.ApiResult;
 import com.github.bestheroz.standard.common.response.Result;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -48,5 +50,10 @@ public class AdminMemberController {
     public ResponseEntity<ApiResult> delete(@PathVariable(value = "id") final String id) {
         this.tableMemberRepository.delete(TableMemberEntity.class, Map.of("id", id));
         return Result.ok();
+    }
+
+    @GetMapping("memberList")
+    public ResponseEntity<ApiResult> getMemberList() {
+        return Result.ok(this.tableMemberRepository.getItems(TableMemberEntity.class).stream().map(item -> new CodeVO(item.getId(), item.getName())).collect(Collectors.toList()));
     }
 }

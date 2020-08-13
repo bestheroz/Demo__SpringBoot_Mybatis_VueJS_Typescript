@@ -21,15 +21,11 @@ Vue.filter('formatDate', function (
   return dayjs(value).format('YYYY-MM-DD');
 });
 Vue.filter('formatEmpNm', function (value: string | undefined | null): string {
-  if (!Vue.$storage.has('memberList')) {
-    return value || '';
-  }
   if (value) {
-    const emp = (Vue.$storage.get('memberList') as SelectItem[]).find(
-      (value1) => value1.value === value,
-    );
-    if (emp) {
-      return emp.text;
+    if (window.localStorage.getItem('memberList')) {
+      return JSON.parse(window.localStorage.getItem('memberList')!).find(
+        (value1: SelectItem) => value1!.value === value,
+      ).text;
     } else {
       return value || '';
     }
