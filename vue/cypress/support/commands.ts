@@ -23,7 +23,9 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
+/// <reference types="../support" />
 import 'cypress-localstorage-commands';
+
 const pbkdf2 = require('pbkdf2');
 Cypress.Commands.add('login', () => {
   const pbkdf2Password = pbkdf2
@@ -43,7 +45,53 @@ Cypress.Commands.add('login', () => {
       cy.setLocalStorage('refreshToken', body.data.refreshToken);
     })
     .then(() => {
-      console.log(window.localStorage.getItem('accessToken'));
       cy.visit('/');
     });
 });
+Cypress.Commands.add('menu', (menuGroup: string, menu: string) => {
+  return cy.get('nav.v-navigation-drawer').within(() => {
+    cy.get('div.v-list-item__title').contains(menuGroup).click();
+    cy.get('div.v-list-item__title').contains(menu).click();
+  });
+});
+Cypress.Commands.add(
+  'chooseSelectValue',
+  (label: string, value: string, within = false) => {
+    return cy
+      .get('label')
+      .contains(label)
+      .next()
+      .children('input')
+      .then((element) => {
+        cy.get(
+          `div[aria-owns="${element.attr('id')!.split('input').join('list')}"]`,
+        )
+          .parent('div.v-input__control')
+          .parent('div.v-select')
+          .click();
+        if (within) {
+          cy.root()
+            .parent('div.v-application')
+            .within(() => {
+              cy.get(
+                `#${element
+                  .attr('id')!
+                  .split('input')
+                  .join('list')} div.v-list-item__content`,
+              )
+                .contains(value)
+                .click();
+            });
+        } else {
+          cy.get(
+            `#${element
+              .attr('id')!
+              .split('input')
+              .join('list')} div.v-list-item__content`,
+          )
+            .contains(value)
+            .click();
+        }
+      });
+  },
+);

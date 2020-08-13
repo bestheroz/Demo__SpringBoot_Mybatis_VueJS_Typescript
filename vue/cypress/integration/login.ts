@@ -10,7 +10,7 @@ describe('로그인 체크', () => {
 
   it('로그인 처리', () => {
     cy.server();
-    cy.contains("Let's Go").click();
+    cy.contains(' Go').click();
   });
 
   it('로그인 완료 확인', () => {
