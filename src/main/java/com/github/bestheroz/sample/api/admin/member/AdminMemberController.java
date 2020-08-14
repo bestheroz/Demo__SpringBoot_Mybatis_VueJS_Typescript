@@ -46,7 +46,9 @@ public class AdminMemberController {
     @PatchMapping(value = "{id}")
     @CacheEvict(value = "memberCache")
     public ResponseEntity<ApiResult> update(@PathVariable(value = "id") final String id, @RequestBody final TableMemberEntity tableMemberEntity) {
-        this.tableMemberRepository.updateMap(TableMemberEntity.class, Map.of("id", id), Map.of("id", id));
+        this.tableMemberRepository.updateMap(TableMemberEntity.class,
+                Map.of("name", tableMemberEntity.getName(), "authority", tableMemberEntity.getAuthority(), "expired", tableMemberEntity.getExpired(), "available", tableMemberEntity.isAvailable(),
+                        "timeout", tableMemberEntity.getTimeout()), Map.of("id", id));
         return Result.ok();
     }
 
@@ -54,6 +56,12 @@ public class AdminMemberController {
     @CacheEvict(value = "memberCache")
     public ResponseEntity<ApiResult> delete(@PathVariable(value = "id") final String id) {
         this.tableMemberRepository.delete(TableMemberEntity.class, Map.of("id", id));
+        return Result.ok();
+    }
+
+    @PostMapping(value = "{id}/resetPassword")
+    public ResponseEntity<ApiResult> resetPassword(@PathVariable(value = "id") final String id) {
+        this.tableMemberRepository.resetPassword(id);
         return Result.ok();
     }
 

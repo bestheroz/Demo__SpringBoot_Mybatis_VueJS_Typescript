@@ -11,4 +11,7 @@ public interface TableMemberRepository extends SqlRepository<TableMemberEntity> 
 
     @Select(value = "UPDATE MEMBER SET LOGIN_FAIL_CNT = LOGIN_FAIL_CNT + 1 WHERE ID = #{id, jdbcType=VARCHAR}")
     void plusLoginFailCnt(String id);
+
+    @Select(value = "UPDATE MEMBER SET PASSWORD = NULL WHERE ID = #{id, jdbcType=VARCHAR}")
+    void resetPassword(String id);
 }

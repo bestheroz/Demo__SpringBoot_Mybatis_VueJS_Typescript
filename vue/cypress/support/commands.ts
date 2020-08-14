@@ -44,34 +44,41 @@ Cypress.Commands.add('login', (username: string, password: string) => {
     .then(() => {
       cy.visitHome();
     });
+  return cy;
 });
 Cypress.Commands.add('visitHome', () => {
   cy.server();
-  cy.route('**/api/auth/me').as('me');
-  cy.route('**/api/menus/drawer').as('drawer');
-  cy.route('**/api/menus').as('menus');
-  cy.route('**/api/admin/members/memberList').as('memberList');
+  cy.route('GET', '**/api/auth/me').as('me');
+  cy.route('GET', '**/api/menus/drawer').as('drawer');
+  cy.route('GET', '**/api/menus').as('menus');
+  cy.route('GET', '**/api/admin/members/memberList').as('memberList');
   cy.visit('/');
   cy.wait('@me');
   cy.wait('@drawer');
   cy.wait('@menus');
   cy.wait('@memberList');
+  return cy;
 });
 Cypress.Commands.add('logout', () => {
+  cy.server();
+  cy.route('DELETE', '**/api/auth/logout').as('logout');
   cy.get('div.v-toolbar__content i.mdi-account').parent().trigger('mouseenter');
-  return cy.get('button').contains('Logout').click();
+  cy.get('button').contains('Logout').click();
+  cy.wait('@logout');
+  cy.visit('/login');
+  return cy;
 });
 Cypress.Commands.add('menu', (menuGroup: string, menu: string) => {
-  return cy.get('nav.v-navigation-drawer').within(() => {
+  cy.get('nav.v-navigation-drawer').within(() => {
     cy.get('div.v-list-item__title').contains(menuGroup).click();
     cy.get('div.v-list-item__title').contains(menu).click();
   });
+  return cy;
 });
 Cypress.Commands.add(
   'chooseSelectValue',
   (label: string, value: string, within = false) => {
-    return cy
-      .get('label')
+    cy.get('label')
       .contains(label)
       .next()
       .children('input')
@@ -106,5 +113,6 @@ Cypress.Commands.add(
             .click();
         }
       });
+    return cy;
   },
 );

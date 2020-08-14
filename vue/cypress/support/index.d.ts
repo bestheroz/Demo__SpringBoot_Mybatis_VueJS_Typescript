@@ -17,9 +17,9 @@
 
 declare namespace Cypress {
   interface Chainable<Subject> {
-    login(username: string, password: string): void;
-    logout(): void;
-    visitHome(): void;
+    login(username: string, password: string): Chainable<any>;
+    logout(): Chainable<any>;
+    visitHome(): Chainable<any>;
     menu(menuGroup: string, menu: string): Chainable<any>;
     chooseSelectValue(label: string, value: string, within?: boolean): Chainable<any>;
   }

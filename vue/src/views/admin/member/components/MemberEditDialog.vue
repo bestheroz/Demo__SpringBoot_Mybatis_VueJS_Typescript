@@ -105,31 +105,13 @@
                     @click:append="show1 = !show1"
                   />
                 </ValidationProvider>
-                <ValidationProvider
-                  name="비밀번호"
-                  vid="password"
-                  rules="max:20"
-                  v-slot="{ errors }"
-                  v-else
-                >
-                  <v-text-field
-                    v-model="editItem.password"
-                    label="*비밀번호"
-                    :counter="20"
-                    :error-messages="errors"
-                    :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
-                    :type="show1 ? 'text' : 'password'"
-                    @click:append="show1 = !show1"
-                    clearable
-                  />
-                </ValidationProvider>
               </v-col>
               <v-col cols="12" md="4">
                 <ValidationProvider
                   name="비밀번호 확인"
                   rules="required|confirmed:password|max:20"
                   v-slot="{ errors }"
-                  v-if="editItem.password"
+                  v-if="mode === '추가' && editItem.password"
                 >
                   <v-text-field
                     v-model="password2"
@@ -142,6 +124,14 @@
                     clearable
                   />
                 </ValidationProvider>
+                <v-btn
+                  color="warning"
+                  @click="resetPassword"
+                  v-if="mode !== '추가'"
+                  outlined
+                >
+                  패스워드 초기화
+                </v-btn>
               </v-col>
             </v-row>
           </ValidationObserver>
@@ -264,6 +254,15 @@ export default class extends Vue {
         this.$emit('finished');
       }
     }
+  }
+
+  async resetPassword() {
+    this.loading = true;
+    await postDataApi<TableMemberVO>(
+      `${this.ENDPOINT_URL}${this.editItem.id}/resetPassword`,
+      this.editItem,
+    );
+    this.loading = false;
   }
 }
 </script>

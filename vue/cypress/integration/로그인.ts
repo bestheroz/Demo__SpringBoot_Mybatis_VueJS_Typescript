@@ -16,7 +16,7 @@ describe('로그인/로그아웃', () => {
     cy.login(Cypress.env('username'), Cypress.env('password'));
     cy.get('div.v-toolbar__content i.mdi-timer-sand')
       .parent()
-      .should('contain', '01시간');
+      .contains('01시간');
     cy.logout();
   });
 });
