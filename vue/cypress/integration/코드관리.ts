@@ -1,5 +1,5 @@
 before(() => {
-  cy.login();
+  cy.login(Cypress.env('username'), Cypress.env('password'));
   cy.saveLocalStorage();
 });
 
@@ -111,7 +111,7 @@ describe('관리자>코드관리', () => {
     cy.wait(20).get('button').contains('성공').click();
   });
   it('수정된 코드확인', () => {
-    cy.get('tr>td').contains('테스트 하위코드1111');
+    cy.get('tr>td').should('contain', '테스트 하위코드1111');
   });
   it('코드수정 - MENU_TYPE > P', () => {
     cy.server();
@@ -139,7 +139,7 @@ describe('관리자>코드관리', () => {
     cy.route('**/api/admin/menus/').as('getList');
     cy.menu('관리자', '메뉴관리');
     cy.wait('@getList');
-    cy.get('tr>td').contains('페이쥐_테스트');
+    cy.get('tr>td').should('contain', '페이쥐_테스트');
   });
   it('코드수정 - MENU_TYPE > P - 복구', () => {
     cy.server();
@@ -160,7 +160,7 @@ describe('관리자>코드관리', () => {
     cy.wait(20).get('button').contains('성공').click();
   });
   it('원복 코드확인', () => {
-    cy.get('tr>td').contains('페이지');
+    cy.get('tr>td').should('contain', '페이지');
   });
   it('코드삭제 - 하위코드2', () => {
     cy.server();

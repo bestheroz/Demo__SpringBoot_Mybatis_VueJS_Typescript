@@ -1,5 +1,5 @@
 before(() => {
-  cy.login();
+  cy.login(Cypress.env('username'), Cypress.env('password'));
   cy.saveLocalStorage();
 });
 
@@ -168,8 +168,8 @@ describe('관리자>메뉴관리, 관리자>메뉴권한관리', () => {
     cy.visitHome();
     cy.get('nav.v-navigation-drawer').within(() => {
       cy.get('div.v-list-item__title').contains('테스트 그룹메뉴0000').click();
-      cy.get('div.v-list-item__title').contains('테스트 하위메뉴1111');
-      cy.get('div.v-list-item__title').contains('테스트 하위메뉴2222');
+      cy.get('div.v-list-item__title').should('contain', '테스트 하위메뉴1111');
+      cy.get('div.v-list-item__title').should('contain', '테스트 하위메뉴2222');
     });
   });
   // it('화면이동 - 관리자>메뉴관리', () => {

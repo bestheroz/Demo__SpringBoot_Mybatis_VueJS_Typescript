@@ -1,4 +1,4 @@
-describe('로그인', () => {
+describe('로그인/로그아웃', () => {
   it('로그인화면 이동', () => {
     cy.visit('/login');
   });
@@ -9,16 +9,14 @@ describe('로그인', () => {
   });
 
   it('로그인 처리', () => {
-    cy.server();
     cy.contains(' Go').click();
   });
 
-  it('로그인 완료 확인', () => {
-    cy.get('.v-toolbar__content i.mdi-timer-sand ')
+  it('로그인 완료 확인 및 로그아웃', () => {
+    cy.login(Cypress.env('username'), Cypress.env('password'));
+    cy.get('div.v-toolbar__content i.mdi-timer-sand')
       .parent()
-      .should('contain', '시간');
+      .should('contain', '01시간');
+    cy.logout();
   });
-});
-describe('로그아웃', () => {
-  // TODO:
 });

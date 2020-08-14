@@ -11,7 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -22,12 +24,16 @@ public class AdminMemberController {
 
     @GetMapping
     ResponseEntity<ApiResult> getItems() {
-        return Result.ok(this.tableMemberRepository.getItems(TableMemberEntity.class));
+        final List<TableMemberEntity> items = this.tableMemberRepository.getItems(TableMemberEntity.class);
+        items.forEach(item -> item.setPassword(null));
+        return Result.ok(items);
     }
 
     @GetMapping(value = "{id}")
     ResponseEntity<ApiResult> getItem(@PathVariable(value = "id") final String id) {
-        return Result.ok(this.tableMemberRepository.getItem(TableMemberEntity.class, Map.of("id", id)));
+        final Optional<TableMemberEntity> item = this.tableMemberRepository.getItem(TableMemberEntity.class, Map.of("id", id));
+        item.ifPresent(item1 -> item1.setPassword(null));
+        return Result.ok(item);
     }
 
     @PostMapping
@@ -40,8 +46,7 @@ public class AdminMemberController {
     @PatchMapping(value = "{id}")
     @CacheEvict(value = "memberCache")
     public ResponseEntity<ApiResult> update(@PathVariable(value = "id") final String id, @RequestBody final TableMemberEntity tableMemberEntity) {
-        // TODO: 화면에서 받은걸 그냥 update 하면 특정 컬럼의 데이터가 지워질 수 있다.
-        this.tableMemberRepository.update(tableMemberEntity, Map.of("id", id));
+        this.tableMemberRepository.updateMap(TableMemberEntity.class, Map.of("id", id), Map.of("id", id));
         return Result.ok();
     }
 

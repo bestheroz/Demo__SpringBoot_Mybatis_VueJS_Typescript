@@ -22,6 +22,7 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @UtilityClass
@@ -146,7 +147,7 @@ public class FileUtils {
 
     private File uploadMultipartFile(final String targetDirPath, final MultipartFile multipartFile) {
         final StringBuilder fileName = new StringBuilder(80);
-        fileName.append(OffsetDateTime.now().format(DateUtils.YYYYMMDDHHMMSS)).append(STR_UNDERLINE)
+        fileName.append(OffsetDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))).append(STR_UNDERLINE)
                 .append(DigestUtils.md5DigestAsHex(Objects.requireNonNull(multipartFile.getOriginalFilename()).getBytes()));
         if (StringUtils.isNotEmpty(getExtension(multipartFile))) {
             fileName.append(STR_DOT).append(getExtension(multipartFile));

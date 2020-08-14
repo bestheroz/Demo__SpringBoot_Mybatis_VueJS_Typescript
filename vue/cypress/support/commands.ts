@@ -27,16 +27,13 @@
 import 'cypress-localstorage-commands';
 
 const pbkdf2 = require('pbkdf2');
-Cypress.Commands.add('login', () => {
-  const pbkdf2Password = pbkdf2
-    .pbkdf2Sync(Cypress.env('password'), 'salt', 1, 32, 'sha512')
-    .toString();
+Cypress.Commands.add('login', (username: string, password: string) => {
   cy.request({
     method: 'POST',
     url: `${Cypress.env('apiHost')}/api/auth/login`,
     body: {
-      id: Cypress.env('username'),
-      password: pbkdf2Password,
+      id: username,
+      password: pbkdf2.pbkdf2Sync(password, 'salt', 1, 32, 'sha512').toString(),
     },
   })
     .its('body')
@@ -59,6 +56,10 @@ Cypress.Commands.add('visitHome', () => {
   cy.wait('@drawer');
   cy.wait('@menus');
   cy.wait('@memberList');
+});
+Cypress.Commands.add('logout', () => {
+  cy.get('div.v-toolbar__content i.mdi-account').parent().trigger('mouseenter');
+  return cy.get('button').contains('Logout').click();
 });
 Cypress.Commands.add('menu', (menuGroup: string, menu: string) => {
   return cy.get('nav.v-navigation-drawer').within(() => {
