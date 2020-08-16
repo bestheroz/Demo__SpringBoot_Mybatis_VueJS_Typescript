@@ -112,8 +112,8 @@ import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import {
   DataTableHeader,
   SelectItem,
-  TableCodeGroupVO,
-  TableCodeVO,
+  TableCodeEntity,
+  TableCodeGroupEntity,
 } from '@/common/types';
 import { getCodeListApi, getListApi } from '@/utils/apis';
 import envs from '@/constants/envs';
@@ -130,7 +130,7 @@ import DataTableFilter from '@/components/datatable/DataTableFilter.vue';
   },
 })
 export default class extends Vue {
-  @Prop({ required: true }) readonly parentItem!: TableCodeGroupVO;
+  @Prop({ required: true }) readonly parentItem!: TableCodeGroupEntity;
 
   readonly envs: typeof envs = envs;
   AUTHORITY: SelectItem[] | null = null;
@@ -139,10 +139,10 @@ export default class extends Vue {
   loading: boolean = false;
   sortBy: string[] = ['displayOrder'];
   sortDesc: boolean[] = [false];
-  items: TableCodeVO[] = [];
-  filteredItems: TableCodeVO[] = [];
-  editItem: TableCodeVO = Object.create(null);
-  selected: TableCodeVO[] = [];
+  items: TableCodeEntity[] = [];
+  filteredItems: TableCodeEntity[] = [];
+  editItem: TableCodeEntity = Object.create(null);
+  selected: TableCodeEntity[] = [];
   dialog: boolean = false;
   headers: DataTableHeader[] = [
     {
@@ -198,7 +198,7 @@ export default class extends Vue {
   }
 
   @Watch('parentItem')
-  watchParentItem(val: TableCodeGroupVO): void {
+  watchParentItem(val: TableCodeGroupEntity): void {
     this.items = [];
     if (val && val.codeGroup) {
       this.getList();
@@ -209,7 +209,7 @@ export default class extends Vue {
     this.selected = [];
     this.items = [];
     this.loading = true;
-    const response = await getListApi<TableCodeVO[]>(
+    const response = await getListApi<TableCodeEntity[]>(
       `admin/codes/${this.parentItem.codeGroup}`,
     );
     this.loading = false;

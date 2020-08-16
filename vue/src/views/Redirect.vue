@@ -7,8 +7,8 @@ import { Component, Vue } from 'vue-property-decorator';
 import {
   DrawerItem,
   SelectItem,
-  TableMemberVO,
-  TableMenuVO,
+  TableMemberEntity,
+  TableMenuEntity,
 } from '@/common/types';
 import store from '@/store';
 import { getApi } from '@/utils/apis';
@@ -25,7 +25,7 @@ export default class extends Vue {
       store.commit('needLogin');
       return;
     }
-    const response = await getApi<TableMemberVO>(`auth/me`);
+    const response = await getApi<TableMemberEntity>(`auth/me`);
     if (!response.data) {
       store.commit('needLogin');
       return;
@@ -39,7 +39,7 @@ export default class extends Vue {
     }
     window.localStorage.setItem('drawer', JSON.stringify(response2.data));
 
-    const response3 = await getApi<TableMenuVO[]>('menus');
+    const response3 = await getApi<TableMenuEntity[]>('menus');
     if (!response3.data) {
       store.commit('needLogin');
       return;

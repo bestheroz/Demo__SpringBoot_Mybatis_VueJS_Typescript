@@ -153,7 +153,7 @@
 
 <script lang="ts">
 import { Component, Prop, PropSync, Vue, Watch } from 'vue-property-decorator';
-import { SelectItem, TableMemberVO } from '@/common/types';
+import { SelectItem, TableMemberEntity } from '@/common/types';
 import {
   deleteDataApi,
   getCodeListApi,
@@ -172,7 +172,7 @@ const pbkdf2 = require('pbkdf2');
 })
 export default class extends Vue {
   @PropSync('dialog', { required: true, type: Boolean }) syncedDialog!: boolean;
-  @Prop({ required: true }) readonly editItem!: TableMemberVO;
+  @Prop({ required: true }) readonly editItem!: TableMemberEntity;
   @Prop({ required: true }) readonly mode!: string | null;
 
   readonly ENDPOINT_URL: string = 'admin/members/';
@@ -210,7 +210,7 @@ export default class extends Vue {
         .pbkdf2Sync(params.password, 'salt', 1, 32, 'sha512')
         .toString();
     }
-    const response = await postDataApi<TableMemberVO>(
+    const response = await postDataApi<TableMemberEntity>(
       this.ENDPOINT_URL,
       params,
     );
@@ -229,7 +229,7 @@ export default class extends Vue {
         .pbkdf2Sync(params.password, 'salt', 1, 32, 'sha512')
         .toString();
     }
-    const response = await patchDataApi<TableMemberVO>(
+    const response = await patchDataApi<TableMemberEntity>(
       this.ENDPOINT_URL,
       params,
       this.editItem.id!,
@@ -245,7 +245,7 @@ export default class extends Vue {
     const result = await confirmDelete();
     if (result.value) {
       this.loading = true;
-      const response = await deleteDataApi<TableMemberVO>(
+      const response = await deleteDataApi<TableMemberEntity>(
         this.ENDPOINT_URL,
         this.editItem.id!,
       );
@@ -258,7 +258,7 @@ export default class extends Vue {
 
   async resetPassword() {
     this.loading = true;
-    await postDataApi<TableMemberVO>(
+    await postDataApi<TableMemberEntity>(
       `${this.ENDPOINT_URL}${this.editItem.id}/resetPassword`,
       this.editItem,
     );

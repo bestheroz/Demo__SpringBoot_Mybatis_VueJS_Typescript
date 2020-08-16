@@ -6,7 +6,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { DrawerItem, TableMenuVO } from '@/common/types';
+import { DrawerItem, TableMenuEntity } from '@/common/types';
 
 @Component({ name: 'ViewNoDrawer' })
 export default class extends Vue {
@@ -14,7 +14,7 @@ export default class extends Vue {
 
   mounted() {
     this.items = JSON.parse(window.localStorage.getItem('drawer')!);
-    const items: TableMenuVO[] = JSON.parse(
+    const items: TableMenuEntity[] = JSON.parse(
       window.localStorage.getItem('menus')!,
     );
     if (items && items.length > 0) {

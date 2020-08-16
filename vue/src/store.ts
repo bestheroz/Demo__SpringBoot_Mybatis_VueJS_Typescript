@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import router from '@/router';
-import { TableMemberVO } from '@/common/types';
+import { TableMemberEntity } from '@/common/types';
 import envs from '@/constants/envs';
 import { axiosInstance } from '@/utils/apis';
 
@@ -18,7 +18,7 @@ export default new Vuex.Store({
       window.localStorage.setItem('refreshToken', token.refreshToken);
     },
     // @ts-ignore
-    saveUserVO(state, loginVO: TableMemberVO) {
+    saveUserVO(state, loginVO: TableMemberEntity) {
       window.localStorage.setItem('authority', loginVO.authority!.toString());
       window.localStorage.setItem('timeout', loginVO.timeout!.toString());
       window.localStorage.setItem('userVO', JSON.stringify(loginVO));

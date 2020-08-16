@@ -33,11 +33,11 @@ public class AuthService implements UserDetailsService {
         if (StringUtils.isEmpty(username)) {
             throw new UsernameNotFoundException("No user found");
         }
-        final Optional<TableMemberEntity> oTableMemberVO = this.tableMemberRepository.getItem(TableMemberEntity.class, Map.of("id", username));
-        if (oTableMemberVO.isEmpty()) {
+        final Optional<TableMemberEntity> oTableMemberEntity = this.tableMemberRepository.getItem(TableMemberEntity.class, Map.of("id", username));
+        if (oTableMemberEntity.isEmpty()) {
             throw new UsernameNotFoundException("No user found by `" + username + "`");
         }
-        final TableMemberEntity tableMemberEntity = oTableMemberVO.get();
+        final TableMemberEntity tableMemberEntity = oTableMemberEntity.get();
         return new UserVO(tableMemberEntity.getId(), tableMemberEntity.getName(), tableMemberEntity.getAuthority(), tableMemberEntity.getTimeout());
     }
 
@@ -99,7 +99,7 @@ public class AuthService implements UserDetailsService {
             log.warn(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER.toString());
             throw new BusinessException(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER);
         }
- 
+
         final TableMemberEntity tableMemberEntity = oTableMemberEntity.get();
         if (StringUtils.isNotEmpty(tableMemberEntity.getPassword())) {
             log.warn(ExceptionCode.FAIL_INVALID_REQUEST.toString());
