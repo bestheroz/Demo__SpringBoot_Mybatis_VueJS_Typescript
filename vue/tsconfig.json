@@ -12,7 +12,7 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "emitDecoratorMetadata": true,
-    "sourceMap": false,
+    "sourceMap": true,
     "baseUrl": ".",
     "locale": "ko",
     "types": ["webpack-env", "vuetify"],
