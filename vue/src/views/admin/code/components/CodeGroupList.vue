@@ -76,7 +76,7 @@
             {{ item.updated | formatDatetime }}
           </template>
           <template v-slot:item.updatedBy="{ item }">
-            {{ item.updatedBy | formatEmpNm }}
+            {{ item.updatedBy | formatMemberNm }}
           </template>
         </v-data-table>
         <code-group-edit-dialog
@@ -93,7 +93,7 @@
 
 <script lang="ts">
 import { Component, Emit, Vue, Watch } from 'vue-property-decorator';
-import { DataTableHeader, TableCodeGroupVO } from '@/common/types';
+import { DataTableHeader, TableCodeGroupEntity } from '@/common/types';
 import { getListApi } from '@/utils/apis';
 import envs from '@/constants/envs';
 import dayjs from 'dayjs';
@@ -115,10 +115,10 @@ export default class extends Vue {
   mode: string | null = null;
   sortBy: string[] = ['codeGroup'];
   sortDesc: boolean[] = [false];
-  items: TableCodeGroupVO[] = [];
-  filteredItems: TableCodeGroupVO[] = [];
-  editItem: TableCodeGroupVO = Object.create(null);
-  selected: TableCodeGroupVO[] = [];
+  items: TableCodeGroupEntity[] = [];
+  filteredItems: TableCodeGroupEntity[] = [];
+  editItem: TableCodeGroupEntity = Object.create(null);
+  selected: TableCodeGroupEntity[] = [];
   dialog: boolean = false;
   loading: boolean = false;
 
@@ -155,7 +155,7 @@ export default class extends Vue {
 
   @Watch('selected')
   @Emit('select')
-  watchSelected(val: TableCodeGroupVO[]) {
+  watchSelected(val: TableCodeGroupEntity[]) {
     return val;
   }
 
@@ -164,7 +164,9 @@ export default class extends Vue {
     this.selected = [];
     this.items = [];
     this.loading = true;
-    const response = await getListApi<TableCodeGroupVO[]>(`admin/codeGroups/`);
+    const response = await getListApi<TableCodeGroupEntity[]>(
+      `admin/codeGroups/`,
+    );
     this.loading = false;
     this.items = response.data || [];
   }

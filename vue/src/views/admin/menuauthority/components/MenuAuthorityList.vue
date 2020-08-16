@@ -58,12 +58,12 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
-import { DataTableHeader, SelectItem, TableMenuVO } from '@/common/types';
+import { DataTableHeader, SelectItem, TableMenuEntity } from '@/common/types';
 import { getCodeListApi, getListApi, putDataApi } from '@/utils/apis';
 import envs from '@/constants/envs';
 import ButtonSet from '@/components/speeddial/ButtonSet.vue';
 
-interface AdminMenuAuthorityVO extends TableMenuVO {
+interface AdminMenuAuthorityVO extends TableMenuEntity {
   checked: boolean;
 }
 

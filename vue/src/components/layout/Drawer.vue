@@ -79,7 +79,7 @@ export default class extends Vue {
   }
 
   created() {
-    this.items = this.$storage.get('drawer');
+    this.items = JSON.parse(window.localStorage.getItem('drawer')!);
   }
 
   popupWindow(url: string) {

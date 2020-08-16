@@ -37,7 +37,7 @@ export interface SelectItem {
   text: string;
 }
 
-export interface TableMemberVO {
+export interface TableMemberEntity {
   id?: string | null;
   password?: string | null;
   name?: string | null;
@@ -53,7 +53,7 @@ export interface TableMemberVO {
   updatedBy?: string | null;
 }
 
-export interface TableMenuVO {
+export interface TableMenuEntity {
   id?: number | null;
   name?: string | null;
   type?: string | null;
@@ -77,7 +77,7 @@ export interface TableMenuVO {
 //   updatedBy?: string | null;
 // }
 
-export interface TableCodeGroupVO {
+export interface TableCodeGroupEntity {
   codeGroup?: string | null;
   name?: string | null;
   created?: Date | null;
@@ -86,7 +86,7 @@ export interface TableCodeGroupVO {
   updatedBy?: string | null;
 }
 
-export interface TableCodeVO {
+export interface TableCodeEntity {
   codeGroup?: string | null;
   code?: string | null;
   name?: string | null;

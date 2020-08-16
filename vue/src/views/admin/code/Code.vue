@@ -23,7 +23,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { TableCodeGroupVO } from '@/common/types';
+import { TableCodeGroupEntity } from '@/common/types';
 import CodeList from '@/views/admin/code/components/CodeList.vue';
 import CodeGroupList from '@/views/admin/code/components/CodeGroupList.vue';
 
@@ -35,6 +35,6 @@ import CodeGroupList from '@/views/admin/code/components/CodeGroupList.vue';
   },
 })
 export default class extends Vue {
-  parentItem: TableCodeGroupVO = Object.create(null);
+  parentItem: TableCodeGroupEntity = Object.create(null);
 }
 </script>

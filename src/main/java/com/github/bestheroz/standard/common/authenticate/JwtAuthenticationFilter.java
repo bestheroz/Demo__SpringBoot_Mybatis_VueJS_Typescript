@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Slf4j
 public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
@@ -43,7 +42,6 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
 
         final String token = JwtTokenProvider.resolveAccessToken(request);
         final String refreshToken = JwtTokenProvider.resolveRefreshToken(request);
-        log.debug("{}", Arrays.stream(SecurityConfiguration.PUBLIC).map(item -> item.replace("*", "")).collect(Collectors.joining(",")));
         final Optional<String> oPublicPages = Arrays.stream(SecurityConfiguration.PUBLIC).map(item -> item.replace("*", "")).filter(requestURI::startsWith).findFirst();
         if (oPublicPages.isEmpty()) {
             if (StringUtils.isAnyEmpty(token, refreshToken)) {

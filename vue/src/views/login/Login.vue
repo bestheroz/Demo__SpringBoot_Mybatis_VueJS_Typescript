@@ -108,7 +108,7 @@ export default class extends Vue {
       this.$toasted.error('로그인이 필요합니다.');
     }
     this.title = await getVariableApi('title');
-    Vue.$storage.clear();
+    window.localStorage.clear();
   }
 
   async login() {
@@ -130,8 +130,9 @@ export default class extends Vue {
         id: this.id,
         password: pbkdf2Password,
       });
-      if (response.data.code === `S002`) {
+      if (response.data.code === 'S002') {
         this.dialog = true;
+        this.password = null;
       } else if (_.startsWith(response.data.code, `S`)) {
         this.$store.commit('saveToken', response.data.data);
         this.$toasted.clear();

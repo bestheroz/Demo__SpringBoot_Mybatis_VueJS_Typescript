@@ -11,11 +11,11 @@ export function getCodes(
 
 export function getText(
   codes: SelectItem[] | null,
-  value: string,
+  value: string | null,
   defaultText?: string,
 ): string {
   const filterElement = (codes || []).find(
-    (item) => item.value === value.toString(),
+    (item) => item.value === (value || '').toString(),
   );
   return (filterElement && filterElement.text) || defaultText || '-';
 }

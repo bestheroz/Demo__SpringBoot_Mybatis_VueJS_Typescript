@@ -119,7 +119,7 @@
 
 <script lang="ts">
 import { Component, Prop, PropSync, Vue, Watch } from 'vue-property-decorator';
-import { SelectItem, TableCodeVO } from '@/common/types';
+import { SelectItem, TableCodeEntity } from '@/common/types';
 import {
   deleteDataApi,
   getCodeListApi,
@@ -134,7 +134,7 @@ import { confirmDelete } from '@/utils/alerts';
 })
 export default class extends Vue {
   @PropSync('dialog', { required: true, type: Boolean }) syncedDialog!: boolean;
-  @Prop({ required: true }) readonly editItem!: TableCodeVO;
+  @Prop({ required: true }) readonly editItem!: TableCodeEntity;
   @Prop({ required: true }) readonly mode!: string | null;
 
   AUTHORITY: SelectItem[] | null = null;
@@ -162,7 +162,7 @@ export default class extends Vue {
 
   async create() {
     this.loading = true;
-    const response = await postDataApi<TableCodeVO>(
+    const response = await postDataApi<TableCodeEntity>(
       `admin/codes/${this.editItem.codeGroup}`,
       this.editItem,
     );
@@ -175,7 +175,7 @@ export default class extends Vue {
 
   async patch() {
     this.loading = true;
-    const response = await patchDataApi<TableCodeVO>(
+    const response = await patchDataApi<TableCodeEntity>(
       `admin/codes/`,
       this.editItem,
       { key: this.editItem.codeGroup!, key2: this.editItem.code! },
@@ -183,7 +183,7 @@ export default class extends Vue {
     this.loading = false;
     if (_.startsWith(response.code, `S`)) {
       this.syncedDialog = false;
-      Vue.$storage.remove(`code__${this.editItem.codeGroup}`);
+      window.localStorage.removeItem(`code__${this.editItem.codeGroup}`);
       this.$emit('finished');
     }
   }
@@ -192,13 +192,13 @@ export default class extends Vue {
     const result = await confirmDelete();
     if (result.value) {
       this.loading = true;
-      const response = await deleteDataApi<TableCodeVO>(`admin/codes/`, {
+      const response = await deleteDataApi<TableCodeEntity>(`admin/codes/`, {
         key: this.editItem.codeGroup!,
         key2: this.editItem.code!,
       });
       this.loading = false;
       if (_.startsWith(response.code, `S`)) {
-        Vue.$storage.remove(`code__${this.editItem.codeGroup}`);
+        window.localStorage.removeItem(`code__${this.editItem.codeGroup}`);
         this.$emit('finished');
       }
     }

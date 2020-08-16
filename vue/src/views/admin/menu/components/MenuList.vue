@@ -93,13 +93,13 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { DataTableHeader, SelectItem, TableMenuVO } from '@/common/types';
+import { DataTableHeader, SelectItem, TableMenuEntity } from '@/common/types';
 import { getCodeListApi, getListApi } from '@/utils/apis';
 import envs from '@/constants/envs';
 import MenuEditDialog from '@/views/admin/menu/components/MenuEditDialog.vue';
 import ButtonSet from '@/components/speeddial/ButtonSet.vue';
 
-interface MenuVO extends TableMenuVO {
+interface MenuVO extends TableMenuEntity {
   level: number;
 }
 
@@ -113,9 +113,9 @@ interface MenuVO extends TableMenuVO {
 export default class extends Vue {
   readonly envs: typeof envs = envs;
   mode: string | null = null;
-  items: TableMenuVO[] = [];
-  editItem: TableMenuVO = Object.create(null);
-  selected: TableMenuVO[] = [];
+  items: TableMenuEntity[] = [];
+  editItem: TableMenuEntity = Object.create(null);
+  selected: TableMenuEntity[] = [];
   loading: boolean = false;
   dialog: boolean = false;
 

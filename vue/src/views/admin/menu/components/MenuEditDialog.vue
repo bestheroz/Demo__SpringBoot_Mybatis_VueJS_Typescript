@@ -77,7 +77,7 @@
                 <v-text-field v-model="editItem.icon" label="메뉴 아이콘" />
               </v-col>
               <v-col cols="12" md="1" v-if="editItem.level === 2">
-                <v-icon> {{ editItem.icon }} </v-icon>
+                <v-icon> {{ editItem.icon }}</v-icon>
               </v-col>
             </v-row>
           </ValidationObserver>
@@ -99,7 +99,7 @@
 
 <script lang="ts">
 import { Component, Prop, PropSync, Vue, Watch } from 'vue-property-decorator';
-import { SelectItem, TableMenuVO } from '@/common/types';
+import { SelectItem, TableMenuEntity } from '@/common/types';
 import {
   deleteDataApi,
   getCodeListApi,
@@ -109,7 +109,7 @@ import {
 import _ from 'lodash';
 import { confirmDelete } from '@/utils/alerts';
 
-interface MenuVO extends TableMenuVO {
+interface MenuVO extends TableMenuEntity {
   level: number;
 }
 
@@ -145,7 +145,7 @@ export default class extends Vue {
 
   async create() {
     this.loading = true;
-    const response = await postDataApi<TableMenuVO>(
+    const response = await postDataApi<TableMenuEntity>(
       `admin/menus/`,
       this.editItem,
     );
@@ -158,7 +158,7 @@ export default class extends Vue {
 
   async patch() {
     this.loading = true;
-    const response = await patchDataApi<TableMenuVO>(
+    const response = await patchDataApi<TableMenuEntity>(
       `admin/menus/`,
       this.editItem,
       this.editItem.id!,
@@ -174,7 +174,7 @@ export default class extends Vue {
     const result = await confirmDelete();
     if (result.value) {
       this.loading = true;
-      const response = await deleteDataApi<TableMenuVO>(
+      const response = await deleteDataApi<TableMenuEntity>(
         `admin/menus/`,
         this.editItem.id!,
       );
