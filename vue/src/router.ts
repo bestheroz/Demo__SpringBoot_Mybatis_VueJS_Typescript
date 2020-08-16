@@ -6,7 +6,10 @@ Vue.use(Router);
 
 // @ts-ignore
 const requireAuth = () => async (to: any, from: any, next: any) => {
-  if (Vue.$storage.has('accessToken') && Vue.$storage.has('refreshToken')) {
+  if (
+    window.localStorage.getItem('accessToken') &&
+    window.localStorage.getItem('refreshToken')
+  ) {
     return next();
   }
   return store.commit('needLogin');

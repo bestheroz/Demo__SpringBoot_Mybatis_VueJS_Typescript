@@ -10,7 +10,7 @@
           @click="$store.commit('logout')"
           v-if="
             $router.currentRoute.path !== '/login' &&
-            this.$storage.has('accessToken')
+            window.localStorage.getItem('accessToken')
           "
         >
           <v-icon>mdi-logout</v-icon>

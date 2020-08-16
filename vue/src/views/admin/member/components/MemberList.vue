@@ -88,7 +88,7 @@
           {{ item.updated | formatDatetime }}
         </template>
         <template v-slot:item.updatedBy="{ item }">
-          {{ item.updatedBy | formatEmpNm }}
+          {{ item.updatedBy | formatMemberNm }}
         </template>
       </v-data-table>
       <member-edit-dialog
@@ -104,7 +104,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { DataTableHeader, SelectItem, TableMemberVO } from '@/common/types';
+import { DataTableHeader, SelectItem, TableMemberEntity } from '@/common/types';
 import { getCodeListApi, getListApi } from '@/utils/apis';
 import envs from '@/constants/envs';
 import ButtonSet from '@/components/speeddial/ButtonSet.vue';
@@ -126,10 +126,10 @@ export default class extends Vue {
   mode: string | null = null;
   sortBy: string[] = ['authority'];
   sortDesc: boolean[] = [true];
-  items: TableMemberVO[] = [];
-  filteredItems: TableMemberVO[] = [];
-  editItem: TableMemberVO = Object.create(null);
-  selected: TableMemberVO[] = [];
+  items: TableMemberEntity[] = [];
+  filteredItems: TableMemberEntity[] = [];
+  editItem: TableMemberEntity = Object.create(null);
+  selected: TableMemberEntity[] = [];
   loading: boolean = false;
   dialog: boolean = false;
 
@@ -199,7 +199,7 @@ export default class extends Vue {
     this.selected = [];
     this.items = [];
     this.loading = true;
-    const response = await getListApi<TableMemberVO[]>(`admin/members/`);
+    const response = await getListApi<TableMemberEntity[]>(`admin/members/`);
     this.loading = false;
     this.items = response.data || [];
   }

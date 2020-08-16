@@ -105,31 +105,13 @@
                     @click:append="show1 = !show1"
                   />
                 </ValidationProvider>
-                <ValidationProvider
-                  name="비밀번호"
-                  vid="password"
-                  rules="max:20"
-                  v-slot="{ errors }"
-                  v-else
-                >
-                  <v-text-field
-                    v-model="editItem.password"
-                    label="*비밀번호"
-                    :counter="20"
-                    :error-messages="errors"
-                    :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
-                    :type="show1 ? 'text' : 'password'"
-                    @click:append="show1 = !show1"
-                    clearable
-                  />
-                </ValidationProvider>
               </v-col>
               <v-col cols="12" md="4">
                 <ValidationProvider
                   name="비밀번호 확인"
                   rules="required|confirmed:password|max:20"
                   v-slot="{ errors }"
-                  v-if="editItem.password"
+                  v-if="mode === '추가' && editItem.password"
                 >
                   <v-text-field
                     v-model="password2"
@@ -142,6 +124,14 @@
                     clearable
                   />
                 </ValidationProvider>
+                <v-btn
+                  color="warning"
+                  @click="resetPassword"
+                  v-if="mode !== '추가'"
+                  outlined
+                >
+                  패스워드 초기화
+                </v-btn>
               </v-col>
             </v-row>
           </ValidationObserver>
@@ -163,7 +153,7 @@
 
 <script lang="ts">
 import { Component, Prop, PropSync, Vue, Watch } from 'vue-property-decorator';
-import { SelectItem, TableMemberVO } from '@/common/types';
+import { SelectItem, TableMemberEntity } from '@/common/types';
 import {
   deleteDataApi,
   getCodeListApi,
@@ -182,7 +172,7 @@ const pbkdf2 = require('pbkdf2');
 })
 export default class extends Vue {
   @PropSync('dialog', { required: true, type: Boolean }) syncedDialog!: boolean;
-  @Prop({ required: true }) readonly editItem!: TableMemberVO;
+  @Prop({ required: true }) readonly editItem!: TableMemberEntity;
   @Prop({ required: true }) readonly mode!: string | null;
 
   readonly ENDPOINT_URL: string = 'admin/members/';
@@ -220,7 +210,7 @@ export default class extends Vue {
         .pbkdf2Sync(params.password, 'salt', 1, 32, 'sha512')
         .toString();
     }
-    const response = await postDataApi<TableMemberVO>(
+    const response = await postDataApi<TableMemberEntity>(
       this.ENDPOINT_URL,
       params,
     );
@@ -239,7 +229,7 @@ export default class extends Vue {
         .pbkdf2Sync(params.password, 'salt', 1, 32, 'sha512')
         .toString();
     }
-    const response = await patchDataApi<TableMemberVO>(
+    const response = await patchDataApi<TableMemberEntity>(
       this.ENDPOINT_URL,
       params,
       this.editItem.id!,
@@ -255,7 +245,7 @@ export default class extends Vue {
     const result = await confirmDelete();
     if (result.value) {
       this.loading = true;
-      const response = await deleteDataApi<TableMemberVO>(
+      const response = await deleteDataApi<TableMemberEntity>(
         this.ENDPOINT_URL,
         this.editItem.id!,
       );
@@ -264,6 +254,15 @@ export default class extends Vue {
         this.$emit('finished');
       }
     }
+  }
+
+  async resetPassword() {
+    this.loading = true;
+    await postDataApi<TableMemberEntity>(
+      `${this.ENDPOINT_URL}${this.editItem.id}/resetPassword`,
+      this.editItem,
+    );
+    this.loading = false;
   }
 }
 </script>

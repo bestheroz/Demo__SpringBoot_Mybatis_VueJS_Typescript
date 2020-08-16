@@ -39,10 +39,6 @@ public class AdminMenuController {
     @PatchMapping(value = "{id}")
     @CacheEvict(value = "drawerCache", allEntries = true)
     public ResponseEntity<ApiResult> update(@PathVariable(value = "id") final Integer id, @RequestBody final TableMenuEntity tableMenuEntity) {
-//        final Optional<TableMenuEntity> byId = this.tableMenuRepository.getItem(TableMenuEntity.class, Map.of("id", id));
-//        if (byId.isEmpty()) {
-//            throw BusinessException.FAIL_INVALID_REQUEST;
-//        }
         this.tableMenuRepository.update(tableMenuEntity, Map.of("id", id));
         return Result.ok();
     }

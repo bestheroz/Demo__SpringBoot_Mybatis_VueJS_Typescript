@@ -219,13 +219,13 @@ public abstract class AbstractExcelXView extends AbstractView {
         } else if (excelVOs.get(columnIdx).getCellType().equals(CellType.DATE) || excelVOs.get(columnIdx).getCellType().equals(CellType.DATE_YYYYMMDDHHMMSS)) {
             strData = RegExUtils.removeAll(strData, "\\.0");
             if (StringUtils.isNumeric(strData)) {
-                strData = DateUtils.getString(Long.parseLong(strData), DateUtils.YYYY_MM_DD_HH_MM_SS);
+                strData = DateUtils.toString(Long.parseLong(strData), "yyyy-MM-dd HH:mm:ss");
             }
             this.setDate(cell, strData);
         } else if (excelVOs.get(columnIdx).getCellType().equals(CellType.DATE_YYYYMMDD)) {
             strData = RegExUtils.removeAll(strData, "\\.0");
             if (StringUtils.isNumeric(strData)) {
-                strData = DateUtils.getString(Long.parseLong(strData), DateUtils.YYYY_MM_DD);
+                strData = DateUtils.toString(Long.parseLong(strData), "yyyy-MM-dd");
             }
             this.setDate(cell, strData);
         } else {
