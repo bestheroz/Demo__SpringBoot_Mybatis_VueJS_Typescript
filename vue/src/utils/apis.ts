@@ -67,6 +67,7 @@ export interface ApiDataResult<T> {
   message: string;
   paginationTotalLength?: number;
 }
+
 export interface requestKey {
   key: string | number;
   key2: string | number;
@@ -244,6 +245,7 @@ export async function getExcelApi(url: string): Promise<void> {
       responseType: 'blob',
       headers: {
         Authorization: window.localStorage.getItem('accessToken'),
+        AuthorizationR: window.localStorage.getItem('refreshToken'),
         'Content-Type':
           'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
       },
