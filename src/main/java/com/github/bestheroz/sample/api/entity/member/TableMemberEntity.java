@@ -3,13 +3,14 @@ package com.github.bestheroz.sample.api.entity.member;
 import com.github.bestheroz.sample.api.entity.AbstractCreatedUpdateEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.time.Instant;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
-
 @AllArgsConstructor
 @NoArgsConstructor
 public class TableMemberEntity extends AbstractCreatedUpdateEntity implements Serializable {

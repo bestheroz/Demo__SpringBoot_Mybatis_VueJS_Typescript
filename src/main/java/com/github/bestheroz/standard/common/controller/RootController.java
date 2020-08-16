@@ -13,9 +13,9 @@ public class RootController implements ErrorController {
         return INDEX_HTML;
     }
 
-
     @Override
     public String getErrorPath() {
         return null;
     }
 }
+
