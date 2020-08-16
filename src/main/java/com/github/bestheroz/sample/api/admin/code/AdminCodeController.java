@@ -29,7 +29,6 @@ public class AdminCodeController {
     }
 
     @PostMapping(value = "{codeGroup}")
-    @CacheEvict(value = "codeCache", key = "#codeGroup")
     public ResponseEntity<ApiResult> insert(@PathVariable(value = "codeGroup") final String codeGroup, @RequestBody final TableCodeEntity tableCodeEntity) {
         this.tableCodeRepository.insert(tableCodeEntity);
         return Result.ok();

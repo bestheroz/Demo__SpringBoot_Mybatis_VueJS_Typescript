@@ -56,7 +56,6 @@ import { Component, PropSync, Vue, Watch } from 'vue-property-decorator';
 import envs from '@/constants/envs';
 import Countdown from 'vue-awesome-countdown/src/vue-awesome-countdown.vue';
 import { getVariableApi } from '@/utils/apis';
-import { DrawerItem } from '@/common/types';
 
 @Component({
   name: 'AppBar',
@@ -66,15 +65,14 @@ export default class extends Vue {
   @PropSync('drawer', { required: true, default: true }) syncedDrawer!: boolean;
   readonly envs: typeof envs = envs;
   title: string | null = null;
-  items: DrawerItem[] | null = null;
 
   get isPopup(): boolean {
     return !window.toolbar.visible;
   }
 
   get userName() {
-    if (this.$storage.has('userVO')) {
-      return this.$storage.get('userVO').name;
+    if (window.localStorage.getItem('userVO')) {
+      return JSON.parse(window.localStorage.getItem('userVO')!).name;
     } else {
       return '';
     }
@@ -82,10 +80,6 @@ export default class extends Vue {
 
   get logoutTime() {
     return this.$store.state.logoutTime;
-  }
-
-  async created() {
-    this.items = this.$storage.get('drawer');
   }
 
   async mounted() {

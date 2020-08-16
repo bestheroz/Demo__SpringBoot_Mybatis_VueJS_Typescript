@@ -1,53 +1,52 @@
 import Vue from 'vue';
 import dayjs from 'dayjs';
-import { SelectItem } from '@/common/types';
-import { getText } from '@/utils/codes';
+import {SelectItem} from '@/common/types';
+import {getText} from '@/utils/codes';
 import _ from 'lodash';
 
 Vue.filter('formatDatetime', function (
-  value: string | number | Date | undefined | null,
+    value: string | number | Date | undefined | null,
 ): string {
-  if (value === undefined || value === null || value === '') {
-    return '';
-  }
-  return dayjs(value).format('YYYY-MM-DD HH:mm:ss');
+    if (value === undefined || value === null || value === '') {
+        return '';
+    }
+    return dayjs(value).format('YYYY-MM-DD HH:mm:ss');
 });
 Vue.filter('formatDate', function (
-  value: string | number | Date | undefined | null,
+    value: string | number | Date | undefined | null,
 ): string {
-  if (value === undefined || value === null || value === '') {
-    return '';
-  }
-  return dayjs(value).format('YYYY-MM-DD');
-});
-Vue.filter('formatEmpNm', function (value: string | undefined | null): string {
-  if (!Vue.$storage.has('memberList')) {
-    return value || '';
-  }
-  if (value) {
-    const emp = (Vue.$storage.get('memberList') as SelectItem[]).find(
-      (value1) => value1.value === value,
-    );
-    if (emp) {
-      return emp.text;
-    } else {
-      return value || '';
+    if (value === undefined || value === null || value === '') {
+        return '';
     }
-  } else {
-    return '';
-  }
+    return dayjs(value).format('YYYY-MM-DD');
+});
+Vue.filter('formatMemberNm', function (
+    value: string | undefined | null,
+): string {
+    if (value) {
+        if (window.localStorage.getItem('memberList')) {
+            const find = JSON.parse(window.localStorage.getItem('memberList')!).find(
+                (value1: SelectItem) => value1!.value === value,
+            );
+            return find ? find.text : value;
+        } else {
+            return value;
+        }
+    } else {
+        return '';
+    }
 });
 Vue.filter('getCodeText', function (
-  value: string,
-  codes: SelectItem[] | null,
+    value: string,
+    codes: SelectItem[] | null,
 ): string {
-  return getText(codes, value);
+    return getText(codes, value);
 });
 Vue.filter('getEllipseText', function (text: string, length: number): string {
-  return _.truncate(text, {
-    length: length,
-  });
+    return _.truncate(text, {
+        length: length,
+    });
 });
 Vue.filter('getSwitchLabel', function (yn: boolean, prefix?: string): string {
-  return _.trim((prefix || '') + (yn ? ' 사용' : ' 사용안함'));
+    return _.trim((prefix || '') + (yn ? ' 사용' : ' 사용안함'));
 });

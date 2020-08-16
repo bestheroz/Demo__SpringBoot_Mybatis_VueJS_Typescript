@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Slf4j
 public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
@@ -43,9 +42,8 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
 
         final String token = JwtTokenProvider.resolveAccessToken(request);
         final String refreshToken = JwtTokenProvider.resolveRefreshToken(request);
-        log.debug("{}", Arrays.stream(SecurityConfiguration.PUBLIC).map(item -> item.replace("*", "")).collect(Collectors.joining(",")));
-        final Optional<String> publicPages = Arrays.stream(SecurityConfiguration.PUBLIC).map(item -> item.replace("*", "")).filter(requestURI::startsWith).findFirst();
-        if (publicPages.isEmpty()) {
+        final Optional<String> oPublicPages = Arrays.stream(SecurityConfiguration.PUBLIC).map(item -> item.replace("*", "")).filter(requestURI::startsWith).findFirst();
+        if (oPublicPages.isEmpty()) {
             if (StringUtils.isAnyEmpty(token, refreshToken)) {
                 log.debug("non token");
                 (response).sendError(HttpServletResponse.SC_UNAUTHORIZED);
@@ -61,13 +59,13 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
                         return;
                     }
                 } else if (JwtTokenProvider.validateRefreshToken(token, refreshToken)) {
-                    final Optional<TableMemberEntity> one = AccessBeanUtils.getBean(TableMemberRepository.class).getItem(TableMemberEntity.class, Map.of("token", refreshToken));
-                    if (one.isEmpty()) {
+                    final Optional<TableMemberEntity> oTableMemberEntity = AccessBeanUtils.getBean(TableMemberRepository.class).getItem(TableMemberEntity.class, Map.of("token", refreshToken));
+                    if (oTableMemberEntity.isEmpty()) {
                         log.debug("invalid refresh-token");
                         (response).sendError(HttpServletResponse.SC_UNAUTHORIZED);
                         return;
                     }
-                    final TableMemberEntity tableMemberEntity = one.get();
+                    final TableMemberEntity tableMemberEntity = oTableMemberEntity.get();
                     final UserVO userVO = MapperUtils.toObject(tableMemberEntity, UserVO.class);
                     final String newAccessToken = JwtTokenProvider.createAccessToken(userVO);
                     final String newRefreshToken = JwtTokenProvider.createRefreshToken(userVO, newAccessToken);

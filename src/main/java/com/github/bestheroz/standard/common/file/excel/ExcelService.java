@@ -34,7 +34,7 @@ public class ExcelService extends AbstractExcelXView {
         final List<HashMap> listData = MapperUtils.toArrayList(model.get(AbstractExcelXView.LIST_DATA), HashMap.class);
         final String fileName = FileUtils.getEncodedFileName(request, (String) model.get(AbstractExcelXView.FILE_NAME));
 
-        response.setHeader("Content-Disposition", "attachment;filename=" + fileName + "_" + DateUtils.getStringNow(DateUtils.YYYYMMDDHHMMSS) + AbstractExcelXView.EXTENSION + ";");
+        response.setHeader("Content-Disposition", "attachment;filename=" + fileName + "_" + DateUtils.toStringNow("yyyyMMddHHmmss") + AbstractExcelXView.EXTENSION + ";");
 
         final SXSSFSheet sheet = workbook.createSheet("report");
         sheet.setRandomAccessWindowSize(100);
@@ -50,7 +50,7 @@ public class ExcelService extends AbstractExcelXView {
         final CellRangeAddress mergedRegion = new CellRangeAddress(0, 0, 0, excelVOs.size() - 1);
         sheet.addMergedRegion(mergedRegion);
         final SXSSFCell cell10 = row0.createCell(0);
-        cell10.setCellValue("This report was generated at " + DateUtils.getStringNow(DateUtils.YYYY_MM_DD_HH_MM_SS));
+        cell10.setCellValue("This report was generated at " + DateUtils.toStringNow("yyyy-MM-dd HH:mm:ss"));
 
         final XSSFCellStyle cellStyle = (XSSFCellStyle) sheet.getWorkbook().createCellStyle();
         cellStyle.setAlignment(HorizontalAlignment.CENTER);
@@ -79,7 +79,7 @@ public class ExcelService extends AbstractExcelXView {
             final HashMap jo = listData.get(i);
             for (int j = 0; j < excelVOs.size(); j++) {
                 final String value = (String) jo.get(excelVOs.get(j).getDbColName());
-                if (value != null && StringUtils.isNotEmpty(value)) {
+                if (StringUtils.isNotEmpty(value)) {
                     this.writeColumnData(excelVOs, j, row.createCell(j), value);
                 }
             }

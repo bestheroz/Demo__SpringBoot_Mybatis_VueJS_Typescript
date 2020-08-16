@@ -33,24 +33,24 @@ public class AuthService implements UserDetailsService {
         if (StringUtils.isEmpty(username)) {
             throw new UsernameNotFoundException("No user found");
         }
-        final Optional<TableMemberEntity> oTableMemberVO = this.tableMemberRepository.getItem(TableMemberEntity.class, Map.of("id", username));
-        if (oTableMemberVO.isEmpty()) {
+        final Optional<TableMemberEntity> oTableMemberEntity = this.tableMemberRepository.getItem(TableMemberEntity.class, Map.of("id", username));
+        if (oTableMemberEntity.isEmpty()) {
             throw new UsernameNotFoundException("No user found by `" + username + "`");
         }
-        final TableMemberEntity tableMemberEntity = oTableMemberVO.get();
+        final TableMemberEntity tableMemberEntity = oTableMemberEntity.get();
         return new UserVO(tableMemberEntity.getId(), tableMemberEntity.getName(), tableMemberEntity.getAuthority(), tableMemberEntity.getTimeout());
     }
 
     Map<String, String> login(final String id, final String password) {
-        final Optional<TableMemberEntity> one = this.tableMemberRepository.getItem(TableMemberEntity.class, Map.of("id", id));
+        final Optional<TableMemberEntity> oTableMemberEntity = this.tableMemberRepository.getItem(TableMemberEntity.class, Map.of("id", id));
         // 로그인 관문
         // 1. 유저가 없으면
-        if (one.isEmpty()) {
+        if (oTableMemberEntity.isEmpty()) {
             log.warn(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER.toString());
             throw new BusinessException(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER);
         }
 
-        final TableMemberEntity tableMemberEntity = one.get();
+        final TableMemberEntity tableMemberEntity = oTableMemberEntity.get();
 
         // 2. 패스워드를 생성한 적이 없으면
         if (StringUtils.isEmpty(tableMemberEntity.getPassword())) {
@@ -92,15 +92,15 @@ public class AuthService implements UserDetailsService {
     }
 
     void initPassword(final String id, final String password) {
-        final Optional<TableMemberEntity> one = this.tableMemberRepository.getItem(TableMemberEntity.class, Map.of("id", id));
+        final Optional<TableMemberEntity> oTableMemberEntity = this.tableMemberRepository.getItem(TableMemberEntity.class, Map.of("id", id));
         // 로그인 관문
         // 1. 유저가 없으면
-        if (one.isEmpty()) {
+        if (oTableMemberEntity.isEmpty()) {
             log.warn(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER.toString());
             throw new BusinessException(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER);
         }
 
-        final TableMemberEntity tableMemberEntity = one.get();
+        final TableMemberEntity tableMemberEntity = oTableMemberEntity.get();
         if (StringUtils.isNotEmpty(tableMemberEntity.getPassword())) {
             log.warn(ExceptionCode.FAIL_INVALID_REQUEST.toString());
             throw new BusinessException(ExceptionCode.FAIL_INVALID_REQUEST);

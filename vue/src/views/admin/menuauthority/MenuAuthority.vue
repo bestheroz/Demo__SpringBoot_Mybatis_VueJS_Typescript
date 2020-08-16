@@ -49,7 +49,9 @@ export default class extends Vue {
     this.AUTHORITY =
       data.filter(
         (value) =>
-          ![Vue.$storage.get('authority'), 999].includes(parseInt(value.value)),
+          ![window.localStorage.getItem('authority'), 999].includes(
+            parseInt(value.value),
+          ),
       ) || [];
   }
 }

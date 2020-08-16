@@ -65,7 +65,7 @@
 
 <script lang="ts">
 import { Component, Prop, PropSync, Vue, Watch } from 'vue-property-decorator';
-import { TableCodeGroupVO } from '@/common/types';
+import { TableCodeGroupEntity } from '@/common/types';
 import { deleteDataApi, patchDataApi, postDataApi } from '@/utils/apis';
 import _ from 'lodash';
 import { confirmDelete } from '@/utils/alerts';
@@ -75,7 +75,7 @@ import { confirmDelete } from '@/utils/alerts';
 })
 export default class extends Vue {
   @PropSync('dialog', { required: true, type: Boolean }) syncedDialog!: boolean;
-  @Prop({ required: true }) readonly editItem!: TableCodeGroupVO;
+  @Prop({ required: true }) readonly editItem!: TableCodeGroupEntity;
   @Prop({ required: true }) readonly mode!: string | null;
 
   loading: boolean = false;
@@ -97,7 +97,7 @@ export default class extends Vue {
 
   async create() {
     this.loading = true;
-    const response = await postDataApi<TableCodeGroupVO>(
+    const response = await postDataApi<TableCodeGroupEntity>(
       `admin/codeGroups/`,
       this.editItem,
     );
@@ -110,7 +110,7 @@ export default class extends Vue {
 
   async patch() {
     this.loading = true;
-    const response = await patchDataApi<TableCodeGroupVO>(
+    const response = await patchDataApi<TableCodeGroupEntity>(
       `admin/codeGroups/`,
       this.editItem,
       this.editItem.codeGroup!,
@@ -126,7 +126,7 @@ export default class extends Vue {
     const result = await confirmDelete();
     if (result.value) {
       this.loading = true;
-      const response = await deleteDataApi<TableCodeGroupVO>(
+      const response = await deleteDataApi<TableCodeGroupEntity>(
         `admin/codeGroups/`,
         this.editItem.codeGroup!,
       );

@@ -3,21 +3,20 @@ import _ from 'lodash';
 import store from '@/store';
 import { alertError, alertSuccess, alertWarning } from '@/utils/alerts';
 import envs from '@/constants/envs';
-import Vue from 'vue';
 
 export const axiosInstance = axios.create({
   baseURL: envs.API_HOST,
   headers: {
     contentType: 'application/json',
-    Authorization: Vue.$storage.get('accessToken'),
-    AuthorizationR: Vue.$storage.get('refreshToken'),
+    Authorization: window.localStorage.getItem('accessToken'),
+    AuthorizationR: window.localStorage.getItem('refreshToken'),
   },
 });
 
 axiosInstance.interceptors.request.use(
   function (config) {
-    config.headers.Authorization = Vue.$storage.get('accessToken');
-    config.headers.AuthorizationR = Vue.$storage.get('refreshToken');
+    config.headers.Authorization = window.localStorage.getItem('accessToken');
+    config.headers.AuthorizationR = window.localStorage.getItem('refreshToken');
     return config;
   },
   function (error) {
@@ -68,6 +67,7 @@ export interface ApiDataResult<T> {
   message: string;
   paginationTotalLength?: number;
 }
+
 export interface requestKey {
   key: string | number;
   key2: string | number;
@@ -79,7 +79,7 @@ export async function getListApi<T>(url: string): Promise<ApiDataResult<T>> {
   return response.data;
 }
 
-export async function getDataApi<T>(
+export async function getItemApi<T>(
   url: string,
   id?: number | undefined,
 ): Promise<ApiDataResult<T>> {
@@ -162,8 +162,8 @@ export async function deleteDataApi<T>(
 export async function getCodeListApi<SelectItem>(
   codeGroup: string,
 ): Promise<SelectItem[]> {
-  if (Vue.$storage.has(`code__${codeGroup}`)) {
-    return Vue.$storage.get(`code__${codeGroup}`);
+  if (window.localStorage.getItem(`code__${codeGroup}`)) {
+    return JSON.parse(window.localStorage.getItem(`code__${codeGroup}`)!);
   } else {
     try {
       const response = await axiosInstance.get<ApiDataResult<SelectItem[]>>(
@@ -172,7 +172,10 @@ export async function getCodeListApi<SelectItem>(
       if (response && response.data && response.data.data) {
         const result = response.data.data || [];
         if (result.length > 0) {
-          Vue.$storage.set(`code__${codeGroup}`, result);
+          window.localStorage.setItem(
+            `code__${codeGroup}`,
+            JSON.stringify(result),
+          );
         }
         // @ts-ignore
         return result;
@@ -189,8 +192,8 @@ export async function getCodeListApi<SelectItem>(
 export async function getVariableApi<T = string>(
   variable: string,
 ): Promise<T | null> {
-  if (Vue.$storage.has(`variable__${variable}`)) {
-    return Vue.$storage.get(`variable__${variable}`);
+  if (window.localStorage.getItem(`variable__${variable}`)) {
+    return JSON.parse(window.localStorage.getItem(`variable__${variable}`)!);
   } else {
     try {
       const response = await axiosInstance.get<ApiDataResult<T>>(
@@ -198,7 +201,10 @@ export async function getVariableApi<T = string>(
       );
       const result = response.data.data;
       if (result) {
-        Vue.$storage.set(`variable__${variable}`, result);
+        window.localStorage.setItem(
+          `variable__${variable}`,
+          JSON.stringify(result),
+        );
       }
       // @ts-ignore
       return result;
@@ -238,7 +244,8 @@ export async function getExcelApi(url: string): Promise<void> {
       baseURL: envs.API_HOST || 'http://localhost:8080/',
       responseType: 'blob',
       headers: {
-        Authorization: Vue.$storage.get('accessToken'),
+        Authorization: window.localStorage.getItem('accessToken'),
+        AuthorizationR: window.localStorage.getItem('refreshToken'),
         'Content-Type':
           'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
       },

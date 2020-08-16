@@ -91,6 +91,7 @@ public class SqlCommand {
         }
     }
 
+    @SuppressWarnings("SameParameterValue")
     private void getWhereSql(final SQL sql, final Map<String, Object> whereConditions, final int entityPosition) {
         whereConditions.forEach((key, value) -> {
             if (ENCRYPTED_COLUMN_LIST.contains(key)) {
@@ -102,7 +103,7 @@ public class SqlCommand {
     }
 
     public <T> String countAll(final Class<T> tClass) {
-        return countByKey(tClass, Map.of());
+        return this.countByKey(tClass, Map.of());
     }
 
     public <T> String countByKey(final Class<T> tClass, final Map<String, Object> whereConditions) {
@@ -114,15 +115,15 @@ public class SqlCommand {
     }
 
     public <T> String getItems(final Class<T> tClass) {
-        return getItemsByKeyWithOrder(tClass, Map.of(), Set.of());
+        return this.getItemsByKeyWithOrder(tClass, Map.of(), Set.of());
     }
 
     public <T> String getItemsWithOrder(final Class<T> tClass, final Set<String> orderByConditions) {
-        return getItemsByKeyWithOrder(tClass, Map.of(), orderByConditions);
+        return this.getItemsByKeyWithOrder(tClass, Map.of(), orderByConditions);
     }
 
     public <T> String getItemsByKey(final Class<T> tClass, final Map<String, Object> whereConditions) {
-        return getItemsByKeyWithOrder(tClass, whereConditions, Set.of());
+        return this.getItemsByKeyWithOrder(tClass, whereConditions, Set.of());
     }
 
     public <T> String getItemsByKeyWithOrder(final Class<T> tClass, final Map<String, Object> whereConditions, final Set<String> orderByConditions) {
@@ -130,14 +131,14 @@ public class SqlCommand {
         this.getSelectSql(sql, ArrayUtils.addAll(tClass.getDeclaredFields(), tClass.getSuperclass().getDeclaredFields()));
         sql.FROM(getTableName(tClass.getSimpleName()));
         this.getWhereSql(sql, whereConditions, 2);
-        orderByConditions.forEach(columns -> sql.ORDER_BY(getCamelCaseToSnakeCase(columns)));
+        orderByConditions.forEach(columns -> sql.ORDER_BY(this.getCamelCaseToSnakeCase(columns)));
         log.debug(sql.toString());
         return sql.toString();
     }
 
     public <T> String getItemByKey(@NonNull final Class<T> tClass, @NonNull final Map<String, Object> whereConditions) {
         this.verifyWhereKey(whereConditions);
-        return getItemsByKeyWithOrder(tClass, whereConditions, Set.of());
+        return this.getItemsByKeyWithOrder(tClass, whereConditions, Set.of());
     }
 
     public <T> String insert(@NonNull final T entity) {
@@ -207,12 +208,7 @@ public class SqlCommand {
                 Arrays.stream(ArrayUtils.addAll(entity.getClass().getSuperclass().getDeclaredFields(), entity.getClass().getDeclaredFields())).map(Field::getName)
                         .collect(Collectors.toSet());
 
-        if (fieldNames.contains(VARIABLE_NAME_UPDATED)) {
-            sql.SET(TABLE_COLUMN_NAME_UPDATED + " = " + SYSDATE);
-        }
-        if (fieldNames.contains(VARIABLE_NAME_UPDATED_BY)) {
-            sql.SET(MessageFormat.format(SET_UPDATED_BY_BIND_STRING, TABLE_COLUMN_NAME_UPDATED_BY, AuthenticationUtils.getUserPk()));
-        }
+        this.getUpdateSetSql(sql, fieldNames);
         if (!StringUtils.containsIgnoreCase(sql.toString(), "WHERE ")) {
             log.warn("Not Found 'WHERE'");
             throw BusinessException.ERROR_SYSTEM;
@@ -237,9 +233,9 @@ public class SqlCommand {
         whereConditions.forEach((key, value) -> {
             final String dbColumnName = this.getCamelCaseToSnakeCase(key);
             if (ENCRYPTED_COLUMN_LIST.contains(key)) {
-                sql.WHERE(MessageFormat.format(WHERE_BIND_ENCRYPTED_STRING, dbColumnName, key, this.getJdbcType(value), 2));
+                sql.WHERE(MessageFormat.format(WHERE_BIND_ENCRYPTED_STRING, dbColumnName, key, this.getJdbcType(value), 3));
             } else {
-                sql.WHERE(MessageFormat.format(WHERE_BIND_STRING, dbColumnName, key, this.getJdbcType(value), 2));
+                sql.WHERE(MessageFormat.format(WHERE_BIND_STRING, dbColumnName, key, this.getJdbcType(value), 3));
             }
         });
 
@@ -247,12 +243,7 @@ public class SqlCommand {
                 Arrays.stream(ArrayUtils.addAll(tClass.getSuperclass().getDeclaredFields(), tClass.getDeclaredFields())).map(Field::getName)
                         .collect(Collectors.toSet());
 
-        if (fieldNames.contains(VARIABLE_NAME_UPDATED)) {
-            sql.SET(TABLE_COLUMN_NAME_UPDATED + " = " + SYSDATE);
-        }
-        if (fieldNames.contains(VARIABLE_NAME_UPDATED_BY)) {
-            sql.SET(MessageFormat.format(SET_UPDATED_BY_BIND_STRING, TABLE_COLUMN_NAME_UPDATED_BY, AuthenticationUtils.getUserPk()));
-        }
+        this.getUpdateSetSql(sql, fieldNames);
         if (!StringUtils.containsIgnoreCase(sql.toString(), "WHERE ")) {
             log.warn("Not Found 'WHERE'");
             throw BusinessException.ERROR_SYSTEM;
@@ -261,17 +252,30 @@ public class SqlCommand {
         return sql.toString();
     }
 
+    private void getUpdateSetSql(final SQL sql, final Set<String> fieldNames) {
+        if (fieldNames.contains(VARIABLE_NAME_UPDATED)) {
+            sql.SET(TABLE_COLUMN_NAME_UPDATED + " = " + SYSDATE);
+        }
+        if (fieldNames.contains(VARIABLE_NAME_UPDATED_BY)) {
+            sql.SET(MessageFormat.format(SET_UPDATED_BY_BIND_STRING, TABLE_COLUMN_NAME_UPDATED_BY, AuthenticationUtils.getUserPk()));
+        }
+    }
+
     public <T> String deleteByKey(final Class<T> tClass, final Map<String, Object> whereConditions) {
-        verifyWhereKey(whereConditions);
+        this.verifyWhereKey(whereConditions);
         final SQL sql = new SQL();
         sql.DELETE_FROM(getTableName(tClass.getSimpleName()));
         this.getWhereSql(sql, whereConditions, 2);
+        this.requiredWhereConditions(sql);
+        log.debug(sql.toString());
+        return sql.toString();
+    }
+
+    private void requiredWhereConditions(final SQL sql) {
         if (!StringUtils.containsIgnoreCase(sql.toString(), "WHERE ")) {
             log.warn("Not Found 'WHERE'");
             throw BusinessException.ERROR_SYSTEM;
         }
-        log.debug(sql.toString());
-        return sql.toString();
     }
 
     private String getCamelCaseToSnakeCase(final String javaFileName) {
