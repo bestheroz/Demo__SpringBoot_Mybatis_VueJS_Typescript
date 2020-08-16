@@ -132,7 +132,6 @@ export default class extends Vue {
       });
       if (response.data.code === 'S002') {
         this.dialog = true;
-        this.id = null;
         this.password = null;
       } else if (_.startsWith(response.data.code, `S`)) {
         this.$store.commit('saveToken', response.data.data);

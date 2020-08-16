@@ -8,7 +8,7 @@ beforeEach(() => {
 });
 const pbkdf2 = require('pbkdf2');
 describe('관리자>회원관리', () => {
-  it('화면이동', () => {
+  it('화면이동 - 회원관리', () => {
     cy.server();
     cy.route('GET', '**/api/admin/members/').as('getList');
     cy.menu('관리자', '회원관리');
@@ -72,7 +72,7 @@ describe('관리자>회원관리', () => {
         cy.wrap(body).its('code').should('eq', 'F003');
       });
   });
-  it('화면이동', () => {
+  it('화면이동 - 회원관리', () => {
     cy.server();
     cy.login(Cypress.env('username'), Cypress.env('password'));
     cy.saveLocalStorage();
@@ -148,8 +148,9 @@ describe('관리자>회원관리', () => {
       cy.get('button').contains('저장').click();
     });
     cy.wait('@save');
-    cy.get('input:eq(0)').type('tester').should('have.value', 'tester');
+    cy.get('input:eq(0)').clear().type('tester').should('have.value', 'tester');
     cy.get('input:eq(1)').type('tester1234').should('have.value', 'tester1234');
+    cy.contains(' Go').click();
     cy.get('div.v-toolbar__content i.mdi-timer-sand')
       .parent()
       .contains('00시간');
@@ -157,7 +158,7 @@ describe('관리자>회원관리', () => {
     cy.get('div.v-toolbar__content i.mdi-account').parent().contains('테스터');
     cy.logout();
   });
-  it('화면이동', () => {
+  it('화면이동 - 회원관리', () => {
     cy.server();
     cy.login(Cypress.env('username'), Cypress.env('password'));
     cy.saveLocalStorage();

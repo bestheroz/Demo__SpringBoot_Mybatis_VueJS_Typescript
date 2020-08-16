@@ -74,8 +74,8 @@ describe('관리자>메뉴관리, 관리자>메뉴권한관리', () => {
   it('추가된 메뉴 - 권한 추가', () => {
     cy.server();
     cy.route('GET', '**/api/codes/AUTHORITY').as('AUTHORITY');
-    cy.route('GET', '**/api/admin/menuAuthority/**').as('getList');
-    cy.route('POST', '**/api/admin/menuAuthority/**').as('save');
+    cy.route('GET', '**/api/admin/menuAuthority/900').as('getList');
+    cy.route('PUT', '**/api/admin/menuAuthority/900/').as('save');
     cy.menu('관리자', '메뉴권한관리');
     cy.wait('@AUTHORITY');
     cy.chooseSelectValue('권한 선택', '마스터 관리자');

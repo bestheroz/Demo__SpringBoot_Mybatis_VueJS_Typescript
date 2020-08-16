@@ -31,7 +31,7 @@ describe('관리자>코드관리', () => {
   });
   it('코드추가 - 하위코드1', () => {
     cy.server();
-    cy.route('POST', '**/api/admin/codes/').as('save');
+    cy.route('POST', '**/api/admin/codes/TEST_CODE_GROUP').as('save');
     cy.get('td>a')
       .contains('TEST_CODE_GROUP')
       .parent()
@@ -56,7 +56,7 @@ describe('관리자>코드관리', () => {
   });
   it('코드추가 - 하위코드2', () => {
     cy.server();
-    cy.route('POST', '**/api/admin/codes/').as('save');
+    cy.route('POST', '**/api/admin/codes/TEST_CODE_GROUP').as('save');
     cy.get('div.v-speed-dial:eq(1)').trigger('mouseenter');
     cy.get(
       'div.v-speed-dial:eq(1) div.v-speed-dial__list button:eq(2)',
@@ -75,7 +75,7 @@ describe('관리자>코드관리', () => {
   });
   it('코드수정 - 코드 그룹', () => {
     cy.server();
-    cy.route('PATCH', '**/api/admin/codeGroups/MEMBER_TYPE').as('save');
+    cy.route('PATCH', '**/api/admin/codeGroups/TEST_CODE_GROUP').as('save');
     cy.get('tr>td>a').contains('TEST_CODE_GROUP').click();
     cy.get('div.v-dialog__content--active').within(() => {
       cy.get('label')
@@ -89,7 +89,9 @@ describe('관리자>코드관리', () => {
   });
   it('코드수정 - 하위코드1', () => {
     cy.server();
-    cy.route('PATCH', '**/api/admin/codes/MEMBER_TYPE/P').as('save');
+    cy.route('PATCH', '**/api/admin/codes/TEST_CODE_GROUP/TEST_CODE_1').as(
+      'save',
+    );
     cy.get('td>a')
       .contains('TEST_CODE_GROUP')
       .parent()
@@ -115,7 +117,7 @@ describe('관리자>코드관리', () => {
   });
   it('코드수정 - MENU_TYPE > P', () => {
     cy.server();
-    cy.route('PATCH', '**/api/admin/codes/MEMBER_TYPE/P').as('save');
+    cy.route('PATCH', '**/api/admin/codes/MENU_TYPE/P').as('save');
     cy.get('td>a')
       .contains('MENU_TYPE')
       .parent()
@@ -143,7 +145,7 @@ describe('관리자>코드관리', () => {
   });
   it('코드수정 - MENU_TYPE > P - 복구', () => {
     cy.server();
-    cy.route('PATCH', '**/api/admin/codes/MEMBER_TYPE/P').as('save');
+    cy.route('PATCH', '**/api/admin/codes/MENU_TYPE/P').as('save');
     cy.menu('관리자', '코드관리');
     cy.get('td>a')
       .contains('MENU_TYPE')
@@ -164,7 +166,9 @@ describe('관리자>코드관리', () => {
   });
   it('코드삭제 - 하위코드2', () => {
     cy.server();
-    cy.route('DELETE', '**/api/admin/codes/MEMBER_TYPE/P').as('delete');
+    cy.route('DELETE', '**/api/admin/codes/TEST_CODE_GROUP/TEST_CODE_2/').as(
+      'delete',
+    );
     cy.get('td>a')
       .contains('TEST_CODE_GROUP')
       .parent()
@@ -187,7 +191,7 @@ describe('관리자>코드관리', () => {
   });
   it('코드삭제 - 코드 그룹', () => {
     cy.server();
-    cy.route('DELETE', '**/api/admin/codeGroups/MEMBER_TYPE').as('delete');
+    cy.route('DELETE', '**/api/admin/codeGroups/TEST_CODE_GROUP').as('delete');
     cy.get('tr>td>a')
       .contains('TEST_CODE_1')
       .parent()
