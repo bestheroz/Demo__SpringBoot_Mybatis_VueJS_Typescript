@@ -37,14 +37,14 @@ public class AdminMemberController {
     }
 
     @PostMapping
-    @CacheEvict(value = "memberCache")
+    @CacheEvict(value = "memberCache", allEntries = true)
     public ResponseEntity<ApiResult> insert(@RequestBody final TableMemberEntity tableMemberEntity) {
         this.tableMemberRepository.insert(tableMemberEntity);
         return Result.ok();
     }
 
     @PatchMapping(value = "{id}")
-    @CacheEvict(value = "memberCache")
+    @CacheEvict(value = "memberCache", allEntries = true)
     public ResponseEntity<ApiResult> update(@PathVariable(value = "id") final String id, @RequestBody final TableMemberEntity tableMemberEntity) {
         this.tableMemberRepository.updateMap(TableMemberEntity.class,
                 Map.of("name", tableMemberEntity.getName(), "authority", tableMemberEntity.getAuthority(), "expired", tableMemberEntity.getExpired(), "available", tableMemberEntity.isAvailable(),
@@ -53,7 +53,7 @@ public class AdminMemberController {
     }
 
     @DeleteMapping(value = "{id}")
-    @CacheEvict(value = "memberCache")
+    @CacheEvict(value = "memberCache", allEntries = true)
     public ResponseEntity<ApiResult> delete(@PathVariable(value = "id") final String id) {
         this.tableMemberRepository.delete(TableMemberEntity.class, Map.of("id", id));
         return Result.ok();
