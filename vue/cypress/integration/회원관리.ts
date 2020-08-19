@@ -17,7 +17,7 @@ describe('관리자>회원관리', () => {
   it('회원 추가 - tester', () => {
     cy.server();
     cy.route('POST', '**/api/admin/members/').as('save');
-    cy.clickFunction(0, 2).click();
+    cy.clickFunction(0, 2);
     cy.get('div.v-dialog__content--active').within(() => {
       cy.get('label')
         .contains('사용자아이디')
@@ -172,7 +172,7 @@ describe('관리자>회원관리', () => {
       .prev()
       .children('div.v-simple-checkbox')
       .click();
-    cy.clickFunction(0, 1).click();
+    cy.clickFunction(0, 1);
     cy.get('button').contains('삭제 하겠습니다').click();
     cy.wait('@delete');
     cy.wait(20).get('button.swal2-confirm').contains('성공').click();

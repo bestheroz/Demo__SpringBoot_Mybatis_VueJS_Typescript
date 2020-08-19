@@ -83,7 +83,7 @@ describe('관리자>메뉴관리, 관리자>메뉴권한관리', () => {
     cy.get('label').contains('테스트 그룹메뉴').click();
     cy.get('label').contains('테스트 하위메뉴1').click();
     cy.get('label').contains('테스트 하위메뉴2').click();
-    cy.clickFunction(0, 1).click();
+    cy.clickFunction(0, 1);
     cy.wait('@save');
   });
   it('추가된 메뉴확인', () => {

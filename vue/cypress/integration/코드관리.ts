@@ -17,7 +17,7 @@ describe('관리자>코드관리', () => {
   it('코드그룹추가 - TEST_CODE_GROUP', () => {
     cy.server();
     cy.route('POST', '**/api/admin/codeGroups/').as('save');
-    cy.clickFunction(0, 2).click();
+    cy.clickFunction(0, 2);
     cy.get('div.v-dialog__content--active').within(() => {
       cy.get('label').contains('그룹코드').next().type('TEST_CODE_GROUP');
       cy.get('label').contains('그룹코드명').next().type('테스트 코드 그룹');
@@ -35,7 +35,7 @@ describe('관리자>코드관리', () => {
       .prev()
       .children('div.v-simple-checkbox')
       .click();
-    cy.clickFunction(1, 2).click();
+    cy.clickFunction(1, 2);
 
     cy.get('div.v-dialog__content--active').within(() => {
       cy.get('label').contains('사용안함').click();
@@ -51,7 +51,7 @@ describe('관리자>코드관리', () => {
   it('코드추가 - 하위코드2', () => {
     cy.server();
     cy.route('POST', '**/api/admin/codes/TEST_CODE_GROUP').as('save');
-    cy.clickFunction(1, 2).click();
+    cy.clickFunction(1, 2);
 
     cy.get('div.v-dialog__content--active').within(() => {
       cy.get('label').contains('사용안함').click();
@@ -172,7 +172,7 @@ describe('관리자>코드관리', () => {
       .prev()
       .children('div.v-simple-checkbox')
       .click();
-    cy.clickFunction(1, 1).click();
+    cy.clickFunction(1, 1);
     cy.get('button').contains('삭제 하겠습니다').click();
     cy.wait('@delete');
     cy.wait(20).get('button.swal2-confirm').contains('성공').click();
@@ -186,7 +186,7 @@ describe('관리자>코드관리', () => {
       .prev()
       .children('div.v-simple-checkbox')
       .click();
-    cy.clickFunction(0, 1).click();
+    cy.clickFunction(0, 1);
     cy.get('button').contains('삭제 하겠습니다').click();
     cy.wait('@delete');
     cy.wait(20).get('button.swal2-confirm').contains('성공').click();
