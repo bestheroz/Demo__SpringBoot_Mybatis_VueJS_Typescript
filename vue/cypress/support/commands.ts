@@ -119,7 +119,7 @@ Cypress.Commands.add(
 Cypress.Commands.add(
   'clickFunction',
   (dialIndex: number, buttonReverseIndex: number) => {
-    cy.get(`div.v-speed-dial:eq(${dialIndex})`).trigger('click');
+    cy.get(`div.v-speed-dial:eq(${dialIndex})`).trigger('mouseenter');
     cy.get(
       `div.v-speed-dial:eq(${dialIndex}) div.v-speed-dial__list button:eq(${buttonReverseIndex})`,
     ).click();
