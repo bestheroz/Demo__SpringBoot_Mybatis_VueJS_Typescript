@@ -29,7 +29,7 @@ describe('관리자>회원관리', () => {
         .next()
         .type('테스터')
         .should('have.value', '테스터');
-      cy.chooseSelectValue('권한', '손님', true);
+      cy.setSelectValue('권한', '손님', true);
       cy.get('label')
         .contains('세션타임아웃시간')
         .next()
@@ -49,7 +49,7 @@ describe('관리자>회원관리', () => {
       cy.get('button').contains('저장').click();
     });
     cy.wait('@save');
-    cy.wait(20).get('button.swal2-confirm').contains('성공').click();
+    cy.clickAlert('성공');
   });
   it('로그인 실패 체크 - tester', () => {
     cy.server();
@@ -82,11 +82,11 @@ describe('관리자>회원관리', () => {
     cy.route('PATCH', '**/api/admin/members/tester/').as('save');
     cy.get('td>a').contains('tester').click();
     cy.get('div.v-dialog__content--active').within(() => {
-      cy.get('label').contains('사용안함').click();
+      cy.setInputValue('사용안함').click();
       cy.get('button').contains('저장').click();
     });
     cy.wait('@save');
-    cy.wait(20).get('button.swal2-confirm').contains('성공').click();
+    cy.clickAlert('성공');
   });
   it('로그인 및 세센타임아웃시간 체크 - tester', () => {
     cy.server();
@@ -118,7 +118,7 @@ describe('관리자>회원관리', () => {
       cy.get('button').contains('저장').click();
     });
     cy.wait('@save');
-    cy.wait(20).get('button.swal2-confirm').contains('성공').click();
+    cy.clickAlert('성공');
   });
   it('로그인 및 패스워드 초기화 - tester', () => {
     cy.server();
@@ -175,6 +175,6 @@ describe('관리자>회원관리', () => {
     cy.clickFunction(0, 1);
     cy.get('button').contains('삭제 하겠습니다').click();
     cy.wait('@delete');
-    cy.wait(20).get('button.swal2-confirm').contains('성공').click();
+    cy.clickAlert('성공');
   });
 });

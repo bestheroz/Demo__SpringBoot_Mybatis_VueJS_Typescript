@@ -197,7 +197,7 @@ export default class extends Vue {
     );
   }
 
-  @Watch('parentItem')
+  @Watch('parentItem', { immediate: true })
   watchParentItem(val: TableCodeGroupEntity): void {
     this.items = [];
     if (val && val.codeGroup) {

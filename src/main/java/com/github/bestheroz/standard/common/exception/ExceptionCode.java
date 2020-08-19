@@ -52,7 +52,13 @@ public enum ExceptionCode {
 
     FAIL_FILE_SIZE("F016", "최대 2MB 이하의 파일 첨부만 가능합니다."),
 
-    FAIL_NO_DATA_SUCCESS("F017", "처리건 없음.");
+    FAIL_NO_DATA_SUCCESS("F017", "처리건 없음."),
+
+    FAIL_UNIQUE_CONSTRAINT_VIOLATED("F018", "이미 존재하는 데이터입니다."),
+
+    FAIL_CANNOT_INSERT_NULL("F019", "필수 값을 채워주세요."),
+
+    FAIL_VALUE_TOO_LARGE_FOR_COLUMN("F020", "입력하신 값이 너무 큽니다.");
 
     private final String code;
     private final String message;

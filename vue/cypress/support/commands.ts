@@ -51,7 +51,7 @@ Cypress.Commands.add('visitHome', () => {
   cy.route('GET', '**/api/auth/me').as('me');
   cy.route('GET', '**/api/menus/drawer').as('drawer');
   cy.route('GET', '**/api/menus').as('menus');
-  cy.route('GET', '**/api/admin/members/memberList').as('memberList');
+  cy.route('GET', '**/api/admin/members/lists/codes').as('memberList');
   cy.visit('/');
   cy.wait('@me');
   cy.wait('@drawer');
@@ -69,15 +69,54 @@ Cypress.Commands.add('logout', () => {
   return cy;
 });
 Cypress.Commands.add('menu', (menuGroup: string, menu: string) => {
+  console.log(
+    document.querySelector('div.v-list-group__header.v-list-item--active'),
+  );
+  console.log(
+    !document.querySelector('div.v-list-group__header.v-list-item--active'),
+  );
   cy.get('nav.v-navigation-drawer').within(() => {
-    cy.get('div.v-list-item__title').contains(menuGroup).click();
-    cy.get('div.v-list-item__title').contains(menu).click();
+    console.log(
+      document.querySelector('div.v-list-group__header.v-list-item--active'),
+    );
+    console.log(
+      !document.querySelector('div.v-list-group__header.v-list-item--active'),
+    );
+    if (
+      !document.querySelector('div.v-list-group__header.v-list-item--active')
+    ) {
+      cy.get('div.v-list-item__title').contains(menuGroup).click();
+    }
+    cy.get('div.v-list-item__title').contains(menu).parent().click();
   });
+  cy.wait(20).get('div.v-alert__content').contains(menu);
+  return cy;
+});
+Cypress.Commands.add('clickSelection', (label: string) => {
+  return cy.get('label').contains(label).click();
+});
+Cypress.Commands.add('setInputValue', (label: string, value: string) => {
+  value
+    ? cy.get('label').contains(label).next().clear().type(value)
+    : cy.get('label').contains(label).next().clear();
   return cy;
 });
 Cypress.Commands.add(
-  'chooseSelectValue',
-  (label: string, value: string, within = false) => {
+  'setInputAutoValue',
+  (labels: string[], prefix = '(cypress)') => {
+    labels.forEach((label) => {
+      cy.get('label')
+        .contains(label)
+        .next()
+        .clear()
+        .type(prefix + label);
+    });
+    return cy;
+  },
+);
+Cypress.Commands.add(
+  'setSelectValue',
+  (label: string, value: string, inDialog = true) => {
     cy.get('label')
       .contains(label)
       .next()
@@ -89,7 +128,7 @@ Cypress.Commands.add(
           .parent('div.v-input__control')
           .parent('div.v-select')
           .click();
-        if (within) {
+        if (inDialog) {
           cy.root()
             .parent('div.v-application')
             .within(() => {
@@ -120,9 +159,13 @@ Cypress.Commands.add(
   'clickFunction',
   (dialIndex: number, buttonReverseIndex: number) => {
     cy.get(`div.v-speed-dial:eq(${dialIndex})`).trigger('mouseenter');
-    cy.get(
-      `div.v-speed-dial:eq(${dialIndex}) div.v-speed-dial__list button:eq(${buttonReverseIndex})`,
-    ).click();
-    return cy;
+    return cy
+      .get(
+        `div.v-speed-dial:eq(${dialIndex}) div.v-speed-dial__list button:eq(${buttonReverseIndex})`,
+      )
+      .click();
   },
 );
+Cypress.Commands.add('clickAlert', (label: string) => {
+  return cy.wait(20).get('div.swal2-actions button').contains(label).click();
+});
