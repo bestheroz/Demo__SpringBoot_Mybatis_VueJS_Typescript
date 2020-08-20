@@ -65,7 +65,7 @@ public class AdminMemberController {
         return Result.ok();
     }
 
-    @GetMapping("memberList")
+    @GetMapping("lists/codes")
     public ResponseEntity<ApiResult> getMemberList() {
         return Result.ok(this.tableMemberRepository.getItems(TableMemberEntity.class).stream().map(item -> new CodeVO(item.getId(), item.getName())).collect(Collectors.toList()));
     }

@@ -21,6 +21,11 @@ declare namespace Cypress {
     logout(): Chainable<any>;
     visitHome(): Chainable<any>;
     menu(menuGroup: string, menu: string): Chainable<any>;
-    chooseSelectValue(label: string, value: string, within?: boolean): Chainable<any>;
+    clickFunction(dialIndex: number, buttonReverseIndex: number): Chainable<any>;
+    setInputValue(label: string, value: string): Chainable<any>;
+    setInputAutoValue(labels: string[], prefix?: string): Chainable<any>;
+    clickSelection(label: string): Chainable<any>;
+    setSelectValue(label: string, value: string): Chainable<any>;
+    clickAlert(label: string): Chainable<any>;
   }
 }

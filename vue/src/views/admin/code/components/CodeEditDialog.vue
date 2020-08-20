@@ -137,6 +137,7 @@ export default class extends Vue {
   @Prop({ required: true }) readonly editItem!: TableCodeEntity;
   @Prop({ required: true }) readonly mode!: string | null;
 
+  readonly END_POINT = 'admin/codes/';
   AUTHORITY: SelectItem[] | null = null;
 
   loading: boolean = false;
@@ -163,7 +164,7 @@ export default class extends Vue {
   async create() {
     this.loading = true;
     const response = await postDataApi<TableCodeEntity>(
-      `admin/codes/${this.editItem.codeGroup}`,
+      `${this.END_POINT}${this.editItem.codeGroup}`,
       this.editItem,
     );
     this.loading = false;
@@ -176,7 +177,7 @@ export default class extends Vue {
   async patch() {
     this.loading = true;
     const response = await patchDataApi<TableCodeEntity>(
-      `admin/codes/`,
+      `${this.END_POINT}`,
       this.editItem,
       { key: this.editItem.codeGroup!, key2: this.editItem.code! },
     );
@@ -192,10 +193,13 @@ export default class extends Vue {
     const result = await confirmDelete();
     if (result.value) {
       this.loading = true;
-      const response = await deleteDataApi<TableCodeEntity>(`admin/codes/`, {
-        key: this.editItem.codeGroup!,
-        key2: this.editItem.code!,
-      });
+      const response = await deleteDataApi<TableCodeEntity>(
+        `${this.END_POINT}`,
+        {
+          key: this.editItem.codeGroup!,
+          key2: this.editItem.code!,
+        },
+      );
       this.loading = false;
       if (_.startsWith(response.code, `S`)) {
         window.localStorage.removeItem(`code__${this.editItem.codeGroup}`);

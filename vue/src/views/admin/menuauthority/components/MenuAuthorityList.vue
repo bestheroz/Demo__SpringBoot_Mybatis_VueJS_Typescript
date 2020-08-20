@@ -77,6 +77,7 @@ export default class extends Vue {
   @Prop({ required: true }) readonly authority!: string;
 
   readonly envs: typeof envs = envs;
+  readonly END_POINT = 'admin/menuAuthority/';
   mode: string | null = null;
   items: AdminMenuAuthorityVO[] = [];
   loading: boolean = false;
@@ -138,7 +139,7 @@ export default class extends Vue {
     this.items = [];
     this.loading = true;
     const response = await getListApi<AdminMenuAuthorityVO[]>(
-      `admin/menuAuthority/${this.authority}`,
+      `${this.END_POINT}${this.authority}`,
     );
     this.loading = false;
     this.items = response.data || [];
@@ -147,7 +148,7 @@ export default class extends Vue {
   async save() {
     this.loading = true;
     await putDataApi<object>(
-      `admin/menuAuthority/`,
+      this.END_POINT,
       {
         menuIdList: this.items
           .map((value) => (value.checked ? value.id : undefined))

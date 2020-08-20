@@ -78,6 +78,7 @@ export default class extends Vue {
   @Prop({ required: true }) readonly editItem!: TableCodeGroupEntity;
   @Prop({ required: true }) readonly mode!: string | null;
 
+  readonly END_POINT = 'admin/codeGroups/';
   loading: boolean = false;
 
   @Watch('dialog')
@@ -98,7 +99,7 @@ export default class extends Vue {
   async create() {
     this.loading = true;
     const response = await postDataApi<TableCodeGroupEntity>(
-      `admin/codeGroups/`,
+      this.END_POINT,
       this.editItem,
     );
     this.loading = false;
@@ -111,7 +112,7 @@ export default class extends Vue {
   async patch() {
     this.loading = true;
     const response = await patchDataApi<TableCodeGroupEntity>(
-      `admin/codeGroups/`,
+      this.END_POINT,
       this.editItem,
       this.editItem.codeGroup!,
     );
@@ -127,7 +128,7 @@ export default class extends Vue {
     if (result.value) {
       this.loading = true;
       const response = await deleteDataApi<TableCodeGroupEntity>(
-        `admin/codeGroups/`,
+        this.END_POINT,
         this.editItem.codeGroup!,
       );
       this.loading = false;

@@ -4,8 +4,12 @@ describe('로그인/로그아웃', () => {
   });
 
   it('아이디 패스워드 입력', () => {
-    cy.get('input:eq(0)').type('1').should('have.value', '1');
-    cy.get('input:eq(1)').type('1').should('have.value', '1');
+    cy.get('input:eq(0)')
+      .type(Cypress.env('username'))
+      .should('have.value', Cypress.env('username'));
+    cy.get('input:eq(1)')
+      .type(Cypress.env('password'))
+      .should('have.value', Cypress.env('password'));
   });
 
   it('로그인 처리', () => {

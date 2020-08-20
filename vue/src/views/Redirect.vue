@@ -46,7 +46,7 @@ export default class extends Vue {
     }
     window.localStorage.setItem('menus', JSON.stringify(response3.data));
 
-    const response4 = await getApi<SelectItem[]>('admin/members/memberList');
+    const response4 = await getApi<SelectItem[]>('admin/members/lists/codes');
     if (!response4.data) {
       store.commit('needLogin');
       return;

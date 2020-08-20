@@ -4,6 +4,7 @@ import com.github.bestheroz.standard.common.response.ApiResult;
 import com.github.bestheroz.standard.common.response.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.BindException;
@@ -32,7 +33,7 @@ public class ApiExceptionHandler {
     }
 
     @ExceptionHandler({BusinessException.class})
-    public ResponseEntity<ApiResult> response(final BusinessException e) {
+    public ResponseEntity<ApiResult> businessException(final BusinessException e) {
         log.warn(e.toString());
         if (e.isEquals(ExceptionCode.FAIL_TRY_LOGIN_FIRST)) {
             return Result.unauthenticated();
@@ -41,7 +42,7 @@ public class ApiExceptionHandler {
     }
 
     @ExceptionHandler({UsernameNotFoundException.class})
-    public ResponseEntity<ApiResult> response(final UsernameNotFoundException e) {
+    public ResponseEntity<ApiResult> usernameNotFoundException(final UsernameNotFoundException e) {
         log.warn(e.toString());
         return Result.unauthenticated();
     }
@@ -60,7 +61,7 @@ public class ApiExceptionHandler {
     }
 
     @ExceptionHandler({MultipartException.class})
-    public ResponseEntity<ApiResult> handleMultipartException(final MultipartException e) {
+    public ResponseEntity<ApiResult> multipartException(final MultipartException e) {
         log.warn(ExceptionUtils.getStackTrace(e));
         final ResponseEntity<ApiResult> result;
 //        if (ExceptionUtils.getMessage(e).contains(FileUploadBase.SizeLimitExceededException.class.getSimpleName())) {
@@ -69,5 +70,11 @@ public class ApiExceptionHandler {
         result = Result.error();
 //        }
         return result;
+    }
+
+    @ExceptionHandler({DuplicateKeyException.class})
+    public ResponseEntity<ApiResult> duplicateKeyException(final DuplicateKeyException e) {
+        log.warn(ExceptionUtils.getStackTrace(e));
+        return Result.error(ExceptionCode.FAIL_UNIQUE_CONSTRAINT_VIOLATED);
     }
 }
