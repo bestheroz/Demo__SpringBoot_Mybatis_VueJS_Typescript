@@ -98,6 +98,7 @@ describe('관리자>코드관리', () => {
   });
   it('코드수정 - MENU_TYPE > P', () => {
     cy.server();
+    cy.route('GET', '**/api/admin/codes/MENU_TYPE').as('getList');
     cy.route('PATCH', '**/api/admin/codes/MENU_TYPE/P').as('save');
     cy.get('td>a')
       .contains('MENU_TYPE')
@@ -105,7 +106,12 @@ describe('관리자>코드관리', () => {
       .prev()
       .children('div.v-simple-checkbox')
       .click();
-    cy.get('tr>td').contains('페이지').prev().children('a').click();
+    cy.wait('@getList')
+      .get('tr>td')
+      .contains('페이지')
+      .prev()
+      .children('a')
+      .click();
     cy.wait(200)
       .get('div.v-dialog__content--active')
       .within(() => {
@@ -118,12 +124,13 @@ describe('관리자>코드관리', () => {
   it('화면이동 - 변경된 값 확인(페이쥐 테스트)', () => {
     cy.server();
     cy.route('GET', '**/api/admin/menus/').as('getList');
-    cy.menu('관리자', '메뉴관리');
+    cy.wait(1000).menu('관리자', '메뉴관리');
     cy.wait('@getList');
     cy.get('tr>td').contains('페이쥐_테스트');
   });
   it('코드수정 - MENU_TYPE > P - 복구', () => {
     cy.server();
+    cy.route('GET', '**/api/admin/codes/MENU_TYPE').as('getList');
     cy.route('PATCH', '**/api/admin/codes/MENU_TYPE/P').as('save');
     cy.menu('관리자', '코드관리');
     cy.get('td>a')
@@ -132,7 +139,7 @@ describe('관리자>코드관리', () => {
       .prev()
       .children('div.v-simple-checkbox')
       .click();
-    cy.wait(200)
+    cy.wait('@getList')
       .get('tr>td')
       .contains('페이쥐_테스트')
       .prev()
@@ -150,6 +157,7 @@ describe('관리자>코드관리', () => {
   });
   it('코드삭제 - 하위코드2', () => {
     cy.server();
+    cy.route('GET', '**/api/admin/codes/(cypress)그룹코드').as('getList');
     cy.route('DELETE', '**/api/admin/codes/(cypress)그룹코드/TEST_CODE_2/').as(
       'delete',
     );
@@ -159,7 +167,7 @@ describe('관리자>코드관리', () => {
       .prev()
       .children('div.v-simple-checkbox')
       .click();
-    cy.wait(200)
+    cy.wait('@getList')
       .get('tr>td>a')
       .contains('TEST_CODE_2')
       .parent()
@@ -173,6 +181,7 @@ describe('관리자>코드관리', () => {
   });
   it('코드삭제 - 코드 그룹', () => {
     cy.server();
+    cy.route('GET', '**/api/admin/codes/(cypress)그룹코드').as('getList');
     cy.route('DELETE', '**/api/admin/codeGroups/(cypress)그룹코드').as(
       'delete',
     );

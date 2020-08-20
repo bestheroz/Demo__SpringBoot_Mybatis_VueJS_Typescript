@@ -41,7 +41,7 @@ describe('관리자>메뉴관리, 관리자>메뉴권한관리', () => {
       .click();
     cy.get('div.v-dialog__content--active').within(() => {
       cy.setInputValue('메뉴명', '(cypress)하위메뉴1');
-      cy.setSelectValue('타입', '페이지', true);
+      cy.setSelectValue('타입', '페이지');
       cy.setInputValue('링크 URL', '/test1');
       cy.setInputValue('메뉴 순서', '9995');
       cy.get('button').contains('저장').click();
@@ -63,7 +63,7 @@ describe('관리자>메뉴관리, 관리자>메뉴권한관리', () => {
       .click();
     cy.get('div.v-dialog__content--active').within(() => {
       cy.setInputValue('메뉴명', '(cypress)하위메뉴2');
-      cy.setSelectValue('타입', '페이지', true);
+      cy.setSelectValue('타입', '페이지');
       cy.setInputValue('링크 URL', '/test2');
       cy.setInputValue('메뉴 순서', '9996');
       cy.get('button').contains('저장').click();
@@ -78,7 +78,7 @@ describe('관리자>메뉴관리, 관리자>메뉴권한관리', () => {
     cy.route('PUT', '**/api/admin/menuAuthority/900/').as('save');
     cy.menu('관리자', '메뉴권한관리');
     cy.wait('@AUTHORITY');
-    cy.setSelectValue('권한 선택', '마스터 관리자', false);
+    cy.setSelectValue('권한 선택', '마스터 관리자');
     cy.wait('@getList');
     cy.clickSelection('(cypress)그룹메뉴');
     cy.clickSelection('(cypress)하위메뉴1');

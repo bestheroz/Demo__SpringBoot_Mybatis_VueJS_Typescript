@@ -69,27 +69,27 @@ Cypress.Commands.add('logout', () => {
   return cy;
 });
 Cypress.Commands.add('menu', (menuGroup: string, menu: string) => {
-  console.log(
-    document.querySelector('div.v-list-group__header.v-list-item--active'),
-  );
-  console.log(
-    !document.querySelector('div.v-list-group__header.v-list-item--active'),
-  );
-  cy.get('nav.v-navigation-drawer').within(() => {
-    console.log(
-      document.querySelector('div.v-list-group__header.v-list-item--active'),
-    );
-    console.log(
-      !document.querySelector('div.v-list-group__header.v-list-item--active'),
-    );
-    if (
-      !document.querySelector('div.v-list-group__header.v-list-item--active')
-    ) {
-      cy.get('div.v-list-item__title').contains(menuGroup).click();
-    }
-    cy.get('div.v-list-item__title').contains(menu).parent().click();
+  cy.get('body').then(($body) => {
+    const clickMenuGroup =
+      $body.find('div.v-list-group__header.v-list-item.v-list-item--active')
+        .length === 0 ||
+      $body
+        .find('div.v-list-group__header.v-list-item.v-list-item--active')
+        .text()
+        .trim() !== menuGroup;
+    cy.get('nav.v-navigation-drawer').within(() => {
+      clickMenuGroup &&
+        cy.get('div.v-list-item__title').contains(menuGroup).click();
+      cy.get('div.v-list-item__title')
+        .contains(menuGroup)
+        .parent()
+        .parent()
+        .parent()
+        .within(() => {
+          cy.get('div.v-list-item__title').contains(menu).click();
+        });
+    });
   });
-  cy.wait(20).get('div.v-alert__content').contains(menu);
   return cy;
 });
 Cypress.Commands.add('clickSelection', (label: string) => {
@@ -114,47 +114,34 @@ Cypress.Commands.add(
     return cy;
   },
 );
-Cypress.Commands.add(
-  'setSelectValue',
-  (label: string, value: string, inDialog = true) => {
-    cy.get('label')
-      .contains(label)
-      .next()
-      .children('input')
-      .then((element) => {
-        cy.get(
-          `div[aria-owns="${element.attr('id')!.split('input').join('list')}"]`,
-        )
-          .parent('div.v-input__control')
-          .parent('div.v-select')
-          .click();
-        if (inDialog) {
+Cypress.Commands.add('setSelectValue', (label: string, value: string) => {
+  let id: any = null;
+  return cy
+    .get('label')
+    .contains(label)
+    .next()
+    .children('input')
+    .then((element) => {
+      id = element.attr('id')!.split('input').join('list');
+      cy.get(`div[aria-owns="${id}"]`)
+        .parent('div.v-input__control')
+        .parent('div.v-select')
+        .click();
+      cy.root().then(($root) => {
+        if ($root.prop('tagName') === 'HTML') {
+          cy.root().within(() => {
+            cy.get(`#${id} div.v-list-item__title`).contains(value).click();
+          });
+        } else {
           cy.root()
             .parent('div.v-application')
             .within(() => {
-              cy.get(
-                `#${element
-                  .attr('id')!
-                  .split('input')
-                  .join('list')} div.v-list-item__content`,
-              )
-                .contains(value)
-                .click();
+              cy.get(`#${id} div.v-list-item__title`).contains(value).click();
             });
-        } else {
-          cy.get(
-            `#${element
-              .attr('id')!
-              .split('input')
-              .join('list')} div.v-list-item__content`,
-          )
-            .contains(value)
-            .click();
         }
       });
-    return cy;
-  },
-);
+    });
+});
 Cypress.Commands.add(
   'clickFunction',
   (dialIndex: number, buttonReverseIndex: number) => {

@@ -25,7 +25,7 @@ declare namespace Cypress {
     setInputValue(label: string, value: string): Chainable<any>;
     setInputAutoValue(labels: string[], prefix?: string): Chainable<any>;
     clickSelection(label: string): Chainable<any>;
-    setSelectValue(label: string, value: string, within?: boolean): Chainable<any>;
+    setSelectValue(label: string, value: string): Chainable<any>;
     clickAlert(label: string): Chainable<any>;
   }
 }
