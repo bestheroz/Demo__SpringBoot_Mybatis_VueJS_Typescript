@@ -115,14 +115,13 @@ Cypress.Commands.add(
   },
 );
 Cypress.Commands.add('setSelectValue', (label: string, value: string) => {
-  let id: any = null;
   return cy
     .get('label')
     .contains(label)
     .next()
     .children('input')
     .then((element) => {
-      id = element.attr('id')!.split('input').join('list');
+      const id = element.attr('id')!.split('input').join('list');
       cy.get(`div[aria-owns="${id}"]`)
         .parent('div.v-input__control')
         .parent('div.v-select')
