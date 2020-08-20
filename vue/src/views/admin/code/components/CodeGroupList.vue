@@ -26,7 +26,7 @@
           single-select
           show-select
           dense
-          :height="326"
+          :height="selected.length > 0 ? 326 : 773"
           :footer-props="envs.FOOTER_PROPS_100"
         >
           <template v-slot:top>

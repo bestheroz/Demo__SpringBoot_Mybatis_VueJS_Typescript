@@ -112,6 +112,7 @@ interface MenuVO extends TableMenuEntity {
 })
 export default class extends Vue {
   readonly envs: typeof envs = envs;
+  readonly ENDPOINT_URL: string = 'admin/menus/';
   mode: string | null = null;
   items: TableMenuEntity[] = [];
   editItem: TableMenuEntity = Object.create(null);
@@ -174,7 +175,7 @@ export default class extends Vue {
     this.selected = [];
     this.items = [];
     this.loading = true;
-    const response = await getListApi<MenuVO[]>(`admin/menus/`);
+    const response = await getListApi<MenuVO[]>(this.ENDPOINT_URL);
     this.loading = false;
     this.items = response.data || [];
   }

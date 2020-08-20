@@ -121,6 +121,7 @@ export default class extends Vue {
   @Prop({ required: true }) readonly editItem!: MenuVO;
   @Prop({ required: true }) readonly mode!: string | null;
 
+  readonly END_POINT = 'admin/menus/';
   loading: boolean = false;
   MENU_TYPE: SelectItem[] | null = null;
 
@@ -146,7 +147,7 @@ export default class extends Vue {
   async create() {
     this.loading = true;
     const response = await postDataApi<TableMenuEntity>(
-      `admin/menus/`,
+      this.END_POINT,
       this.editItem,
     );
     this.loading = false;
@@ -159,7 +160,7 @@ export default class extends Vue {
   async patch() {
     this.loading = true;
     const response = await patchDataApi<TableMenuEntity>(
-      `admin/menus/`,
+      this.END_POINT,
       this.editItem,
       this.editItem.id!,
     );
@@ -175,7 +176,7 @@ export default class extends Vue {
     if (result.value) {
       this.loading = true;
       const response = await deleteDataApi<TableMenuEntity>(
-        `admin/menus/`,
+        this.END_POINT,
         this.editItem.id!,
       );
       this.loading = false;

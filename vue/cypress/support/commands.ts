@@ -51,7 +51,7 @@ Cypress.Commands.add('visitHome', () => {
   cy.route('GET', '**/api/auth/me').as('me');
   cy.route('GET', '**/api/menus/drawer').as('drawer');
   cy.route('GET', '**/api/menus').as('menus');
-  cy.route('GET', '**/api/admin/members/memberList').as('memberList');
+  cy.route('GET', '**/api/admin/members/lists/codes').as('memberList');
   cy.visit('/');
   cy.wait('@me');
   cy.wait('@drawer');
@@ -69,60 +69,90 @@ Cypress.Commands.add('logout', () => {
   return cy;
 });
 Cypress.Commands.add('menu', (menuGroup: string, menu: string) => {
-  cy.get('nav.v-navigation-drawer').within(() => {
-    cy.get('div.v-list-item__title').contains(menuGroup).click();
-    cy.get('div.v-list-item__title').contains(menu).click();
+  cy.get('body').then(($body) => {
+    const clickMenuGroup =
+      $body.find('div.v-list-group__header.v-list-item.v-list-item--active')
+        .length === 0 ||
+      $body
+        .find('div.v-list-group__header.v-list-item.v-list-item--active')
+        .text()
+        .trim() !== menuGroup;
+    cy.get('nav.v-navigation-drawer').within(() => {
+      clickMenuGroup &&
+        cy.get('div.v-list-item__title').contains(menuGroup).click();
+      cy.get('div.v-list-item__title')
+        .contains(menuGroup)
+        .parent()
+        .parent()
+        .parent()
+        .within(() => {
+          cy.get('div.v-list-item__title').contains(menu).click();
+        });
+    });
   });
   return cy;
 });
+Cypress.Commands.add('clickSelection', (label: string) => {
+  return cy.get('label').contains(label).click();
+});
+Cypress.Commands.add('setInputValue', (label: string, value: string) => {
+  value
+    ? cy.get('label').contains(label).next().clear().type(value)
+    : cy.get('label').contains(label).next().clear();
+  return cy;
+});
 Cypress.Commands.add(
-  'chooseSelectValue',
-  (label: string, value: string, within = false) => {
-    cy.get('label')
-      .contains(label)
-      .next()
-      .children('input')
-      .then((element) => {
-        cy.get(
-          `div[aria-owns="${element.attr('id')!.split('input').join('list')}"]`,
-        )
-          .parent('div.v-input__control')
-          .parent('div.v-select')
-          .click();
-        if (within) {
-          cy.root()
-            .parent('div.v-application')
-            .within(() => {
-              cy.get(
-                `#${element
-                  .attr('id')!
-                  .split('input')
-                  .join('list')} div.v-list-item__content`,
-              )
-                .contains(value)
-                .click();
-            });
-        } else {
-          cy.get(
-            `#${element
-              .attr('id')!
-              .split('input')
-              .join('list')} div.v-list-item__content`,
-          )
-            .contains(value)
-            .click();
-        }
-      });
+  'setInputAutoValue',
+  (labels: string[], prefix = '(cypress)') => {
+    labels.forEach((label) => {
+      cy.get('label')
+        .contains(label)
+        .next()
+        .clear()
+        .type(prefix + label);
+    });
     return cy;
   },
 );
+Cypress.Commands.add('setSelectValue', (label: string, value: string) => {
+  let id: any = null;
+  return cy
+    .get('label')
+    .contains(label)
+    .next()
+    .children('input')
+    .then((element) => {
+      id = element.attr('id')!.split('input').join('list');
+      cy.get(`div[aria-owns="${id}"]`)
+        .parent('div.v-input__control')
+        .parent('div.v-select')
+        .click();
+      cy.root().then(($root) => {
+        if ($root.prop('tagName') === 'HTML') {
+          cy.root().within(() => {
+            cy.get(`#${id} div.v-list-item__title`).contains(value).click();
+          });
+        } else {
+          cy.root()
+            .parent('div.v-application')
+            .within(() => {
+              cy.get(`#${id} div.v-list-item__title`).contains(value).click();
+            });
+        }
+      });
+    });
+});
 Cypress.Commands.add(
   'clickFunction',
   (dialIndex: number, buttonReverseIndex: number) => {
     cy.get(`div.v-speed-dial:eq(${dialIndex})`).trigger('mouseenter');
-    cy.get(
-      `div.v-speed-dial:eq(${dialIndex}) div.v-speed-dial__list button:eq(${buttonReverseIndex})`,
-    ).click();
-    return cy;
+    return cy
+      .get(
+        `div.v-speed-dial:eq(${dialIndex}) div.v-speed-dial__list button:eq(${buttonReverseIndex})`,
+      )
+      .click();
   },
 );
+Cypress.Commands.add('clickAlert', (label: string) => {
+  return cy.wait(20).get('div.swal2-actions button').contains(label).click();
+});

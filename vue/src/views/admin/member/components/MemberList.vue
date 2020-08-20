@@ -123,6 +123,7 @@ import dayjs from 'dayjs';
 export default class extends Vue {
   readonly envs: typeof envs = envs;
   readonly dayjs: typeof dayjs = dayjs;
+  readonly ENDPOINT_URL: string = 'admin/members/';
   mode: string | null = null;
   sortBy: string[] = ['authority'];
   sortDesc: boolean[] = [true];
@@ -199,7 +200,7 @@ export default class extends Vue {
     this.selected = [];
     this.items = [];
     this.loading = true;
-    const response = await getListApi<TableMemberEntity[]>(`admin/members/`);
+    const response = await getListApi<TableMemberEntity[]>(this.ENDPOINT_URL);
     this.loading = false;
     this.items = response.data || [];
   }

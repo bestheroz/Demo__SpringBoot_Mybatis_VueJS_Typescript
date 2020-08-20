@@ -14,7 +14,7 @@
         </v-col>
         <v-divider class="mr-1" />
         <v-col cols="12">
-          <code-list :parent-item="parentItem" />
+          <code-list :parent-item="parentItem" v-if="parentItem.codeGroup" />
         </v-col>
       </v-row>
     </v-card>
