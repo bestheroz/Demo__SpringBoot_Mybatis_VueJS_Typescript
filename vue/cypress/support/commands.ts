@@ -62,8 +62,12 @@ Cypress.Commands.add('visitHome', () => {
 Cypress.Commands.add('logout', () => {
   cy.server();
   cy.route('DELETE', '**/api/auth/logout').as('logout');
-  cy.get('div.v-toolbar__content i.mdi-account').parent().trigger('mouseenter');
-  cy.get('button').contains('Logout').click();
+  cy.get('div.v-toolbar__content i.mdi-account')
+    .parent()
+    .parent()
+    .trigger('mouseenter')
+    .wait(200);
+  cy.get('button:visible').contains('Logout');
   cy.wait('@logout');
   cy.visit('/login');
   return cy;
