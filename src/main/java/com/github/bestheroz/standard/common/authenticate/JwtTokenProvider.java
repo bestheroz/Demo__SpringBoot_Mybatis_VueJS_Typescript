@@ -1,7 +1,6 @@
 package com.github.bestheroz.standard.common.authenticate;
 
 import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTCreator;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.github.bestheroz.standard.common.exception.BusinessException;
@@ -23,24 +22,23 @@ import java.time.OffsetDateTime;
 public class JwtTokenProvider {
     private final Algorithm ALGORITHM = Algorithm.HMAC512("secret");
     private final Long expiresAtAccessToken = 300L;
-    private final Long expiresAtRefreshToken = 7200L;
+    private final Long expiresAtRefreshToken = 2592000L;  // 3600 * 24 * 30 == 1month
 
     public String createAccessToken(final UserVO userVO) {
-        return getJWTCreator(userVO).withExpiresAt(Date.from(OffsetDateTime.now().plusSeconds(expiresAtAccessToken.intValue()).toInstant())).sign(ALGORITHM);
-    }
-
-    public String createRefreshToken(final UserVO userVO, final String accessToken) {
-        return getJWTCreator(userVO).withClaim("accessToken", accessToken)
-                .withExpiresAt(Date.from(OffsetDateTime.now().plusSeconds(expiresAtRefreshToken.intValue()).toInstant()))
-                .sign(ALGORITHM);
-    }
-
-    private JWTCreator.Builder getJWTCreator(final UserVO userVO) {
         Assert.notNull(userVO, "userVO parameter must not be empty or null");
         Assert.hasText(userVO.getId(), "userPk parameter must not be empty or null");
         Assert.hasText(userVO.getName(), "userName parameter must not be empty or null");
         Assert.notNull(userVO.getAuthority(), "authority parameter must not be empty or null");
-        return JWT.create().withClaim("userPk", userVO.getId()).withClaim("userVO", MapperUtils.toString(userVO));
+        return JWT.create().withClaim("userPk", userVO.getId()).withClaim("userVO", MapperUtils.toString(userVO))
+                .withExpiresAt(Date.from(OffsetDateTime.now().plusSeconds(expiresAtAccessToken.intValue()).toInstant())).sign(ALGORITHM);
+    }
+
+    public String createRefreshToken(final UserVO userVO) {
+        Assert.notNull(userVO, "userVO parameter must not be empty or null");
+        Assert.hasText(userVO.getId(), "userPk parameter must not be empty or null");
+        return JWT.create().withClaim("userPk", userVO.getId())
+                .withExpiresAt(Date.from(OffsetDateTime.now().plusSeconds(expiresAtRefreshToken.intValue()).toInstant()))
+                .sign(ALGORITHM);
     }
 
     public Authentication getAuthentication(final String token) {
@@ -70,16 +68,6 @@ public class JwtTokenProvider {
         }
     }
 
-    public String getAccessTokenFromRefreshToken(final String token) {
-        Assert.hasText(token, "token parameter must not be empty or null");
-        try {
-            return JWT.require(ALGORITHM).acceptExpiresAt(expiresAtRefreshToken).build().verify(token).getClaims().get("accessToken").asString();
-        } catch (final JWTVerificationException | NullPointerException e) {
-            log.warn(BusinessException.FAIL_TRY_LOGIN_FIRST.toString());
-            throw BusinessException.FAIL_TRY_LOGIN_FIRST;
-        }
-    }
-
     public String resolveAccessToken(final HttpServletRequest request) {
         final String authorization = request.getHeader("Authorization");
         return StringUtils.equals(authorization, "null") ? null : authorization;
@@ -95,16 +83,6 @@ public class JwtTokenProvider {
         try {
             JWT.require(ALGORITHM).acceptExpiresAt(expiresAtAccessToken).build().verify(token);
             return true;
-        } catch (final JWTVerificationException | NullPointerException e) {
-            return false;
-        }
-    }
-
-    public boolean validateRefreshToken(final String token, final String refreshToken) {
-        Assert.hasText(token, "token parameter must not be empty or null");
-        try {
-            JWT.require(ALGORITHM).acceptExpiresAt(expiresAtRefreshToken).build().verify(refreshToken);
-            return StringUtils.equals(getAccessTokenFromRefreshToken(refreshToken), token);
         } catch (final JWTVerificationException | NullPointerException e) {
             return false;
         }

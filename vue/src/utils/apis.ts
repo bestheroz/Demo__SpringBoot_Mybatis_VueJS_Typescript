@@ -9,14 +9,12 @@ export const axiosInstance = axios.create({
   headers: {
     contentType: 'application/json',
     Authorization: window.localStorage.getItem('accessToken'),
-    AuthorizationR: window.localStorage.getItem('refreshToken'),
   },
 });
 
 axiosInstance.interceptors.request.use(
   function (config) {
     config.headers.Authorization = window.localStorage.getItem('accessToken');
-    config.headers.AuthorizationR = window.localStorage.getItem('refreshToken');
     return config;
   },
   function (error) {
@@ -35,25 +33,15 @@ axiosInstance.interceptors.response.use(
       return;
     }
     if (error.response) {
-      if (error.response.status === 401) {
-        if (
-          error.response.headers.accesstoken &&
-          error.response.headers.refreshtoken
-        ) {
-          return axios.request(refreshToken(error).config);
+      if ([400, 401].includes(error.response.status)) {
+        if (error.response.headers.refreshtoken === 'must') {
+          return axios.request((await refreshToken(error)).config);
         }
         store.commit('needLogin');
         return;
-      } else if (error.response.status === 403) {
-        store.commit('error', 403);
+      } else if ([403, 404, 500].includes(error.response.status)) {
+        store.commit('error', error.response.status);
         return;
-      } else if (error.response.status === 400) {
-        if (
-          error.response.headers.accesstoken &&
-          error.response.headers.refreshtoken
-        ) {
-          return axios.request(refreshToken(error).config);
-        }
       }
     }
     alertAxiosError(error);
@@ -273,18 +261,25 @@ export async function getExcelApi(url: string): Promise<void> {
   return response.data;
 }
 
-function refreshToken(error: AxiosError) {
-  if (
-    error.response &&
-    error.response.headers.accesstoken &&
-    error.response.headers.refreshtoken
-  ) {
-    store.commit('saveToken', {
-      accessToken: error.response.headers.accesstoken,
-      refreshToken: error.response.headers.refreshtoken,
-    });
-    error.config.headers.Authorization = error.response.headers.accesstoken;
-    error.config.headers.AuthorizationR = error.response.headers.refreshtoken;
+async function refreshToken(error: AxiosError) {
+  if (error.response && error.response.headers.refreshtoken === 'must') {
+    const response = await axios
+      .create({
+        baseURL: envs.API_HOST,
+        headers: {
+          contentType: 'application/json',
+          Authorization: window.localStorage.getItem('accessToken'),
+          AuthorizationR: window.localStorage.getItem('refreshToken'),
+        },
+      })
+      .get('api/auth/refreshToken');
+    store.commit('refreshToken', response.data.data);
+    error.config.headers.Authorization = window.localStorage.getItem(
+      'accessToken',
+    );
+    error.config.headers.AuthorizationR = window.localStorage.getItem(
+      'refreshToken',
+    );
   }
   return error;
 }
