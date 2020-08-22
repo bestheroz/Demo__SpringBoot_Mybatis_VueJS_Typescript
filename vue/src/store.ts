@@ -19,7 +19,6 @@ export default new Vuex.Store({
     },
     // @ts-ignore
     refreshToken(state, accessToken: string) {
-      console.log(accessToken);
       window.localStorage.setItem('accessToken', accessToken);
     },
     // @ts-ignore
