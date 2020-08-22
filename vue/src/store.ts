@@ -18,6 +18,10 @@ export default new Vuex.Store({
       window.localStorage.setItem('refreshToken', token.refreshToken);
     },
     // @ts-ignore
+    refreshToken(state, accessToken: string) {
+      window.localStorage.setItem('accessToken', accessToken);
+    },
+    // @ts-ignore
     saveUserVO(state, loginVO: TableMemberEntity) {
       window.localStorage.setItem('authority', loginVO.authority!.toString());
       window.localStorage.setItem('timeout', loginVO.timeout!.toString());

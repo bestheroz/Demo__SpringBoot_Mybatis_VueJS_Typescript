@@ -26,6 +26,11 @@ public class AuthController {
         return Result.ok(JwtTokenProvider.getAuthentication(token).getPrincipal());
     }
 
+    @GetMapping(value = "/refreshToken")
+    public ResponseEntity<ApiResult> refreshToken(@RequestHeader(value = "Authorization") final String accessToken, @RequestHeader(value = "AuthorizationR") final String refreshToken) {
+        return Result.ok(this.authService.getNewAccessToken(refreshToken));
+    }
+
     @PostMapping(value = "/initPassword")
     ResponseEntity<ApiResult> initPassword(@RequestBody final TableMemberEntity tableMemberEntity) {
         this.authService.initPassword(tableMemberEntity.getId(), tableMemberEntity.getPassword());

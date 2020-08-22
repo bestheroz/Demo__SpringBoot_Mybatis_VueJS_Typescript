@@ -10,6 +10,7 @@ import com.github.bestheroz.standard.common.util.AuthenticationUtils;
 import com.github.bestheroz.standard.common.util.MapperUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -82,13 +83,27 @@ public class AuthService implements UserDetailsService {
         tableMemberEntity.setLoginFailCnt(0);
         final UserVO userVO = MapperUtils.toObject(tableMemberEntity, UserVO.class);
         final String accessToken = JwtTokenProvider.createAccessToken(userVO);
-        final String refreshToken = JwtTokenProvider.createRefreshToken(userVO, accessToken);
+        final String refreshToken = JwtTokenProvider.createRefreshToken(userVO);
         this.tableMemberRepository.updateMap(TableMemberEntity.class, Map.of("token", refreshToken), Map.of("id", id));
         return Map.of("accessToken", accessToken, "refreshToken", refreshToken);
     }
 
     void logout() {
         this.tableMemberRepository.updateMap(TableMemberEntity.class, Map.of("token", ""), Map.of("id", AuthenticationUtils.getUserPk()));
+    }
+
+    String getNewAccessToken(final String refreshToken) {
+        final Optional<TableMemberEntity> oTableMemberEntity =
+                this.tableMemberRepository.getItem(TableMemberEntity.class, Map.of("token", refreshToken, "id", JwtTokenProvider.getUserPk(refreshToken)));
+        if (oTableMemberEntity.isEmpty()) {
+            log.info("invalid refresh-token");
+            throw BusinessException.FAIL_TRY_LOGIN_FIRST;
+        }
+        final TableMemberEntity tableMemberEntity = oTableMemberEntity.get();
+        final UserVO userVO = MapperUtils.toObject(tableMemberEntity, UserVO.class);
+        final String newAccessToken = JwtTokenProvider.createAccessToken(userVO);
+        SecurityContextHolder.getContext().setAuthentication(JwtTokenProvider.getAuthentication(newAccessToken));
+        return newAccessToken;
     }
 
     void initPassword(final String id, final String password) {
