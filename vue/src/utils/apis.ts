@@ -245,7 +245,7 @@ export async function getExcelApi(url: string): Promise<void> {
           'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
       },
     })
-    .get<any>(url);
+    .get<any>(`api/${url}`);
   const newUrl = window.URL.createObjectURL(
     new Blob([response.data], { type: response.headers['content-type'] }),
   );
