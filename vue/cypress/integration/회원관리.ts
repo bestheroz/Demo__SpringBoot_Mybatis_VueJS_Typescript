@@ -82,7 +82,7 @@ describe('관리자>회원관리', () => {
     cy.menu('관리자', '회원관리');
     cy.wait('@getList');
   });
-  it('회원수정 - 패스워드 초기화 - tester', () => {
+  it('회원수정 - 비밀번호 초기화 - tester', () => {
     cy.server();
     cy.route('POST', '**/api/admin/members/tester/resetPassword').as(
       'resetPassword',
@@ -90,7 +90,7 @@ describe('관리자>회원관리', () => {
     cy.route('PATCH', '**/api/admin/members/tester').as('save');
     cy.get('td>a').contains('tester').click();
     cy.get('div.v-dialog__content--active').within(() => {
-      cy.get('button').contains('패스워드 초기화').click();
+      cy.get('button').contains('비밀번호 초기화').click();
       cy.wait('@resetPassword')
         .wait(4000)
         .get('button')
@@ -99,7 +99,7 @@ describe('관리자>회원관리', () => {
     });
     cy.wait('@save').clickAlert('성공');
   });
-  it('로그인 및 패스워드 초기화 - tester', () => {
+  it('로그인 및 비밀번호 초기화 - tester', () => {
     cy.server();
     cy.logout();
     cy.route('POST', '**/api/auth/initPassword').as('save');
@@ -109,7 +109,7 @@ describe('관리자>회원관리', () => {
     cy.contains(' Go').click();
     cy.wait('@login');
     cy.get('div.v-dialog--active').within(() => {
-      cy.get('div.v-alert__content').contains('패스워드 초기화');
+      cy.get('div.v-alert__content').contains('비밀번호 초기화');
       cy.setInputValue('비밀번호', 'tester1234').setInputValue(
         '비밀번호 확인',
         'tester1234',
