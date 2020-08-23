@@ -4,7 +4,6 @@ import com.github.bestheroz.sample.api.entity.menu.TableMenuEntity;
 import com.github.bestheroz.sample.api.entity.menu.TableMenuRepository;
 import com.github.bestheroz.sample.api.entity.menuauthority.TableMenuAuthorityEntity;
 import com.github.bestheroz.sample.api.entity.menuauthority.TableMenuAuthorityRepository;
-import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,8 +23,8 @@ public class AdminMenuService {
         this.tableMenuRepository.delete(TableMenuEntity.class, Map.of("id", id));
         this.tableMenuAuthorityRepository.getItems(TableMenuAuthorityEntity.class).forEach(item -> {
             this.tableMenuAuthorityRepository
-                    .updateMap(TableMenuAuthorityEntity.class, ImmutableMap.of("menuIdList", StringUtils.remove(item.getMenuIdList(), "^|" + id + ",")),
-                            ImmutableMap.of("authority", item.getAuthority()));
+                    .updateMap(TableMenuAuthorityEntity.class, Map.of("menuIdList", StringUtils.remove(item.getMenuIdList(), "^|" + id + ",")),
+                            Map.of("authority", item.getAuthority()));
         });
     }
 }
