@@ -1,13 +1,13 @@
-before(() => {
-  cy.login(Cypress.env('username'), Cypress.env('password'));
-  cy.saveLocalStorage();
-});
-
-beforeEach(() => {
-  cy.restoreLocalStorage();
-});
-
 describe('관리자>코드관리', () => {
+  before(() => {
+    cy.login(Cypress.env('username'), Cypress.env('password'));
+    cy.saveLocalStorage();
+  });
+
+  beforeEach(() => {
+    cy.restoreLocalStorage();
+  });
+
   it('화면이동', () => {
     cy.server();
     cy.route('GET', '**/api/admin/codeGroups/').as('getList');

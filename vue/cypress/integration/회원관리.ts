@@ -1,13 +1,14 @@
-before(() => {
-  cy.login(Cypress.env('username'), Cypress.env('password'));
-  cy.saveLocalStorage();
-});
-
-beforeEach(() => {
-  cy.restoreLocalStorage();
-});
 const pbkdf2 = require('pbkdf2');
 describe('관리자>회원관리', () => {
+  before(() => {
+    cy.login(Cypress.env('username'), Cypress.env('password'));
+    cy.saveLocalStorage();
+  });
+
+  beforeEach(() => {
+    cy.restoreLocalStorage();
+  });
+
   it('화면이동 - 회원관리', () => {
     cy.server();
     cy.route('GET', '**/api/admin/members/').as('getList');

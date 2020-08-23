@@ -8,10 +8,7 @@
           class="font-weight-light"
           :style="{ cursor: 'pointer' }"
           @click="$store.commit('logout')"
-          v-if="
-            $router.currentRoute.path !== '/login' &&
-            window.localStorage.getItem('accessToken')
-          "
+          v-if="$router.currentRoute.path !== '/login' && accessToken"
         >
           <v-icon>mdi-logout</v-icon>
           로그아웃
@@ -37,6 +34,14 @@ export default class extends Vue {
     return (
       !window.toolbar.visible || this.$route.fullPath.indexOf('/popup') === 0
     );
+  }
+
+  get accessToken() {
+    if (window && window.localStorage) {
+      return window.localStorage.getItem('accessToken');
+    } else {
+      return null;
+    }
   }
 
   async mounted() {

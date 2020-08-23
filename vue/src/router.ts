@@ -48,6 +48,17 @@ const routes = () => {
       ],
     },
     {
+      path: '/home',
+      component: () => import('@/views/index/Index.vue'),
+      beforeEnter: requireAuth(),
+      children: [
+        {
+          path: '',
+          component: () => import('@/views/Home.vue'),
+        },
+      ],
+    },
+    {
       path: '/',
       component: () => import('@/views/Redirect.vue'),
     },

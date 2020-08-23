@@ -25,6 +25,9 @@ import { DrawerItem, TableMenuEntity } from '@/common/types';
 @Component({ name: 'Viewer' })
 export default class extends Vue {
   mounted() {
+    if (this.$route.fullPath === '/home') {
+      return;
+    }
     const items: TableMenuEntity[] = JSON.parse(
       window.localStorage.getItem('menus')!,
     );
@@ -35,6 +38,9 @@ export default class extends Vue {
   }
 
   get title() {
+    if (this.$route.fullPath === '/home') {
+      return '';
+    }
     let result: string = '';
     const items: DrawerItem[] = JSON.parse(
       window.localStorage.getItem('drawer')!,

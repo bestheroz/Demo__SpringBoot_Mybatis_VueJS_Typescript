@@ -67,7 +67,7 @@ Cypress.Commands.add('logout', () => {
     .parent()
     .trigger('mouseenter')
     .wait(200);
-  cy.get('button:visible').contains('Logout');
+  cy.get('button:visible').contains('Logout').click();
   cy.wait('@logout');
   cy.visit('/login');
   return cy;
