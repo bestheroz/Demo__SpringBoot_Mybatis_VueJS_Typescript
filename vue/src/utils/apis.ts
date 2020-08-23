@@ -39,7 +39,14 @@ axiosInstance.interceptors.response.use(
         }
         store.commit('needLogin');
         return;
-      } else if ([403, 404, 500].includes(error.response.status)) {
+      } else if (
+        error.response.status === 404 &&
+        error.response.headers.refreshtoken === 'must'
+      ) {
+        // 로컬환경때문에 추가
+        return axios.request((await refreshToken(error)).config);
+      }
+      if ([403, 404, 500].includes(error.response.status)) {
         store.commit('error', error.response.status);
         return;
       }
@@ -238,7 +245,7 @@ export async function getExcelApi(url: string): Promise<void> {
           'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
       },
     })
-    .get<any>(url);
+    .get<any>(`api/${url}`);
   const newUrl = window.URL.createObjectURL(
     new Blob([response.data], { type: response.headers['content-type'] }),
   );

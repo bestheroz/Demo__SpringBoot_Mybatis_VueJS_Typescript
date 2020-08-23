@@ -1,17 +1,17 @@
-before(() => {
-  cy.login(Cypress.env('username'), Cypress.env('password'));
-  cy.saveLocalStorage();
-});
-
-beforeEach(() => {
-  cy.restoreLocalStorage();
-});
-
 describe('관리자>메뉴관리, 관리자>메뉴권한관리', () => {
+  before(() => {
+    cy.login(Cypress.env('username'), Cypress.env('password'));
+    cy.saveLocalStorage();
+  });
+
+  beforeEach(() => {
+    cy.restoreLocalStorage();
+  });
+
   it('화면이동', () => {
     cy.server();
     cy.route('GET', '**/api/admin/menus/').as('getList');
-    cy.visit('/admin/menu');
+    cy.menu('관리자', '메뉴관리');
     cy.wait('@getList');
   });
   it('메뉴추가 - 그룹메뉴', () => {
@@ -85,6 +85,7 @@ describe('관리자>메뉴관리, 관리자>메뉴권한관리', () => {
     cy.clickSelection('(cypress)하위메뉴2');
     cy.clickFunction(0, 1);
     cy.wait('@save');
+    cy.clickAlert('성공');
   });
   it('추가된 메뉴확인', () => {
     cy.visitHome();
@@ -96,7 +97,10 @@ describe('관리자>메뉴관리, 관리자>메뉴권한관리', () => {
   });
   it('메뉴수정 - 그룹메뉴', () => {
     cy.server();
+    cy.route('GET', '**/api/admin/menus/').as('getList');
     cy.route('PATCH', '**/api/admin/menus/**').as('save');
+    cy.menu('관리자', '메뉴관리');
+    cy.wait('@getList');
     cy.get('tr>td>span')
       .contains('(cypress)그룹메뉴')
       .parent('td')
@@ -166,6 +170,9 @@ describe('관리자>메뉴관리, 관리자>메뉴권한관리', () => {
   it('메뉴삭제 - 하위메뉴2', () => {
     cy.server();
     cy.route('DELETE', '**/api/admin/menus/**').as('delete');
+    cy.route('GET', '**/api/admin/menus/').as('getList');
+    cy.menu('관리자', '메뉴관리');
+    cy.wait('@getList');
     cy.get('tr>td>span')
       .contains('(cypress)하위메뉴2')
       .parent('td')

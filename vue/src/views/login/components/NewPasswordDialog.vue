@@ -15,7 +15,7 @@
           icon="mdi-lock-outline"
           class="title"
         >
-          패스워드 초기화
+          비밀번호 초기화
         </v-alert>
         <v-card-text>
           <ValidationObserver ref="observer">

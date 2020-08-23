@@ -52,7 +52,7 @@ export default class extends Vue {
       return;
     }
     window.localStorage.setItem('memberList', JSON.stringify(response4.data));
-    await this.$router.push('/admin/menu');
+    await this.$router.push('/home');
   }
 }
 </script>

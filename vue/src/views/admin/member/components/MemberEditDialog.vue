@@ -130,7 +130,7 @@
                   v-if="mode !== '추가'"
                   outlined
                 >
-                  패스워드 초기화
+                  비밀번호 초기화
                 </v-btn>
               </v-col>
             </v-row>

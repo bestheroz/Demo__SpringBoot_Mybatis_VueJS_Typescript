@@ -29,7 +29,7 @@ public class TraceLogger {
 
     @Around("execution(public * com.github.bestheroz..*Controller.*(..)) || execution(public * com.github.bestheroz..*Service.*(..)) " +
             "|| execution(public * com.github.bestheroz..*Repository.*(..)) || execution(public * com.github.bestheroz..*DAO.*(..))")
-    public Object writeLog(final ProceedingJoinPoint pjp) throws Throwable {
+    public static Object writeLog(final ProceedingJoinPoint pjp) throws Throwable {
         final Object retVal;
 
         final Class<?> targetClass = pjp.getTarget().getClass();
@@ -45,7 +45,7 @@ public class TraceLogger {
 
             stopWatch.stop();
             log.info(STR_END_EXECUTE_TIME, formatClassMethod, stopWatch.toString(), ((MethodSignature) pjp.getSignature()).getReturnType().getSimpleName(),
-                    StringUtils.defaultString(MapperUtils.toString(retVal), "null"));
+                    StringUtils.abbreviate(StringUtils.defaultString(MapperUtils.toString(retVal), "null"), "--skip long text--", 1000));
         } catch (final Throwable e) {
             log.warn("{} -\n{}", formatClassMethod, ExceptionUtils.getStackTrace(e));
             throw e;
