@@ -40,7 +40,6 @@ Cypress.Commands.add('login', (username: string, password: string) => {
     .then((body) => {
       cy.setLocalStorage('accessToken', body.data.accessToken);
       cy.setLocalStorage('refreshToken', body.data.refreshToken);
-      cy.wait(500);
     })
     .then(() => {
       cy.visitHome();
