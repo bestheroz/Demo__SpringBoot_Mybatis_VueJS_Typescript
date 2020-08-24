@@ -77,7 +77,6 @@ export default class extends Vue {
 
   async mounted() {
     this.title = await getVariableApi('title');
-    this.$store.dispatch('getMemberCodes');
     const user = await this.$store.dispatch('getUser');
     this.userName = user.name;
   }
