@@ -283,6 +283,7 @@ async function apiRefreshToken(error: AxiosError) {
       })
       .get('api/auth/refreshToken');
     await refreshToken(response.data.data);
+    store.dispatch('resetTimer');
     error.config.headers.Authorization = window.localStorage.getItem(
       'accessToken',
     );
