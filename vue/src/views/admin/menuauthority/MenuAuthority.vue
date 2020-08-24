@@ -47,6 +47,7 @@ export default class extends Vue {
     const data: SelectItem[] = await getCodeListApi('AUTHORITY');
     this.loading = false;
     const user = await this.$store.dispatch('getUser');
+    console.log(user.authority);
     this.AUTHORITY =
       data.filter(
         (value) => ![user.authority, 999].includes(parseInt(value.value)),

@@ -50,12 +50,10 @@ Cypress.Commands.add('visitHome', () => {
   cy.server();
   cy.route('GET', '**/api/auth/me').as('me');
   cy.route('GET', '**/api/menus/drawer').as('drawer');
-  cy.route('GET', '**/api/menus').as('menus');
   cy.route('GET', '**/api/admin/members/lists/codes').as('memberList');
   cy.visit('/');
   cy.wait('@me');
   cy.wait('@drawer');
-  cy.wait('@menus');
   cy.wait('@memberList');
   return cy;
 });

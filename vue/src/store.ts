@@ -52,7 +52,10 @@ const moduleUser = {
       }
       return getters.user;
     },
-    resetTimer({ commit }: ActionContext<any, any>) {
+    async resetTimer({ commit, state, dispatch }: ActionContext<any, any>) {
+      if (!state.user) {
+        await dispatch('setUser');
+      }
       commit('resetTimer');
     },
     clearUser({ state }: ActionContext<any, any>) {
