@@ -7,7 +7,7 @@
         <v-toolbar-title
           class="font-weight-light"
           :style="{ cursor: 'pointer' }"
-          @click="$store.commit('logout')"
+          @click="logout"
           v-if="$router.currentRoute.path !== '/login' && accessToken"
         >
           <v-icon>mdi-logout</v-icon>
@@ -20,14 +20,12 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import envs from '@/constants/envs';
-import router from '@/router';
 import { getVariableApi } from '@/utils/apis';
+import { logout } from '@/utils/authentications';
 
 @Component({ name: 'AppBarNoDrawer' })
 export default class extends Vue {
-  router: typeof router = router;
-  envs: typeof envs = envs;
+  readonly logout: typeof logout = logout;
   title: string | null = null;
 
   get isPopup(): boolean {

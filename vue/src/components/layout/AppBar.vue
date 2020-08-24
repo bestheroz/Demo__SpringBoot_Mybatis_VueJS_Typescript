@@ -11,8 +11,8 @@
       <v-btn x-large text dark :ripple="false" color="primary">
         <countdown
           ref="countdown"
-          :end-time="logoutTime"
-          @finished="$store.commit('logout')"
+          :end-time="logoutTimer"
+          @finished="logout"
           :speed="1000"
         >
           <template v-slot:process="anyYouWantedScopeName">
@@ -39,7 +39,7 @@
         <v-list dense>
           <v-list-item>
             <v-list-item-title>
-              <v-btn block @click="$store.commit('logout')">
+              <v-btn block @click="logout">
                 <v-icon>mdi-logout</v-icon>
                 Logout
               </v-btn>
@@ -53,9 +53,9 @@
 
 <script lang="ts">
 import { Component, PropSync, Vue, Watch } from 'vue-property-decorator';
-import envs from '@/constants/envs';
 import Countdown from 'vue-awesome-countdown/src/vue-awesome-countdown.vue';
 import { getVariableApi } from '@/utils/apis';
+import { logout } from '@/utils/authentications';
 
 @Component({
   name: 'AppBar',
@@ -63,30 +63,26 @@ import { getVariableApi } from '@/utils/apis';
 })
 export default class extends Vue {
   @PropSync('drawer', { required: true, default: true }) syncedDrawer!: boolean;
-  readonly envs: typeof envs = envs;
+  readonly logout: typeof logout = logout;
   title: string | null = null;
+  userName: string | null = null;
 
   get isPopup(): boolean {
     return !window.toolbar.visible;
   }
 
-  get userName() {
-    if (window.localStorage.getItem('userVO')) {
-      return JSON.parse(window.localStorage.getItem('userVO')!).name;
-    } else {
-      return '';
-    }
-  }
-
-  get logoutTime() {
-    return this.$store.state.logoutTime;
+  get logoutTimer() {
+    return this.$store.state.user.logoutTimer;
   }
 
   async mounted() {
     this.title = await getVariableApi('title');
+    this.$store.dispatch('getMemberCodes');
+    const user = await this.$store.dispatch('getUser');
+    this.userName = user.name;
   }
 
-  @Watch('$store.state.logoutTime')
+  @Watch('$store.state.user.logoutTimer')
   watchLogoutTime() {
     if (this.$refs.countdown) {
       (this.$refs.countdown as any).startCountdown('restart');

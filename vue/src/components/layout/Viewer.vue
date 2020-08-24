@@ -21,37 +21,36 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { DrawerItem, TableMenuEntity } from '@/common/types';
+import { errorPage } from '@/utils/errors';
 
 @Component({ name: 'Viewer' })
 export default class extends Vue {
-  mounted() {
-    if (this.$route.fullPath === '/home') {
+  drawers: DrawerItem[] = [];
+
+  async mounted() {
+    if (this.$route.fullPath === '/index') {
       return;
     }
-    const items: TableMenuEntity[] = JSON.parse(
-      window.localStorage.getItem('menus')!,
-    );
+    const items: TableMenuEntity[] = await this.$store.dispatch('getMenus');
     if (items && items.length > 0) {
       const result = items.find((item) => item.url === this.$route.fullPath);
-      !result && this.$store.commit('error', 404);
+      !result && (await errorPage(404));
     }
+    this.drawers = await this.$store.dispatch('getDrawers');
   }
 
-  get title() {
-    if (this.$route.fullPath === '/home') {
+  get title(): string {
+    if (this.$route.fullPath === '/index') {
       return '';
     }
     let result: string = '';
-    const items: DrawerItem[] = JSON.parse(
-      window.localStorage.getItem('drawer')!,
-    );
-    if (items && items.length > 0) {
-      items.forEach((item) => {
+    if (this.drawers && this.drawers.length > 0) {
+      this.drawers.forEach((drawer) => {
         if (this.$route.name) {
           return '';
         }
-        if (item.children && item.children.length > 0) {
-          const find = item.children.find((child: any) => {
+        if (drawer.children && drawer.children.length > 0) {
+          const find = drawer.children.find((child: any) => {
             if (child.to) {
               return child.to === this.$route.fullPath;
             }
@@ -61,7 +60,8 @@ export default class extends Vue {
           }
         }
       });
-      !result && this.$store.commit('error', 403);
+      !result && errorPage(403);
+      return '';
     }
     return result.split('(팝업)').join('');
   }

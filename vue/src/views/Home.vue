@@ -16,8 +16,8 @@
 </template>
 
 <script lang="ts">
-import {Component, Vue} from 'vue-property-decorator';
-import {getVariableApi} from '@/utils/apis';
+import { Component, Vue } from 'vue-property-decorator';
+import { getVariableApi } from '@/utils/apis';
 
 @Component({
   name: 'Home',

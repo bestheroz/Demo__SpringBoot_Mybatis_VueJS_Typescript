@@ -3,6 +3,7 @@ import dayjs from 'dayjs';
 import { SelectItem } from '@/common/types';
 import { getText } from '@/utils/codes';
 import _ from 'lodash';
+import store from '@/store';
 
 Vue.filter('formatDatetime', function (
   value: string | number | Date | undefined | null,
@@ -23,15 +24,11 @@ Vue.filter('formatDate', function (
 Vue.filter('formatMemberNm', function (
   value: string | undefined | null,
 ): string {
-  if (value) {
-    if (window.localStorage.getItem('memberList')) {
-      const find = JSON.parse(window.localStorage.getItem('memberList')!).find(
-        (value1: SelectItem) => value1!.value === value,
-      );
-      return find ? find.text : value;
-    } else {
-      return value;
-    }
+  if (value && store.state.cache.members) {
+    const find = store.state.cache.members.find(
+      (value1: SelectItem) => value1!.value === value,
+    );
+    return find ? find.text : value;
   } else {
     return '';
   }
