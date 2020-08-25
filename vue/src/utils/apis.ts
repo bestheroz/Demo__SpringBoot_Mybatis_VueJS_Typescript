@@ -25,8 +25,8 @@ axiosInstance.interceptors.request.use(
   },
 );
 axiosInstance.interceptors.response.use(
-  function (response) {
-    store.dispatch('resetTimer');
+  async function (response) {
+    await store.dispatch('resetTimer');
     return response;
   },
   async function (error: AxiosError) {
