@@ -10,7 +10,7 @@
         >
           <template v-slot:activator>
             <v-list-item-content>
-              <v-list-item-title> {{ item.title }} </v-list-item-title>
+              <v-list-item-title> {{ item.title }}</v-list-item-title>
             </v-list-item-content>
           </template>
           <v-list-item
@@ -23,7 +23,7 @@
             :link="!!item.to"
           >
             <v-list-item-action>
-              <v-icon v-if="child.icon"> {{ child.icon }} </v-icon>
+              <v-icon v-if="child.icon"> {{ child.icon }}</v-icon>
             </v-list-item-action>
             <v-list-item-content>
               <v-list-item-title>
@@ -41,10 +41,10 @@
           :link="!!item.to"
         >
           <v-list-item-action>
-            <v-icon> {{ item.icon }} </v-icon>
+            <v-icon> {{ item.icon }}</v-icon>
           </v-list-item-action>
           <v-list-item-content>
-            <v-list-item-title> {{ item.title }} </v-list-item-title>
+            <v-list-item-title> {{ item.title }}</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </template>
@@ -52,7 +52,7 @@
 
     <template v-slot:append>
       <div class="pa-2">
-        <v-btn block @click="$store.commit('logout')">
+        <v-btn block @click="logout">
           <v-icon>mdi-logout</v-icon>
           Logout
         </v-btn>
@@ -62,8 +62,9 @@
 </template>
 
 <script lang="ts">
-import { Component, PropSync, Vue } from 'vue-property-decorator';
+import { Component, PropSync, Vue, Watch } from 'vue-property-decorator';
 import { DrawerItem } from '@/common/types';
+import { logout } from '@/utils/authentications';
 
 @Component({
   name: 'Drawer',
@@ -72,14 +73,17 @@ export default class extends Vue {
   @PropSync('drawer', { required: true, default: true })
   readonly syncedDrawer!: boolean;
 
+  readonly logout: typeof logout = logout;
+
   items: DrawerItem[] | null = null;
 
   get isPopup(): boolean {
     return !window.toolbar.visible;
   }
 
-  created() {
-    this.items = JSON.parse(window.localStorage.getItem('drawer')!);
+  @Watch('$store.state.drawer.drawers')
+  async watchDrawers() {
+    this.items = await this.$store.dispatch('getDrawers');
   }
 
   popupWindow(url: string) {

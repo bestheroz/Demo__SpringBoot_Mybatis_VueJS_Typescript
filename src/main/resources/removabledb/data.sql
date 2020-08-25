@@ -37,8 +37,8 @@ INTO MEMBER
  UPDATED)
 VALUES ('1',
         '�ޤ�o%PO�8�.�9�+�Xڹ1����n�ח',
-        '1',
-        900,
+        '개발자',
+        999,
         0,
         TRUE,
         SYSDATE + 365,

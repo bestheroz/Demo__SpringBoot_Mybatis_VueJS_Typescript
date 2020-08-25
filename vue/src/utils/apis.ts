@@ -3,6 +3,8 @@ import _ from 'lodash';
 import store from '@/store';
 import { alertError, alertSuccess, alertWarning } from '@/utils/alerts';
 import envs from '@/constants/envs';
+import { needLogin, refreshToken } from '@/utils/authentications';
+import { errorPage } from '@/utils/errors';
 
 export const axiosInstance = axios.create({
   baseURL: envs.API_HOST,
@@ -24,7 +26,7 @@ axiosInstance.interceptors.request.use(
 );
 axiosInstance.interceptors.response.use(
   function (response) {
-    store.commit('timer');
+    store.dispatch('resetTimer').then(() => {});
     return response;
   },
   async function (error: AxiosError) {
@@ -35,19 +37,19 @@ axiosInstance.interceptors.response.use(
     if (error.response) {
       if ([400, 401].includes(error.response.status)) {
         if (error.response.headers.refreshtoken === 'must') {
-          return axios.request((await refreshToken(error)).config);
+          return axios.request((await apiRefreshToken(error)).config);
         }
-        store.commit('needLogin');
+        await needLogin();
         return;
       } else if (
         error.response.status === 404 &&
         error.response.headers.refreshtoken === 'must'
       ) {
         // 로컬환경때문에 추가
-        return axios.request((await refreshToken(error)).config);
+        return axios.request((await apiRefreshToken(error)).config);
       }
       if ([403, 404, 500].includes(error.response.status)) {
-        store.commit('error', error.response.status);
+        await errorPage(error.response.status);
         return;
       }
     }
@@ -264,23 +266,30 @@ export async function getExcelApi(url: string): Promise<void> {
   tempLink.click();
   document.body.removeChild(tempLink);
   window.URL.revokeObjectURL(newUrl);
-  store.commit('timer');
+  await store.dispatch('resetTimer');
   return response.data;
 }
 
-async function refreshToken(error: AxiosError) {
+async function apiRefreshToken(error: AxiosError) {
   if (error.response && error.response.headers.refreshtoken === 'must') {
-    const response = await axios
-      .create({
-        baseURL: envs.API_HOST,
-        headers: {
-          contentType: 'application/json',
-          Authorization: window.localStorage.getItem('accessToken'),
-          AuthorizationR: window.localStorage.getItem('refreshToken'),
-        },
-      })
-      .get('api/auth/refreshToken');
-    store.commit('refreshToken', response.data.data);
+    try {
+      const response = await axios
+        .create({
+          baseURL: envs.API_HOST,
+          headers: {
+            contentType: 'application/json',
+            Authorization: window.localStorage.getItem('accessToken'),
+            AuthorizationR: window.localStorage.getItem('refreshToken'),
+          },
+        })
+        .get('api/auth/refreshToken');
+      await refreshToken(response.data.data);
+      await store.dispatch('resetTimer');
+    } catch (e) {
+      if (e.response.status === 401) {
+        await needLogin();
+      }
+    }
     error.config.headers.Authorization = window.localStorage.getItem(
       'accessToken',
     );

@@ -1,63 +1,123 @@
 import Vue from 'vue';
-import Vuex from 'vuex';
-import router from '@/router';
-import { TableMemberEntity } from '@/common/types';
-import envs from '@/constants/envs';
-import { axiosInstance } from '@/utils/apis';
+import Vuex, { ActionContext } from 'vuex';
+import { DrawerItem, SelectItem, TableMemberEntity } from '@/common/types';
+import { getApi } from '@/utils/apis';
 
 Vue.use(Vuex);
 
-export default new Vuex.Store({
+const moduleUser = {
   state: {
-    logoutTime: new Date().getTime() + 2 * 3600 * 1000,
+    user: null,
+    logoutTimer: new Date().getTime() + 7200 * 1000,
+  },
+  getters: {
+    user: (state: any) => {
+      return {
+        id: state.user.id,
+        name: state.user.name,
+        timeout: state.user.timeout,
+        authority: state.user.authority,
+      };
+    },
   },
   mutations: {
-    // @ts-ignore
-    saveToken(state, token: { accessToken: string; refreshToken: string }) {
-      window.localStorage.setItem('accessToken', token.accessToken);
-      window.localStorage.setItem('refreshToken', token.refreshToken);
+    setUser(state: any, data: TableMemberEntity) {
+      state.user = data;
     },
-    // @ts-ignore
-    refreshToken(state, accessToken: string) {
-      window.localStorage.setItem('accessToken', accessToken);
-    },
-    // @ts-ignore
-    saveUserVO(state, loginVO: TableMemberEntity) {
-      window.localStorage.setItem('authority', loginVO.authority!.toString());
-      window.localStorage.setItem('timeout', loginVO.timeout!.toString());
-      window.localStorage.setItem('userVO', JSON.stringify(loginVO));
-    },
-    async logout() {
-      try {
-        await axiosInstance.delete(`${envs.API_HOST}api/auth/logout`);
-      } catch (e) {
-        console.error(e);
+    resetTimer(state: any) {
+      if (state.user && state.user.timeout) {
+        state.logoutTimer = new Date().getTime() + state.user.timeout * 1000;
+      } else {
+        state.logoutTimer = new Date().getTime() + 7200 * 1000;
       }
-      window.localStorage.clear();
-      await router.replace('/login');
-    },
-    // @ts-ignore
-    async error(state, statsCode) {
-      if (
-        !['/', '/login', '/error', '/error/403', '/error/404'].includes(
-          router.currentRoute.path,
-        )
-      ) {
-        await router.replace(`/error/${statsCode}`);
-      }
-    },
-    async needLogin() {
-      if (router.currentRoute.path !== '/login') {
-        window.localStorage.clear();
-        await router.replace('/login?login=need');
-      }
-    },
-    timer(state) {
-      state.logoutTime =
-        new Date().getTime() +
-        +(window.localStorage.getItem('timeout') || 2 * 3600) * 1000;
     },
   },
-  actions: {},
-  modules: {},
+  actions: {
+    async setUser({ commit }: ActionContext<any, any>) {
+      const response = await getApi<TableMemberEntity>(`auth/me`);
+      commit('setUser', response.data);
+      commit('resetTimer');
+    },
+    async getUser({
+      state,
+      dispatch,
+      getters,
+    }: ActionContext<any, any>): Promise<TableMemberEntity> {
+      if (!state.user) {
+        await dispatch('setUser');
+      }
+      return getters.user;
+    },
+    async resetTimer({ commit }: ActionContext<any, any>) {
+      commit('resetTimer');
+    },
+    clearUser({ state }: ActionContext<any, any>) {
+      state.user = null;
+      state.logoutTimer = new Date().getTime() + 7200 * 1000;
+    },
+  },
+};
+
+const moduleDrawer = {
+  state: {
+    drawers: null,
+  },
+  mutations: {
+    setDrawers(state: any, data: DrawerItem[]) {
+      state.drawers = data;
+    },
+  },
+  actions: {
+    async setDrawers({ commit }: ActionContext<any, any>) {
+      const response = await getApi<DrawerItem[]>('menus/drawer');
+      commit('setDrawers', response.data);
+    },
+    async getDrawers({
+      state,
+      dispatch,
+    }: ActionContext<any, any>): Promise<DrawerItem[]> {
+      if (!state.drawers) {
+        await dispatch('setDrawers');
+      }
+      return state.drawers;
+    },
+    clearDrawer({ state }: ActionContext<any, any>) {
+      state.drawers = null;
+      state.menus = null;
+    },
+  },
+};
+
+const moduleCache = {
+  state: {
+    members: null,
+  },
+  mutations: {
+    setMemberCodes(state: any, data: SelectItem[]) {
+      state.members = data;
+    },
+  },
+  actions: {
+    async setMemberCodes({ commit }: ActionContext<any, any>) {
+      const response = await getApi<SelectItem[]>('admin/members/lists/codes');
+      commit('setMemberCodes', response.data);
+    },
+    async getMemberCodes({ state, dispatch }: ActionContext<any, any>) {
+      if (!state.members) {
+        await dispatch('setMemberCodes');
+      }
+      return state.members;
+    },
+    clearCache({ state }: ActionContext<any, any>) {
+      state.members = null;
+    },
+  },
+};
+
+export default new Vuex.Store({
+  modules: {
+    user: moduleUser,
+    drawer: moduleDrawer,
+    cache: moduleCache,
+  },
 });
