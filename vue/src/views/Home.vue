@@ -4,7 +4,7 @@
       <v-container class="fill-height" fluid>
         <v-row align="center" justify="center">
           <v-col cols="12" class="text-center">
-            <h1 style="font-size: 3rem;">{{ title }}</h1>
+            <h1 style="font-size: 3rem">{{ title }}</h1>
           </v-col>
           <v-col cols="12" class="text-center">
             <h1>{{ now }}</h1>
