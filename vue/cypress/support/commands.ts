@@ -81,14 +81,14 @@ Cypress.Commands.add('menu', (menuGroup: string, menu: string) => {
         .trim() !== menuGroup;
     cy.get('nav.v-navigation-drawer').within(() => {
       clickMenuGroup &&
-        cy.get('div.v-list-item__title').contains(menuGroup).click();
+        cy.get('div.v-list-item__title').contains(menuGroup).parent().click();
       cy.get('div.v-list-item__title')
         .contains(menuGroup)
         .parent()
         .parent()
         .parent()
         .within(() => {
-          cy.get('div.v-list-item__title').contains(menu).click();
+          cy.get('div.v-list-item__title').contains(menu).parent().click();
         });
     });
   });

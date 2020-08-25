@@ -152,7 +152,7 @@ export default class extends Vue {
     );
     this.loading = false;
     if (_.startsWith(response.code, `S`)) {
-      await this.$store.dispatch('clearDrawer');
+      await this.$store.dispatch('setDrawers');
       this.syncedDialog = false;
       this.$emit('finished');
     }
@@ -167,7 +167,7 @@ export default class extends Vue {
     );
     this.loading = false;
     if (_.startsWith(response.code, `S`)) {
-      await this.$store.dispatch('clearDrawer');
+      await this.$store.dispatch('setDrawers');
       this.syncedDialog = false;
       this.$emit('finished');
     }
@@ -183,7 +183,7 @@ export default class extends Vue {
       );
       this.loading = false;
       if (_.startsWith(response.code, `S`)) {
-        await this.$store.dispatch('clearDrawer');
+        await this.$store.dispatch('setDrawers');
         this.$emit('finished');
       }
     }

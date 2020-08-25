@@ -19,7 +19,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator';
+import { Component, Vue } from 'vue-property-decorator';
 import { DrawerItem } from '@/common/types';
 import { errorPage } from '@/utils/errors';
 
@@ -33,14 +33,13 @@ export default class extends Vue {
     }
     let result: string = '';
     if (this.drawers && this.drawers.length > 0) {
-      const find = this.findThisPage();
-      result = find.title;
+      result = this.findThisPage().title;
     }
     return result.split('(팝업)').join('');
   }
 
-  findThisPage(): DrawerItem | null {
-    let result: DrawerItem | null = null;
+  findThisPage(): DrawerItem {
+    let result: DrawerItem = { title: '' };
     if (this.drawers && this.drawers.length > 0) {
       this.drawers.forEach((drawer) => {
         if (this.$route.name) {
@@ -62,16 +61,6 @@ export default class extends Vue {
       errorPage(403);
     }
     return result;
-  }
-
-  @Watch('$store.state.drawer.drawers')
-  async watchDrawers() {
-    await this.$store.dispatch('getDrawers');
-  }
-
-  @Watch('$store.state.cache.members', { immediate: true })
-  async watchCache() {
-    await this.$store.dispatch('getMemberCodes');
   }
 }
 </script>
