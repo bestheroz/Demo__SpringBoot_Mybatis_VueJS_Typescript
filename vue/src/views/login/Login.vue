@@ -105,9 +105,9 @@ export default class extends Vue {
   dialog: boolean = false;
 
   async mounted() {
-    this.$store.dispatch('clearUser');
-    this.$store.dispatch('clearDrawer');
-    this.$store.dispatch('clearCache');
+    await this.$store.dispatch('clearUser');
+    await this.$store.dispatch('clearDrawer');
+    await this.$store.dispatch('clearCache');
     window.localStorage.clear();
     if (this.$route.query.login === 'need') {
       this.$toasted.error('로그인이 필요합니다.');
