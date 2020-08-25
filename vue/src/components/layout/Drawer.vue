@@ -81,7 +81,7 @@ export default class extends Vue {
     return !window.toolbar.visible;
   }
 
-  @Watch('$store.state.drawer.drawers')
+  @Watch('$store.state.drawer.drawers', { immediate: true })
   async watchDrawers() {
     this.items = await this.$store.dispatch('getDrawers');
   }

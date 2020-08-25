@@ -63,7 +63,7 @@ export default class extends Vue {
     return result;
   }
 
-  @Watch('$store.state.drawer.drawers')
+  @Watch('$store.state.drawer.drawers', { immediate: true })
   async watchDrawers() {
     this.drawers = await this.$store.dispatch('getDrawers');
   }
