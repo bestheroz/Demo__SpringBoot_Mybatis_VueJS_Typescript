@@ -17,7 +17,6 @@ export default class extends Vue {
       await this.$router.push('/login');
       return;
     }
-    this.$store.dispatch('getMemberCodes');
     await this.$router.push('/index');
   }
 }
