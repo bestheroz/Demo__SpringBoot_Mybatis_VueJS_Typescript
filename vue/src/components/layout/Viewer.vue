@@ -19,7 +19,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Vue, Watch } from 'vue-property-decorator';
 import { DrawerItem } from '@/common/types';
 import { errorPage } from '@/utils/errors';
 
@@ -61,6 +61,11 @@ export default class extends Vue {
       errorPage(403);
     }
     return result;
+  }
+
+  @Watch('$store.state.drawer.drawers')
+  async watchDrawers() {
+    this.drawers = await this.$store.dispatch('getDrawers');
   }
 }
 </script>
