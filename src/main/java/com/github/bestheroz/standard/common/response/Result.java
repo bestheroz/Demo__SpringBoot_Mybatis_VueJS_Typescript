@@ -6,6 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
 
+import java.util.Optional;
+
 public class Result {
     private Result() {
     }
@@ -19,7 +21,11 @@ public class Result {
     }
 
     public static ResponseEntity<ApiResult> ok(final Object data) {
-        return ResponseEntity.ok(ApiResult.ok(data));
+        if (data instanceof Optional) {
+            return ((Optional<?>) data).map(o -> ResponseEntity.ok(ApiResult.ok(o))).orElseGet(() -> ResponseEntity.ok(ApiResult.ok()));
+        } else {
+            return ResponseEntity.ok(ApiResult.ok(data));
+        }
     }
 
     public static ResponseEntity<ApiResult> ok(final Object data, final Integer paginationTotalLength) {

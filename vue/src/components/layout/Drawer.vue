@@ -62,7 +62,7 @@
 </template>
 
 <script lang="ts">
-import { Component, PropSync, Vue } from 'vue-property-decorator';
+import { Component, PropSync, Vue, Watch } from 'vue-property-decorator';
 import { DrawerItem } from '@/common/types';
 import { logout } from '@/utils/authentications';
 
@@ -81,7 +81,8 @@ export default class extends Vue {
     return !window.toolbar.visible;
   }
 
-  async mounted() {
+  @Watch('$store.state.drawer.drawers', { immediate: true })
+  async watchDrawers() {
     this.items = await this.$store.dispatch('getDrawers');
   }
 

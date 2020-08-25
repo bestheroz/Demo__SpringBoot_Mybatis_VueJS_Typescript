@@ -44,7 +44,7 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
                 return;
             }
             if (!JwtTokenProvider.validateAccessToken(token)) {
-                log.info("invalid accessToken ");
+                log.info("invalid accessToken - refreshToken must ");
                 (response).addHeader("refreshToken", "must");
                 (response).sendError(HttpServletResponse.SC_UNAUTHORIZED);
                 return;

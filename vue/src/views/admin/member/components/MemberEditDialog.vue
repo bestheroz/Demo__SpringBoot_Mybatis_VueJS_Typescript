@@ -216,6 +216,7 @@ export default class extends Vue {
     );
     this.loading = false;
     if (_.startsWith(response.code, `S`)) {
+      await this.$store.dispatch('clearCache');
       this.syncedDialog = false;
       this.$emit('finished');
     }
@@ -236,6 +237,11 @@ export default class extends Vue {
     );
     this.loading = false;
     if (_.startsWith(response.code, `S`)) {
+      const user = await this.$store.dispatch('getUser');
+      if (this.editItem.id === user.id) {
+        await this.$store.dispatch('clearUser');
+      }
+      await this.$store.dispatch('clearCache');
       this.syncedDialog = false;
       this.$emit('finished');
     }
@@ -251,6 +257,7 @@ export default class extends Vue {
       );
       this.loading = false;
       if (_.startsWith(response.code, `S`)) {
+        await this.$store.dispatch('clearCache');
         this.$emit('finished');
       }
     }

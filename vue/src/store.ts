@@ -1,11 +1,6 @@
 import Vue from 'vue';
 import Vuex, { ActionContext } from 'vuex';
-import {
-  DrawerItem,
-  SelectItem,
-  TableMemberEntity,
-  TableMenuEntity,
-} from '@/common/types';
+import { DrawerItem, SelectItem, TableMemberEntity } from '@/common/types';
 import { getApi } from '@/utils/apis';
 
 Vue.use(Vuex);
@@ -41,6 +36,7 @@ const moduleUser = {
     async setUser({ commit }: ActionContext<any, any>) {
       const response = await getApi<TableMemberEntity>(`auth/me`);
       commit('setUser', response.data);
+      commit('resetTimer');
     },
     async getUser({
       state,
@@ -52,10 +48,7 @@ const moduleUser = {
       }
       return getters.user;
     },
-    async resetTimer({ commit, state, dispatch }: ActionContext<any, any>) {
-      if (!state.user) {
-        await dispatch('setUser');
-      }
+    async resetTimer({ commit }: ActionContext<any, any>) {
       commit('resetTimer');
     },
     clearUser({ state }: ActionContext<any, any>) {
@@ -68,14 +61,10 @@ const moduleUser = {
 const moduleDrawer = {
   state: {
     drawers: null,
-    menus: null,
   },
   mutations: {
     setDrawers(state: any, data: DrawerItem[]) {
       state.drawers = data;
-    },
-    setMenus(state: any, data: TableMenuEntity[]) {
-      state.menus = data;
     },
   },
   actions: {
@@ -91,19 +80,6 @@ const moduleDrawer = {
         await dispatch('setDrawers');
       }
       return state.drawers;
-    },
-    async setMenus({ commit }: ActionContext<any, any>) {
-      const response = await getApi<TableMenuEntity[]>('menus');
-      commit('setMenus', response.data);
-    },
-    async getMenus({
-      state,
-      dispatch,
-    }: ActionContext<any, any>): Promise<TableMenuEntity[]> {
-      if (!state.menus) {
-        await dispatch('setMenus');
-      }
-      return state.menus;
     },
     clearDrawer({ state }: ActionContext<any, any>) {
       state.drawers = null;

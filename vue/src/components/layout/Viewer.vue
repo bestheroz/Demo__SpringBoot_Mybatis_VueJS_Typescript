@@ -19,25 +19,13 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
-import { DrawerItem, TableMenuEntity } from '@/common/types';
+import { Component, Vue, Watch } from 'vue-property-decorator';
+import { DrawerItem } from '@/common/types';
 import { errorPage } from '@/utils/errors';
 
 @Component({ name: 'Viewer' })
 export default class extends Vue {
   drawers: DrawerItem[] = [];
-
-  async mounted() {
-    if (this.$route.fullPath === '/index') {
-      return;
-    }
-    const items: TableMenuEntity[] = await this.$store.dispatch('getMenus');
-    if (items && items.length > 0) {
-      const result = items.find((item) => item.url === this.$route.fullPath);
-      !result && (await errorPage(404));
-    }
-    this.drawers = await this.$store.dispatch('getDrawers');
-  }
 
   get title(): string {
     if (this.$route.fullPath === '/index') {
@@ -45,9 +33,18 @@ export default class extends Vue {
     }
     let result: string = '';
     if (this.drawers && this.drawers.length > 0) {
+      const find = this.findThisPage();
+      result = find.title;
+    }
+    return result.split('(팝업)').join('');
+  }
+
+  findThisPage(): DrawerItem | null {
+    let result: DrawerItem | null = null;
+    if (this.drawers && this.drawers.length > 0) {
       this.drawers.forEach((drawer) => {
         if (this.$route.name) {
-          return '';
+          return { title: null };
         }
         if (drawer.children && drawer.children.length > 0) {
           const find = drawer.children.find((child: any) => {
@@ -56,14 +53,25 @@ export default class extends Vue {
             }
           });
           if (find) {
-            result = find.title;
+            result = find;
           }
         }
       });
-      !result && errorPage(403);
-      return '';
     }
-    return result.split('(팝업)').join('');
+    if (!result) {
+      errorPage(403);
+    }
+    return result;
+  }
+
+  @Watch('$store.state.drawer.drawers')
+  async watchDrawers() {
+    await this.$store.dispatch('getDrawers');
+  }
+
+  @Watch('$store.state.cache.members', { immediate: true })
+  async watchCache() {
+    await this.$store.dispatch('getMemberCodes');
   }
 }
 </script>

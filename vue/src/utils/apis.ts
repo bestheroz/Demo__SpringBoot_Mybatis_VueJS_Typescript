@@ -266,24 +266,30 @@ export async function getExcelApi(url: string): Promise<void> {
   tempLink.click();
   document.body.removeChild(tempLink);
   window.URL.revokeObjectURL(newUrl);
-  store.dispatch('resetTimer');
+  await store.dispatch('resetTimer');
   return response.data;
 }
 
 async function apiRefreshToken(error: AxiosError) {
   if (error.response && error.response.headers.refreshtoken === 'must') {
-    const response = await axios
-      .create({
-        baseURL: envs.API_HOST,
-        headers: {
-          contentType: 'application/json',
-          Authorization: window.localStorage.getItem('accessToken'),
-          AuthorizationR: window.localStorage.getItem('refreshToken'),
-        },
-      })
-      .get('api/auth/refreshToken');
-    await refreshToken(response.data.data);
-    store.dispatch('resetTimer');
+    try {
+      const response = await axios
+        .create({
+          baseURL: envs.API_HOST,
+          headers: {
+            contentType: 'application/json',
+            Authorization: window.localStorage.getItem('accessToken'),
+            AuthorizationR: window.localStorage.getItem('refreshToken'),
+          },
+        })
+        .get('api/auth/refreshToken');
+      await refreshToken(response.data.data);
+      await store.dispatch('resetTimer');
+    } catch (e) {
+      if (e.response.status === 401) {
+        await needLogin();
+      }
+    }
     error.config.headers.Authorization = window.localStorage.getItem(
       'accessToken',
     );

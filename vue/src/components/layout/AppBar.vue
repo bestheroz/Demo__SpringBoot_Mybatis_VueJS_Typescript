@@ -77,16 +77,19 @@ export default class extends Vue {
 
   async mounted() {
     this.title = await getVariableApi('title');
-    await this.$store.dispatch('getMemberCodes');
-    const user = await this.$store.dispatch('getUser');
-    this.userName = user.name;
   }
 
-  @Watch('$store.state.user.logoutTimer')
+  @Watch('$store.state.user.logoutTimer', { immediate: true })
   watchLogoutTime() {
     if (this.$refs.countdown) {
       (this.$refs.countdown as any).startCountdown('restart');
     }
+  }
+
+  @Watch('$store.state.user.user', { immediate: true })
+  async watchUser() {
+    const user = await this.$store.dispatch('getUser');
+    this.userName = user.name;
   }
 
   goHome() {
