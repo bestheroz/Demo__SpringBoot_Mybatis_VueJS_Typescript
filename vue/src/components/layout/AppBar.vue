@@ -86,7 +86,7 @@ export default class extends Vue {
     }
   }
 
-  @Watch('$store.state.user.user')
+  @Watch('$store.state.user.user', { immediate: true })
   async watchUser() {
     const user = await this.$store.dispatch('getUser');
     this.userName = user.name;

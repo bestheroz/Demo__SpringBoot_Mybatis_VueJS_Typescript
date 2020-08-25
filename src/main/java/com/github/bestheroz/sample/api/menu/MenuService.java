@@ -3,6 +3,7 @@ package com.github.bestheroz.sample.api.menu;
 import com.github.bestheroz.sample.api.entity.menu.TableMenuEntity;
 import com.github.bestheroz.sample.api.entity.menu.TableMenuRepository;
 import com.github.bestheroz.standard.common.util.MapperUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -48,7 +49,7 @@ public class MenuService {
         drawerVO.setId(vo.getId());
         drawerVO.setTitle(vo.getName());
         drawerVO.setIcon(vo.getIcon());
-        drawerVO.setTo(vo.getUrl());
+        drawerVO.setTo(StringUtils.defaultString(vo.getUrl()));
         drawerVO.setType(vo.getType());
         return drawerVO;
     }
