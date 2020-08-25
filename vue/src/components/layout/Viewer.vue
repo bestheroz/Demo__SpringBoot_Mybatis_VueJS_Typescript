@@ -19,51 +19,53 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
-import { DrawerItem, TableMenuEntity } from '@/common/types';
+import { Component, Vue, Watch } from 'vue-property-decorator';
+import { DrawerItem } from '@/common/types';
+import { errorPage } from '@/utils/errors';
 
 @Component({ name: 'Viewer' })
 export default class extends Vue {
-  mounted() {
-    if (this.$route.fullPath === '/home') {
-      return;
-    }
-    const items: TableMenuEntity[] = JSON.parse(
-      window.localStorage.getItem('menus')!,
-    );
-    if (items && items.length > 0) {
-      const result = items.find((item) => item.url === this.$route.fullPath);
-      !result && this.$store.commit('error', 404);
-    }
-  }
+  drawers: DrawerItem[] = [];
 
-  get title() {
-    if (this.$route.fullPath === '/home') {
+  get title(): string {
+    if (this.$route.fullPath === '/index') {
       return '';
     }
     let result: string = '';
-    const items: DrawerItem[] = JSON.parse(
-      window.localStorage.getItem('drawer')!,
-    );
-    if (items && items.length > 0) {
-      items.forEach((item) => {
+    if (this.drawers && this.drawers.length > 0) {
+      result = this.findThisPage().title;
+    }
+    return result.split('(팝업)').join('');
+  }
+
+  findThisPage(): DrawerItem {
+    let result: DrawerItem = { title: '' };
+    if (this.drawers && this.drawers.length > 0) {
+      this.drawers.forEach((drawer) => {
         if (this.$route.name) {
-          return '';
+          return { title: null };
         }
-        if (item.children && item.children.length > 0) {
-          const find = item.children.find((child: any) => {
+        if (drawer.children && drawer.children.length > 0) {
+          const find = drawer.children.find((child: any) => {
             if (child.to) {
               return child.to === this.$route.fullPath;
             }
           });
           if (find) {
-            result = find.title;
+            result = find;
           }
         }
       });
-      !result && this.$store.commit('error', 403);
     }
-    return result.split('(팝업)').join('');
+    if (!result) {
+      errorPage(403);
+    }
+    return result;
+  }
+
+  @Watch('$store.state.drawer.drawers')
+  async watchDrawers() {
+    this.drawers = await this.$store.dispatch('getDrawers');
   }
 }
 </script>

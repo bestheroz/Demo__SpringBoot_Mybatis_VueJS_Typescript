@@ -91,6 +91,7 @@ import {
 import { alertError } from '@/utils/alerts';
 import _ from 'lodash';
 import NewPasswordDialog from '@/views/login/components/NewPasswordDialog.vue';
+import { saveToken } from '@/utils/authentications';
 
 const pbkdf2 = require('pbkdf2');
 
@@ -104,11 +105,14 @@ export default class extends Vue {
   dialog: boolean = false;
 
   async mounted() {
+    await this.$store.dispatch('clearUser');
+    await this.$store.dispatch('clearDrawer');
+    await this.$store.dispatch('clearCache');
+    window.localStorage.clear();
     if (this.$route.query.login === 'need') {
       this.$toasted.error('로그인이 필요합니다.');
     }
     this.title = await getVariableApi('title');
-    window.localStorage.clear();
   }
 
   async login() {
@@ -134,7 +138,10 @@ export default class extends Vue {
         this.dialog = true;
         this.password = null;
       } else if (_.startsWith(response.data.code, `S`)) {
-        this.$store.commit('saveToken', response.data.data);
+        saveToken({
+          accessToken: response.data.data!.accessToken,
+          refreshToken: response.data.data!.refreshToken,
+        });
         this.$toasted.clear();
         await this.$router.push('/');
       } else {

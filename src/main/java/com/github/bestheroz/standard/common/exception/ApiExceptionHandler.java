@@ -3,6 +3,7 @@ package com.github.bestheroz.standard.common.exception;
 import com.github.bestheroz.standard.common.response.ApiResult;
 import com.github.bestheroz.standard.common.response.Result;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MultipartException;
+
+import javax.servlet.http.HttpServletResponse;
 
 @Slf4j
 @ControllerAdvice
@@ -55,7 +58,10 @@ public class ApiExceptionHandler {
 
     @ExceptionHandler(
             {HttpMediaTypeNotAcceptableException.class, HttpMediaTypeNotSupportedException.class, HttpRequestMethodNotSupportedException.class, HttpClientErrorException.class})
-    public ResponseEntity<ApiResult> httpMediaTypeNotAcceptableException(final Throwable e) {
+    public ResponseEntity<ApiResult> httpMediaTypeNotAcceptableException(final Throwable e, final HttpServletResponse response) {
+        if (StringUtils.equals(response.getHeader("refreshToken"), "must")) {  // 데이터 수정시 가끔 이곳으로 넘어와 버리네..
+            return Result.unauthenticated();
+        }
         log.warn(ExceptionUtils.getStackTrace(e));
         return Result.error(BusinessException.FAIL_INVALID_REQUEST);
     }

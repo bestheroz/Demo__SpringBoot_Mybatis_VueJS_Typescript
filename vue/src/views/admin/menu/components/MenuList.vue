@@ -28,6 +28,9 @@
         <template v-slot:item.updated="{ item }">
           {{ item.updated | formatDatetime }}
         </template>
+        <template v-slot:item.updatedBy="{ item }">
+          {{ item.updatedBy | formatMemberNm }}
+        </template>
         <template v-slot:item.action="{ item }">
           <v-btn
             class="mx-1"

@@ -88,7 +88,6 @@ describe('관리자>메뉴관리, 관리자>메뉴권한관리', () => {
     cy.clickAlert('성공');
   });
   it('추가된 메뉴확인', () => {
-    cy.visitHome();
     cy.get('nav.v-navigation-drawer').within(() => {
       cy.get('div.v-list-item__title').contains('(cypress)그룹메뉴').click();
       cy.get('div.v-list-item__title').contains('(cypress)하위메뉴1');
@@ -158,7 +157,6 @@ describe('관리자>메뉴관리, 관리자>메뉴권한관리', () => {
     cy.clickAlert('성공');
   });
   it('수정된 메뉴확인', () => {
-    cy.visitHome();
     cy.get('nav.v-navigation-drawer').within(() => {
       cy.get('div.v-list-item__title')
         .contains('(cypress)그룹메뉴0000')
@@ -170,9 +168,6 @@ describe('관리자>메뉴관리, 관리자>메뉴권한관리', () => {
   it('메뉴삭제 - 하위메뉴2', () => {
     cy.server();
     cy.route('DELETE', '**/api/admin/menus/**').as('delete');
-    cy.route('GET', '**/api/admin/menus/').as('getList');
-    cy.menu('관리자', '메뉴관리');
-    cy.wait('@getList');
     cy.get('tr>td>span')
       .contains('(cypress)하위메뉴2')
       .parent('td')

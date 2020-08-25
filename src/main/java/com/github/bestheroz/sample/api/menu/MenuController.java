@@ -15,11 +15,6 @@ import javax.annotation.Resource;
 public class MenuController {
     @Resource private MenuService menuService;
 
-    @GetMapping()
-    ResponseEntity<ApiResult> getMenus() {
-        return Result.ok(this.menuService.getMenuList());
-    }
-
     @GetMapping(value = "drawer")
     ResponseEntity<ApiResult> getDrawerList() {
         return Result.ok(this.menuService.getDrawerList(AuthenticationUtils.getLoginVO().getAuthority()));

@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import store from '@/store';
+import { needLogin } from '@/utils/authentications';
 
 Vue.use(Router);
 
@@ -12,7 +12,7 @@ const requireAuth = () => async (to: any, from: any, next: any) => {
   ) {
     return next();
   }
-  return store.commit('needLogin');
+  return needLogin();
 };
 
 const routes = () => {
@@ -48,7 +48,7 @@ const routes = () => {
       ],
     },
     {
-      path: '/home',
+      path: '/index',
       component: () => import('@/views/index/Index.vue'),
       beforeEnter: requireAuth(),
       children: [

@@ -1,6 +1,7 @@
 package com.github.bestheroz.sample.api.auth;
 
 import com.github.bestheroz.sample.api.entity.member.TableMemberEntity;
+import com.github.bestheroz.sample.api.entity.member.TableMemberRepository;
 import com.github.bestheroz.standard.common.authenticate.JwtTokenProvider;
 import com.github.bestheroz.standard.common.response.ApiResult;
 import com.github.bestheroz.standard.common.response.Result;
@@ -9,11 +10,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/api/auth")
 public class AuthController {
     @Resource private AuthService authService;
+    @Resource private TableMemberRepository tableMemberRepository;
+
 
     @PostMapping(value = "/login")
     @ResponseBody
@@ -23,7 +27,7 @@ public class AuthController {
 
     @GetMapping(value = "/me")
     public ResponseEntity<ApiResult> getMyData(@RequestHeader(value = "Authorization") final String token) {
-        return Result.ok(JwtTokenProvider.getAuthentication(token).getPrincipal());
+        return Result.ok(this.tableMemberRepository.getItem(TableMemberEntity.class, Map.of("id", JwtTokenProvider.getUserPk(token))));
     }
 
     @GetMapping(value = "/refreshToken")

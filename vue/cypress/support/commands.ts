@@ -50,12 +50,10 @@ Cypress.Commands.add('visitHome', () => {
   cy.server();
   cy.route('GET', '**/api/auth/me').as('me');
   cy.route('GET', '**/api/menus/drawer').as('drawer');
-  cy.route('GET', '**/api/menus').as('menus');
   cy.route('GET', '**/api/admin/members/lists/codes').as('memberList');
   cy.visit('/');
   cy.wait('@me');
   cy.wait('@drawer');
-  cy.wait('@menus');
   cy.wait('@memberList');
   return cy;
 });
@@ -83,14 +81,14 @@ Cypress.Commands.add('menu', (menuGroup: string, menu: string) => {
         .trim() !== menuGroup;
     cy.get('nav.v-navigation-drawer').within(() => {
       clickMenuGroup &&
-        cy.get('div.v-list-item__title').contains(menuGroup).click();
+        cy.get('div.v-list-item__title').contains(menuGroup).parent().click();
       cy.get('div.v-list-item__title')
         .contains(menuGroup)
         .parent()
         .parent()
         .parent()
         .within(() => {
-          cy.get('div.v-list-item__title').contains(menu).click();
+          cy.get('div.v-list-item__title').contains(menu).parent().click();
         });
     });
   });

@@ -45,13 +45,11 @@ export default class extends Vue {
   async getCodeList() {
     this.loading = true;
     const data: SelectItem[] = await getCodeListApi('AUTHORITY');
+    const user = await this.$store.dispatch('getUser');
     this.loading = false;
     this.AUTHORITY =
       data.filter(
-        (value) =>
-          ![window.localStorage.getItem('authority'), 999].includes(
-            parseInt(value.value),
-          ),
+        (value) => ![user.authority, 999].includes(parseInt(value.value)),
       ) || [];
   }
 }
