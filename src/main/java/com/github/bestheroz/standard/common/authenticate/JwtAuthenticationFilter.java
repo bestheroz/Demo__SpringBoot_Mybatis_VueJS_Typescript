@@ -17,7 +17,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Optional;
 
 @Slf4j
 public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
@@ -35,8 +34,7 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
         final StopWatch stopWatch = new StopWatch();
         stopWatch.start();
 
-        final Optional<String> oPublicPages = Arrays.stream(SecurityConfiguration.PUBLIC).map(item -> item.replace("*", "")).filter(requestURI::startsWith).findFirst();
-        oPublicPages.ifPresentOrElse(item -> {
+        Arrays.stream(SecurityConfiguration.PUBLIC).map(item -> item.replace("*", "")).filter(requestURI::startsWith).findFirst().ifPresentOrElse(item -> {
             try {
                 chain.doFilter(request, response);
                 stopWatch.stop();
