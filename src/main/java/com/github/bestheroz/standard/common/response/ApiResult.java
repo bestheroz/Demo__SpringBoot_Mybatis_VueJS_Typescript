@@ -6,7 +6,7 @@ import org.springframework.util.Assert;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
+import java.util.Optional;
 
 public class ApiResult extends HashMap<String, Object> {
     public static final String CODE_KEY = "code";
@@ -52,12 +52,8 @@ public class ApiResult extends HashMap<String, Object> {
         final Map<String, Object> map = new HashMap<>();
         map.put(CODE_KEY, this.get(CODE_KEY));
         map.put(MESSAGE_KEY, this.get(MESSAGE_KEY));
-        if (Objects.nonNull(this.get(DATA_KEY))) {
-            map.put(DATA_KEY, this.get(DATA_KEY));
-        }
-        if (Objects.nonNull(this.get(PAGINATION_TOTAL_LENGTH_KEY))) {
-            map.put(PAGINATION_TOTAL_LENGTH_KEY, this.get(PAGINATION_TOTAL_LENGTH_KEY));
-        }
+        Optional.ofNullable(this.get(DATA_KEY)).ifPresent(item -> map.put(DATA_KEY, this.get(item)));
+        Optional.ofNullable(this.get(PAGINATION_TOTAL_LENGTH_KEY)).ifPresent(item -> map.put(PAGINATION_TOTAL_LENGTH_KEY, this.get(item)));
         return MapperUtils.toString(map);
     }
 }

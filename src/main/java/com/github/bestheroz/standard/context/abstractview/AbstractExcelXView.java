@@ -33,9 +33,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 public abstract class AbstractExcelXView extends AbstractView {
@@ -167,10 +165,10 @@ public abstract class AbstractExcelXView extends AbstractView {
 
     protected SXSSFWorkbook getTemplateSource(final String url, final HttpServletRequest request) throws Exception {
         final ApplicationContext applicationContext = this.getApplicationContext();
-        if (applicationContext == null) {
+        Optional.ofNullable(applicationContext).orElseThrow(() -> {
             log.warn("applicationContext is null");
-            throw BusinessException.ERROR_SYSTEM;
-        }
+            return BusinessException.ERROR_SYSTEM;
+        });
         final LocalizedResourceHelper helper = new LocalizedResourceHelper(applicationContext);
         final Locale userLocale = RequestContextUtils.getLocale(request);
         final Resource inputFile = helper.findLocalizedResource(url, EXTENSION, userLocale);
@@ -185,19 +183,12 @@ public abstract class AbstractExcelXView extends AbstractView {
 
     protected abstract void buildExcelDocument(Map<String, Object> model, SXSSFWorkbook workbook, HttpServletRequest request, HttpServletResponse response);
 
-    protected SXSSFCell getCell(final SXSSFSheet sheet, final int row, final int col) {
-        SXSSFRow sheetRow = sheet.getRow(row);
-        if (sheetRow == null) {
-            sheetRow = sheet.createRow(row);
-        }
-        SXSSFCell cell = sheetRow.getCell(col);
-        if (cell == null) {
-            cell = sheetRow.createCell(col);
-        }
-        return cell;
+    protected static SXSSFCell getCell(final SXSSFSheet sheet, final int row, final int col) {
+        final SXSSFRow sheetRow = Objects.requireNonNullElseGet(sheet.getRow(row), () -> sheet.createRow(row));
+        return Objects.requireNonNullElseGet(sheetRow.getCell(col), () -> sheetRow.createCell(col));
     }
 
-    protected void autoSizeColumn(final SXSSFSheet sheet, final List<ExcelVO> excelVOs) {
+    protected static void autoSizeColumn(final SXSSFSheet sheet, final List<ExcelVO> excelVOs) {
         sheet.trackAllColumnsForAutoSizing();
         for (int j = 0; j < excelVOs.size(); j++) {
             sheet.autoSizeColumn(j);
@@ -240,7 +231,7 @@ public abstract class AbstractExcelXView extends AbstractView {
                             } else if (excelVOs.get(columnIdx).getCellType().equals(CellType.STRING_RIGHT)) {
                                 this.setStringRight(cell, value);
                             } else {
-                                this.setString(cell, value);
+                                AbstractExcelXView.setString(cell, value);
                             }
                             return;
                         }
@@ -251,40 +242,40 @@ public abstract class AbstractExcelXView extends AbstractView {
                 } else if (excelVOs.get(columnIdx).getCellType().equals(CellType.STRING_RIGHT)) {
                     this.setStringRight(cell, strData);
                 } else {
-                    this.setString(cell, strData);
+                    AbstractExcelXView.setString(cell, strData);
                 }
             } catch (final Throwable e) {
                 log.warn(ExceptionUtils.getStackTrace(e));
-                this.setString(cell, strData);
+                AbstractExcelXView.setString(cell, strData);
             }
         }
     }
 
-    private void setString(final SXSSFCell cell, final String text) {
+    private static void setString(final SXSSFCell cell, final String text) {
         cell.setCellType(org.apache.poi.ss.usermodel.CellType.STRING);
-        cell.setCellValue(this.getSecureCellText(text));
+        cell.setCellValue(AbstractExcelXView.getSecureCellText(text));
     }
 
     private void setStringCenter(final SXSSFCell cell, final String text) {
         cell.setCellType(org.apache.poi.ss.usermodel.CellType.STRING);
         cell.setCellStyle(this.stringCenterStyle);
-        cell.setCellValue(this.getSecureCellText(text));
+        cell.setCellValue(AbstractExcelXView.getSecureCellText(text));
     }
 
     private void setStringRight(final SXSSFCell cell, final String text) {
         cell.setCellType(org.apache.poi.ss.usermodel.CellType.STRING);
         cell.setCellStyle(this.stringRightStyle);
-        cell.setCellValue(this.getSecureCellText(text));
+        cell.setCellValue(AbstractExcelXView.getSecureCellText(text));
     }
 
     private void setInteger(final SXSSFCell cell, final String text) {
         cell.setCellType(org.apache.poi.ss.usermodel.CellType.NUMERIC);
         cell.setCellStyle(this.numberStyle);
         try {
-            cell.setCellValue((long) Double.parseDouble(this.getSecureCellText(text)));
+            cell.setCellValue((long) Double.parseDouble(AbstractExcelXView.getSecureCellText(text)));
         } catch (final Throwable e) {
             log.warn("Excel setInteger() error\n{}.", ExceptionUtils.getStackTrace(e));
-            cell.setCellValue(this.getSecureCellText(text));
+            cell.setCellValue(AbstractExcelXView.getSecureCellText(text));
         }
     }
 
@@ -292,10 +283,10 @@ public abstract class AbstractExcelXView extends AbstractView {
         cell.setCellType(org.apache.poi.ss.usermodel.CellType.NUMERIC);
         cell.setCellStyle(this.doubleStyle);
         try {
-            cell.setCellValue(Double.parseDouble(this.getSecureCellText(text)));
+            cell.setCellValue(Double.parseDouble(AbstractExcelXView.getSecureCellText(text)));
         } catch (final Throwable e) {
             log.warn("Excel setDouble() error\n{}.", ExceptionUtils.getStackTrace(e));
-            cell.setCellValue(this.getSecureCellText(text));
+            cell.setCellValue(AbstractExcelXView.getSecureCellText(text));
         }
     }
 
@@ -303,13 +294,13 @@ public abstract class AbstractExcelXView extends AbstractView {
         cell.setCellType(org.apache.poi.ss.usermodel.CellType.STRING);
         cell.setCellStyle(this.dateStyle);
         try {
-            cell.setCellValue(this.getSecureCellText(text));
+            cell.setCellValue(AbstractExcelXView.getSecureCellText(text));
         } catch (final Throwable e) {
             log.warn("Excel setDate() error\n{}.", ExceptionUtils.getStackTrace(e));
         }
     }
 
-    private String getSecureCellText(final String text) {
+    private static String getSecureCellText(final String text) {
         if (StringUtils.isEmpty(text) || StringUtils.equals(text, "null")) {
             return StringUtils.EMPTY;
         } else {

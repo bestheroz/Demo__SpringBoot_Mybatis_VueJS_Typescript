@@ -9,6 +9,8 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.util.Optional;
+
 @Slf4j
 @UtilityClass
 public class AuthenticationUtils {
@@ -45,12 +47,10 @@ public class AuthenticationUtils {
 
     public String getUserPk() {
         try {
-            final String username = SecurityContextHolder.getContext().getAuthentication().getName();
-            if (username == null) {
+            return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(() -> {
                 log.warn(BusinessException.FAIL_TRY_LOGIN_FIRST.toString());
-                throw BusinessException.FAIL_TRY_LOGIN_FIRST;
-            }
-            return username;
+                return BusinessException.FAIL_TRY_LOGIN_FIRST;
+            });
         } catch (final NullPointerException e) {
             log.warn(BusinessException.FAIL_TRY_LOGIN_FIRST.toString());
             throw BusinessException.FAIL_TRY_LOGIN_FIRST;

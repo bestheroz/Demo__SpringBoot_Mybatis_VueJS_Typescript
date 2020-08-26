@@ -2,59 +2,49 @@ package com.github.bestheroz.standard.common.util;
 
 import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.Assert;
 
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
-import java.util.Objects;
+import java.util.Optional;
 
 @UtilityClass
 public class DateUtils {
     public String toStringNow(final String pattern) {
+        Assert.hasText(pattern, "pattern parameter must not be empty or null");
         return OffsetDateTime.now().format(DateTimeFormatter.ofPattern(pattern));
     }
 
     public String toString(final Instant instant, final String pattern) {
-        if (instant == null) {
-            return null;
-        }
-        return OffsetDateTime.ofInstant(instant, ZoneOffset.UTC).format(DateTimeFormatter.ofPattern(pattern));
+        Assert.hasText(pattern, "pattern parameter must not be empty or null");
+        return Optional.ofNullable(instant).map(item -> OffsetDateTime.ofInstant(item, ZoneOffset.UTC).format(DateTimeFormatter.ofPattern(pattern))).orElse(null);
     }
 
     public String toString(final Long timestamp, final String pattern) {
-        if (timestamp == null) {
-            return null;
-        }
-        return OffsetDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZoneOffset.UTC).format(DateTimeFormatter.ofPattern(pattern));
+        Assert.hasText(pattern, "pattern parameter must not be empty or null");
+        return Optional.ofNullable(timestamp).map(item -> OffsetDateTime.ofInstant(Instant.ofEpochMilli(item), ZoneOffset.UTC).format(DateTimeFormatter.ofPattern(pattern))).orElse(null);
     }
 
     public String toString(final Date date, final String pattern) {
-        if (date == null) {
-            return StringUtils.EMPTY;
-        }
-        return DateUtils.toString(date.getTime(), pattern);
+        Assert.hasText(pattern, "pattern parameter must not be empty or null");
+        return Optional.ofNullable(date).map(item -> DateUtils.toString(item.getTime(), pattern)).orElse(StringUtils.EMPTY);
     }
 
     public String toString(final String string, final String fromPattern, final String toPattern) {
-        if (StringUtils.isEmpty(string)) {
-            return StringUtils.EMPTY;
-        }
-        return Objects.requireNonNull(parseOffsetDateTime(string, fromPattern)).format(DateTimeFormatter.ofPattern(toPattern));
+        Assert.hasText(fromPattern, "fromPattern parameter must not be empty or null");
+        Assert.hasText(toPattern, "toPattern parameter must not be empty or null");
+        return Optional.ofNullable(string).map(item -> parseOffsetDateTime(item, fromPattern).format(DateTimeFormatter.ofPattern(toPattern))).orElse(StringUtils.EMPTY);
     }
 
     public OffsetDateTime parseOffsetDateTime(final String text, final String pattern) {
-        if (StringUtils.isEmpty(text)) {
-            return null;
-        }
-        return OffsetDateTime.parse(text, DateTimeFormatter.ofPattern(pattern));
+        Assert.hasText(pattern, "pattern parameter must not be empty or null");
+        return Optional.ofNullable(text).map(item -> OffsetDateTime.parse(item, DateTimeFormatter.ofPattern(pattern))).orElse(null);
     }
 
     public OffsetDateTime parseOffsetDateTimeAtUTC(final String text) {
-        if (StringUtils.isEmpty(text)) {
-            return null;
-        }
-        return OffsetDateTime.parse(text);
+        return Optional.ofNullable(text).map(item -> OffsetDateTime.parse(text)).orElse(null);
     }
 }

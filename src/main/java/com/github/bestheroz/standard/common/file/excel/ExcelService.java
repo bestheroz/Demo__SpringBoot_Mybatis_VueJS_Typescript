@@ -39,13 +39,13 @@ public class ExcelService extends AbstractExcelXView {
         final SXSSFSheet sheet = workbook.createSheet("report");
         sheet.setRandomAccessWindowSize(100);
 
-        this.createColumnLabel(sheet, excelVOs);
+        ExcelService.createColumnLabel(sheet, excelVOs);
 
         this.addRowData(sheet, excelVOs, listData);
-        this.autoSizeColumn(sheet, excelVOs);
+        AbstractExcelXView.autoSizeColumn(sheet, excelVOs);
     }
 
-    private void createColumnLabel(final SXSSFSheet sheet, final List<ExcelVO> excelVOs) {
+    private static void createColumnLabel(final SXSSFSheet sheet, final List<ExcelVO> excelVOs) {
         final SXSSFRow row0 = sheet.createRow(0);
         final CellRangeAddress mergedRegion = new CellRangeAddress(0, 0, 0, excelVOs.size() - 1);
         sheet.addMergedRegion(mergedRegion);
