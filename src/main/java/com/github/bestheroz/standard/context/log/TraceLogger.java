@@ -27,8 +27,8 @@ public class TraceLogger {
     private static final String STR_START_EXECUTE_TIME = "{} START ....... Execute Time ....... : {}";
     private static final String STR_END_EXECUTE_TIME = "{} E N D ....... Execute Time ....... : {} - return Value({}) : {}";
 
-    @Around("execution(public * com.github.bestheroz..*Controller.*(..)) || execution(public * com.github.bestheroz..*Service.*(..)) " +
-            "|| execution(public * com.github.bestheroz..*Repository.*(..)) || execution(public * com.github.bestheroz..*DAO.*(..))")
+    @Around("execution(!private * com.github.bestheroz..*Controller.*(..)) || execution(!private * com.github.bestheroz..*Service.*(..)) " +
+            "|| execution(!private * com.github.bestheroz..*Repository.*(..)) || execution(!private * com.github.bestheroz..*DAO.*(..))")
     public static Object writeLog(final ProceedingJoinPoint pjp) throws Throwable {
         final Object retVal;
 
