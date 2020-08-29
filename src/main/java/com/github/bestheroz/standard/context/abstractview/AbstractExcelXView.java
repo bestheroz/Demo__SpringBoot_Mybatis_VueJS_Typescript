@@ -64,15 +64,15 @@ public abstract class AbstractExcelXView extends AbstractView {
         this.setContentType(CONTENT_TYPE);
     }
 
-    public void addHeaderOfRowNo(final List<ExcelVO> excelVOList, final String title) {
-        this.addHeader(excelVOList, title, ROW_NUMBER, AbstractExcelXView.CellType.STRING_CENTER, null);
+    public static void addHeaderOfRowNo(final List<ExcelVO> excelVOList, final String title) {
+        addHeader(excelVOList, title, ROW_NUMBER, AbstractExcelXView.CellType.STRING_CENTER, null);
     }
 
-    public void addHeader(final List<ExcelVO> excelVOList, final String title, final String dbColName, final CellType cellType) {
-        this.addHeader(excelVOList, title, dbColName, cellType, null);
+    public static void addHeader(final List<ExcelVO> excelVOList, final String title, final String dbColName, final CellType cellType) {
+        addHeader(excelVOList, title, dbColName, cellType, null);
     }
 
-    public void addHeader(final List<ExcelVO> excelVOList, final String title, final String dbColName, final CellType cellType, final List<CodeVO> codeList) {
+    public static void addHeader(final List<ExcelVO> excelVOList, final String title, final String dbColName, final CellType cellType, final List<CodeVO> codeList) {
         final ExcelVO excelVO = new ExcelVO();
         excelVO.setTitle(title);
         excelVO.setDbColName(dbColName);
