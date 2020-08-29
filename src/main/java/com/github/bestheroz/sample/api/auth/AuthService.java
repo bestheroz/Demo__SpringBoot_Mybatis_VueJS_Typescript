@@ -21,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.time.Instant;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 @Slf4j
@@ -34,58 +33,51 @@ public class AuthService implements UserDetailsService {
         if (StringUtils.isEmpty(username)) {
             throw new UsernameNotFoundException("No user found");
         }
-        final Optional<TableMemberEntity> oTableMemberEntity = this.tableMemberRepository.getItem(TableMemberEntity.class, Map.of("id", username));
-        if (oTableMemberEntity.isEmpty()) {
-            throw new UsernameNotFoundException("No user found by `" + username + "`");
-        }
-        final TableMemberEntity tableMemberEntity = oTableMemberEntity.get();
-        return new UserVO(tableMemberEntity.getId(), tableMemberEntity.getName(), tableMemberEntity.getAuthority(), tableMemberEntity.getTimeout());
+        return this.tableMemberRepository.getItem(TableMemberEntity.class, Map.of("id", username))
+                .map(tableMemberEntity -> new UserVO(tableMemberEntity.getId(), tableMemberEntity.getName(), tableMemberEntity.getAuthority(), tableMemberEntity.getTimeout()))
+                .orElseThrow(() -> new UsernameNotFoundException("No user found by `" + username + "`"));
     }
 
     Map<String, String> login(final String id, final String password) {
-        final Optional<TableMemberEntity> oTableMemberEntity = this.tableMemberRepository.getItem(TableMemberEntity.class, Map.of("id", id));
-        // 로그인 관문
-        // 1. 유저가 없으면
-        if (oTableMemberEntity.isEmpty()) {
+        return this.tableMemberRepository.getItem(TableMemberEntity.class, Map.of("id", id)).map(tableMemberEntity -> {
+            // 2. 패스워드를 생성한 적이 없으면
+            if (StringUtils.isEmpty(tableMemberEntity.getPassword())) {
+                log.info(ExceptionCode.SUCCESS_TRY_NEW_PASSWORD.toString());
+                throw new BusinessException(ExceptionCode.SUCCESS_TRY_NEW_PASSWORD);
+            }
+
+            final Pbkdf2PasswordEncoder pbkdf2PasswordEncoder = new Pbkdf2PasswordEncoder();
+            // 3. 패스워드가 틀리면
+            if (!pbkdf2PasswordEncoder.matches(tableMemberEntity.getPassword(), pbkdf2PasswordEncoder.encode(password))) {
+                tableMemberEntity.setLoginFailCnt(tableMemberEntity.getLoginFailCnt() + 1);
+                this.tableMemberRepository.plusLoginFailCnt(tableMemberEntity.getId());
+                log.warn(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER.toString());
+                throw new BusinessException(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER);
+            }
+
+            // 4. LOGIN_FAIL_CNT가 5회 이상 인가
+            if (tableMemberEntity.getLoginFailCnt() >= 5) {
+                log.warn(ExceptionCode.FAIL_LOGIN_FAIL_CNT.toString());
+                throw new BusinessException(ExceptionCode.FAIL_LOGIN_FAIL_CNT);
+            }
+
+            // 5. 계정 차단된 상태인가
+            if (!tableMemberEntity.isAvailable() || tableMemberEntity.getExpired().toEpochMilli() < Instant.now().toEpochMilli()) {
+                log.warn(ExceptionCode.FAIL_LOGIN_CLOSED.toString());
+                throw new BusinessException(ExceptionCode.FAIL_LOGIN_CLOSED);
+            }
+
+            tableMemberEntity.setLoginFailCnt(0);
+            final UserVO userVO = MapperUtils.toObject(tableMemberEntity, UserVO.class);
+            final String accessToken = JwtTokenProvider.createAccessToken(userVO);
+            final String refreshToken = JwtTokenProvider.createRefreshToken(userVO);
+            this.tableMemberRepository.updateMap(TableMemberEntity.class, Map.of("token", refreshToken), Map.of("id", id));
+            return Map.of("accessToken", accessToken, "refreshToken", refreshToken);
+        }).orElseThrow(() -> {
+            // 1. 유저가 없으면
             log.warn(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER.toString());
-            throw new BusinessException(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER);
-        }
-
-        final TableMemberEntity tableMemberEntity = oTableMemberEntity.get();
-
-        // 2. 패스워드를 생성한 적이 없으면
-        if (StringUtils.isEmpty(tableMemberEntity.getPassword())) {
-            log.info(ExceptionCode.SUCCESS_TRY_NEW_PASSWORD.toString());
-            throw new BusinessException(ExceptionCode.SUCCESS_TRY_NEW_PASSWORD);
-        }
-
-        final Pbkdf2PasswordEncoder pbkdf2PasswordEncoder = new Pbkdf2PasswordEncoder();
-        // 3. 패스워드가 틀리면
-        if (!pbkdf2PasswordEncoder.matches(tableMemberEntity.getPassword(), pbkdf2PasswordEncoder.encode(password))) {
-            tableMemberEntity.setLoginFailCnt(tableMemberEntity.getLoginFailCnt() + 1);
-            this.tableMemberRepository.plusLoginFailCnt(tableMemberEntity.getId());
-            log.warn(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER.toString());
-            throw new BusinessException(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER);
-        }
-
-        // 4. LOGIN_FAIL_CNT가 5회 이상 인가
-        if (tableMemberEntity.getLoginFailCnt() >= 5) {
-            log.warn(ExceptionCode.FAIL_LOGIN_FAIL_CNT.toString());
-            throw new BusinessException(ExceptionCode.FAIL_LOGIN_FAIL_CNT);
-        }
-
-        // 5. 계정 차단된 상태인가
-        if (!tableMemberEntity.isAvailable() || tableMemberEntity.getExpired().toEpochMilli() < Instant.now().toEpochMilli()) {
-            log.warn(ExceptionCode.FAIL_LOGIN_CLOSED.toString());
-            throw new BusinessException(ExceptionCode.FAIL_LOGIN_CLOSED);
-        }
-
-        tableMemberEntity.setLoginFailCnt(0);
-        final UserVO userVO = MapperUtils.toObject(tableMemberEntity, UserVO.class);
-        final String accessToken = JwtTokenProvider.createAccessToken(userVO);
-        final String refreshToken = JwtTokenProvider.createRefreshToken(userVO);
-        this.tableMemberRepository.updateMap(TableMemberEntity.class, Map.of("token", refreshToken), Map.of("id", id));
-        return Map.of("accessToken", accessToken, "refreshToken", refreshToken);
+            return new BusinessException(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER);
+        });
     }
 
     void logout() {
@@ -93,34 +85,32 @@ public class AuthService implements UserDetailsService {
     }
 
     String getNewAccessToken(final String refreshToken) {
-        final Optional<TableMemberEntity> oTableMemberEntity =
-                this.tableMemberRepository.getItem(TableMemberEntity.class, Map.of("token", refreshToken, "id", JwtTokenProvider.getUserPk(refreshToken)));
-        if (oTableMemberEntity.isEmpty()) {
-            log.info("invalid refresh-token");
-            throw BusinessException.FAIL_TRY_LOGIN_FIRST;
-        }
-        final TableMemberEntity tableMemberEntity = oTableMemberEntity.get();
-        final UserVO userVO = MapperUtils.toObject(tableMemberEntity, UserVO.class);
-        final String newAccessToken = JwtTokenProvider.createAccessToken(userVO);
-        SecurityContextHolder.getContext().setAuthentication(JwtTokenProvider.getAuthentication(newAccessToken));
-        return newAccessToken;
+        return this.tableMemberRepository.getItem(TableMemberEntity.class, Map.of("token", refreshToken, "id", JwtTokenProvider.getUserPk(refreshToken)))
+                .map(tableMemberEntity -> {
+                    final UserVO userVO = MapperUtils.toObject(tableMemberEntity, UserVO.class);
+                    final String newAccessToken = JwtTokenProvider.createAccessToken(userVO);
+                    SecurityContextHolder.getContext().setAuthentication(JwtTokenProvider.getAuthentication(newAccessToken));
+                    return newAccessToken;
+                })
+                .orElseThrow(() -> {
+                    log.info("invalid refresh-token");
+                    return BusinessException.FAIL_TRY_LOGIN_FIRST;
+                });
     }
 
     void initPassword(final String id, final String password) {
-        final Optional<TableMemberEntity> oTableMemberEntity = this.tableMemberRepository.getItem(TableMemberEntity.class, Map.of("id", id));
-        // 로그인 관문
-        // 1. 유저가 없으면
-        if (oTableMemberEntity.isEmpty()) {
-            log.warn(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER.toString());
-            throw new BusinessException(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER);
-        }
+        this.tableMemberRepository.getItem(TableMemberEntity.class, Map.of("id", id)).ifPresentOrElse(tableMemberEntity -> {
+                    if (StringUtils.isNotEmpty(tableMemberEntity.getPassword())) {
+                        log.warn(ExceptionCode.FAIL_INVALID_REQUEST.toString());
+                        throw new BusinessException(ExceptionCode.FAIL_INVALID_REQUEST);
+                    }
 
-        final TableMemberEntity tableMemberEntity = oTableMemberEntity.get();
-        if (StringUtils.isNotEmpty(tableMemberEntity.getPassword())) {
-            log.warn(ExceptionCode.FAIL_INVALID_REQUEST.toString());
-            throw new BusinessException(ExceptionCode.FAIL_INVALID_REQUEST);
-        }
-
-        this.tableMemberRepository.updateMap(TableMemberEntity.class, Map.of("password", password), Map.of("id", id));
+                    this.tableMemberRepository.updateMap(TableMemberEntity.class, Map.of("password", password), Map.of("id", id));
+                },
+                () -> {
+                    // 1. 유저가 없으면
+                    log.warn(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER.toString());
+                    throw new BusinessException(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER);
+                });
     }
 }

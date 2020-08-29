@@ -5,12 +5,13 @@ import org.apache.ibatis.annotations.InsertProvider;
 import org.apache.ibatis.annotations.SelectProvider;
 import org.apache.ibatis.annotations.UpdateProvider;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-public interface SqlRepository<T> {
+public interface SqlRepository<T extends Serializable> {
 
     @SelectProvider(type = SqlCommand.class, method = SqlCommand.SELECT_ITEMS)
     List<T> getItems(Class<T> tClass);

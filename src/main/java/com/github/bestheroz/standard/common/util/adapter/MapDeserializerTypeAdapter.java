@@ -7,16 +7,14 @@ import org.apache.commons.lang3.StringUtils;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 public class MapDeserializerTypeAdapter implements JsonDeserializer<Map<String, Object>> {
     @Override
     public Map<String, Object> deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context) throws JsonParseException {
-        final Map<String, Object> map = new LinkedHashMap<>();
+        final Map<String, Object> map = new HashMap<>();
         final JsonObject jsonObject = json.getAsJsonObject();
-        for (final Entry<String, JsonElement> entry : jsonObject.entrySet()) {
+        jsonObject.entrySet().forEach(entry -> {
             final String key = entry.getKey();
             final JsonElement value = entry.getValue();
             if (value.isJsonArray()) {
@@ -50,8 +48,7 @@ public class MapDeserializerTypeAdapter implements JsonDeserializer<Map<String, 
             } else if (value.isJsonObject()) {
                 map.put(key, MapperUtils.getGsonObject().fromJson(value, HashMap.class));
             }
-
-        }
+        });
         return map;
     }
 }

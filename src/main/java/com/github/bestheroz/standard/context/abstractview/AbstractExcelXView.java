@@ -33,9 +33,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 public abstract class AbstractExcelXView extends AbstractView {
@@ -66,15 +64,15 @@ public abstract class AbstractExcelXView extends AbstractView {
         this.setContentType(CONTENT_TYPE);
     }
 
-    public static void addHeaderOfRowNo(final List<ExcelVO> excelVOList, final String title) {
-        addHeader(excelVOList, title, ROW_NUMBER, AbstractExcelXView.CellType.STRING_CENTER, null);
+    public void addHeaderOfRowNo(final List<ExcelVO> excelVOList, final String title) {
+        this.addHeader(excelVOList, title, ROW_NUMBER, AbstractExcelXView.CellType.STRING_CENTER, null);
     }
 
-    public static void addHeader(final List<ExcelVO> excelVOList, final String title, final String dbColName, final CellType cellType) {
-        addHeader(excelVOList, title, dbColName, cellType, null);
+    public void addHeader(final List<ExcelVO> excelVOList, final String title, final String dbColName, final CellType cellType) {
+        this.addHeader(excelVOList, title, dbColName, cellType, null);
     }
 
-    public static void addHeader(final List<ExcelVO> excelVOList, final String title, final String dbColName, final CellType cellType, final List<CodeVO> codeList) {
+    public void addHeader(final List<ExcelVO> excelVOList, final String title, final String dbColName, final CellType cellType, final List<CodeVO> codeList) {
         final ExcelVO excelVO = new ExcelVO();
         excelVO.setTitle(title);
         excelVO.setDbColName(dbColName);
@@ -167,10 +165,10 @@ public abstract class AbstractExcelXView extends AbstractView {
 
     protected SXSSFWorkbook getTemplateSource(final String url, final HttpServletRequest request) throws Exception {
         final ApplicationContext applicationContext = this.getApplicationContext();
-        if (applicationContext == null) {
+        Optional.ofNullable(applicationContext).orElseThrow(() -> {
             log.warn("applicationContext is null");
-            throw BusinessException.ERROR_SYSTEM;
-        }
+            return BusinessException.ERROR_SYSTEM;
+        });
         final LocalizedResourceHelper helper = new LocalizedResourceHelper(applicationContext);
         final Locale userLocale = RequestContextUtils.getLocale(request);
         final Resource inputFile = helper.findLocalizedResource(url, EXTENSION, userLocale);
@@ -186,15 +184,8 @@ public abstract class AbstractExcelXView extends AbstractView {
     protected abstract void buildExcelDocument(Map<String, Object> model, SXSSFWorkbook workbook, HttpServletRequest request, HttpServletResponse response);
 
     protected SXSSFCell getCell(final SXSSFSheet sheet, final int row, final int col) {
-        SXSSFRow sheetRow = sheet.getRow(row);
-        if (sheetRow == null) {
-            sheetRow = sheet.createRow(row);
-        }
-        SXSSFCell cell = sheetRow.getCell(col);
-        if (cell == null) {
-            cell = sheetRow.createCell(col);
-        }
-        return cell;
+        final SXSSFRow sheetRow = Objects.requireNonNullElseGet(sheet.getRow(row), () -> sheet.createRow(row));
+        return Objects.requireNonNullElseGet(sheetRow.getCell(col), () -> sheetRow.createCell(col));
     }
 
     protected void autoSizeColumn(final SXSSFSheet sheet, final List<ExcelVO> excelVOs) {

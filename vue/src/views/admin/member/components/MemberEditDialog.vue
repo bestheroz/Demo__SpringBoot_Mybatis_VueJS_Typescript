@@ -91,13 +91,13 @@
                 <ValidationProvider
                   name="비밀번호"
                   vid="password"
-                  rules="required|max:20"
+                  rules="max:20"
                   v-slot="{ errors }"
                   v-if="mode === '추가'"
                 >
                   <v-text-field
                     v-model="editItem.password"
-                    label="*비밀번호"
+                    label="비밀번호"
                     :counter="20"
                     :error-messages="errors"
                     :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"

@@ -11,9 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -24,16 +22,15 @@ public class AdminMemberController {
 
     @GetMapping
     ResponseEntity<ApiResult> getItems() {
-        final List<TableMemberEntity> items = this.tableMemberRepository.getItems(TableMemberEntity.class);
-        items.forEach(item -> item.setPassword(null));
-        return Result.ok(items);
+        return Result.ok(this.tableMemberRepository.getItems(TableMemberEntity.class).stream().peek(item -> item.setPassword(null)).collect(Collectors.toList()));
     }
 
     @GetMapping(value = "{id}")
     ResponseEntity<ApiResult> getItem(@PathVariable(value = "id") final String id) {
-        final Optional<TableMemberEntity> item = this.tableMemberRepository.getItem(TableMemberEntity.class, Map.of("id", id));
-        item.ifPresent(item1 -> item1.setPassword(null));
-        return Result.ok(item);
+        return Result.ok(this.tableMemberRepository.getItem(TableMemberEntity.class, Map.of("id", id)).map(item -> {
+            item.setPassword(null);
+            return item;
+        }));
     }
 
     @PostMapping

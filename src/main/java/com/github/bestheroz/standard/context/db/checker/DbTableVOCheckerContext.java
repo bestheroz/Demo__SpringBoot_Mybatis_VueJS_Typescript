@@ -39,16 +39,16 @@ public class DbTableVOCheckerContext {
     public static final Set<String> BOOLEAN_JDBC_TYPE_SET = Set.of("BOOLEAN");
     public static final Set<String> BYTE_JDBC_TYPE_SET = Set.of("BLOB");
 
-    private static String resolveBasePackage() {
+    private String resolveBasePackage() {
         return ClassUtils.convertClassNameToResourcePath(SystemPropertyUtils.resolvePlaceholders("com.github.bestheroz"));
     }
 
-    private static Set<Class<?>> findMyTypes() throws IOException, ClassNotFoundException {
+    private Set<Class<?>> findMyTypes() throws IOException, ClassNotFoundException {
         final ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
         final MetadataReaderFactory metadataReaderFactory = new CachingMetadataReaderFactory(resourcePatternResolver);
 
         final Set<Class<?>> candidates = new LinkedHashSet<>();
-        final String packageSearchPath = ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX + DbTableVOCheckerContext.resolveBasePackage() + "/" + "**/Table*Entity.class";
+        final String packageSearchPath = ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX + this.resolveBasePackage() + "/" + "**/Table*Entity.class";
         for (final Resource resource : resourcePatternResolver.getResources(packageSearchPath)) {
             if (resource.isReadable()) {
                 final MetadataReader metadataReader = metadataReaderFactory.getMetadataReader(resource);
@@ -63,7 +63,7 @@ public class DbTableVOCheckerContext {
     @Autowired(required = false)
     public void validDbTableVO(final SqlSession sqlSession) {
         try (final Statement stmt = new SqlSessionFactoryBuilder().build(sqlSession.getConfiguration()).openSession().getConnection().createStatement()) {
-            final Set<Class<?>> targetClassList = DbTableVOCheckerContext.findMyTypes();
+            final Set<Class<?>> targetClassList = this.findMyTypes();
             for (final Class<?> class1 : targetClassList) {
                 final String tableName = SqlCommand.getTableName(class1.getSimpleName());
                 try (final ResultSet rs = stmt.executeQuery("SELECT * FROM " + tableName + " LIMIT 0")) {
