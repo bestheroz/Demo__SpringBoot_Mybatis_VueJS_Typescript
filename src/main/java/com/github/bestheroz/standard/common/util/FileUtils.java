@@ -161,13 +161,12 @@ public class FileUtils {
     }
 
     public void uploadFile(final MultipartFile multipartFile, final String targetDirPath) {
-        if (NullUtils.isEmpty(multipartFile)) {
-            return;
-        }
-        validateFile(multipartFile);
-        checkExistingDirectory(targetDirPath);
-        final File file = uploadMultipartFile(targetDirPath, multipartFile);
-        log.info(STR_INFO_MESSAGE, file.getAbsolutePath());
+        Optional.ofNullable(multipartFile).ifPresent(item -> {
+            validateFile(item);
+            checkExistingDirectory(targetDirPath);
+            final File file = uploadMultipartFile(targetDirPath, item);
+            log.info(STR_INFO_MESSAGE, file.getAbsolutePath());
+        });
     }
 
     // 업로드 하려는 파일의 검증(MultipartFile 이용)

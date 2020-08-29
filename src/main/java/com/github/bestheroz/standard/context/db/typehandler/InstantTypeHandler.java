@@ -15,40 +15,24 @@ public class InstantTypeHandler implements TypeHandler<Instant> {
     @Override
     public Instant getResult(final ResultSet rs, final String columnName) throws SQLException {
         final Timestamp ts = rs.getTimestamp(columnName);
-        if (ts != null) {
-            return Instant.ofEpochMilli(ts.getTime());
-        } else {
-            return null;
-        }
+        return ts == null ? null : Instant.ofEpochMilli(ts.getTime());
     }
 
     @Override
     public Instant getResult(final ResultSet rs, final int columnIndex) throws SQLException {
         final Timestamp ts = rs.getTimestamp(columnIndex);
-        if (ts != null) {
-            return Instant.ofEpochMilli(ts.getTime());
-        } else {
-            return null;
-        }
+        return ts == null ? null : Instant.ofEpochMilli(ts.getTime());
     }
 
     @Override
     public Instant getResult(final CallableStatement cs, final int columnIndex) throws SQLException {
         final Timestamp ts = cs.getTimestamp(columnIndex);
-        if (ts != null) {
-            return Instant.ofEpochMilli(ts.getTime());
-        } else {
-            return null;
-        }
+        return ts == null ? null : Instant.ofEpochMilli(ts.getTime());
     }
 
     @Override
     public void setParameter(final PreparedStatement ps, final int i, final Instant parameter, final JdbcType arg3) throws SQLException {
-        if (parameter != null) {
-            ps.setTimestamp(i, new Timestamp(parameter.toEpochMilli()));
-        } else {
-            ps.setTimestamp(i, null);
-        }
+        ps.setTimestamp(i, parameter == null ? null : new Timestamp(parameter.toEpochMilli()));
     }
 
 }

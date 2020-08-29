@@ -21,10 +21,9 @@ public class AdminMenuService {
     public void delete(final Integer id) {
         this.tableMenuRepository.delete(TableMenuEntity.class, Map.of("parentId", id));
         this.tableMenuRepository.delete(TableMenuEntity.class, Map.of("id", id));
-        this.tableMenuAuthorityRepository.getItems(TableMenuAuthorityEntity.class).forEach(item -> {
+        this.tableMenuAuthorityRepository.getItems(TableMenuAuthorityEntity.class).parallelStream().filter(item -> StringUtils.contains(item.getMenuIdList(), "^|" + id + ",")).forEach(item -> {
             this.tableMenuAuthorityRepository
-                    .updateMap(TableMenuAuthorityEntity.class, Map.of("menuIdList", StringUtils.remove(item.getMenuIdList(), "^|" + id + ",")),
-                            Map.of("authority", item.getAuthority()));
+                    .updateMap(TableMenuAuthorityEntity.class, Map.of("menuIdList", StringUtils.remove(item.getMenuIdList(), "^|" + id + ",")), Map.of("authority", item.getAuthority()));
         });
     }
 }
