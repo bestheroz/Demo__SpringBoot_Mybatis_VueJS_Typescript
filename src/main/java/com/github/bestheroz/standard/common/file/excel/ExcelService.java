@@ -42,7 +42,7 @@ public class ExcelService extends AbstractExcelXView {
         this.createColumnLabel(sheet, excelVOs);
 
         this.addRowData(sheet, excelVOs, listData);
-        AbstractExcelXView.autoSizeColumn(sheet, excelVOs);
+        this.autoSizeColumn(sheet, excelVOs);
     }
 
     private void createColumnLabel(final SXSSFSheet sheet, final List<ExcelVO> excelVOs) {
