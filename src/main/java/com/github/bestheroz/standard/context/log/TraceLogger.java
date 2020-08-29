@@ -29,7 +29,7 @@ public class TraceLogger {
 
     @Around("execution(!private * com.github.bestheroz..*Controller.*(..)) || execution(!private * com.github.bestheroz..*Service.*(..)) " +
             "|| execution(!private * com.github.bestheroz..*Repository.*(..)) || execution(!private * com.github.bestheroz..*DAO.*(..))")
-    public static Object writeLog(final ProceedingJoinPoint pjp) throws Throwable {
+    public Object writeLog(final ProceedingJoinPoint pjp) throws Throwable {
         final Object retVal;
 
         final Class<?> targetClass = pjp.getTarget().getClass();
