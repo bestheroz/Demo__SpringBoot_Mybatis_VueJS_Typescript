@@ -13,7 +13,7 @@ import java.util.List;
 @Mapper
 @Repository
 public interface MemberRepository extends SqlRepository<CodeVO> {
-    @Select(value = "SELECT M.ID AS VALUE, M.NAME AS TEXT FROM MEMBER M ORDER BY M.ID ASC")
+    @Select(value = "SELECT M.ID AS VALUE, M.NAME AS TEXT FROM MEMBER M ORDER BY M.NAME ASC")
     @Cacheable(value = "memberCache")
     List<CodeVO> getCodeItems() throws BusinessException;
 }

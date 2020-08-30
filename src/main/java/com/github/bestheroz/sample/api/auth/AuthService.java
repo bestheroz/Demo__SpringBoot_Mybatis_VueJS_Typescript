@@ -49,7 +49,6 @@ public class AuthService implements UserDetailsService {
             final Pbkdf2PasswordEncoder pbkdf2PasswordEncoder = new Pbkdf2PasswordEncoder();
             // 3. 패스워드가 틀리면
             if (!pbkdf2PasswordEncoder.matches(tableMemberEntity.getPassword(), pbkdf2PasswordEncoder.encode(password))) {
-                tableMemberEntity.setLoginFailCnt(tableMemberEntity.getLoginFailCnt() + 1);
                 this.tableMemberRepository.plusLoginFailCnt(tableMemberEntity.getId());
                 log.warn(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER.toString());
                 throw new BusinessException(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER);

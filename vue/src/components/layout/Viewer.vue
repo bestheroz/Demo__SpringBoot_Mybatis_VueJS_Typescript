@@ -12,7 +12,7 @@
       <v-icon class="pb-1">mdi-file-document-outline</v-icon>
       {{ title }}
     </v-alert>
-    <v-container fluid>
+    <v-container fluid class="pt-0">
       <router-view />
     </v-container>
   </v-main>

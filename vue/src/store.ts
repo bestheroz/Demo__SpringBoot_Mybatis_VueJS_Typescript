@@ -99,7 +99,7 @@ const moduleCache = {
   },
   actions: {
     async setMemberCodes({ commit }: ActionContext<any, any>) {
-      const response = await getApi<SelectItem[]>('admin/members/lists/codes');
+      const response = await getApi<SelectItem[]>('members/lists/codes');
       commit('setMemberCodes', response.data);
     },
     async getMemberCodes({ state, dispatch }: ActionContext<any, any>) {
