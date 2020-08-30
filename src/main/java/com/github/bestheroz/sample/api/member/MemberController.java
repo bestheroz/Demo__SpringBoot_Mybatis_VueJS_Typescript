@@ -23,7 +23,7 @@ public class MemberController {
 
     @Resource private MemberRepository memberRepository;
 
-    @GetMapping
+    @GetMapping(value = "lists/codes")
     ResponseEntity<ApiResult> getItems() {
         return Result.ok(this.memberRepository.getCodeItems());
     }

@@ -2,7 +2,6 @@ package com.github.bestheroz.sample.api.admin.member;
 
 import com.github.bestheroz.sample.api.entity.member.TableMemberEntity;
 import com.github.bestheroz.sample.api.entity.member.TableMemberRepository;
-import com.github.bestheroz.standard.common.code.CodeVO;
 import com.github.bestheroz.standard.common.response.ApiResult;
 import com.github.bestheroz.standard.common.response.Result;
 import lombok.extern.slf4j.Slf4j;
@@ -60,10 +59,5 @@ public class AdminMemberController {
     public ResponseEntity<ApiResult> resetPassword(@PathVariable(value = "id") final String id) {
         this.tableMemberRepository.resetPassword(id);
         return Result.ok();
-    }
-
-    @GetMapping("lists/codes")
-    public ResponseEntity<ApiResult> getMemberList() {
-        return Result.ok(this.tableMemberRepository.getItems(TableMemberEntity.class).stream().map(item -> new CodeVO(item.getId(), item.getName())).collect(Collectors.toList()));
     }
 }
