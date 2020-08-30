@@ -37,7 +37,7 @@ INTO MEMBER
  UPDATED)
 VALUES ('1',
         '�ޤ�o%PO�8�.�9�+�Xڹ1����n�ח',
-        '개발자',
+        '개발자1',
         999,
         0,
         TRUE,

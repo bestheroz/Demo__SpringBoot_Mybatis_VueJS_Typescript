@@ -58,7 +58,11 @@ public enum ExceptionCode {
 
     FAIL_CANNOT_INSERT_NULL("F019", "필수 값을 채워주세요."),
 
-    FAIL_VALUE_TOO_LARGE_FOR_COLUMN("F020", "입력하신 값이 너무 큽니다.");
+    FAIL_VALUE_TOO_LARGE_FOR_COLUMN("F020", "입력하신 값이 너무 큽니다."),
+
+    FAIL_MATCH_OLD_PASSWORD("F021", "이전 비밀번호가 올바르지 않습니다."),
+
+    ;
 
     private final String code;
     private final String message;
