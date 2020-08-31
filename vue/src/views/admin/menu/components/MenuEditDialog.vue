@@ -9,7 +9,7 @@
           :icon="
             mode === '추가' ? 'mdi-pencil-plus-outline' : 'mdi-pencil-outline'
           "
-          class="title"
+          class="title mb-0"
         >
           메뉴 데이터 관리 {{ mode }}
         </v-alert>

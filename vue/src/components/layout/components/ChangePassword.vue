@@ -7,7 +7,7 @@
           colored-border
           color="divider"
           icon="mdi-pencil-outline"
-          class="title"
+          class="title mb-0"
         >
           비밀번호 변경
         </v-alert>

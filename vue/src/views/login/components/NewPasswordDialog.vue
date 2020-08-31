@@ -13,7 +13,7 @@
           colored-border
           color="divider"
           icon="mdi-lock-outline"
-          class="title"
+          class="title mb-0"
         >
           비밀번호 초기화
         </v-alert>

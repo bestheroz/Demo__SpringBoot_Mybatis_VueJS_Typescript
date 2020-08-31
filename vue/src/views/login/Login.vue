@@ -61,7 +61,7 @@
               </v-alert>
               <v-btn
                 large
-                color="accent"
+                color="button-default"
                 text
                 outlined
                 rounded

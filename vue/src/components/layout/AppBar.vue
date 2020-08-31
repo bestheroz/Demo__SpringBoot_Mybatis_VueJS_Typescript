@@ -57,10 +57,6 @@
           </v-list>
         </v-menu>
       </v-toolbar-title>
-      <v-btn icon @click="changeTheme" color="button-default">
-        <v-icon v-if="$vuetify.theme.dark">mdi-weather-sunny</v-icon>
-        <v-icon v-else>mdi-weather-night</v-icon>
-      </v-btn>
     </v-app-bar>
     <edit-me
       :edit-item="$store.state.user.user"
@@ -73,7 +69,7 @@
 <script lang="ts">
 import { Component, PropSync, Vue, Watch } from 'vue-property-decorator';
 import Countdown from 'vue-awesome-countdown/src/vue-awesome-countdown.vue';
-import { getVariableApi, postDataApi } from '@/utils/apis';
+import { getVariableApi } from '@/utils/apis';
 import { logout } from '@/utils/authentications';
 import EditMe from '@/components/layout/components/EditMe.vue';
 import { TableMemberEntity } from '@/common/types';
@@ -120,27 +116,6 @@ export default class extends Vue {
 
   editMe() {
     this.editMeDialog = true;
-  }
-
-  changeTheme() {
-    this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
-    window.localStorage.setItem(
-      'theme',
-      this.$vuetify.theme.dark ? 'dark' : 'light',
-    );
-    try {
-      postDataApi<{
-        theme: string;
-      }>(
-        `members/${this.user.id}/changeTheme/`,
-        {
-          theme: this.$vuetify.theme.dark ? 'dark' : 'light',
-        },
-        false,
-      );
-    } catch (e) {
-      console.warn(e);
-    }
   }
 }
 </script>
