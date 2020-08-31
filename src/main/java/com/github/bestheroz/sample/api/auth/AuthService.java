@@ -71,6 +71,7 @@ public class AuthService implements UserDetailsService {
             final UserVO userVO = MapperUtils.toObject(tableMemberEntity, UserVO.class);
             final String accessToken = JwtTokenProvider.createAccessToken(userVO);
             final String refreshToken = JwtTokenProvider.createRefreshToken(userVO);
+            SecurityContextHolder.getContext().setAuthentication(JwtTokenProvider.getAuthentication(accessToken));
             this.tableMemberRepository.updateMap(TableMemberEntity.class, Map.of("token", refreshToken), Map.of("id", id));
             return Map.of("accessToken", accessToken, "refreshToken", refreshToken);
         }).orElseThrow(() -> {
