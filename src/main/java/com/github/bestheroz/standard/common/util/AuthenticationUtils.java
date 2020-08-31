@@ -47,7 +47,7 @@ public class AuthenticationUtils {
 
     public String getUserPk() {
         try {
-            return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication().getName()).map(item -> StringUtils.equals(item, "anonymousUser") ? "-" : "").orElseThrow(() -> {
+            return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication().getName()).map(item -> StringUtils.equals(item, "anonymousUser") ? "-" : item).orElseThrow(() -> {
                 log.warn(BusinessException.FAIL_TRY_LOGIN_FIRST.toString());
                 return BusinessException.FAIL_TRY_LOGIN_FIRST;
             });
