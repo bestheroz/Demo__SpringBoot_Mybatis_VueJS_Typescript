@@ -12,7 +12,6 @@ export default class extends Vue {
 
   async mounted() {
     document.title = await getVariableApi('title');
-    console.log(window.localStorage.getItem('theme'));
     this.$vuetify.theme.dark =
       (window.localStorage.getItem('theme') || 'dark') === 'dark';
   }
