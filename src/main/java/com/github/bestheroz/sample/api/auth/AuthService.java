@@ -34,7 +34,8 @@ public class AuthService implements UserDetailsService {
             throw new UsernameNotFoundException("No user found");
         }
         return this.tableMemberRepository.getItem(TableMemberEntity.class, Map.of("id", username))
-                .map(tableMemberEntity -> new UserVO(tableMemberEntity.getId(), tableMemberEntity.getName(), tableMemberEntity.getAuthority(), tableMemberEntity.getTimeout()))
+                .map(tableMemberEntity -> new UserVO(tableMemberEntity.getId(), tableMemberEntity.getName(), tableMemberEntity.getAuthority(), tableMemberEntity.getTimeout(),
+                        tableMemberEntity.getTheme()))
                 .orElseThrow(() -> new UsernameNotFoundException("No user found by `" + username + "`"));
     }
 

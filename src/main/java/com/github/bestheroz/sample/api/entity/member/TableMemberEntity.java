@@ -22,6 +22,7 @@ public class TableMemberEntity extends AbstractCreatedUpdateEntity implements Se
     private Integer loginFailCnt;
     private Instant expired;
     private boolean available;
+    private String theme;
     private Integer timeout;
     private String token;
 }

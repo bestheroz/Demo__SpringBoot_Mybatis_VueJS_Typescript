@@ -54,4 +54,17 @@ public class MemberController {
             return new BusinessException(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER);
         });
     }
+
+    @PostMapping(value = "{id}/changeTheme")
+    public ResponseEntity<ApiResult> changeTheme(@PathVariable(value = "id") final String id, @RequestBody final Map<String, String> payload) {
+        return this.tableMemberRepository.getItem(TableMemberEntity.class, Map.of("id", id)).map(tableMemberEntity -> {
+            this.tableMemberRepository.updateMap(TableMemberEntity.class,
+                    Map.of("theme", payload.get("theme")), Map.of("id", id));
+            return Result.ok();
+        }).orElseThrow(() -> {
+            // 1. 유저가 없으면
+            log.warn(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER.toString());
+            return new BusinessException(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER);
+        });
+    }
 }

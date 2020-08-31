@@ -2,15 +2,7 @@
   <div>
     <v-card>
       <v-card-text class="py-1">
-        <v-alert
-          border="bottom"
-          colored-border
-          color="success"
-          icon="mdi-format-list-checkbox"
-          dense
-          text
-          class="mb-0"
-        >
+        <v-alert icon="mdi-format-list-checkbox" dense class="mb-0">
           코드 관리 - Detail
         </v-alert>
         <v-data-table
@@ -74,7 +66,7 @@
             </a>
           </template>
           <template v-slot:item.available="{ item }">
-            <span style="display: inline-flex">
+            <span style="display: inline-flex;">
               <v-checkbox
                 readonly
                 :input-value="item.available"
