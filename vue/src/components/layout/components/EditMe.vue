@@ -5,7 +5,7 @@
         <v-alert
           border="bottom"
           colored-border
-          color="success"
+          color="divider"
           icon="mdi-pencil-outline"
           class="title"
         >
@@ -37,7 +37,7 @@
                 </ValidationProvider>
               </v-col>
               <v-col cols="12" style="text-align: right;">
-                <v-btn color="warning" @click="changePassword" outlined>
+                <v-btn color="button-edit" @click="changePassword" outlined>
                   비밀번호 변경
                 </v-btn>
               </v-col>

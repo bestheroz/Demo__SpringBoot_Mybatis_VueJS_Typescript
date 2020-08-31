@@ -1,5 +1,12 @@
 <template>
-  <v-app-bar absolute dark color="transparent" flat height="85" v-if="!isPopup">
+  <v-app-bar
+    absolute
+    :dark="$vuetify.theme.dark"
+    color="transparent"
+    flat
+    height="85"
+    v-if="!isPopup"
+  >
     <v-container>
       <v-row align="center">
         <v-toolbar-title v-text="title" :style="{ cursor: 'pointer' }" />

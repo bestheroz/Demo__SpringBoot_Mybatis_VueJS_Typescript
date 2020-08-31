@@ -11,7 +11,7 @@
         <v-alert
           border="bottom"
           colored-border
-          color="success"
+          color="divider"
           icon="mdi-lock-outline"
           class="title"
         >

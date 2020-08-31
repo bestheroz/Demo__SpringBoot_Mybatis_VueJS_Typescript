@@ -11,8 +11,10 @@ export default class extends Vue {
   title: string | null = null;
 
   async mounted() {
-    // @ts-ignore
     document.title = await getVariableApi('title');
+    console.log(window.localStorage.getItem('theme'));
+    this.$vuetify.theme.dark =
+      (window.localStorage.getItem('theme') || 'dark') === 'dark';
   }
 }
 </script>
@@ -20,60 +22,81 @@ export default class extends Vue {
 <style lang="scss">
 .v-application {
   font-family: 'Open Sans', sans-serif;
-  a {
-    color: #4caf50;
-  }
-}
 
-.v-data-table {
-  thead {
-    th {
-      background-color: #424242 !important;
-      border-top: thin solid rgba(255, 255, 255, 0.12);
-      border-left: thin solid rgba(255, 255, 255, 0.12);
-      min-width: 100px;
-      i.v-icon {
-        color: #fafad2 !important;
+  .v-data-table {
+    thead {
+      th {
+        background-color: var(--v-table-header-base) !important;
+        border-top: thin solid var(--v-table-border-base);
+        border-left: thin solid var(--v-table-border-base);
+        min-width: 100px;
+      }
+
+      th:last-child {
+        background-color: var(--v-table-header-base) !important;
+        border-top: thin solid var(--v-table-border-base);
+        border-left: thin solid var(--v-table-border-base);
+        border-right: thin solid var(--v-table-border-base);
+      }
+
+      .v-data-table__progress {
+        .v-progress-linear {
+          height: 25px !important;
+        }
       }
     }
 
-    th:last-child {
-      background-color: #424242 !important;
-      border-top: thin solid rgba(255, 255, 255, 0.12);
-      border-left: thin solid rgba(255, 255, 255, 0.12);
-      border-right: thin solid rgba(255, 255, 255, 0.12);
+    tbody {
+      td {
+        border-bottom: thin solid var(--v-table-border-base);
+        border-left: thin solid var(--v-table-border-base);
+        word-break: break-all;
+      }
+
+      td:last-child {
+        border-bottom: thin solid var(--v-table-border-base);
+        border-left: thin solid var(--v-table-border-base);
+        border-right: thin solid var(--v-table-border-base);
+        word-break: break-all;
+      }
     }
 
-    .v-data-table__progress {
-      .v-progress-linear {
-        height: 25px !important;
+    .v-data-footer {
+      .v-data-footer__select {
+        .v-input__slot:before {
+          top: 28px;
+          height: 0;
+        }
+
+        .v-select {
+          margin-top: 4px;
+          margin-bottom: 4px;
+        }
       }
     }
   }
 
-  tbody {
-    td {
-      border-bottom: thin solid rgba(255, 255, 255, 0.12);
-      border-left: thin solid rgba(255, 255, 255, 0.12);
-      word-break: break-all;
-    }
-
-    td:last-child {
-      border-bottom: thin solid rgba(255, 255, 255, 0.12);
-      border-left: thin solid rgba(255, 255, 255, 0.12);
-      border-right: thin solid rgba(255, 255, 255, 0.12);
-      word-break: break-all;
+  .v-dialog {
+    .v-alert {
+      .v-icon {
+        margin-top: 4px;
+      }
     }
   }
 
-  .v-data-footer__select {
-    .v-input__slot:before {
-      top: 28px;
-      height: 0;
+  .v-toolbar {
+    .v-btn__content {
+      font-weight: 600;
     }
-    .v-select {
-      margin-top: 4px;
-      margin-bottom: 4px;
+  }
+
+  .v-navigation-drawer {
+    .v-list {
+      .v-list-group--active {
+        .v-list-group__header {
+          border-bottom: thin solid var(--v-table-border-base);
+        }
+      }
     }
   }
 }

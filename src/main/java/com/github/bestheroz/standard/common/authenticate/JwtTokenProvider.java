@@ -44,7 +44,7 @@ public class JwtTokenProvider {
     public Authentication getAuthentication(final String token) {
         Assert.hasText(token, "token parameter must not be empty or null");
         final UserVO userVO = getUserVO(token);
-        final UserDetails userDetails = new UserVO(getUserPk(token), userVO.getName(), userVO.getAuthority(), userVO.getTimeout());
+        final UserDetails userDetails = new UserVO(getUserPk(token), userVO.getName(), userVO.getAuthority(), userVO.getTimeout(), userVO.getTheme());
         return new UsernamePasswordAuthenticationToken(userDetails, StringUtils.EMPTY, userDetails.getAuthorities());
     }
 

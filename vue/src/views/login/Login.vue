@@ -53,7 +53,7 @@
               <v-alert
                 border="top"
                 colored-border
-                color="success"
+                color="divider"
                 dense
                 class="mb-0"
               >
@@ -61,7 +61,7 @@
               </v-alert>
               <v-btn
                 large
-                color="success"
+                color="accent"
                 text
                 outlined
                 rounded

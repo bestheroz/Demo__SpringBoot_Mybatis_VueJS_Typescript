@@ -4,7 +4,7 @@
       id="pageTitle"
       border="bottom"
       colored-border
-      color="success"
+      color="divider"
       dense
       class="ma-0 mb-2"
     >

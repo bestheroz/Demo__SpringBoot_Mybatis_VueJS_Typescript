@@ -2,15 +2,7 @@
   <div>
     <v-card>
       <v-card-text class="py-1">
-        <v-alert
-          border="bottom"
-          colored-border
-          color="success"
-          icon="mdi-format-list-checkbox"
-          dense
-          text
-          class="mb-0"
-        >
+        <v-alert icon="mdi-format-list-checkbox" dense tile class="mb-0">
           코드 관리 - Master
         </v-alert>
         <v-data-table

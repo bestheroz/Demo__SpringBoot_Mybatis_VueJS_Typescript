@@ -23,7 +23,7 @@
             :link="!!item.to"
           >
             <v-list-item-action>
-              <v-icon v-if="child.icon"> {{ child.icon }}</v-icon>
+              <v-icon>mdi-menu-right</v-icon>
             </v-list-item-action>
             <v-list-item-content>
               <v-list-item-title>
@@ -52,7 +52,7 @@
 
     <template v-slot:append>
       <div class="pa-2">
-        <v-btn block @click="logout">
+        <v-btn block outlined @click="logout">
           <v-icon>mdi-logout</v-icon>
           Logout
         </v-btn>

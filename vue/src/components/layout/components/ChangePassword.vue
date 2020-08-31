@@ -5,7 +5,7 @@
         <v-alert
           border="bottom"
           colored-border
-          color="success"
+          color="divider"
           icon="mdi-pencil-outline"
           class="title"
         >
@@ -134,7 +134,5 @@ export default class extends Vue {
       this.$emit('finished');
     }
   }
-
-  changePassword() {}
 }
 </script>
