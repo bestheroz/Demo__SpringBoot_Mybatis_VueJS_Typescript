@@ -115,8 +115,9 @@ export default class extends Vue {
     height: 1.5rem;
     padding-right: 2px;
     padding-left: 2px;
-    border-bottom: thin solid rgba(255, 255, 255, 0.12);
-    border-left: thin solid rgba(255, 255, 255, 0.12);
+    border-bottom: thin solid var(--v-table-border-base);
+    border-left: thin solid var(--v-table-border-base);
+
     div.v-input {
       div.v-input__append-inner {
         div.v-input__icon {
@@ -131,6 +132,7 @@ export default class extends Vue {
         }
       }
     }
+
     .v-input__control {
       width: 0;
 
@@ -169,8 +171,9 @@ export default class extends Vue {
       }
     }
   }
+
   td:last-child {
-    border-right: thin solid rgba(255, 255, 255, 0.12);
+    border-right: thin solid var(--v-table-border-base);
   }
 }
 </style>

@@ -19,6 +19,7 @@ public class UserVO implements UserDetails, Serializable {
     private String name;
     private Integer authority;
     private Integer timeout;
+    private String theme;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

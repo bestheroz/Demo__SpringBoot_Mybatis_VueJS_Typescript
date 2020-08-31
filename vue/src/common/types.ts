@@ -44,9 +44,10 @@ export interface TableMemberEntity {
   loginFailCnt?: number | null;
   expired?: Date | null;
   available?: boolean | null;
-  token?: string | null;
+  theme?: string | null;
   authority?: number | null;
   timeout?: number | null;
+  token?: string | null;
   created?: Date | null;
   createdBy?: string | null;
   updated?: Date | null;

@@ -4,15 +4,15 @@
       id="pageTitle"
       border="bottom"
       colored-border
-      color="success"
+      color="divider"
       dense
-      class="mx-3 mt-3 mb-0 pl-6"
+      class="mx-3 mt-3 mb-0 pl-6 elevation-1"
       v-if="title"
     >
       <v-icon class="pb-1">mdi-file-document-outline</v-icon>
       {{ title }}
     </v-alert>
-    <v-container fluid class="pt-0">
+    <v-container fluid class="pt-0 elevation-1">
       <router-view />
     </v-container>
   </v-main>

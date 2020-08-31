@@ -23,7 +23,7 @@
             :link="!!item.to"
           >
             <v-list-item-action>
-              <v-icon v-if="child.icon"> {{ child.icon }}</v-icon>
+              <v-icon>mdi-menu-right</v-icon>
             </v-list-item-action>
             <v-list-item-content>
               <v-list-item-title>
@@ -51,11 +51,21 @@
     </v-list>
 
     <template v-slot:append>
-      <div class="pa-2">
-        <v-btn block @click="logout">
-          <v-icon>mdi-logout</v-icon>
-          Logout
-        </v-btn>
+      <div class="ma-2">
+        <v-row no-gutters>
+          <v-col cols="8">
+            <v-btn outlined @click="logout">
+              <v-icon>mdi-logout</v-icon>
+              Logout
+            </v-btn>
+          </v-col>
+          <v-col cols="4" class="text-right">
+            <v-btn icon outlined @click="changeTheme">
+              <v-icon v-if="$vuetify.theme.dark">mdi-weather-sunny</v-icon>
+              <v-icon v-else>mdi-weather-night</v-icon>
+            </v-btn>
+          </v-col>
+        </v-row>
       </div>
     </template>
   </v-navigation-drawer>
@@ -65,6 +75,7 @@
 import { Component, PropSync, Vue, Watch } from 'vue-property-decorator';
 import { DrawerItem } from '@/common/types';
 import { logout } from '@/utils/authentications';
+import { postDataApi } from '@/utils/apis';
 
 @Component({
   name: 'Drawer',
@@ -92,6 +103,27 @@ export default class extends Vue {
       '_blank',
       // 'location=false,menubar=false,scrollbars=true,status=false,toolbar=false',
     );
+  }
+
+  changeTheme() {
+    this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
+    window.localStorage.setItem(
+      'theme',
+      this.$vuetify.theme.dark ? 'dark' : 'light',
+    );
+    try {
+      postDataApi<{
+        theme: string;
+      }>(
+        `members/${this.$store.state.user.user.id}/changeTheme/`,
+        {
+          theme: this.$vuetify.theme.dark ? 'dark' : 'light',
+        },
+        false,
+      );
+    } catch (e) {
+      console.warn(e);
+    }
   }
 }
 </script>

@@ -17,6 +17,7 @@ const moduleUser = {
         name: state.user.name,
         timeout: state.user.timeout,
         authority: state.user.authority,
+        theme: state.user.theme,
       };
     },
   },

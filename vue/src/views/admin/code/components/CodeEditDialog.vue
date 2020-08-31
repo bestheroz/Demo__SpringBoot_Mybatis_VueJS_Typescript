@@ -5,11 +5,11 @@
         <v-alert
           border="bottom"
           colored-border
-          color="success"
+          color="divider"
           :icon="
             mode === '추가' ? 'mdi-pencil-plus-outline' : 'mdi-pencil-outline'
           "
-          class="title"
+          class="title mb-0"
         >
           시스템코드관리-DET {{ mode }}
         </v-alert>

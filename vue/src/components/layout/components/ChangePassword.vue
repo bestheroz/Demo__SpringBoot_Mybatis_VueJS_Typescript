@@ -5,9 +5,9 @@
         <v-alert
           border="bottom"
           colored-border
-          color="success"
+          color="divider"
           icon="mdi-pencil-outline"
-          class="title"
+          class="title mb-0"
         >
           비밀번호 변경
         </v-alert>
@@ -134,7 +134,5 @@ export default class extends Vue {
       this.$emit('finished');
     }
   }
-
-  changePassword() {}
 }
 </script>
