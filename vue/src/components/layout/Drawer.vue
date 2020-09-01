@@ -143,6 +143,7 @@ export default class extends Vue {
       this.$store.state.layout.lockLayout = !this.$store.state.layout
         .lockLayout;
     }
+    this.$store.dispatch('setLayoutMenuId', item.id); // ViewNoDrawer 때문에 존재
     if (item.type === 'W') {
       this.popupWindow(item.to);
     } else {
