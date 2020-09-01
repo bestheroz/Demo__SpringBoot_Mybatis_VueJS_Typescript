@@ -1,4 +1,5 @@
-import '@sweetalert2/theme-dark/dark.scss';
+import 'sweetalert2/dist/sweetalert2.css';
+import '@/scss/sweetalert.scss';
 import { SweetAlertResult } from 'sweetalert2';
 import Swal from 'sweetalert2/src/sweetalert2.js';
 import { AxiosError } from 'axios';
@@ -27,9 +28,15 @@ const countdownDialog = () => {
 };
 
 export function alertInfo(message: string, timer = 3500): void {
+  Swal.mixin({
+    customClass: {
+      confirmButton: 'info',
+    },
+    buttonsStyling: false,
+  });
+
   Swal.fire({
     icon: 'info',
-    confirmButtonColor: '#00CAE3',
     confirmButtonText: message,
     timer: timer,
     html: '<b>3</b> 초 후에 자동으로 닫힙니다.',
@@ -40,10 +47,16 @@ export function alertInfo(message: string, timer = 3500): void {
     },
   });
 }
-export function alertSuccess(message: string, timer = 3500): void {
+
+export function alertSuccess(message: string, timer = 350000): void {
+  Swal.mixin({
+    customClass: {
+      confirmButton: 'success',
+    },
+    buttonsStyling: false,
+  });
   Swal.fire({
     icon: 'success',
-    confirmButtonColor: '#4caf50',
     confirmButtonText: message,
     timer: timer,
     html: '<b>3</b> 초 후에 자동으로 닫힙니다.',
@@ -54,14 +67,28 @@ export function alertSuccess(message: string, timer = 3500): void {
     },
   });
 }
+
 export function alertWarning(message: string): void {
+  Swal.mixin({
+    customClass: {
+      confirmButton: 'warning',
+    },
+    buttonsStyling: false,
+  });
+
   Swal.fire({
     icon: 'warning',
-    confirmButtonColor: '#FFC107',
     confirmButtonText: message,
   });
 }
+
 export function alertError(e: string | AxiosError): void {
+  Swal.mixin({
+    customClass: {
+      confirmButton: 'error',
+    },
+    buttonsStyling: false,
+  });
   let message;
   if (
     typeof e === 'string' ||
@@ -73,7 +100,6 @@ export function alertError(e: string | AxiosError): void {
   }
   Swal.fire({
     icon: 'error',
-    confirmButtonColor: '#E91E63',
     confirmButtonText: message,
   });
 }
@@ -89,12 +115,11 @@ export async function confirm(
     text: text,
     icon: 'question',
     showCancelButton: true,
-    confirmButtonColor: '#4caf50',
     confirmButtonText: confirmButtonText,
-    cancelButtonColor: '#E91E63',
     cancelButtonText: cancelButtonText,
   });
 }
+
 export async function confirmDelete(
   title = '삭제 하시겠습니까?',
   text = '',
@@ -104,9 +129,7 @@ export async function confirmDelete(
     text: text,
     icon: 'question',
     showCancelButton: true,
-    confirmButtonColor: '#4caf50',
     confirmButtonText: '삭제 하겠습니다',
-    cancelButtonColor: '#E91E63',
     cancelButtonText: '취소',
   });
 }

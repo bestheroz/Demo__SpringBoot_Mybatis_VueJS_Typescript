@@ -1,0 +1,22 @@
+.swal2-container {
+  .swal2-popup {
+    background-color: var(--v-alert-background-base)
+  }
+
+  .swal2-title {
+    color: var(--v-alert-text-base);
+  }
+
+  .swal2-content {
+    color: var(--v-alert-text-base);
+    font-weight: 800;
+  }
+
+  .swal2-confirm {
+    background-color: var(--v-primary-base);
+  }
+
+  .swal2-cancel {
+    background-color: var(--v-secondary-base);
+  }
+}

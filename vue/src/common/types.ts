@@ -1,3 +1,8 @@
+export interface SelectItem {
+  value: string;
+  text: string;
+}
+
 export interface DataTableHeader {
   text: string;
   value: string;
@@ -30,11 +35,6 @@ export interface DrawerItem {
   checked?: boolean | null;
   depth?: number | null;
   children?: DrawerItem[];
-}
-
-export interface SelectItem {
-  value: string;
-  text: string;
 }
 
 export interface TableMemberEntity {
