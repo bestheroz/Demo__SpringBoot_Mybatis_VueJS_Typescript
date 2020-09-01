@@ -39,7 +39,7 @@ export default class extends Vue {
   }
 
   findThisPage(): DrawerItem {
-    let result: DrawerItem = { title: '' };
+    let result: DrawerItem = { id: 0, title: '' };
     if (this.drawers && this.drawers.length > 0) {
       this.drawers.forEach((drawer) => {
         if (this.$route.name) {

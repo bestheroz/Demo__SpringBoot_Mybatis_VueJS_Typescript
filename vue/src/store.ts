@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Vuex, { ActionContext } from 'vuex';
 import { DrawerItem, SelectItem, TableMemberEntity } from '@/common/types';
-import { getApi } from '@/utils/apis';
+import { getApi, patchDataApi } from '@/utils/apis';
 
 Vue.use(Vuex);
 
@@ -22,9 +22,6 @@ const moduleUser = {
     },
   },
   mutations: {
-    setUser(state: any, data: TableMemberEntity) {
-      state.user = data;
-    },
     resetTimer(state: any) {
       if (state.user && state.user.timeout) {
         state.logoutTimer = new Date().getTime() + state.user.timeout * 1000;
@@ -34,9 +31,9 @@ const moduleUser = {
     },
   },
   actions: {
-    async setUser({ commit }: ActionContext<any, any>) {
+    async setUser({ commit, state }: ActionContext<any, any>) {
       const response = await getApi<TableMemberEntity>(`auth/me`);
-      commit('setUser', response.data);
+      state.user = response.data;
       commit('resetTimer');
     },
     async getUser({
@@ -63,15 +60,11 @@ const moduleDrawer = {
   state: {
     drawers: null,
   },
-  mutations: {
-    setDrawers(state: any, data: DrawerItem[]) {
-      state.drawers = data;
-    },
-  },
+  mutations: {},
   actions: {
-    async setDrawers({ commit }: ActionContext<any, any>) {
+    async setDrawers({ state }: ActionContext<any, any>) {
       const response = await getApi<DrawerItem[]>('menus/drawer');
-      commit('setDrawers', response.data);
+      state.drawers = response.data;
     },
     async getDrawers({
       state,
@@ -93,15 +86,11 @@ const moduleCache = {
   state: {
     members: null,
   },
-  mutations: {
-    setMemberCodes(state: any, data: SelectItem[]) {
-      state.members = data;
-    },
-  },
+  mutations: {},
   actions: {
-    async setMemberCodes({ commit }: ActionContext<any, any>) {
+    async setMemberCodes({ state }: ActionContext<any, any>) {
       const response = await getApi<SelectItem[]>('members/lists/codes');
-      commit('setMemberCodes', response.data);
+      state.members = response.data;
     },
     async getMemberCodes({ state, dispatch }: ActionContext<any, any>) {
       if (!state.members) {
@@ -115,10 +104,30 @@ const moduleCache = {
   },
 };
 
+const moduleLayout = {
+  state: {
+    layout: null,
+    lockLayout: true,
+  },
+  mutations: {},
+  actions: {
+    async saveLayout({ state }: ActionContext<any, any>, menuId: string) {
+      const response = await patchDataApi<SelectItem[]>(
+        `layouts/${state.user.id}/${menuId}/`,
+      );
+      state.members = response.data;
+    },
+    setLockLayout({ state }: ActionContext<any, any>, lock: boolean) {
+      state.user = lock;
+    },
+  },
+};
+
 export default new Vuex.Store({
   modules: {
     user: moduleUser,
     drawer: moduleDrawer,
     cache: moduleCache,
+    layout: moduleLayout,
   },
 });

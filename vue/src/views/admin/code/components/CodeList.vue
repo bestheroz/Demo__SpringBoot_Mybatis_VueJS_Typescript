@@ -66,7 +66,7 @@
             </a>
           </template>
           <template v-slot:item.available="{ item }">
-            <span style="display: inline-flex">
+            <span style="display: inline-flex;">
               <v-checkbox
                 readonly
                 :input-value="item.available"
@@ -107,7 +107,7 @@ import {
   TableCodeEntity,
   TableCodeGroupEntity,
 } from '@/common/types';
-import { getCodeListApi, getListApi } from '@/utils/apis';
+import { getApi, getCodeListApi } from '@/utils/apis';
 import envs from '@/constants/envs';
 import ButtonSet from '@/components/speeddial/ButtonSet.vue';
 import CodeEditDialog from '@/views/admin/code/components/CodeEditDialog.vue';
@@ -201,7 +201,7 @@ export default class extends Vue {
     this.selected = [];
     this.items = [];
     this.loading = true;
-    const response = await getListApi<TableCodeEntity[]>(
+    const response = await getApi<TableCodeEntity[]>(
       `admin/codes/${this.parentItem.codeGroup}`,
     );
     this.loading = false;

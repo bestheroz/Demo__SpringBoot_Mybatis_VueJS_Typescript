@@ -64,7 +64,7 @@
           </a>
         </template>
         <template v-slot:item.available="{ item }">
-          <span style="display: inline-flex">
+          <span style="display: inline-flex;">
             <v-checkbox
               readonly
               :input-value="item.available"
@@ -105,7 +105,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { DataTableHeader, SelectItem, TableMemberEntity } from '@/common/types';
-import { getCodeListApi, getListApi } from '@/utils/apis';
+import { getApi, getCodeListApi } from '@/utils/apis';
 import envs from '@/constants/envs';
 import ButtonSet from '@/components/speeddial/ButtonSet.vue';
 import DataTableFilter from '@/components/datatable/DataTableFilter.vue';
@@ -200,7 +200,7 @@ export default class extends Vue {
     this.selected = [];
     this.items = [];
     this.loading = true;
-    const response = await getListApi<TableMemberEntity[]>(this.ENDPOINT_URL);
+    const response = await getApi<TableMemberEntity[]>(this.ENDPOINT_URL);
     this.loading = false;
     this.items = response.data || [];
   }

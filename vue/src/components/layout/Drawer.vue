@@ -60,6 +60,18 @@
             </v-btn>
           </v-col>
           <v-col cols="4" class="text-right">
+            <v-btn
+              icon
+              outlined
+              @click="
+                $store.state.layout.lockLayout = !$store.state.layout.lockLayout
+              "
+            >
+              <v-icon v-if="$store.state.layout.lockLayout">
+                mdi-arrow-expand-all
+              </v-icon>
+              <v-icon v-else> mdi-arrow-vertical-lock</v-icon>
+            </v-btn>
             <v-btn icon outlined @click="changeTheme">
               <v-icon v-if="$vuetify.theme.dark">mdi-weather-sunny</v-icon>
               <v-icon v-else>mdi-weather-night</v-icon>

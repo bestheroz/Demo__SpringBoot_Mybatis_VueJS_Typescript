@@ -86,7 +86,7 @@
 <script lang="ts">
 import { Component, Emit, Vue, Watch } from 'vue-property-decorator';
 import { DataTableHeader, TableCodeGroupEntity } from '@/common/types';
-import { getListApi } from '@/utils/apis';
+import { getApi } from '@/utils/apis';
 import envs from '@/constants/envs';
 import dayjs from 'dayjs';
 import ButtonSet from '@/components/speeddial/ButtonSet.vue';
@@ -156,9 +156,7 @@ export default class extends Vue {
     this.selected = [];
     this.items = [];
     this.loading = true;
-    const response = await getListApi<TableCodeGroupEntity[]>(
-      `admin/codeGroups/`,
-    );
+    const response = await getApi<TableCodeGroupEntity[]>(`admin/codeGroups/`);
     this.loading = false;
     this.items = response.data || [];
   }

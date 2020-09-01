@@ -59,7 +59,7 @@
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import { DataTableHeader, SelectItem, TableMenuEntity } from '@/common/types';
-import { getCodeListApi, getListApi, putDataApi } from '@/utils/apis';
+import { getApi, getCodeListApi, putDataApi } from '@/utils/apis';
 import envs from '@/constants/envs';
 import ButtonSet from '@/components/speeddial/ButtonSet.vue';
 
@@ -138,7 +138,7 @@ export default class extends Vue {
   async getList() {
     this.items = [];
     this.loading = true;
-    const response = await getListApi<AdminMenuAuthorityVO[]>(
+    const response = await getApi<AdminMenuAuthorityVO[]>(
       `${this.END_POINT}${this.authority}`,
     );
     this.loading = false;
