@@ -27,6 +27,7 @@ export interface DataTableHeader {
 // }
 
 export interface DrawerItem {
+  id: number;
   title: string;
   icon?: string | null;
   to?: string | null;

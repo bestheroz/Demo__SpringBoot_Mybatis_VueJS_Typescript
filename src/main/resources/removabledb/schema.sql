@@ -61,9 +61,13 @@ CREATE TABLE CODE
     UPDATED_BY    VARCHAR(100)          NOT NULL,
     UPDATED       DATETIME              NOT NULL
 );
-ALTER TABLE CODE
-    ADD PRIMARY KEY (CODE_GROUP, CODE);
 
-create
-sequence hibernate_sequence start
-with 1 increment by 1;
+CREATE TABLE LAYOUT
+(
+    MEMBER_ID    VARCHAR(100)       NOT NULL,
+    MENU_ID      INT(10)            NOT NULL,
+    LAYOUT_LIST  VARCHAR(4000)      NOT NULL
+);
+
+ALTER TABLE LAYOUT
+    ADD PRIMARY KEY (MEMBER_ID, MENU_ID);

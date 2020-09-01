@@ -11,7 +11,7 @@
         disable-filtering
         disable-pagination
         dense
-        :height="773"
+        :height="height"
       >
         <template v-slot:top>
           <button-set reload-button @click:reload="getList" />
@@ -95,7 +95,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Prop, Vue } from 'vue-property-decorator';
 import { DataTableHeader, SelectItem, TableMenuEntity } from '@/common/types';
 import { getApi, getCodesApi } from '@/utils/apis';
 import envs from '@/constants/envs';
@@ -114,6 +114,7 @@ interface MenuVO extends TableMenuEntity {
   },
 })
 export default class extends Vue {
+  @Prop({ required: true }) readonly height!: number;
   readonly envs: typeof envs = envs;
   readonly ENDPOINT_URL: string = 'admin/menus/';
   mode: string | null = null;

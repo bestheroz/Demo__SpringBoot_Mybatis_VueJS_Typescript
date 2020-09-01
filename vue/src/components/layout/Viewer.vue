@@ -39,27 +39,27 @@ export default class extends Vue {
   }
 
   findThisPage(): DrawerItem {
-    let result: DrawerItem = { title: '' };
+    let result: DrawerItem = { id: 0, title: '' };
     if (this.drawers && this.drawers.length > 0) {
       this.drawers.forEach((drawer) => {
         if (this.$route.name) {
           return { title: null };
         }
         if (drawer.children && drawer.children.length > 0) {
-          const find = drawer.children.find((child: any) => {
+          const find = drawer.children.find((child: DrawerItem) => {
             if (child.to) {
+              this.$store.dispatch('setLayoutMenuId', child.id);
               return child.to === this.$route.fullPath;
             }
           });
-          if (find) {
-            result = find;
-          }
+          find && (result = find);
         }
       });
     }
     if (!result) {
       errorPage(403);
     }
+    this.$store.dispatch('setLayoutMenuId', result.id);
     return result;
   }
 

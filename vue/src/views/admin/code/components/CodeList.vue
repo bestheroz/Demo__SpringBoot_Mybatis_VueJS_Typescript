@@ -18,7 +18,7 @@
           single-select
           show-select
           dense
-          :height="327"
+          :height="height"
           :footer-props="envs.FOOTER_PROPS_100"
         >
           <template v-slot:top>
@@ -66,7 +66,7 @@
             </a>
           </template>
           <template v-slot:item.available="{ item }">
-            <span style="display: inline-flex">
+            <span style="display: inline-flex;">
               <v-checkbox
                 readonly
                 :input-value="item.available"
@@ -123,6 +123,7 @@ import DataTableFilter from '@/components/datatable/DataTableFilter.vue';
 })
 export default class extends Vue {
   @Prop({ required: true }) readonly parentItem!: TableCodeGroupEntity;
+  @Prop({ required: true }) readonly height!: number;
 
   readonly envs: typeof envs = envs;
   AUTHORITY: SelectItem[] | null = null;

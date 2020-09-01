@@ -14,7 +14,7 @@
         single-select
         show-select
         dense
-        :height="773"
+        :height="height"
         :footer-props="envs.FOOTER_PROPS_100"
       >
         <template v-slot:top>
@@ -64,7 +64,7 @@
           </a>
         </template>
         <template v-slot:item.available="{ item }">
-          <span style="display: inline-flex">
+          <span style="display: inline-flex;">
             <v-checkbox
               readonly
               :input-value="item.available"
@@ -103,7 +103,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Prop, Vue } from 'vue-property-decorator';
 import { DataTableHeader, SelectItem, TableMemberEntity } from '@/common/types';
 import { getApi, getCodesApi } from '@/utils/apis';
 import envs from '@/constants/envs';
@@ -121,6 +121,7 @@ import dayjs from 'dayjs';
   },
 })
 export default class extends Vue {
+  @Prop({ required: true }) readonly height!: number;
   readonly envs: typeof envs = envs;
   readonly dayjs: typeof dayjs = dayjs;
   readonly ENDPOINT_URL: string = 'admin/members/';

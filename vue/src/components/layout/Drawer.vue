@@ -16,11 +16,8 @@
           <v-list-item
             v-for="(child, i) in item.children"
             :key="i"
-            @click="child.type === 'W' ? popupWindow(`${child.to}`) : undefined"
-            :to="
-              child.type !== 'W' ? `${!!child.to ? child.to : ''}` : undefined
-            "
             :link="!!item.to"
+            @click="movePage(child)"
           >
             <v-list-item-action>
               <v-icon>mdi-menu-right</v-icon>
@@ -36,9 +33,9 @@
 
         <v-list-item
           v-else
-          :to="!!item.to ? item.to : ''"
           :key="item.title"
           :link="!!item.to"
+          @click="movePage(item)"
         >
           <v-list-item-action>
             <v-icon> {{ item.icon }}</v-icon>
@@ -60,9 +57,21 @@
             </v-btn>
           </v-col>
           <v-col cols="4" class="text-right">
+            <v-btn
+              icon
+              outlined
+              @click="
+                $store.state.layout.lockLayout = !$store.state.layout.lockLayout
+              "
+            >
+              <v-icon v-if="$store.state.layout.lockLayout">
+                mdi-arrow-vertical-lock
+              </v-icon>
+              <v-icon v-else> mdi-arrow-expand-all</v-icon>
+            </v-btn>
             <v-btn icon outlined @click="changeTheme">
-              <v-icon v-if="$vuetify.theme.dark">mdi-weather-sunny</v-icon>
-              <v-icon v-else>mdi-weather-night</v-icon>
+              <v-icon v-if="$vuetify.theme.dark"> mdi-weather-night</v-icon>
+              <v-icon v-else> mdi-weather-sunny</v-icon>
             </v-btn>
           </v-col>
         </v-row>
@@ -123,6 +132,22 @@ export default class extends Vue {
       );
     } catch (e) {
       console.warn(e);
+    }
+  }
+
+  movePage(item: DrawerItem) {
+    if (!item.to || item.to === this.$route.fullPath) {
+      return;
+    }
+    if (!this.$store.state.layout.lockLayout) {
+      this.$store.state.layout.lockLayout = !this.$store.state.layout
+        .lockLayout;
+    }
+    this.$store.dispatch('setLayoutMenuId', item.id); // ViewNoDrawer 때문에 존재
+    if (item.type === 'W') {
+      this.popupWindow(item.to);
+    } else {
+      item.to && this.$router.push(item.to);
     }
   }
 }
