@@ -67,8 +67,8 @@ export default class extends Vue {
     h: number;
     i: string;
   }[] = [
-    { x: 0, y: 0, w: 12, h: 11, i: 'code-group-list' },
-    { x: 0, y: 0, w: 12, h: 17, i: 'code-list' },
+    { x: 0, y: 0, w: 12, h: 10, i: 'code-group-list' },
+    { x: 0, y: 0, w: 12, h: 16, i: 'code-list' },
   ];
 
   get height(): number[] {

@@ -136,14 +136,13 @@ export default class extends Vue {
   }
 
   movePage(item: DrawerItem) {
-    if (item.to === this.$route.fullPath) {
+    if (!item.to || item.to === this.$route.fullPath) {
       return;
     }
     if (!this.$store.state.layout.lockLayout) {
       this.$store.state.layout.lockLayout = !this.$store.state.layout
         .lockLayout;
     }
-    this.$store.dispatch('setLayoutMenuId', item.id);
     if (item.type === 'W') {
       this.popupWindow(item.to);
     } else {

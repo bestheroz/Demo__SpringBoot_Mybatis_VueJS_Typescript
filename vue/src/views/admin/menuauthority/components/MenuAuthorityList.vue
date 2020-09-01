@@ -148,7 +148,7 @@ export default class extends Vue {
   async save() {
     this.loading = true;
     await putApi<{ menuIdList: string }>(
-      `${this.ENDPOINT_URL}/${this.authority}/`,
+      `${this.ENDPOINT_URL}${this.authority}/`,
       {
         menuIdList: this.items
           .map((value) => (value.checked ? value.id : undefined))

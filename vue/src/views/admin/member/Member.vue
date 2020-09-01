@@ -48,7 +48,7 @@ export default class extends Vue {
     w: number;
     h: number;
     i: string;
-  }[] = [{ x: 0, y: 0, w: 12, h: 28, i: 'member-list' }];
+  }[] = [{ x: 0, y: 0, w: 12, h: 26, i: 'member-list' }];
 
   get height(): number[] {
     return getRealHeightOfLayout(this.layout);
