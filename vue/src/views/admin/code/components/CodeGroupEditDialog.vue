@@ -67,7 +67,7 @@
 <script lang="ts">
 import { Component, Prop, PropSync, Vue, Watch } from 'vue-property-decorator';
 import { TableCodeGroupEntity } from '@/common/types';
-import { deleteDataApi, patchDataApi, postDataApi } from '@/utils/apis';
+import { deleteApi, patchApi, postApi } from '@/utils/apis';
 import _ from 'lodash';
 import { confirmDelete } from '@/utils/alerts';
 
@@ -79,7 +79,7 @@ export default class extends Vue {
   @Prop({ required: true }) readonly editItem!: TableCodeGroupEntity;
   @Prop({ required: true }) readonly mode!: string | null;
 
-  readonly END_POINT = 'admin/codeGroups/';
+  readonly ENDPOINT_URL = 'admin/codeGroups/';
   loading: boolean = false;
 
   @Watch('dialog')
@@ -99,8 +99,8 @@ export default class extends Vue {
 
   async create() {
     this.loading = true;
-    const response = await postDataApi<TableCodeGroupEntity>(
-      this.END_POINT,
+    const response = await postApi<TableCodeGroupEntity>(
+      this.ENDPOINT_URL,
       this.editItem,
     );
     this.loading = false;
@@ -112,10 +112,9 @@ export default class extends Vue {
 
   async patch() {
     this.loading = true;
-    const response = await patchDataApi<TableCodeGroupEntity>(
-      this.END_POINT,
+    const response = await patchApi<TableCodeGroupEntity>(
+      `${this.ENDPOINT_URL}${this.editItem.codeGroup}/`,
       this.editItem,
-      this.editItem.codeGroup!,
     );
     this.loading = false;
     if (_.startsWith(response.code, `S`)) {
@@ -128,9 +127,8 @@ export default class extends Vue {
     const result = await confirmDelete();
     if (result.value) {
       this.loading = true;
-      const response = await deleteDataApi<TableCodeGroupEntity>(
-        this.END_POINT,
-        this.editItem.codeGroup!,
+      const response = await deleteApi<TableCodeGroupEntity>(
+        `${this.ENDPOINT_URL}${this.editItem.codeGroup}/`,
       );
       this.loading = false;
       if (_.startsWith(response.code, `S`)) {

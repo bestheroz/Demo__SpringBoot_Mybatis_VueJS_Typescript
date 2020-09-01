@@ -24,7 +24,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { SelectItem } from '@/common/types';
-import { getCodeListApi } from '@/utils/apis';
+import { getCodesApi } from '@/utils/apis';
 import MenuAuthorityList from '@/views/admin/menuauthority/components/MenuAuthorityList.vue';
 
 @Component({
@@ -44,7 +44,7 @@ export default class extends Vue {
 
   async getCodeList() {
     this.loading = true;
-    const data: SelectItem[] = await getCodeListApi('AUTHORITY');
+    const data: SelectItem[] = await getCodesApi('AUTHORITY');
     const user = await this.$store.dispatch('getUser');
     this.loading = false;
     this.AUTHORITY =

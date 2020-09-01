@@ -120,12 +120,7 @@
 <script lang="ts">
 import { Component, Prop, PropSync, Vue, Watch } from 'vue-property-decorator';
 import { SelectItem, TableCodeEntity } from '@/common/types';
-import {
-  deleteDataApi,
-  getCodeListApi,
-  patchDataApi,
-  postDataApi,
-} from '@/utils/apis';
+import { deleteApi, getCodesApi, patchApi, postApi } from '@/utils/apis';
 import _ from 'lodash';
 import { confirmDelete } from '@/utils/alerts';
 
@@ -137,13 +132,13 @@ export default class extends Vue {
   @Prop({ required: true }) readonly editItem!: TableCodeEntity;
   @Prop({ required: true }) readonly mode!: string | null;
 
-  readonly END_POINT = 'admin/codes/';
+  readonly ENDPOINT_URL = 'admin/codes/';
   AUTHORITY: SelectItem[] | null = null;
 
   loading: boolean = false;
 
   async mounted() {
-    this.AUTHORITY = await getCodeListApi('AUTHORITY');
+    this.AUTHORITY = await getCodesApi('AUTHORITY');
   }
 
   @Watch('dialog')
@@ -163,8 +158,8 @@ export default class extends Vue {
 
   async create() {
     this.loading = true;
-    const response = await postDataApi<TableCodeEntity>(
-      `${this.END_POINT}${this.editItem.codeGroup}`,
+    const response = await postApi<TableCodeEntity>(
+      `${this.ENDPOINT_URL}${this.editItem.codeGroup}`,
       this.editItem,
     );
     this.loading = false;
@@ -176,10 +171,9 @@ export default class extends Vue {
 
   async patch() {
     this.loading = true;
-    const response = await patchDataApi<TableCodeEntity>(
-      `${this.END_POINT}`,
+    const response = await patchApi<TableCodeEntity>(
+      `${this.ENDPOINT_URL}${this.editItem.codeGroup}/${this.editItem.code}/`,
       this.editItem,
-      { key: this.editItem.codeGroup!, key2: this.editItem.code! },
     );
     this.loading = false;
     if (_.startsWith(response.code, `S`)) {
@@ -193,12 +187,8 @@ export default class extends Vue {
     const result = await confirmDelete();
     if (result.value) {
       this.loading = true;
-      const response = await deleteDataApi<TableCodeEntity>(
-        `${this.END_POINT}`,
-        {
-          key: this.editItem.codeGroup!,
-          key2: this.editItem.code!,
-        },
+      const response = await deleteApi<TableCodeEntity>(
+        `${this.ENDPOINT_URL}${this.editItem.codeGroup}/${this.editItem.code}/`,
       );
       this.loading = false;
       if (_.startsWith(response.code, `S`)) {

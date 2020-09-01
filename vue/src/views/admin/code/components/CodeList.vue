@@ -107,7 +107,7 @@ import {
   TableCodeEntity,
   TableCodeGroupEntity,
 } from '@/common/types';
-import { getCodeListApi, getListApi } from '@/utils/apis';
+import { getApi, getCodesApi } from '@/utils/apis';
 import envs from '@/constants/envs';
 import ButtonSet from '@/components/speeddial/ButtonSet.vue';
 import CodeEditDialog from '@/views/admin/code/components/CodeEditDialog.vue';
@@ -184,7 +184,7 @@ export default class extends Vue {
   ];
 
   async mounted() {
-    this.headers[4].filterSelectItem = this.AUTHORITY = await getCodeListApi(
+    this.headers[4].filterSelectItem = this.AUTHORITY = await getCodesApi(
       'AUTHORITY',
     );
   }
@@ -201,7 +201,7 @@ export default class extends Vue {
     this.selected = [];
     this.items = [];
     this.loading = true;
-    const response = await getListApi<TableCodeEntity[]>(
+    const response = await getApi<TableCodeEntity[]>(
       `admin/codes/${this.parentItem.codeGroup}`,
     );
     this.loading = false;

@@ -36,7 +36,7 @@
                   />
                 </ValidationProvider>
               </v-col>
-              <v-col cols="12" style="text-align: right;">
+              <v-col cols="12" style="text-align: right">
                 <v-btn color="button-edit" @click="changePassword" outlined>
                   비밀번호 변경
                 </v-btn>
@@ -74,7 +74,7 @@
 <script lang="ts">
 import { Component, Prop, PropSync, Vue } from 'vue-property-decorator';
 import { TableMemberEntity } from '@/common/types';
-import { patchDataApi } from '@/utils/apis';
+import { patchApi } from '@/utils/apis';
 import _ from 'lodash';
 import DatetimePicker from '@/components/picker/DatetimePicker.vue';
 import ChangePassword from '@/components/layout/components/ChangePassword.vue';
@@ -98,10 +98,9 @@ export default class extends Vue {
     }
 
     this.loading = true;
-    const response = await patchDataApi<TableMemberEntity>(
-      this.ENDPOINT_URL,
-      { ...this.editItem },
-      this.editItem.id!,
+    const response = await patchApi<TableMemberEntity>(
+      `${this.ENDPOINT_URL}${this.editItem.id}/`,
+      this.editItem,
     );
     this.loading = false;
     if (_.startsWith(response.code, `S`)) {

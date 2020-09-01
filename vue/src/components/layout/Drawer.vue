@@ -75,7 +75,7 @@
 import { Component, PropSync, Vue, Watch } from 'vue-property-decorator';
 import { DrawerItem } from '@/common/types';
 import { logout } from '@/utils/authentications';
-import { postDataApi } from '@/utils/apis';
+import { postApi } from '@/utils/apis';
 
 @Component({
   name: 'Drawer',
@@ -112,7 +112,7 @@ export default class extends Vue {
       this.$vuetify.theme.dark ? 'dark' : 'light',
     );
     try {
-      postDataApi<{
+      postApi<{
         theme: string;
       }>(
         `members/${this.$store.state.user.user.id}/changeTheme/`,

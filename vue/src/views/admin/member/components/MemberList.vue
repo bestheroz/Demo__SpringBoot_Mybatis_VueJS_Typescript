@@ -105,7 +105,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { DataTableHeader, SelectItem, TableMemberEntity } from '@/common/types';
-import { getCodeListApi, getListApi } from '@/utils/apis';
+import { getApi, getCodesApi } from '@/utils/apis';
 import envs from '@/constants/envs';
 import ButtonSet from '@/components/speeddial/ButtonSet.vue';
 import DataTableFilter from '@/components/datatable/DataTableFilter.vue';
@@ -190,7 +190,7 @@ export default class extends Vue {
   ];
 
   async mounted() {
-    this.headers[2].filterSelectItem = this.AUTHORITY = await getCodeListApi(
+    this.headers[2].filterSelectItem = this.AUTHORITY = await getCodesApi(
       'AUTHORITY',
     );
     await this.getList();
@@ -200,7 +200,7 @@ export default class extends Vue {
     this.selected = [];
     this.items = [];
     this.loading = true;
-    const response = await getListApi<TableMemberEntity[]>(this.ENDPOINT_URL);
+    const response = await getApi<TableMemberEntity[]>(this.ENDPOINT_URL);
     this.loading = false;
     this.items = response.data || [];
   }

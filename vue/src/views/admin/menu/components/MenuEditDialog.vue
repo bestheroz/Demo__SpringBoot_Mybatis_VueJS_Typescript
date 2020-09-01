@@ -100,12 +100,7 @@
 <script lang="ts">
 import { Component, Prop, PropSync, Vue, Watch } from 'vue-property-decorator';
 import { SelectItem, TableMenuEntity } from '@/common/types';
-import {
-  deleteDataApi,
-  getCodeListApi,
-  patchDataApi,
-  postDataApi,
-} from '@/utils/apis';
+import { deleteApi, getCodesApi, patchApi, postApi } from '@/utils/apis';
 import _ from 'lodash';
 import { confirmDelete } from '@/utils/alerts';
 
@@ -121,12 +116,12 @@ export default class extends Vue {
   @Prop({ required: true }) readonly editItem!: MenuVO;
   @Prop({ required: true }) readonly mode!: string | null;
 
-  readonly END_POINT = 'admin/menus/';
+  readonly ENDPOINT_URL = 'admin/menus/';
   loading: boolean = false;
   MENU_TYPE: SelectItem[] | null = null;
 
   async mounted() {
-    this.MENU_TYPE = await getCodeListApi(`MENU_TYPE`);
+    this.MENU_TYPE = await getCodesApi(`MENU_TYPE`);
   }
 
   @Watch('dialog')
@@ -146,8 +141,8 @@ export default class extends Vue {
 
   async create() {
     this.loading = true;
-    const response = await postDataApi<TableMenuEntity>(
-      this.END_POINT,
+    const response = await postApi<TableMenuEntity>(
+      this.ENDPOINT_URL,
       this.editItem,
     );
     this.loading = false;
@@ -160,10 +155,9 @@ export default class extends Vue {
 
   async patch() {
     this.loading = true;
-    const response = await patchDataApi<TableMenuEntity>(
-      this.END_POINT,
+    const response = await patchApi<TableMenuEntity>(
+      `${this.ENDPOINT_URL}${this.editItem.id}/`,
       this.editItem,
-      this.editItem.id!,
     );
     this.loading = false;
     if (_.startsWith(response.code, `S`)) {
@@ -177,9 +171,8 @@ export default class extends Vue {
     const result = await confirmDelete();
     if (result.value) {
       this.loading = true;
-      const response = await deleteDataApi<TableMenuEntity>(
-        this.END_POINT,
-        this.editItem.id!,
+      const response = await deleteApi<TableMenuEntity>(
+        `${this.ENDPOINT_URL}${this.editItem.id}/`,
       );
       this.loading = false;
       if (_.startsWith(response.code, `S`)) {
