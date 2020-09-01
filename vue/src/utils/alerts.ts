@@ -28,15 +28,9 @@ const countdownDialog = () => {
 };
 
 export function alertInfo(message: string, timer = 3500): void {
-  Swal.mixin({
-    customClass: {
-      confirmButton: 'info',
-    },
-    buttonsStyling: false,
-  });
-
   Swal.fire({
     icon: 'info',
+    confirmButtonColor: 'var(--v-info-base)',
     confirmButtonText: message,
     timer: timer,
     html: '<b>3</b> 초 후에 자동으로 닫힙니다.',
@@ -48,15 +42,10 @@ export function alertInfo(message: string, timer = 3500): void {
   });
 }
 
-export function alertSuccess(message: string, timer = 350000): void {
-  Swal.mixin({
-    customClass: {
-      confirmButton: 'success',
-    },
-    buttonsStyling: false,
-  });
+export function alertSuccess(message: string, timer = 3500): void {
   Swal.fire({
     icon: 'success',
+    confirmButtonColor: 'var(--v-success-base)',
     confirmButtonText: message,
     timer: timer,
     html: '<b>3</b> 초 후에 자동으로 닫힙니다.',
@@ -69,26 +58,14 @@ export function alertSuccess(message: string, timer = 350000): void {
 }
 
 export function alertWarning(message: string): void {
-  Swal.mixin({
-    customClass: {
-      confirmButton: 'warning',
-    },
-    buttonsStyling: false,
-  });
-
   Swal.fire({
     icon: 'warning',
+    confirmButtonColor: 'var(--v-warning-base)',
     confirmButtonText: message,
   });
 }
 
 export function alertError(e: string | AxiosError): void {
-  Swal.mixin({
-    customClass: {
-      confirmButton: 'error',
-    },
-    buttonsStyling: false,
-  });
   let message;
   if (
     typeof e === 'string' ||
@@ -100,6 +77,7 @@ export function alertError(e: string | AxiosError): void {
   }
   Swal.fire({
     icon: 'error',
+    confirmButtonColor: 'var(--v-error-base)',
     confirmButtonText: message,
   });
 }
@@ -115,7 +93,9 @@ export async function confirm(
     text: text,
     icon: 'question',
     showCancelButton: true,
+    confirmButtonColor: 'var(--v-primary-base)',
     confirmButtonText: confirmButtonText,
+    cancelButtonColor: 'var(--v-secondary-base)',
     cancelButtonText: cancelButtonText,
   });
 }
@@ -129,7 +109,9 @@ export async function confirmDelete(
     text: text,
     icon: 'question',
     showCancelButton: true,
+    confirmButtonColor: 'var(--v-primary-base)',
     confirmButtonText: '삭제 하겠습니다',
+    cancelButtonColor: 'var(--v-secondary-base)',
     cancelButtonText: '취소',
   });
 }
