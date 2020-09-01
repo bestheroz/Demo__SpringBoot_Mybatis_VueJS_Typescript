@@ -25,7 +25,7 @@ export default new Vuetify({
     themes: {
       dark: {
         primary: colors.green.darken1,
-        secondary: colors.purple.base,
+        secondary: colors.brown.darken1,
         accent: colors.green.accent4,
         error: colors.red.accent2,
         info: colors.blue.base,
@@ -39,6 +39,8 @@ export default new Vuetify({
         'button-reload': colors.cyan.darken1,
         'table-header': colors.green.darken4,
         'table-border': colors.grey.darken3,
+        'alert-background': colors.grey.darken4,
+        'alert-text': colors.grey.lighten5,
       },
       light: {
         primary: colors.blue.darken2,
@@ -56,6 +58,8 @@ export default new Vuetify({
         'button-reload': colors.cyan.darken1,
         'table-header': colors.blue.lighten5,
         'table-border': colors.lightBlue.lighten4,
+        'alert-background': colors.grey.lighten5,
+        'alert-text': colors.grey.darken4,
       },
     },
     options: {
