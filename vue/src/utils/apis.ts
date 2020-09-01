@@ -65,33 +65,12 @@ export interface ApiDataResult<T> {
   paginationTotalLength?: number;
 }
 
-export interface requestKey {
-  key: string | number;
-  key2: string | number;
-  key3?: string;
-}
-
-export async function getListApi<T>(url: string): Promise<ApiDataResult<T>> {
-  const response = await axiosInstance.get<ApiDataResult<T>>(`api/${url}`);
-  return response.data;
-}
-
-export async function getItemApi<T>(
-  url: string,
-  id?: number | undefined,
-): Promise<ApiDataResult<T>> {
-  const response = await axiosInstance.get<ApiDataResult<T>>(
-    `api/${url}${id || ''}`,
-  );
-  return response.data;
-}
-
 export async function getApi<T>(url: string): Promise<ApiDataResult<T>> {
   const response = await axiosInstance.get<ApiDataResult<T>>(`api/${url}`);
   return response.data;
 }
 
-export async function postDataApi<T>(
+export async function postApi<T>(
   url: string,
   data: T,
   alert = true,
@@ -107,14 +86,13 @@ export async function postDataApi<T>(
   return response.data;
 }
 
-export async function putDataApi<T>(
+export async function putApi<T>(
   url: string,
   data: T,
-  key: string | number | requestKey,
   alert = true,
 ): Promise<ApiDataResult<T>> {
   const response = await axiosInstance.put<ApiDataResult<T>>(
-    `api/${url}${await makeUrlKey(key)}`,
+    `api/${url}`,
     data,
   );
   // response.status === 200
@@ -124,14 +102,13 @@ export async function putDataApi<T>(
   return response.data;
 }
 
-export async function patchDataApi<T>(
+export async function patchApi<T>(
   url: string,
   data: T,
-  key: string | number | requestKey,
   alert = true,
 ): Promise<ApiDataResult<T>> {
   const response = await axiosInstance.patch<ApiDataResult<T>>(
-    `api/${url}${await makeUrlKey(key)}`,
+    `api/${url}`,
     data,
   );
   // response.status === 200
@@ -141,14 +118,11 @@ export async function patchDataApi<T>(
   return response.data;
 }
 
-export async function deleteDataApi<T>(
+export async function deleteApi<T>(
   url: string,
-  key: string | number | requestKey,
   alert = true,
 ): Promise<ApiDataResult<T>> {
-  const response = await axiosInstance.delete(
-    `api/${url}${await makeUrlKey(key)}`,
-  );
+  const response = await axiosInstance.delete(`api/${url}`);
   // response.status === 204
   if (alert) {
     alertResponseMessage(response.data);
@@ -156,7 +130,7 @@ export async function deleteDataApi<T>(
   return response.data;
 }
 
-export async function getCodeListApi<SelectItem>(
+export async function getCodesApi<SelectItem>(
   codeGroup: string,
 ): Promise<SelectItem[]> {
   if (window.localStorage.getItem(`code__${codeGroup}`)) {
@@ -174,7 +148,6 @@ export async function getCodeListApi<SelectItem>(
             JSON.stringify(result),
           );
         }
-        // @ts-ignore
         return result;
       } else {
         return [];
@@ -196,14 +169,13 @@ export async function getVariableApi<T = string>(
       const response = await axiosInstance.get<ApiDataResult<T>>(
         `api/variables/${variable}`,
       );
-      const result = response.data.data;
+      const result = response.data.data!;
       if (result) {
         window.localStorage.setItem(
           `variable__${variable}`,
           JSON.stringify(result),
         );
       }
-      // @ts-ignore
       return result;
     } catch (error) {
       // console.warn(getErrorResult(error).message);
@@ -217,21 +189,6 @@ function alertResponseMessage(data: ApiDataResult<any>): void {
     alertSuccess(data.message);
   } else {
     alertError(data.message);
-  }
-}
-
-async function makeUrlKey(key: string | number | requestKey) {
-  if (typeof key === 'object') {
-    let result: string = `${key.key}/`;
-    if (key.key2) {
-      result = result + `${key.key2}/`;
-    }
-    if (key.key3) {
-      result = result + `${key.key3}/`;
-    }
-    return result;
-  } else {
-    return `${key}/`;
   }
 }
 

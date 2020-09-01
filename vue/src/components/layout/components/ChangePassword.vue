@@ -88,7 +88,7 @@
 
 <script lang="ts">
 import { Component, Prop, PropSync, Vue } from 'vue-property-decorator';
-import { postDataApi } from '@/utils/apis';
+import { postApi } from '@/utils/apis';
 import _ from 'lodash';
 
 const pbkdf2 = require('pbkdf2');
@@ -117,7 +117,7 @@ export default class extends Vue {
     }
 
     this.loading = true;
-    const response = await postDataApi<{
+    const response = await postApi<{
       oldPassword: string;
       newPassword: string;
     }>(`${this.ENDPOINT_URL}${this.id}/changePassword/`, {

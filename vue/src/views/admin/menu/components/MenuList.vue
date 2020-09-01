@@ -97,7 +97,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { DataTableHeader, SelectItem, TableMenuEntity } from '@/common/types';
-import { getApi, getCodeListApi } from '@/utils/apis';
+import { getApi, getCodesApi } from '@/utils/apis';
 import envs from '@/constants/envs';
 import MenuEditDialog from '@/views/admin/menu/components/MenuEditDialog.vue';
 import ButtonSet from '@/components/speeddial/ButtonSet.vue';
@@ -170,7 +170,7 @@ export default class extends Vue {
   ];
 
   async mounted() {
-    this.MENU_TYPE = await getCodeListApi(`MENU_TYPE`);
+    this.MENU_TYPE = await getCodesApi(`MENU_TYPE`);
     this.headers[0].filterSelectItem = this.MENU_TYPE;
     await this.getList();
   }

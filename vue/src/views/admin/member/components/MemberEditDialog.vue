@@ -154,12 +154,7 @@
 <script lang="ts">
 import { Component, Prop, PropSync, Vue, Watch } from 'vue-property-decorator';
 import { SelectItem, TableMemberEntity } from '@/common/types';
-import {
-  deleteDataApi,
-  getCodeListApi,
-  patchDataApi,
-  postDataApi,
-} from '@/utils/apis';
+import { deleteApi, getCodesApi, patchApi, postApi } from '@/utils/apis';
 import _ from 'lodash';
 import DatetimePicker from '@/components/picker/DatetimePicker.vue';
 import { confirmDelete } from '@/utils/alerts';
@@ -183,7 +178,7 @@ export default class extends Vue {
   show2: boolean = false;
 
   async mounted() {
-    this.AUTHORITY = await getCodeListApi('AUTHORITY');
+    this.AUTHORITY = await getCodesApi('AUTHORITY');
   }
 
   @Watch('dialog')
@@ -210,8 +205,8 @@ export default class extends Vue {
         .pbkdf2Sync(params.password, 'salt', 1, 32, 'sha512')
         .toString();
     }
-    const response = await postDataApi<TableMemberEntity>(
-      this.ENDPOINT_URL,
+    const response = await postApi<TableMemberEntity>(
+      `${this.ENDPOINT_URL}`,
       params,
     );
     this.loading = false;
@@ -230,10 +225,9 @@ export default class extends Vue {
         .pbkdf2Sync(params.password, 'salt', 1, 32, 'sha512')
         .toString();
     }
-    const response = await patchDataApi<TableMemberEntity>(
-      this.ENDPOINT_URL,
+    const response = await patchApi<TableMemberEntity>(
+      `${this.ENDPOINT_URL}${this.editItem.id}/`,
       params,
-      this.editItem.id!,
     );
     this.loading = false;
     if (_.startsWith(response.code, `S`)) {
@@ -251,9 +245,8 @@ export default class extends Vue {
     const result = await confirmDelete();
     if (result.value) {
       this.loading = true;
-      const response = await deleteDataApi<TableMemberEntity>(
-        this.ENDPOINT_URL,
-        this.editItem.id!,
+      const response = await deleteApi<TableMemberEntity>(
+        `${this.ENDPOINT_URL}${this.editItem.id}/`,
       );
       this.loading = false;
       if (_.startsWith(response.code, `S`)) {
@@ -265,7 +258,7 @@ export default class extends Vue {
 
   async resetPassword() {
     this.loading = true;
-    await postDataApi<TableMemberEntity>(
+    await postApi<TableMemberEntity>(
       `${this.ENDPOINT_URL}${this.editItem.id}/resetPassword`,
       this.editItem,
     );

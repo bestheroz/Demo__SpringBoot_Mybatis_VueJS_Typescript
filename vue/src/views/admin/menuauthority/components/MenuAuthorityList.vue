@@ -59,7 +59,7 @@
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import { DataTableHeader, SelectItem, TableMenuEntity } from '@/common/types';
-import { getApi, getCodeListApi, putDataApi } from '@/utils/apis';
+import { getApi, getCodesApi, putApi } from '@/utils/apis';
 import envs from '@/constants/envs';
 import ButtonSet from '@/components/speeddial/ButtonSet.vue';
 
@@ -77,7 +77,7 @@ export default class extends Vue {
   @Prop({ required: true }) readonly authority!: string;
 
   readonly envs: typeof envs = envs;
-  readonly END_POINT = 'admin/menuAuthority/';
+  readonly ENDPOINT_URL = 'admin/menuAuthority/';
   mode: string | null = null;
   items: AdminMenuAuthorityVO[] = [];
   loading: boolean = false;
@@ -113,7 +113,7 @@ export default class extends Vue {
   ];
 
   async mounted() {
-    this.headers[0].filterSelectItem = this.MENU_TYPE = await getCodeListApi(
+    this.headers[0].filterSelectItem = this.MENU_TYPE = await getCodesApi(
       `MENU_TYPE`,
     );
   }
@@ -139,7 +139,7 @@ export default class extends Vue {
     this.items = [];
     this.loading = true;
     const response = await getApi<AdminMenuAuthorityVO[]>(
-      `${this.END_POINT}${this.authority}`,
+      `${this.ENDPOINT_URL}${this.authority}`,
     );
     this.loading = false;
     this.items = response.data || [];
@@ -147,16 +147,12 @@ export default class extends Vue {
 
   async save() {
     this.loading = true;
-    await putDataApi<object>(
-      this.END_POINT,
-      {
-        menuIdList: this.items
-          .map((value) => (value.checked ? value.id : undefined))
-          .filter((value) => value !== undefined)
-          .join(','),
-      },
-      this.authority,
-    );
+    await putApi<object>(`${this.ENDPOINT_URL}/${this.authority}/`, {
+      menuIdList: this.items
+        .map((value) => (value.checked ? value.id : undefined))
+        .filter((value) => value !== undefined)
+        .join(','),
+    });
     this.loading = false;
   }
 }
