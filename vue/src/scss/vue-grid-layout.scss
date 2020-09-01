@@ -1,0 +1,13 @@
+.vue-grid-layout {
+  .vue-resizable {
+    box-sizing: border-box;
+    border: 1px solid var(--v-info-base);
+
+    .vue-resizable-handle {
+      width: 0;
+      height: 0;
+      border-top: 50px solid transparent;
+      border-right: 50px solid var(--v-secondary-base);
+    }
+  }
+}

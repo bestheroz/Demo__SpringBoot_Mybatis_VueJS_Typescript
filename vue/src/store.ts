@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Vuex, { ActionContext } from 'vuex';
 import { DrawerItem, SelectItem, TableMemberEntity } from '@/common/types';
-import { getApi, patchDataApi } from '@/utils/apis';
+import { getApi, putApi } from '@/utils/apis';
 
 Vue.use(Vuex);
 
@@ -106,19 +106,86 @@ const moduleCache = {
 
 const moduleLayout = {
   state: {
-    layout: null,
+    menuId: null,
+    layouts: null,
     lockLayout: true,
   },
   mutations: {},
   actions: {
-    async saveLayout({ state }: ActionContext<any, any>, menuId: string) {
-      const response = await patchDataApi<SelectItem[]>(
-        `layouts/${state.user.id}/${menuId}/`,
-      );
-      state.members = response.data;
+    saveLayout(
+      { state, dispatch }: ActionContext<any, any>,
+      layoutList: {
+        x: number;
+        y: number;
+        w: number;
+        h: number;
+        i: string;
+      }[],
+    ) {
+      try {
+        putApi<{
+          layoutList: {
+            x: number;
+            y: number;
+            w: number;
+            h: number;
+            i: string;
+          }[];
+          // @ts-ignore
+        }>(
+          `layouts/${state.menuId}`,
+          {
+            layoutList: layoutList,
+          },
+          false,
+        ).then(async () => {
+          await dispatch('setLayouts');
+        });
+      } catch (e) {
+        console.warn(e);
+      }
     },
-    setLockLayout({ state }: ActionContext<any, any>, lock: boolean) {
-      state.user = lock;
+    async getLayout({ state, dispatch }: ActionContext<any, any>) {
+      if (!state.layouts) {
+        await dispatch('setLayouts');
+      }
+      const find = state.layouts.find(
+        (item: { menuId: number; layoutList: string }) =>
+          item.menuId === state.menuId,
+      );
+      if (find) {
+        return JSON.parse(find.layoutList);
+      } else {
+        return null;
+      }
+    },
+    async setLayouts({ state }: ActionContext<any, any>) {
+      const response = await getApi<
+        {
+          menuId: number;
+          layoutList: {
+            x: number;
+            y: number;
+            w: number;
+            h: number;
+            i: string;
+          }[];
+        }[]
+        // @ts-ignore
+      >(`layouts`);
+      state.layouts = response.data;
+    },
+    async getLayouts({ state, dispatch }: ActionContext<any, any>) {
+      if (!state.layouts) {
+        await dispatch('setLayouts');
+      }
+      return state.layouts;
+    },
+    setLayoutMenuId({ state }: ActionContext<any, any>, menuId: number) {
+      state.menuId = menuId;
+    },
+    clearLayout({ state }: ActionContext<any, any>) {
+      state.layouts = null;
     },
   },
 };

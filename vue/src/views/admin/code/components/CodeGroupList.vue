@@ -18,7 +18,7 @@
           single-select
           show-select
           dense
-          :height="selected.length > 0 ? 326 : 773"
+          :height="height"
           :footer-props="envs.FOOTER_PROPS_100"
         >
           <template v-slot:top>
@@ -84,7 +84,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Emit, Vue, Watch } from 'vue-property-decorator';
+import { Component, Emit, Prop, Vue, Watch } from 'vue-property-decorator';
 import { DataTableHeader, TableCodeGroupEntity } from '@/common/types';
 import { getApi } from '@/utils/apis';
 import envs from '@/constants/envs';
@@ -102,6 +102,7 @@ import DataTableFilter from '@/components/datatable/DataTableFilter.vue';
   },
 })
 export default class extends Vue {
+  @Prop({ required: true }) readonly height!: number;
   readonly dayjs: typeof dayjs = dayjs;
   readonly envs: typeof envs = envs;
   mode: string | null = null;

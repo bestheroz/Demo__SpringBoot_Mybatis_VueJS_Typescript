@@ -51,17 +51,17 @@ export default class extends Vue {
     return getRealHeightOfLayout(this.layout);
   }
 
-  mounted() {
-    // if (window.localStorage.getItem('gridLayout')) {
-    //   this.layout = JSON.parse(window.localStorage.getItem('gridLayout')!);
-    // }
+  @Watch('$store.state.layout.menuId', { immediate: true })
+  async watchLayoutMenuId(val: number) {
+    if (val) {
+      const layout = await this.$store.dispatch('getLayout');
+      layout && (this.layout = layout);
+    }
   }
 
-  @Watch('layout', { deep: true })
-  watchLayout(
-    val: { x: number; y: number; w: number; h: number; i: string }[],
-  ) {
-    window.localStorage.setItem('gridLayout', JSON.stringify(val));
+  @Watch('$store.state.layout.lockLayout')
+  watchLockLayout(val: boolean) {
+    val && this.$store.dispatch('saveLayout', this.layout);
   }
 }
 </script>

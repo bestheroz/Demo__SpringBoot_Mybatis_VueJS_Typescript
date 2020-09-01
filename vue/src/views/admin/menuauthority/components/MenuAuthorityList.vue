@@ -12,7 +12,7 @@
         disable-filtering
         disable-pagination
         dense
-        :height="729"
+        :height="height"
       >
         <template v-slot:top>
           <button-set
@@ -75,7 +75,7 @@ interface AdminMenuAuthorityVO extends TableMenuEntity {
 })
 export default class extends Vue {
   @Prop({ required: true }) readonly authority!: string;
-
+  @Prop({ required: true }) readonly height!: number;
   readonly envs: typeof envs = envs;
   readonly ENDPOINT_URL = 'admin/menuAuthority/';
   mode: string | null = null;

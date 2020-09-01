@@ -4,6 +4,8 @@ import com.github.bestheroz.sample.api.entity.layout.TableLayoutEntity;
 import com.github.bestheroz.sample.api.entity.layout.TableLayoutRepository;
 import com.github.bestheroz.standard.common.response.ApiResult;
 import com.github.bestheroz.standard.common.response.Result;
+import com.github.bestheroz.standard.common.util.AuthenticationUtils;
+import com.github.bestheroz.standard.common.util.MapperUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,15 +19,19 @@ import java.util.Map;
 public class LayoutController {
     @Resource private TableLayoutRepository tableLayoutRepository;
 
-    @GetMapping(value = "{memberId}")
-    ResponseEntity<ApiResult> getItems(@PathVariable(value = "memberId") final String memberId) {
-        return Result.ok(this.tableLayoutRepository.getItemsByKey(TableLayoutEntity.class, Map.of("memberId", memberId)));
+    @GetMapping
+    ResponseEntity<ApiResult> getItems() {
+        return Result.ok(this.tableLayoutRepository.getItemsByKey(TableLayoutEntity.class, Map.of("memberId", AuthenticationUtils.getUserPk())));
     }
 
-    @PatchMapping(value = "{memberId}/{menuId}")
-    public ResponseEntity<ApiResult> update(@PathVariable(value = "memberId") final String memberId, @PathVariable(value = "menuId") final String menuId,
+    @PutMapping(value = "{menuId}")
+    public ResponseEntity<ApiResult> update(@PathVariable(value = "menuId") final Integer menuId,
                                             @RequestBody final Map<String, String> payload) {
-        this.tableLayoutRepository.updateMap(TableLayoutEntity.class, Map.of("layoutList", payload.get("layoutList")), Map.of("memberId", memberId, "menuId", menuId));
+        this.tableLayoutRepository.getItem(TableLayoutEntity.class, Map.of("memberId", AuthenticationUtils.getUserPk(), "menuId", menuId))
+                .ifPresentOrElse(item -> this.tableLayoutRepository
+                                .updateMap(TableLayoutEntity.class, Map.of("layoutList", MapperUtils.toString(payload.get("layoutList"))),
+                                        Map.of("memberId", AuthenticationUtils.getUserPk(), "menuId", menuId))
+                        , () -> this.tableLayoutRepository.insert(new TableLayoutEntity(AuthenticationUtils.getUserPk(), menuId, MapperUtils.toString(payload.get("layoutList")))));
         return Result.ok();
     }
 }
