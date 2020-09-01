@@ -3,6 +3,7 @@ package com.github.bestheroz.sample.api.auth;
 import com.github.bestheroz.sample.api.entity.member.TableMemberEntity;
 import com.github.bestheroz.sample.api.entity.member.TableMemberRepository;
 import com.github.bestheroz.standard.common.authenticate.JwtTokenProvider;
+import com.github.bestheroz.standard.common.exception.BusinessException;
 import com.github.bestheroz.standard.common.response.ApiResult;
 import com.github.bestheroz.standard.common.response.Result;
 import com.github.bestheroz.standard.common.util.AuthenticationUtils;
@@ -27,7 +28,10 @@ public class AuthController {
 
     @GetMapping(value = "/me")
     public ResponseEntity<ApiResult> getMyData(@RequestHeader(value = "Authorization") final String token) {
-        return Result.ok(this.tableMemberRepository.getItem(TableMemberEntity.class, Map.of("id", JwtTokenProvider.getUserPk(token))));
+        return Result.ok(
+                this.tableMemberRepository.getItem(TableMemberEntity.class, Map.of("id", JwtTokenProvider.getUserPk(token)))
+                        .orElseThrow(() -> BusinessException.FAIL_TRY_LOGIN_FIRST)
+        );
     }
 
     @GetMapping(value = "/refreshToken")
