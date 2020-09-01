@@ -7,6 +7,7 @@ import './registerServiceWorker';
 import './plugins/vue-toasted';
 import './plugins/vee-validate';
 import './plugins/vue-filter';
+import './plugins/vue-grid-layout';
 import './plugins/sentry';
 
 Vue.config.productionTip = false;

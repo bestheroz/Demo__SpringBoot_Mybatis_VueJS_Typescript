@@ -18,7 +18,7 @@
           single-select
           show-select
           dense
-          :height="327"
+          :height="height"
           :footer-props="envs.FOOTER_PROPS_100"
         >
           <template v-slot:top>
@@ -66,7 +66,7 @@
             </a>
           </template>
           <template v-slot:item.available="{ item }">
-            <span style="display: inline-flex">
+            <span style="display: inline-flex;">
               <v-checkbox
                 readonly
                 :input-value="item.available"
@@ -107,7 +107,7 @@ import {
   TableCodeEntity,
   TableCodeGroupEntity,
 } from '@/common/types';
-import { getCodeListApi, getListApi } from '@/utils/apis';
+import { getApi, getCodesApi } from '@/utils/apis';
 import envs from '@/constants/envs';
 import ButtonSet from '@/components/speeddial/ButtonSet.vue';
 import CodeEditDialog from '@/views/admin/code/components/CodeEditDialog.vue';
@@ -123,6 +123,7 @@ import DataTableFilter from '@/components/datatable/DataTableFilter.vue';
 })
 export default class extends Vue {
   @Prop({ required: true }) readonly parentItem!: TableCodeGroupEntity;
+  @Prop({ required: true }) readonly height!: number;
 
   readonly envs: typeof envs = envs;
   AUTHORITY: SelectItem[] | null = null;
@@ -184,7 +185,7 @@ export default class extends Vue {
   ];
 
   async mounted() {
-    this.headers[4].filterSelectItem = this.AUTHORITY = await getCodeListApi(
+    this.headers[4].filterSelectItem = this.AUTHORITY = await getCodesApi(
       'AUTHORITY',
     );
   }
@@ -201,7 +202,7 @@ export default class extends Vue {
     this.selected = [];
     this.items = [];
     this.loading = true;
-    const response = await getListApi<TableCodeEntity[]>(
+    const response = await getApi<TableCodeEntity[]>(
       `admin/codes/${this.parentItem.codeGroup}`,
     );
     this.loading = false;

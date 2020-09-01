@@ -31,7 +31,7 @@ public class AdminCodeController {
     @PostMapping(value = "{codeGroup}")
     public ResponseEntity<ApiResult> insert(@PathVariable(value = "codeGroup") final String codeGroup, @RequestBody final TableCodeEntity tableCodeEntity) {
         this.tableCodeRepository.insert(tableCodeEntity);
-        return Result.ok();
+        return Result.created();
     }
 
     @PatchMapping(value = "{codeGroup}/{code}")

@@ -36,7 +36,7 @@ public class AdminMemberController {
     @CacheEvict(value = "memberCache", allEntries = true)
     public ResponseEntity<ApiResult> insert(@RequestBody final TableMemberEntity tableMemberEntity) {
         this.tableMemberRepository.insert(tableMemberEntity);
-        return Result.ok();
+        return Result.created();
     }
 
     @PatchMapping(value = "{id}")

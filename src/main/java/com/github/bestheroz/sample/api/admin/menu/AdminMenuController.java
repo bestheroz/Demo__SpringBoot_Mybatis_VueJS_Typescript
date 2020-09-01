@@ -33,7 +33,7 @@ public class AdminMenuController {
     @CacheEvict(value = "drawerCache", allEntries = true)
     public ResponseEntity<ApiResult> insert(@RequestBody final TableMenuEntity tableMenuEntity) {
         this.tableMenuRepository.insert(tableMenuEntity);
-        return Result.ok();
+        return Result.created();
     }
 
     @PatchMapping(value = "{id}")

@@ -108,6 +108,7 @@ export default class extends Vue {
     await this.$store.dispatch('clearUser');
     await this.$store.dispatch('clearDrawer');
     await this.$store.dispatch('clearCache');
+    await this.$store.dispatch('clearLayout');
     window.localStorage.clear();
     if (this.$route.query.login === 'need') {
       this.$toasted.error('로그인이 필요합니다.');

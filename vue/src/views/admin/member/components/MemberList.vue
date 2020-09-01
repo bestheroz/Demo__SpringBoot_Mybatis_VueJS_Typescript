@@ -14,7 +14,7 @@
         single-select
         show-select
         dense
-        :height="773"
+        :height="height"
         :footer-props="envs.FOOTER_PROPS_100"
       >
         <template v-slot:top>
@@ -64,7 +64,7 @@
           </a>
         </template>
         <template v-slot:item.available="{ item }">
-          <span style="display: inline-flex">
+          <span style="display: inline-flex;">
             <v-checkbox
               readonly
               :input-value="item.available"
@@ -103,9 +103,9 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Prop, Vue } from 'vue-property-decorator';
 import { DataTableHeader, SelectItem, TableMemberEntity } from '@/common/types';
-import { getCodeListApi, getListApi } from '@/utils/apis';
+import { getApi, getCodesApi } from '@/utils/apis';
 import envs from '@/constants/envs';
 import ButtonSet from '@/components/speeddial/ButtonSet.vue';
 import DataTableFilter from '@/components/datatable/DataTableFilter.vue';
@@ -121,6 +121,7 @@ import dayjs from 'dayjs';
   },
 })
 export default class extends Vue {
+  @Prop({ required: true }) readonly height!: number;
   readonly envs: typeof envs = envs;
   readonly dayjs: typeof dayjs = dayjs;
   readonly ENDPOINT_URL: string = 'admin/members/';
@@ -190,7 +191,7 @@ export default class extends Vue {
   ];
 
   async mounted() {
-    this.headers[2].filterSelectItem = this.AUTHORITY = await getCodeListApi(
+    this.headers[2].filterSelectItem = this.AUTHORITY = await getCodesApi(
       'AUTHORITY',
     );
     await this.getList();
@@ -200,7 +201,7 @@ export default class extends Vue {
     this.selected = [];
     this.items = [];
     this.loading = true;
-    const response = await getListApi<TableMemberEntity[]>(this.ENDPOINT_URL);
+    const response = await getApi<TableMemberEntity[]>(this.ENDPOINT_URL);
     this.loading = false;
     this.items = response.data || [];
   }
