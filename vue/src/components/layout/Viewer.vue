@@ -15,7 +15,6 @@
     <v-container fluid class="pt-0 elevation-1">
       <router-view />
     </v-container>
-    <!--    <v-overlay :value="$store.state.layout.overlay" />-->
   </v-main>
 </template>
 
