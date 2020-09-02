@@ -8,61 +8,53 @@
         </v-btn>
       </v-toolbar-title>
       <v-spacer />
-      <v-toolbar-title>
-        <v-btn x-large text :ripple="false" color="primary">
-          <countdown
-            ref="countdown"
-            :end-time="logoutTimer"
-            @finished="logout"
-            :speed="1000"
-          >
-            <template v-slot:process="anyYouWantedScopeName">
-              <v-icon>mdi-timer-sand</v-icon>
-              {{
-                `${anyYouWantedScopeName.timeObj.h}시간 ${anyYouWantedScopeName.timeObj.m}분 ${anyYouWantedScopeName.timeObj.s}초`
-              }}
-            </template>
-            <template v-slot:finish>
-              <span>Logout!</span>
-            </template>
-          </countdown>
-        </v-btn>
-      </v-toolbar-title>
-      <v-toolbar-title>
-        <v-menu open-on-hover bottom offset-y>
-          <template v-slot:activator="{ on }">
-            <v-btn color="primary" x-large text v-on="on">
-              <v-icon> mdi-account</v-icon>
-              {{ user.name }}
-            </v-btn>
+      <v-btn x-large text :ripple="false" style="cursor: default;" class="pr-0">
+        <countdown
+          ref="countdown"
+          :end-time="logoutTimer"
+          @finished="logout"
+          :speed="1000"
+        >
+          <template v-slot:process="anyYouWantedScopeName">
+            <v-icon>mdi-timer-sand</v-icon>
+            {{
+              `${anyYouWantedScopeName.timeObj.h}시간 ${anyYouWantedScopeName.timeObj.m}분 ${anyYouWantedScopeName.timeObj.s}초`
+            }}
           </template>
+          <template v-slot:finish>
+            <span>Logout!</span>
+          </template>
+        </countdown>
+      </v-btn>
+      <v-menu open-on-hover bottom offset-y>
+        <template v-slot:activator="{ on }">
+          <v-btn color="primary" x-large text v-on="on">
+            <v-icon> mdi-account</v-icon>
+            {{ user.name }}
+          </v-btn>
+        </template>
 
-          <v-list dense>
-            <v-list-item>
-              <v-list-item-title>
-                <v-btn block text @click="editMe">
-                  <v-icon>mdi-account-edit-outline</v-icon>
-                  내 정보수정
-                </v-btn>
-              </v-list-item-title>
-            </v-list-item>
-            <v-list-item>
-              <v-list-item-title>
-                <v-btn block text @click="logout">
-                  <v-icon>mdi-logout</v-icon>
-                  Logout
-                </v-btn>
-              </v-list-item-title>
-            </v-list-item>
-          </v-list>
-        </v-menu>
-      </v-toolbar-title>
+        <v-list dense>
+          <v-list-item>
+            <v-list-item-title>
+              <v-btn block text @click="editMe">
+                <v-icon>mdi-account-edit-outline</v-icon>
+                내 정보수정
+              </v-btn>
+            </v-list-item-title>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-title>
+              <v-btn block text @click="logout">
+                <v-icon>mdi-logout</v-icon>
+                Logout
+              </v-btn>
+            </v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
     </v-app-bar>
-    <edit-me
-      :edit-item="$store.state.user.user"
-      :dialog.sync="editMeDialog"
-      v-if="editMeDialog"
-    />
+    <edit-me-dialog :dialog.sync="editMeDialog" v-if="editMeDialog" />
   </div>
 </template>
 
@@ -71,12 +63,12 @@ import { Component, PropSync, Vue, Watch } from 'vue-property-decorator';
 import Countdown from 'vue-awesome-countdown/src/vue-awesome-countdown.vue';
 import { getVariableApi } from '@/utils/apis';
 import { logout } from '@/utils/authentications';
-import EditMe from '@/components/layout/components/EditMe.vue';
+import EditMeDialog from '@/components/layout/components/EditMeDialog.vue';
 import { TableMemberEntity } from '@/common/types';
 
 @Component({
   name: 'AppBar',
-  components: { EditMe, Countdown },
+  components: { EditMeDialog, Countdown },
 })
 export default class extends Vue {
   @PropSync('drawer', { required: true, default: true }) syncedDrawer!: boolean;

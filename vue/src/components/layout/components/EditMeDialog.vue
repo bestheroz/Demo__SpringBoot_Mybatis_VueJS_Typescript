@@ -36,8 +36,30 @@
                   />
                 </ValidationProvider>
               </v-col>
-              <v-col cols="12" style="text-align: right">
-                <v-btn color="button-edit" @click="changePassword" outlined>
+              <v-col cols="7">
+                <ValidationProvider
+                  name="비빌번호"
+                  rules="required|max:20"
+                  v-slot="{ errors }"
+                >
+                  <v-text-field
+                    v-model="editItem.password"
+                    label="*비빌번호"
+                    :counter="20"
+                    :error-messages="errors"
+                    :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+                    :type="show1 ? 'text' : 'password'"
+                    @click:append="show1 = !show1"
+                  />
+                </ValidationProvider>
+              </v-col>
+              <v-col cols="5" class="text-right pt-7">
+                <v-btn
+                  color="button-edit"
+                  @click="newPasswordDialog = true"
+                  outlined
+                  small
+                >
                   비밀번호 변경
                 </v-btn>
               </v-col>
@@ -65,31 +87,39 @@
     </v-dialog>
     <change-password
       :dialog.sync="newPasswordDialog"
-      :id="editItem.id"
       v-if="newPasswordDialog"
     />
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Prop, PropSync, Vue } from 'vue-property-decorator';
+import { Component, PropSync, Vue } from 'vue-property-decorator';
 import { TableMemberEntity } from '@/common/types';
-import { patchApi } from '@/utils/apis';
+import { getApi, patchApi } from '@/utils/apis';
 import _ from 'lodash';
 import DatetimePicker from '@/components/picker/DatetimePicker.vue';
 import ChangePassword from '@/components/layout/components/ChangePassword.vue';
 
+const pbkdf2 = require('pbkdf2');
+
 @Component({
-  name: 'EditMe',
+  name: 'EditMeDialog',
   components: { ChangePassword, DatetimePicker },
 })
 export default class extends Vue {
   @PropSync('dialog', { required: true, type: Boolean }) syncedDialog!: boolean;
-  @Prop({ required: true }) readonly editItem!: TableMemberEntity;
-
   readonly ENDPOINT_URL: string = `members/`;
+  editItem: TableMemberEntity = Object.create(null);
   loading: boolean = false;
   newPasswordDialog: boolean = false;
+  show1: boolean = false;
+
+  async mounted() {
+    const response = await getApi<TableMemberEntity>(
+      `${this.ENDPOINT_URL}mine`,
+    );
+    this.editItem = response.data;
+  }
 
   async patch() {
     const isValid = await (this.$refs.observer as any).validate();
@@ -98,9 +128,13 @@ export default class extends Vue {
     }
 
     this.loading = true;
+    const payload = { ...this.editItem };
+    payload.password = pbkdf2
+      .pbkdf2Sync(this.editItem.password, 'salt', 1, 32, 'sha512')
+      .toString();
     const response = await patchApi<TableMemberEntity>(
-      `${this.ENDPOINT_URL}${this.editItem.id}/`,
-      this.editItem,
+      `${this.ENDPOINT_URL}mine`,
+      payload,
     );
     this.loading = false;
     if (_.startsWith(response.code, `S`)) {
@@ -109,10 +143,6 @@ export default class extends Vue {
       this.syncedDialog = false;
       this.$emit('finished');
     }
-  }
-
-  changePassword() {
-    this.newPasswordDialog = true;
   }
 }
 </script>

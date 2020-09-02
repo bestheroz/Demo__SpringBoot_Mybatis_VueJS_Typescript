@@ -124,7 +124,7 @@ export default class extends Vue {
       postApi<{
         theme: string;
       }>(
-        `members/${this.$store.state.user.user.id}/changeTheme/`,
+        `members/mine/changeTheme/`,
         {
           theme: this.$vuetify.theme.dark ? 'dark' : 'light',
         },

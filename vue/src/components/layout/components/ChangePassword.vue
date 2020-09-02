@@ -87,7 +87,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, PropSync, Vue } from 'vue-property-decorator';
+import { Component, PropSync, Vue } from 'vue-property-decorator';
 import { postApi } from '@/utils/apis';
 import _ from 'lodash';
 
@@ -99,7 +99,6 @@ const pbkdf2 = require('pbkdf2');
 })
 export default class extends Vue {
   @PropSync('dialog', { required: true, type: Boolean }) syncedDialog!: boolean;
-  @Prop({ required: true }) readonly id!: string;
 
   readonly ENDPOINT_URL: string = `members/`;
   loading: boolean = false;
@@ -120,7 +119,7 @@ export default class extends Vue {
     const response = await postApi<{
       oldPassword: string;
       newPassword: string;
-    }>(`${this.ENDPOINT_URL}${this.id}/changePassword/`, {
+    }>(`${this.ENDPOINT_URL}mine/changePassword/`, {
       oldPassword: pbkdf2
         .pbkdf2Sync(this.oldPassword, 'salt', 1, 32, 'sha512')
         .toString(),

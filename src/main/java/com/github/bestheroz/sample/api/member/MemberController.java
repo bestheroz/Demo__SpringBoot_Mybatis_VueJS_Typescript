@@ -6,6 +6,8 @@ import com.github.bestheroz.standard.common.exception.BusinessException;
 import com.github.bestheroz.standard.common.exception.ExceptionCode;
 import com.github.bestheroz.standard.common.response.ApiResult;
 import com.github.bestheroz.standard.common.response.Result;
+import com.github.bestheroz.standard.common.util.AuthenticationUtils;
+import com.google.common.collect.ImmutableMap;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.ResponseEntity;
@@ -28,17 +30,42 @@ public class MemberController {
         return Result.ok(this.memberRepository.getCodeItems());
     }
 
-    @PatchMapping(value = "{id}")
-    @CacheEvict(value = "memberCache", allEntries = true)
-    public ResponseEntity<ApiResult> editMe(@PathVariable(value = "id") final String id, @RequestBody final TableMemberEntity tableMemberEntity) {
-        this.tableMemberRepository.updateMap(TableMemberEntity.class,
-                Map.of("name", tableMemberEntity.getName()), Map.of("id", id));
-        return Result.ok();
+    @GetMapping(value = "mine")
+    ResponseEntity<ApiResult> getMyInfo() {
+        return Result.ok(this.tableMemberRepository.getItem(TableMemberEntity.class, ImmutableMap.of("id", AuthenticationUtils.getUserPk()))
+                .map(item -> {
+                    item.setPassword(null);
+                    return item;
+                }).orElseThrow(() -> {
+                    log.warn(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER.toString());
+                    return new BusinessException(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER);
+                }));
     }
 
-    @PostMapping(value = "{id}/changePassword")
-    public ResponseEntity<ApiResult> changePassword(@PathVariable(value = "id") final String id, @RequestBody final Map<String, String> payload) {
-        return this.tableMemberRepository.getItem(TableMemberEntity.class, Map.of("id", id)).map(tableMemberEntity -> {
+    @PatchMapping("mine")
+    @CacheEvict(value = "memberCache", allEntries = true)
+    public ResponseEntity<ApiResult> editMe(@RequestBody final TableMemberEntity payload) {
+        return this.tableMemberRepository.getItem(TableMemberEntity.class, Map.of("id", AuthenticationUtils.getUserPk())).map(tableMemberEntity -> {
+            final Pbkdf2PasswordEncoder pbkdf2PasswordEncoder = new Pbkdf2PasswordEncoder();
+            // 패스워드가 틀리면
+            if (!pbkdf2PasswordEncoder.matches(tableMemberEntity.getPassword(), pbkdf2PasswordEncoder.encode(payload.getPassword()))) {
+                log.warn(ExceptionCode.FAIL_MATCH_PASSWORD.toString());
+                throw new BusinessException(ExceptionCode.FAIL_MATCH_PASSWORD);
+            }
+            this.tableMemberRepository.updateMap(TableMemberEntity.class,
+                    Map.of("name", payload.getName()), Map.of("id", AuthenticationUtils.getUserPk()));
+            return Result.ok();
+        }).orElseThrow(() -> {
+            // 1. 유저가 없으면
+            log.warn(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER.toString());
+            return new BusinessException(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER);
+        });
+
+    }
+
+    @PostMapping(value = "mine/changePassword")
+    public ResponseEntity<ApiResult> changePassword(@RequestBody final Map<String, String> payload) {
+        return this.tableMemberRepository.getItem(TableMemberEntity.class, Map.of("id", AuthenticationUtils.getUserPk())).map(tableMemberEntity -> {
             final Pbkdf2PasswordEncoder pbkdf2PasswordEncoder = new Pbkdf2PasswordEncoder();
             // 패스워드가 틀리면
             if (!pbkdf2PasswordEncoder.matches(tableMemberEntity.getPassword(), pbkdf2PasswordEncoder.encode(payload.get("oldPassword")))) {
@@ -46,7 +73,7 @@ public class MemberController {
                 throw new BusinessException(ExceptionCode.FAIL_MATCH_OLD_PASSWORD);
             }
             this.tableMemberRepository.updateMap(TableMemberEntity.class,
-                    Map.of("password", payload.get("newPassword")), Map.of("id", id));
+                    Map.of("password", payload.get("newPassword")), Map.of("id", AuthenticationUtils.getUserPk()));
             return Result.ok();
         }).orElseThrow(() -> {
             // 1. 유저가 없으면
@@ -55,11 +82,11 @@ public class MemberController {
         });
     }
 
-    @PostMapping(value = "{id}/changeTheme")
-    public ResponseEntity<ApiResult> changeTheme(@PathVariable(value = "id") final String id, @RequestBody final Map<String, String> payload) {
-        return this.tableMemberRepository.getItem(TableMemberEntity.class, Map.of("id", id)).map(tableMemberEntity -> {
+    @PostMapping(value = "mine/changeTheme")
+    public ResponseEntity<ApiResult> changeTheme(@RequestBody final Map<String, String> payload) {
+        return this.tableMemberRepository.getItem(TableMemberEntity.class, Map.of("id", AuthenticationUtils.getUserPk())).map(tableMemberEntity -> {
             this.tableMemberRepository.updateMap(TableMemberEntity.class,
-                    Map.of("theme", payload.get("theme")), Map.of("id", id));
+                    Map.of("theme", payload.get("theme")), Map.of("id", AuthenticationUtils.getUserPk()));
             return Result.ok();
         }).orElseThrow(() -> {
             // 1. 유저가 없으면
