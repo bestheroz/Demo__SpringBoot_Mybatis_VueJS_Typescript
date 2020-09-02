@@ -37,7 +37,7 @@
         <v-list dense>
           <v-list-item>
             <v-list-item-title>
-              <v-btn block text @click="editMe">
+              <v-btn block text @click="$modal.show('EditMeDialog')">
                 <v-icon>mdi-account-edit-outline</v-icon>
                 내 정보수정
               </v-btn>
@@ -54,7 +54,7 @@
         </v-list>
       </v-menu>
     </v-app-bar>
-    <edit-me-dialog :dialog.sync="editMeDialog" v-if="editMeDialog" />
+    <edit-me-dialog />
   </div>
 </template>
 
@@ -75,7 +75,6 @@ export default class extends Vue {
   readonly logout: typeof logout = logout;
   title: string | null = null;
   user: TableMemberEntity = { name: '' };
-  editMeDialog: boolean = false;
 
   get isPopup(): boolean {
     return !window.toolbar.visible;
@@ -104,10 +103,6 @@ export default class extends Vue {
 
   goHome() {
     this.$router.currentRoute.path !== '/' && this.$router.push('/');
-  }
-
-  editMe() {
-    this.editMeDialog = true;
   }
 }
 </script>

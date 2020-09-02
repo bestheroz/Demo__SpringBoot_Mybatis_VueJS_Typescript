@@ -1,7 +1,9 @@
 .vue-grid-layout {
   .vue-resizable {
-    box-sizing: border-box;
-    border: 1px solid var(--v-info-base);
+    .v-card {
+      box-sizing: border-box;
+      border: 2px solid var(--v-primary-base);
+    }
 
     .vue-resizable-handle {
       width: 0;

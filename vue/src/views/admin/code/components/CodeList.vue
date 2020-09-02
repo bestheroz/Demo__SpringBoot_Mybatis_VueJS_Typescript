@@ -32,7 +32,7 @@
                 () => {
                   mode = '추가';
                   editItem = { codeGroup: parentItem.codeGroup };
-                  dialog = true;
+                  $modal.show('CodeEditDialog');
                 }
               "
               @click:delete="
@@ -58,7 +58,7 @@
                 () => {
                   mode = '수정';
                   editItem = Object.assign({}, item);
-                  dialog = true;
+                  $modal.show('CodeEditDialog');
                 }
               "
             >
@@ -90,7 +90,6 @@
         <code-edit-dialog
           ref="refEditDialog"
           :edit-item="editItem"
-          :dialog.sync="dialog"
           :mode="mode"
           @finished="getList"
         />
@@ -128,7 +127,6 @@ export default class extends Vue {
   readonly envs: typeof envs = envs;
   AUTHORITY: SelectItem[] | null = null;
   mode: string | null = null;
-
   loading: boolean = false;
   sortBy: string[] = ['displayOrder'];
   sortDesc: boolean[] = [false];
@@ -136,7 +134,7 @@ export default class extends Vue {
   filteredItems: TableCodeEntity[] = [];
   editItem: TableCodeEntity = Object.create(null);
   selected: TableCodeEntity[] = [];
-  dialog: boolean = false;
+
   headers: DataTableHeader[] = [
     {
       text: `상세 코드`,

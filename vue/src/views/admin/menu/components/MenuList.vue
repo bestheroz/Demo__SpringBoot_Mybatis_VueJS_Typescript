@@ -43,7 +43,7 @@
                 editItem = {
                   parentId: item.id,
                 };
-                dialog = true;
+                $modal.show('MenuEditDialog');
               }
             "
             :disabled="item.level === 3"
@@ -60,7 +60,7 @@
               () => {
                 mode = '수정';
                 editItem = Object.assign(Object.create(null), item);
-                dialog = true;
+                $modal.show('MenuEditDialog');
               }
             "
           >
@@ -83,14 +83,13 @@
           </v-btn>
         </template>
       </v-data-table>
-      <menu-edit-dialog
-        ref="refEditDialog"
-        :edit-item="editItem"
-        :dialog.sync="dialog"
-        :mode="mode"
-        @finished="getList"
-      />
     </v-card-text>
+    <menu-edit-dialog
+      ref="refEditDialog"
+      :edit-item="editItem"
+      :mode="mode"
+      @finished="getList"
+    />
   </div>
 </template>
 
@@ -122,7 +121,6 @@ export default class extends Vue {
   editItem: TableMenuEntity = Object.create(null);
   selected: TableMenuEntity[] = [];
   loading: boolean = false;
-  dialog: boolean = false;
 
   MENU_TYPE: SelectItem[] | null = null;
 

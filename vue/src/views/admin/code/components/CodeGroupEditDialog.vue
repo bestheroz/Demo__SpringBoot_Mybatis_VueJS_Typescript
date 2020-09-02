@@ -1,19 +1,27 @@
 <template>
   <div>
-    <v-dialog v-model="syncedDialog" persistent max-width="60%">
+    <modal
+      name="CodeGroupEditDialog"
+      draggable
+      width="50%"
+      height="auto"
+      :shiftX="0.2"
+      :shiftY="0.1"
+      overlayTransition=""
+      :clickToClose="false"
+      @opened="$store.dispatch('setOverlay', true)"
+      @before-close="$store.dispatch('setOverlay', false)"
+    >
       <v-card :loading="loading">
-        <v-alert
-          border="bottom"
-          colored-border
-          color="divider"
-          dense
-          :icon="
-            mode === '추가' ? 'mdi-pencil-plus-outline' : 'mdi-pencil-outline'
-          "
-          class="title mb-0"
-        >
-          시스템코드관리-MST {{ mode }}
-        </v-alert>
+        <v-card-title class="py-2 modal-header">
+          <v-icon v-if="mode === '추가'">mdi-pencil-plus-outline</v-icon>
+          <v-icon v-else>mdi-pencil-outline</v-icon>
+          코드그룹 {{ mode }}
+          <v-spacer />
+          <v-btn text small @click="$modal.hide('CodeGroupEditDialog')">
+            <v-icon> mdi-window-close</v-icon>
+          </v-btn>
+        </v-card-title>
         <v-card-text>
           <ValidationObserver ref="observer">
             <v-row>
@@ -50,22 +58,24 @@
           </ValidationObserver>
         </v-card-text>
         <v-divider />
-        <v-card-actions>
+        <v-card-actions class="py-1">
           <v-spacer />
-          <v-btn color="button-default" text @click="syncedDialog = false">
+          <v-btn text @click="$modal.hide('CodeGroupEditDialog')">
+            <v-icon> mdi-window-close</v-icon>
             닫기
           </v-btn>
-          <v-btn color="button-default" text @click="save" :loading="loading">
+          <v-btn text @click="save" :loading="loading">
+            <v-icon> mdi-content-save-settings-outline</v-icon>
             저장
           </v-btn>
         </v-card-actions>
       </v-card>
-    </v-dialog>
+    </modal>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Prop, PropSync, Vue, Watch } from 'vue-property-decorator';
+import { Component, Prop, Vue } from 'vue-property-decorator';
 import { TableCodeGroupEntity } from '@/common/types';
 import { deleteApi, patchApi, postApi } from '@/utils/apis';
 import _ from 'lodash';
@@ -75,19 +85,11 @@ import { confirmDelete } from '@/utils/alerts';
   name: 'CodeGroupEditDialog',
 })
 export default class extends Vue {
-  @PropSync('dialog', { required: true, type: Boolean }) syncedDialog!: boolean;
   @Prop({ required: true }) readonly editItem!: TableCodeGroupEntity;
   @Prop({ required: true }) readonly mode!: string | null;
 
   readonly ENDPOINT_URL = 'admin/codeGroups/';
   loading: boolean = false;
-
-  @Watch('dialog')
-  watchDialog(val: boolean) {
-    if (val) {
-      this.$refs.observer && (this.$refs.observer as any).reset();
-    }
-  }
 
   async save() {
     const isValid = await (this.$refs.observer as any).validate();
@@ -105,7 +107,7 @@ export default class extends Vue {
     );
     this.loading = false;
     if (_.startsWith(response.code, `S`)) {
-      this.syncedDialog = false;
+      this.$modal.hide('CodeGroupEditDialog');
       this.$emit('finished');
     }
   }
@@ -118,7 +120,7 @@ export default class extends Vue {
     );
     this.loading = false;
     if (_.startsWith(response.code, `S`)) {
-      this.syncedDialog = false;
+      this.$modal.hide('CodeGroupEditDialog');
       this.$emit('finished');
     }
   }

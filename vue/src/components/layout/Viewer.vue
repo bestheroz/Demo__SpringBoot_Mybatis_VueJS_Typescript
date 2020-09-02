@@ -15,6 +15,7 @@
     <v-container fluid class="pt-0 elevation-1">
       <router-view />
     </v-container>
+    <!--    <v-overlay :value="$store.state.layout.overlay" />-->
   </v-main>
 </template>
 
@@ -26,6 +27,7 @@ import { errorPage } from '@/utils/errors';
 @Component({ name: 'Viewer' })
 export default class extends Vue {
   drawers: DrawerItem[] = [];
+  oldTransform: string = '';
 
   get title(): string {
     if (this.$route.fullPath === '/index') {
@@ -66,6 +68,37 @@ export default class extends Vue {
   @Watch('$store.state.drawer.drawers', { immediate: true })
   async watchDrawers() {
     this.drawers = await this.$store.dispatch('getDrawers');
+  }
+
+  @Watch('$store.state.layout.overlay', { immediate: true })
+  async watchOverlay(val: boolean) {
+    if (document.querySelectorAll('.vue-grid-item').length < 2) {
+      return;
+    }
+    if (val) {
+      document.querySelectorAll('.vue-grid-item').forEach((item) => {
+        console.log(item.querySelectorAll('.vm--overlay').length);
+        if (item.querySelectorAll('.vm--overlay').length > 0) {
+          // @ts-ignore
+          this.oldTransform = item.style.transform;
+          // @ts-ignore
+          item.style.transform = 'translate3d(0px, 0px, 0px)';
+        } else {
+          // @ts-ignore
+          item.style.display = 'none';
+        }
+      });
+    } else {
+      document.querySelectorAll('.vue-grid-item').forEach((item) => {
+        if (item.querySelectorAll('.vm--overlay').length > 0) {
+          // @ts-ignore
+          item.style.transform = this.oldTransform;
+        } else {
+          // @ts-ignore
+          item.style.display = 'block';
+        }
+      });
+    }
   }
 }
 </script>

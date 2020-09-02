@@ -8,15 +8,9 @@
       class="elevation-12"
     >
       <v-card :loading="loading">
-        <v-alert
-          border="bottom"
-          colored-border
-          color="divider"
-          icon="mdi-lock-outline"
-          class="title mb-0"
-        >
+        <v-card-title class="py-2 modal-header">
           비밀번호 초기화
-        </v-alert>
+        </v-card-title>
         <v-card-text>
           <ValidationObserver ref="observer">
             <v-row>

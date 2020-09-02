@@ -1,18 +1,24 @@
 <template>
   <div>
-    <v-dialog v-model="syncedDialog" persistent max-width="60%">
+    <modal
+      name="MemberEditDialog"
+      draggable
+      width="50%"
+      height="auto"
+      :shiftX="0.2"
+      :shiftY="0.1"
+      :clickToClose="false"
+    >
       <v-card :loading="loading">
-        <v-alert
-          border="bottom"
-          colored-border
-          color="divider"
-          :icon="
-            mode === '추가' ? 'mdi-pencil-plus-outline' : 'mdi-pencil-outline'
-          "
-          class="title mb-0"
-        >
-          사용자관리 {{ mode }}
-        </v-alert>
+        <v-card-title class="py-2 modal-header">
+          <v-icon v-if="mode === '추가'">mdi-pencil-plus-outline</v-icon>
+          <v-icon v-else>mdi-pencil-outline</v-icon>
+          사용자 {{ mode }}
+          <v-spacer />
+          <v-btn text small @click="$modal.hide('MemberEditDialog')">
+            <v-icon> mdi-window-close</v-icon>
+          </v-btn>
+        </v-card-title>
         <v-card-text>
           <ValidationObserver ref="observer">
             <v-row>
@@ -137,22 +143,24 @@
           </ValidationObserver>
         </v-card-text>
         <v-divider />
-        <v-card-actions>
+        <v-card-actions class="py-1">
           <v-spacer />
-          <v-btn color="button-default" text @click="syncedDialog = false">
+          <v-btn text @click="$modal.hide('MemberEditDialog')">
+            <v-icon> mdi-window-close</v-icon>
             닫기
           </v-btn>
-          <v-btn color="button-default" text @click="save" :loading="loading">
+          <v-btn text @click="save" :loading="loading">
+            <v-icon> mdi-content-save-settings-outline</v-icon>
             저장
           </v-btn>
         </v-card-actions>
       </v-card>
-    </v-dialog>
+    </modal>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Prop, PropSync, Vue, Watch } from 'vue-property-decorator';
+import { Component, Prop, Vue } from 'vue-property-decorator';
 import { SelectItem, TableMemberEntity } from '@/common/types';
 import { deleteApi, getCodesApi, patchApi, postApi } from '@/utils/apis';
 import _ from 'lodash';
@@ -166,7 +174,6 @@ const pbkdf2 = require('pbkdf2');
   components: { DatetimePicker },
 })
 export default class extends Vue {
-  @PropSync('dialog', { required: true, type: Boolean }) syncedDialog!: boolean;
   @Prop({ required: true }) readonly editItem!: TableMemberEntity;
   @Prop({ required: true }) readonly mode!: string | null;
 
@@ -179,14 +186,6 @@ export default class extends Vue {
 
   async mounted() {
     this.AUTHORITY = await getCodesApi('AUTHORITY');
-  }
-
-  @Watch('dialog')
-  watchDialog(val: boolean) {
-    if (val) {
-      this.password2 = '';
-      this.$refs.observer && (this.$refs.observer as any).reset();
-    }
   }
 
   async save() {
@@ -212,7 +211,7 @@ export default class extends Vue {
     this.loading = false;
     if (_.startsWith(response.code, `S`)) {
       await this.$store.dispatch('setMemberCodes');
-      this.syncedDialog = false;
+      this.$modal.hide('MemberEditDialog');
       this.$emit('finished');
     }
   }
@@ -236,7 +235,7 @@ export default class extends Vue {
         await this.$store.dispatch('setUser');
       }
       await this.$store.dispatch('setMemberCodes');
-      this.syncedDialog = false;
+      this.$modal.hide('MemberEditDialog');
       this.$emit('finished');
     }
   }

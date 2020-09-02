@@ -1,16 +1,22 @@
 <template>
   <div>
-    <v-dialog v-model="syncedDialog" persistent max-width="25%">
-      <v-card>
-        <v-alert
-          border="bottom"
-          colored-border
-          color="divider"
-          icon="mdi-pencil-outline"
-          class="title mb-0"
-        >
+    <modal
+      name="EditMeDialog"
+      draggable
+      width="25%"
+      height="auto"
+      :shiftX="0.97"
+      :shiftY="0.1"
+      :clickToClose="false"
+    >
+      <v-card :loading="loading">
+        <v-card-title class="py-2 modal-header">
           내 정보 수정
-        </v-alert>
+          <v-spacer />
+          <v-btn text small @click="$modal.hide('EditMeDialog')">
+            <v-icon> mdi-window-close</v-icon>
+          </v-btn>
+        </v-card-title>
         <v-card-text>
           <ValidationObserver ref="observer">
             <v-row>
@@ -56,7 +62,7 @@
               <v-col cols="5" class="text-right pt-7">
                 <v-btn
                   color="button-edit"
-                  @click="newPasswordDialog = true"
+                  @click="$modal.show('ChangePassword')"
                   outlined
                   small
                 >
@@ -74,26 +80,25 @@
           </ValidationObserver>
         </v-card-text>
         <v-divider />
-        <v-card-actions>
+        <v-card-actions class="py-1">
           <v-spacer />
-          <v-btn color="button-default" text @click="syncedDialog = false">
+          <v-btn text @click="$modal.hide('EditMeDialog')">
+            <v-icon> mdi-window-close</v-icon>
             닫기
           </v-btn>
-          <v-btn color="button-default" text @click="patch" :loading="loading">
+          <v-btn text @click="save" :loading="loading">
+            <v-icon> mdi-content-save-settings-outline</v-icon>
             저장
           </v-btn>
         </v-card-actions>
       </v-card>
-    </v-dialog>
-    <change-password
-      :dialog.sync="newPasswordDialog"
-      v-if="newPasswordDialog"
-    />
+    </modal>
+    <change-password />
   </div>
 </template>
 
 <script lang="ts">
-import { Component, PropSync, Vue } from 'vue-property-decorator';
+import { Component, Vue } from 'vue-property-decorator';
 import { TableMemberEntity } from '@/common/types';
 import { getApi, patchApi } from '@/utils/apis';
 import _ from 'lodash';
@@ -107,21 +112,19 @@ const pbkdf2 = require('pbkdf2');
   components: { ChangePassword, DatetimePicker },
 })
 export default class extends Vue {
-  @PropSync('dialog', { required: true, type: Boolean }) syncedDialog!: boolean;
   readonly ENDPOINT_URL: string = `members/`;
   editItem: TableMemberEntity = Object.create(null);
   loading: boolean = false;
-  newPasswordDialog: boolean = false;
   show1: boolean = false;
 
   async mounted() {
     const response = await getApi<TableMemberEntity>(
       `${this.ENDPOINT_URL}mine`,
     );
-    this.editItem = response.data;
+    this.editItem = response.data!;
   }
 
-  async patch() {
+  async save() {
     const isValid = await (this.$refs.observer as any).validate();
     if (!isValid) {
       return;
@@ -140,7 +143,7 @@ export default class extends Vue {
     if (_.startsWith(response.code, `S`)) {
       await this.$store.dispatch('setUser');
       await this.$store.dispatch('setMemberCodes');
-      this.syncedDialog = false;
+      this.$modal.hide('EditMeDialog');
       this.$emit('finished');
     }
   }

@@ -31,7 +31,7 @@
                 () => {
                   mode = '추가';
                   editItem = Object.create(null);
-                  dialog = true;
+                  $modal.show('CodeGroupEditDialog');
                 }
               "
               @click:delete="
@@ -57,7 +57,7 @@
                 () => {
                   mode = '수정';
                   editItem = Object.assign({}, item);
-                  dialog = true;
+                  $modal.show('CodeGroupEditDialog');
                 }
               "
             >
@@ -74,7 +74,6 @@
         <code-group-edit-dialog
           ref="refEditDialog"
           :edit-item="editItem"
-          :dialog.sync="dialog"
           :mode="mode"
           @finished="getList"
         />
@@ -112,7 +111,6 @@ export default class extends Vue {
   filteredItems: TableCodeGroupEntity[] = [];
   editItem: TableCodeGroupEntity = Object.create(null);
   selected: TableCodeGroupEntity[] = [];
-  dialog: boolean = false;
   loading: boolean = false;
 
   headers: DataTableHeader[] = [

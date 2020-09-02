@@ -29,7 +29,7 @@
                   expired: dayjs().add(1, 'year').toDate(),
                   timeout: 7200,
                 };
-                dialog = true;
+                $modal.show('MemberEditDialog');
               }
             "
             @click:delete="
@@ -54,9 +54,8 @@
             @click="
               () => {
                 mode = '수정';
-                editItem = Object.assign({}, item);
-                editItem.password = undefined;
-                dialog = true;
+                editItem = { ...item, password: undefined };
+                $modal.show('MemberEditDialog');
               }
             "
           >
@@ -94,7 +93,6 @@
       <member-edit-dialog
         ref="refEditDialog"
         :edit-item="editItem"
-        :dialog.sync="dialog"
         :mode="mode"
         @finished="getList"
       />
@@ -133,8 +131,6 @@ export default class extends Vue {
   editItem: TableMemberEntity = Object.create(null);
   selected: TableMemberEntity[] = [];
   loading: boolean = false;
-  dialog: boolean = false;
-
   AUTHORITY: SelectItem[] | null = null;
 
   headers: DataTableHeader[] = [
