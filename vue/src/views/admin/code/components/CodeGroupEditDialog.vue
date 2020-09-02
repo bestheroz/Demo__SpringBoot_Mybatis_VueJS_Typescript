@@ -1,24 +1,13 @@
 <template>
   <div>
-    <modal
-      name="CodeGroupEditDialog"
-      draggable
-      width="50%"
-      height="auto"
-      :shiftX="0.2"
-      :shiftY="0.1"
-      overlayTransition=""
-      :clickToClose="false"
-      @opened="$store.dispatch('setOverlay', true)"
-      @before-close="$store.dispatch('setOverlay', false)"
-    >
+    <v-dialog v-model="syncedDialog" persistent max-width="50%">
       <v-card :loading="loading">
         <v-card-title class="py-2 modal-header">
           <v-icon v-if="mode === '추가'">mdi-pencil-plus-outline</v-icon>
           <v-icon v-else>mdi-pencil-outline</v-icon>
-          코드그룹 {{ mode }}
+          시스템코드관리-MST {{ mode }}
           <v-spacer />
-          <v-btn text small @click="$modal.hide('CodeGroupEditDialog')">
+          <v-btn text small @click="syncedDialog = false">
             <v-icon> mdi-window-close</v-icon>
           </v-btn>
         </v-card-title>
@@ -60,7 +49,7 @@
         <v-divider />
         <v-card-actions class="py-1">
           <v-spacer />
-          <v-btn text @click="$modal.hide('CodeGroupEditDialog')">
+          <v-btn text @click="syncedDialog = false">
             <v-icon> mdi-window-close</v-icon>
             닫기
           </v-btn>
@@ -70,12 +59,12 @@
           </v-btn>
         </v-card-actions>
       </v-card>
-    </modal>
+    </v-dialog>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Component, Prop, PropSync, Vue, Watch } from 'vue-property-decorator';
 import { TableCodeGroupEntity } from '@/common/types';
 import { deleteApi, patchApi, postApi } from '@/utils/apis';
 import _ from 'lodash';
@@ -85,11 +74,19 @@ import { confirmDelete } from '@/utils/alerts';
   name: 'CodeGroupEditDialog',
 })
 export default class extends Vue {
+  @PropSync('dialog', { required: true, type: Boolean }) syncedDialog!: boolean;
   @Prop({ required: true }) readonly editItem!: TableCodeGroupEntity;
   @Prop({ required: true }) readonly mode!: string | null;
 
   readonly ENDPOINT_URL = 'admin/codeGroups/';
   loading: boolean = false;
+
+  @Watch('dialog')
+  watchDialog(val: boolean) {
+    if (val) {
+      this.$refs.observer && (this.$refs.observer as any).reset();
+    }
+  }
 
   async save() {
     const isValid = await (this.$refs.observer as any).validate();
@@ -107,7 +104,7 @@ export default class extends Vue {
     );
     this.loading = false;
     if (_.startsWith(response.code, `S`)) {
-      this.$modal.hide('CodeGroupEditDialog');
+      this.syncedDialog = false;
       this.$emit('finished');
     }
   }
@@ -120,7 +117,7 @@ export default class extends Vue {
     );
     this.loading = false;
     if (_.startsWith(response.code, `S`)) {
-      this.$modal.hide('CodeGroupEditDialog');
+      this.syncedDialog = false;
       this.$emit('finished');
     }
   }

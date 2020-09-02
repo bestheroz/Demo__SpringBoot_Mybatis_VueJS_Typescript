@@ -3,7 +3,6 @@
     <v-dialog
       v-model="syncedDialog"
       persistent
-      max-width="100%"
       width="400"
       class="elevation-12"
     >

@@ -54,6 +54,10 @@
     }
   }
 
+  .v-dialog {
+    border: 3px solid var(--v-modal-border-base);
+  }
+
   .v-toolbar {
     .v-btn__content {
       font-weight: 600;

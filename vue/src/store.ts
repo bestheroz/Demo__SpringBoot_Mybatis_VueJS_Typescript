@@ -109,7 +109,6 @@ const moduleLayout = {
     menuId: null,
     layouts: null,
     lockLayout: true,
-    overlay: false,
   },
   mutations: {},
   actions: {
@@ -184,9 +183,6 @@ const moduleLayout = {
     },
     setLayoutMenuId({ state }: ActionContext<any, any>, menuId: number) {
       state.menuId = menuId;
-    },
-    setOverlay({ state }: ActionContext<any, any>, value: boolean) {
-      state.overlay = value;
     },
     clearLayout({ state }: ActionContext<any, any>) {
       state.layouts = null;
