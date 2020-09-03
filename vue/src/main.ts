@@ -10,6 +10,7 @@ import './plugins/vue-filter';
 import './plugins/vue-grid-layout';
 import './plugins/vue-js-modal';
 import './plugins/sentry';
+import './plugins/ag-grid-vue';
 
 Vue.config.productionTip = false;
 
