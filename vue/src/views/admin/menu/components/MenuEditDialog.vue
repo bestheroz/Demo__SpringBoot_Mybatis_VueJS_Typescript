@@ -6,7 +6,7 @@
       width="50%"
       height="auto"
       :shiftX="0.2"
-      :shiftY="0.1"
+      :shiftY="0.05"
       :clickToClose="false"
     >
       <v-card :loading="loading">
@@ -15,6 +15,9 @@
           <v-icon v-else>mdi-pencil-outline</v-icon>
           메뉴 {{ mode }}
           <v-spacer />
+          <v-btn text small :ripple="false" style="cursor: default;">
+            <v-icon> mdi-cursor-move</v-icon>
+          </v-btn>
           <v-btn text small @click="$modal.hide('MenuEditDialog')">
             <v-icon> mdi-window-close</v-icon>
           </v-btn>

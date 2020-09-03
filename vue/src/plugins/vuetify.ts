@@ -21,7 +21,7 @@ export default new Vuetify({
     current: 'ko',
   },
   theme: {
-    dark: true,
+    dark: false,
     themes: {
       dark: {
         primary: colors.green.darken1,

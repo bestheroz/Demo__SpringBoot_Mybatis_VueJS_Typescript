@@ -13,6 +13,9 @@
         <v-card-title class="py-2 modal-header">
           비밀번호 변경
           <v-spacer />
+          <v-btn text small :ripple="false" style="cursor: default;">
+            <v-icon> mdi-cursor-move</v-icon>
+          </v-btn>
           <v-btn text small @click="$modal.hide('ChangePassword')">
             <v-icon> mdi-window-close</v-icon>
           </v-btn>

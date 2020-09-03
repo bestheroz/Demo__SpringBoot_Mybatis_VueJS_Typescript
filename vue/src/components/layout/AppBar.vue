@@ -98,7 +98,7 @@ export default class extends Vue {
   @Watch('$store.state.user.user', { immediate: true })
   async watchUser() {
     this.user = await this.$store.dispatch('getUser');
-    this.$vuetify.theme.dark = (this.user.theme || 'dark') === 'dark';
+    this.$vuetify.theme.dark = (this.user.theme || 'light') === 'dark';
   }
 
   goHome() {
