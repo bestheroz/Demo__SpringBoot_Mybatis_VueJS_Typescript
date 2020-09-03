@@ -15,7 +15,7 @@
           <v-icon v-else>mdi-pencil-outline</v-icon>
           사용자 {{ mode }}
           <v-spacer />
-          <v-btn text small :ripple="false" style="cursor: default;">
+          <v-btn text small :ripple="false" style="cursor: default">
             <v-icon> mdi-cursor-move</v-icon>
           </v-btn>
           <v-btn text small @click="$modal.hide('MemberEditDialog')">

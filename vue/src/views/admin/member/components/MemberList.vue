@@ -63,7 +63,7 @@
           </a>
         </template>
         <template v-slot:item.available="{ item }">
-          <span style="display: inline-flex;">
+          <span style="display: inline-flex">
             <v-checkbox
               readonly
               :input-value="item.available"
