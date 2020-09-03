@@ -1,7 +1,7 @@
 <template>
   <div>
     <modal
-      name="ChangePassword"
+      name="ChangePasswordDialog"
       draggable
       width="25%"
       height="auto"
@@ -16,7 +16,7 @@
           <v-btn text small :ripple="false" style="cursor: default;">
             <v-icon> mdi-cursor-move</v-icon>
           </v-btn>
-          <v-btn text small @click="$modal.hide('ChangePassword')">
+          <v-btn text small @click="$modal.hide('ChangePasswordDialog')">
             <v-icon> mdi-window-close</v-icon>
           </v-btn>
         </v-card-title>
@@ -83,7 +83,7 @@
         <v-divider />
         <v-card-actions class="py-1">
           <v-spacer />
-          <v-btn text @click="$modal.hide('ChangePassword')">
+          <v-btn text @click="$modal.hide('ChangePasswordDialog')">
             <v-icon> mdi-window-close</v-icon>
             닫기
           </v-btn>
@@ -105,7 +105,7 @@ import _ from 'lodash';
 const pbkdf2 = require('pbkdf2');
 
 @Component({
-  name: 'ChangePassword',
+  name: 'ChangePasswordDialog',
   components: {},
 })
 export default class extends Vue {
@@ -138,7 +138,7 @@ export default class extends Vue {
     });
     this.loading = false;
     if (_.startsWith(response.code, `S`)) {
-      this.$modal.hide('ChangePassword');
+      this.$modal.hide('ChangePasswordDialog');
       this.$emit('finished');
     }
   }

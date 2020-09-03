@@ -65,7 +65,7 @@
               <v-col cols="5" class="text-right pt-7">
                 <v-btn
                   color="button-edit"
-                  @click="$modal.show('ChangePassword')"
+                  @click="$modal.show('ChangePasswordDialog')"
                   outlined
                   small
                 >
@@ -96,7 +96,7 @@
         </v-card-actions>
       </v-card>
     </modal>
-    <change-password />
+    <change-password-dialog />
   </div>
 </template>
 
@@ -106,13 +106,13 @@ import { TableMemberEntity } from '@/common/types';
 import { getApi, patchApi } from '@/utils/apis';
 import _ from 'lodash';
 import DatetimePicker from '@/components/picker/DatetimePicker.vue';
-import ChangePassword from '@/components/layout/components/ChangePassword.vue';
+import ChangePasswordDialog from '@/components/layout/components/ChangePasswordDialog.vue';
 
 const pbkdf2 = require('pbkdf2');
 
 @Component({
   name: 'EditMeDialog',
-  components: { ChangePassword, DatetimePicker },
+  components: { ChangePasswordDialog, DatetimePicker },
 })
 export default class extends Vue {
   readonly ENDPOINT_URL: string = `members/`;
