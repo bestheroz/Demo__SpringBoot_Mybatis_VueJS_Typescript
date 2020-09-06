@@ -123,16 +123,13 @@ export default class extends Vue {
   show1: boolean = false;
   newPasswordDialog: boolean = false;
 
-  async mounted() {
-    const response = await getApi<TableMemberEntity>(
-      `${this.ENDPOINT_URL}mine`,
-    );
-    this.editItem = response.data!;
-  }
-
   @Watch('syncedDialog')
-  watchDialog(val: boolean) {
+  async watchDialog(val: boolean) {
     if (val) {
+      const response = await getApi<TableMemberEntity>(
+        `${this.ENDPOINT_URL}mine`,
+      );
+      this.editItem = response.data!;
       this.$refs.observer && (this.$refs.observer as any).reset();
       this.$modal.show('EditMeDialog');
     } else {
