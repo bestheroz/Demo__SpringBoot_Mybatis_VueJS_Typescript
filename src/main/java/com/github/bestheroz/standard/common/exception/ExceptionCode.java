@@ -62,6 +62,8 @@ public enum ExceptionCode {
 
     FAIL_MATCH_OLD_PASSWORD("F021", "이전 비밀번호가 올바르지 않습니다."),
 
+    FAIL_MATCH_PASSWORD("F022", "비밀번호가 올바르지 않습니다."),
+
     ;
 
     private final String code;

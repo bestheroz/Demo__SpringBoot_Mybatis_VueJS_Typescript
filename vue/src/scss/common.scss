@@ -55,11 +55,7 @@
   }
 
   .v-dialog {
-    .v-alert {
-      .v-icon {
-        margin-top: 4px;
-      }
-    }
+    border: 3px solid var(--v-modal-border-base);
   }
 
   .v-toolbar {
@@ -76,5 +72,9 @@
         }
       }
     }
+  }
+
+  .theme--dark.v-btn.v-btn--disabled:not(.v-btn--flat):not(.v-btn--text):not(.v-btn--outlined) {
+    background-color: var(--v-button-disabled-base) !important;
   }
 }

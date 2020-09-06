@@ -21,7 +21,7 @@ export default new Vuetify({
     current: 'ko',
   },
   theme: {
-    dark: true,
+    dark: false,
     themes: {
       dark: {
         primary: colors.green.darken1,
@@ -37,10 +37,14 @@ export default new Vuetify({
         'button-edit': colors.blue.darken3,
         'button-delete': colors.pink.base,
         'button-reload': colors.cyan.darken1,
-        'table-header': colors.green.darken4,
+        'button-disabled': colors.blueGrey.lighten2,
+        'table-header': colors.green.darken2,
         'table-border': colors.grey.darken3,
         'alert-background': colors.grey.darken4,
         'alert-text': colors.grey.lighten5,
+        'modal-background': colors.grey.darken4,
+        'modal-header': colors.green.darken2,
+        'modal-border': colors.lightGreen.darken4,
       },
       light: {
         primary: colors.blue.darken2,
@@ -56,10 +60,14 @@ export default new Vuetify({
         'button-edit': colors.teal.accent4,
         'button-delete': colors.pink.accent2,
         'button-reload': colors.cyan.darken1,
+        'button-disabled': colors.blueGrey.lighten2,
         'table-header': colors.blue.lighten5,
         'table-border': colors.lightBlue.lighten4,
         'alert-background': colors.grey.lighten5,
         'alert-text': colors.grey.darken4,
+        'modal-background': colors.blue.lighten1,
+        'modal-header': colors.blue.lighten5,
+        'modal-border': colors.blue.lighten3,
       },
     },
     options: {
