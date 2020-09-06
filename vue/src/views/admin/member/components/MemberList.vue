@@ -30,7 +30,7 @@
               }
             "
             delete-button
-            :delete-disabled="!selected || selected.length < 1"
+            :delete-disabled="!selected || selected.length === 0"
             @click:delete="
               () => {
                 editItem = selected[0];
