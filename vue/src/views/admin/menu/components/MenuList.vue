@@ -37,18 +37,17 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import { DataTableHeader, SelectItem, TableMenuEntity } from '@/common/types';
+import { SelectItem, TableMenuEntity } from '@/common/types';
 import { getApi, getCodesApi } from '@/utils/apis';
 import envs from '@/constants/envs';
 import MenuEditDialog from '@/views/admin/menu/components/MenuEditDialog.vue';
 import ButtonSet from '@/components/speeddial/ButtonSet.vue';
 import { getText } from '@/utils/codes';
-import dayjs from 'dayjs';
 import FloatingFilterMenuType from '@/views/aggrid/filters/FloatingFilterMenuType.vue';
-import { GridOptionsWrapper, ValueGetterParams } from 'ag-grid-community';
 import RenderColumnAction from '@/views/admin/menu/renders/RenderColumnAction.vue';
 import { onGridSizeChanged } from '@/utils/ag-grid-vue';
 import { formatDatetime, getMemberNm } from '@/utils/formatters';
+import { ColDef, ValueFormatterParams } from 'ag-grid-community';
 
 interface MenuVO extends TableMenuEntity {
   level: number;
@@ -73,8 +72,7 @@ export default class extends Vue {
   loading: boolean = false;
 
   MENU_TYPE: SelectItem[] | null = null;
-
-  columnDefs = [];
+  columnDefs: ColDef[] = [];
 
   async mounted() {
     this.MENU_TYPE = await getCodesApi(`MENU_TYPE`);
@@ -89,7 +87,7 @@ export default class extends Vue {
         floatingFilterComponentParams: {
           suppressFilterButton: true,
         },
-        valueFormatter: (params: ValueGetterParams) => {
+        valueFormatter: (params: ValueFormatterParams) => {
           return getText(this.MENU_TYPE, params.value);
         },
       },
@@ -121,7 +119,7 @@ export default class extends Vue {
         maxWidth: 180,
         filter: false,
         cellClass: ['text-center'],
-        valueFormatter: (params: ValueGetterParams) => {
+        valueFormatter: (params: ValueFormatterParams) => {
           return formatDatetime(params.value);
         },
       },
@@ -131,7 +129,7 @@ export default class extends Vue {
         minWidth: 150,
         maxWidth: 150,
         type: [],
-        valueFormatter: (params: ValueGetterParams) => {
+        valueFormatter: (params: ValueFormatterParams) => {
           return getMemberNm(params.value);
         },
       },

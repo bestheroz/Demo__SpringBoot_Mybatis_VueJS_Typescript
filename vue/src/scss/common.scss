@@ -73,4 +73,8 @@
       }
     }
   }
+
+  .theme--dark.v-btn.v-btn--disabled:not(.v-btn--flat):not(.v-btn--text):not(.v-btn--outlined) {
+    background-color: var(--v-button-disabled-base) !important;
+  }
 }
