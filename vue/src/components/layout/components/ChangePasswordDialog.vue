@@ -124,7 +124,12 @@ export default class extends Vue {
   @Watch('syncedDialog')
   watchDialog(val: boolean) {
     if (val) {
-      this.password2 = '';
+      this.oldPassword = null;
+      this.password = null;
+      this.password2 = null;
+      this.show1 = false;
+      this.show2 = false;
+      this.show3 = false;
       this.$refs.observer && (this.$refs.observer as any).reset();
       this.$modal.show('ChangePasswordDialog');
     } else {
