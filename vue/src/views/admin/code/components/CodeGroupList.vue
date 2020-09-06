@@ -29,7 +29,6 @@
               :delete-disabled="!selected || selected.length === 0"
               @click:add="
                 () => {
-                  mode = '추가';
                   editItem = Object.create(null);
                   dialog = true;
                 }
@@ -55,7 +54,6 @@
               :style="{ 'font-weight': 'bold' }"
               @click="
                 () => {
-                  mode = '수정';
                   editItem = Object.assign({}, item);
                   dialog = true;
                 }
@@ -75,7 +73,6 @@
           ref="refEditDialog"
           :edit-item="editItem"
           :dialog.sync="dialog"
-          :mode="mode"
           @finished="getList"
         />
       </v-card-text>
@@ -105,7 +102,6 @@ export default class extends Vue {
   @Prop({ required: true }) readonly height!: number;
   readonly dayjs: typeof dayjs = dayjs;
   readonly envs: typeof envs = envs;
-  mode: string | null = null;
   sortBy: string[] = ['codeGroup'];
   sortDesc: boolean[] = [false];
   items: TableCodeGroupEntity[] = [];

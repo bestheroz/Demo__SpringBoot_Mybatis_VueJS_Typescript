@@ -18,7 +18,7 @@ describe('관리자>메뉴관리, 관리자>메뉴권한관리', () => {
     cy.server();
     cy.route('POST', '**/api/admin/menus/').as('save');
     cy.get('button').contains('하위메뉴입력').eq(0).click();
-    cy.get('div.v-dialog__content--active').within(() => {
+    cy.get('div.vm--modal').within(() => {
       cy.setInputValue('메뉴명', '(cypress)그룹메뉴');
       cy.setSelectValue('타입', '그룹');
       cy.setInputValue('메뉴 순서', '9990');
@@ -39,7 +39,7 @@ describe('관리자>메뉴관리, 관리자>메뉴권한관리', () => {
       .children('button')
       .contains('하위메뉴입력')
       .click();
-    cy.get('div.v-dialog__content--active').within(() => {
+    cy.get('div.vm--modal').within(() => {
       cy.setInputValue('메뉴명', '(cypress)하위메뉴1');
       cy.setSelectValue('타입', '페이지');
       cy.setInputValue('링크 URL', '/test1');
@@ -61,7 +61,7 @@ describe('관리자>메뉴관리, 관리자>메뉴권한관리', () => {
       .children('button')
       .contains('하위메뉴입력')
       .click();
-    cy.get('div.v-dialog__content--active').within(() => {
+    cy.get('div.vm--modal').within(() => {
       cy.setInputValue('메뉴명', '(cypress)하위메뉴2');
       cy.setSelectValue('타입', '페이지');
       cy.setInputValue('링크 URL', '/test2');
@@ -108,7 +108,7 @@ describe('관리자>메뉴관리, 관리자>메뉴권한관리', () => {
       .children('button')
       .contains('수정')
       .click();
-    cy.get('div.v-dialog__content--active').within(() => {
+    cy.get('div.vm--modal').within(() => {
       cy.setInputValue('메뉴명', '(cypress)그룹메뉴0000');
       cy.setInputValue('메뉴 순서', '99901');
       cy.get('button').contains('저장').click();
@@ -127,7 +127,7 @@ describe('관리자>메뉴관리, 관리자>메뉴권한관리', () => {
       .children('button')
       .contains('수정')
       .click();
-    cy.get('div.v-dialog__content--active').within(() => {
+    cy.get('div.vm--modal').within(() => {
       cy.setInputValue('메뉴명', '(cypress)하위메뉴1111');
       cy.setInputValue('링크 URL', '/test11');
       cy.setInputValue('메뉴 순서', '99955');
@@ -147,7 +147,7 @@ describe('관리자>메뉴관리, 관리자>메뉴권한관리', () => {
       .children('button')
       .contains('수정')
       .click();
-    cy.get('div.v-dialog__content--active').within(() => {
+    cy.get('div.vm--modal').within(() => {
       cy.setInputValue('메뉴명', '(cypress)하위메뉴2222');
       cy.setInputValue('링크 URL', '/test22');
       cy.setInputValue('메뉴 순서', '99966');

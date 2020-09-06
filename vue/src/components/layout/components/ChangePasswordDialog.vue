@@ -1,16 +1,26 @@
 <template>
   <div>
-    <v-dialog v-model="syncedDialog" persistent max-width="25%">
-      <v-card>
-        <v-alert
-          border="bottom"
-          colored-border
-          color="divider"
-          icon="mdi-pencil-outline"
-          class="title mb-0"
-        >
+    <modal
+      name="ChangePasswordDialog"
+      draggable
+      width="25%"
+      height="auto"
+      :shiftX="0.84"
+      :shiftY="0.2"
+      :clickToClose="false"
+    >
+      <v-card :loading="loading">
+        <v-card-title class="py-2 modal-header">
+          <v-icon>mdi-key-change</v-icon>
           비밀번호 변경
-        </v-alert>
+          <v-spacer />
+          <v-btn text small :ripple="false" style="cursor: default;">
+            <v-icon> mdi-cursor-move</v-icon>
+          </v-btn>
+          <v-btn text small @click="syncedDialog = false">
+            <v-icon> mdi-window-close</v-icon>
+          </v-btn>
+        </v-card-title>
         <v-card-text>
           <ValidationObserver ref="observer">
             <v-row>
@@ -72,29 +82,31 @@
           </ValidationObserver>
         </v-card-text>
         <v-divider />
-        <v-card-actions>
+        <v-card-actions class="py-1">
           <v-spacer />
-          <v-btn color="button-default" text @click="syncedDialog = false">
+          <v-btn text @click="syncedDialog = false">
+            <v-icon> mdi-window-close</v-icon>
             닫기
           </v-btn>
-          <v-btn color="button-default" text @click="save" :loading="loading">
+          <v-btn text @click="save" :loading="loading">
+            <v-icon> mdi-content-save-settings-outline</v-icon>
             저장
           </v-btn>
         </v-card-actions>
       </v-card>
-    </v-dialog>
+    </modal>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, PropSync, Vue } from 'vue-property-decorator';
+import { Component, PropSync, Vue, Watch } from 'vue-property-decorator';
 import { postApi } from '@/utils/apis';
 import _ from 'lodash';
 
 const pbkdf2 = require('pbkdf2');
 
 @Component({
-  name: 'ChangePassword',
+  name: 'ChangePasswordDialog',
   components: {},
 })
 export default class extends Vue {
@@ -108,6 +120,17 @@ export default class extends Vue {
   show1: boolean = false;
   show2: boolean = false;
   show3: boolean = false;
+
+  @Watch('syncedDialog')
+  watchDialog(val: boolean) {
+    if (val) {
+      this.password2 = '';
+      this.$refs.observer && (this.$refs.observer as any).reset();
+      this.$modal.show('ChangePasswordDialog');
+    } else {
+      this.$modal.hide('ChangePasswordDialog');
+    }
+  }
 
   async save() {
     const isValid = await (this.$refs.observer as any).validate();

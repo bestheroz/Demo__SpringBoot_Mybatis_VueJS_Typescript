@@ -37,7 +37,7 @@
         <v-list dense>
           <v-list-item>
             <v-list-item-title>
-              <v-btn block text @click="editMe">
+              <v-btn block text @click="editMeDialog = true">
                 <v-icon>mdi-account-edit-outline</v-icon>
                 내 정보수정
               </v-btn>
@@ -54,7 +54,7 @@
         </v-list>
       </v-menu>
     </v-app-bar>
-    <edit-me-dialog :dialog.sync="editMeDialog" v-if="editMeDialog" />
+    <edit-me-dialog :dialog.sync="editMeDialog" />
   </div>
 </template>
 
@@ -99,15 +99,11 @@ export default class extends Vue {
   @Watch('$store.state.user.user', { immediate: true })
   async watchUser() {
     this.user = await this.$store.dispatch('getUser');
-    this.$vuetify.theme.dark = (this.user.theme || 'dark') === 'dark';
+    this.$vuetify.theme.dark = (this.user.theme || 'light') === 'dark';
   }
 
   goHome() {
     this.$router.currentRoute.path !== '/' && this.$router.push('/');
-  }
-
-  editMe() {
-    this.editMeDialog = true;
   }
 }
 </script>

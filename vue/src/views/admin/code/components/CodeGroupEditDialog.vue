@@ -1,19 +1,16 @@
 <template>
   <div>
-    <v-dialog v-model="syncedDialog" persistent max-width="60%">
+    <v-dialog v-model="syncedDialog" persistent max-width="50%">
       <v-card :loading="loading">
-        <v-alert
-          border="bottom"
-          colored-border
-          color="divider"
-          dense
-          :icon="
-            mode === '추가' ? 'mdi-pencil-plus-outline' : 'mdi-pencil-outline'
-          "
-          class="title mb-0"
-        >
-          시스템코드관리-MST {{ mode }}
-        </v-alert>
+        <v-card-title class="py-2 modal-header">
+          <v-icon v-if="isNew">mdi-pencil-plus-outline</v-icon>
+          <v-icon v-else>mdi-pencil-outline</v-icon>
+          코드그룹 {{ isNew ? '추가' : '수정' }}
+          <v-spacer />
+          <v-btn text small @click="syncedDialog = false">
+            <v-icon> mdi-window-close</v-icon>
+          </v-btn>
+        </v-card-title>
         <v-card-text>
           <ValidationObserver ref="observer">
             <v-row>
@@ -28,7 +25,7 @@
                     label="*그룹코드"
                     :counter="32"
                     :error-messages="errors"
-                    :disabled="mode !== '추가'"
+                    :disabled="!isNew"
                   />
                 </ValidationProvider>
               </v-col>
@@ -50,12 +47,14 @@
           </ValidationObserver>
         </v-card-text>
         <v-divider />
-        <v-card-actions>
+        <v-card-actions class="py-1">
           <v-spacer />
-          <v-btn color="button-default" text @click="syncedDialog = false">
+          <v-btn text @click="syncedDialog = false">
+            <v-icon> mdi-window-close</v-icon>
             닫기
           </v-btn>
-          <v-btn color="button-default" text @click="save" :loading="loading">
+          <v-btn text @click="save" :loading="loading">
+            <v-icon> mdi-content-save-settings-outline</v-icon>
             저장
           </v-btn>
         </v-card-actions>
@@ -77,14 +76,15 @@ import { confirmDelete } from '@/utils/alerts';
 export default class extends Vue {
   @PropSync('dialog', { required: true, type: Boolean }) syncedDialog!: boolean;
   @Prop({ required: true }) readonly editItem!: TableCodeGroupEntity;
-  @Prop({ required: true }) readonly mode!: string | null;
 
   readonly ENDPOINT_URL = 'admin/codeGroups/';
   loading: boolean = false;
+  isNew: boolean = false;
 
   @Watch('dialog')
   watchDialog(val: boolean) {
     if (val) {
+      this.isNew = !this.editItem.codeGroup;
       this.$refs.observer && (this.$refs.observer as any).reset();
     }
   }
@@ -94,7 +94,7 @@ export default class extends Vue {
     if (!isValid) {
       return;
     }
-    this.mode === '수정' ? await this.patch() : await this.create();
+    this.isNew ? await this.create() : await this.patch();
   }
 
   async create() {

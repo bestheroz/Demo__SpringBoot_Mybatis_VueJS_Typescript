@@ -20,11 +20,8 @@
         <template v-slot:top>
           <button-set
             add-button
-            delete-button
-            reload-button
             @click:add="
               () => {
-                mode = '추가';
                 editItem = {
                   expired: dayjs().add(1, 'year').toDate(),
                   timeout: 7200,
@@ -32,12 +29,15 @@
                 dialog = true;
               }
             "
+            delete-button
+            :delete-disabled="!selected || selected.length === 0"
             @click:delete="
               () => {
                 editItem = selected[0];
                 $refs.refEditDialog.delete();
               }
             "
+            reload-button
             @click:reload="getList"
           />
         </template>
@@ -53,9 +53,7 @@
             :style="{ 'font-weight': 'bold' }"
             @click="
               () => {
-                mode = '수정';
-                editItem = Object.assign({}, item);
-                editItem.password = undefined;
+                editItem = { ...item, password: undefined };
                 dialog = true;
               }
             "
@@ -95,7 +93,6 @@
         ref="refEditDialog"
         :edit-item="editItem"
         :dialog.sync="dialog"
-        :mode="mode"
         @finished="getList"
       />
     </v-card-text>
@@ -125,7 +122,6 @@ export default class extends Vue {
   readonly envs: typeof envs = envs;
   readonly dayjs: typeof dayjs = dayjs;
   readonly ENDPOINT_URL: string = 'admin/members/';
-  mode: string | null = null;
   sortBy: string[] = ['authority'];
   sortDesc: boolean[] = [true];
   items: TableMemberEntity[] = [];
