@@ -11,7 +11,6 @@
     >
       <v-card :loading="loading">
         <v-card-title class="py-2 modal-header">
-          <v-icon>mdi-key-change</v-icon>
           비밀번호 변경
           <v-spacer />
           <v-btn text small :ripple="false" style="cursor: default;">

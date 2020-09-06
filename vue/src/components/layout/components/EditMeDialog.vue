@@ -126,6 +126,7 @@ export default class extends Vue {
   @Watch('syncedDialog')
   async watchDialog(val: boolean) {
     if (val) {
+      this.show1 = false;
       const response = await getApi<TableMemberEntity>(
         `${this.ENDPOINT_URL}mine`,
       );
