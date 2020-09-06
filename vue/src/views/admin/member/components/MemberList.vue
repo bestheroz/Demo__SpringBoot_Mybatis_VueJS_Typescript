@@ -30,6 +30,8 @@
             selected = event.api.getSelectedRows();
           }
         "
+        @pagination-changed="paginationChanged"
+        @sort-changed="sortChanged"
       >
       </ag-grid-vue>
       <member-edit-dialog
@@ -55,6 +57,8 @@ import {
   CellClickedEvent,
   ColDef,
   GridOptions,
+  PaginationChangedEvent,
+  SortChangedEvent,
   ValueFormatterParams,
   ValueGetterParams,
 } from 'ag-grid-community';
@@ -95,10 +99,11 @@ export default class extends Vue {
       },
     },
     pagination: true,
-    paginationPageSize: 100,
+    paginationPageSize: 1,
     suppressCellSelection: true,
     animateRows: true,
     rowSelection: 'single',
+    suppressMultiSort: true,
     frameworkComponents: {
       FloatingFilterAuthority: FloatingFilterAuthority,
       FloatingFilterSwitch: FloatingFilterSwitch,
@@ -212,6 +217,18 @@ export default class extends Vue {
   deleteItem() {
     this.editItem = this.selected[0];
     (this.$refs.refEditDialog as any).delete();
+  }
+
+  paginationChanged(params: PaginationChangedEvent) {
+    console.log(params);
+    console.log(params.api.paginationGetCurrentPage());
+    console.log(params.api.paginationGetPageSize());
+  }
+
+  sortChanged(params: SortChangedEvent) {
+    console.dir(params);
+    console.log(params.api.getSortModel()[0].colId);
+    console.log(params.api.getSortModel()[0].sort);
   }
 }
 </script>
