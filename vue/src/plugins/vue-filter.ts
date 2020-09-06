@@ -7,7 +7,7 @@ import {
   getEllipseText,
   getMemberNm,
   getSwitchLabel,
-} from '@/utils/formatters';
+} from '@/utils/formatter';
 
 Vue.filter('formatDatetime', function (
   value: string | number | Date | undefined | null,

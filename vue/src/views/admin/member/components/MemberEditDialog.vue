@@ -11,14 +11,14 @@
     >
       <v-card :loading="loading">
         <v-card-title class="py-2 modal-header">
-          <v-icon v-if="mode === '추가'">mdi-pencil-plus-outline</v-icon>
+          <v-icon v-if="isNew">mdi-pencil-plus-outline</v-icon>
           <v-icon v-else>mdi-pencil-outline</v-icon>
-          사용자 {{ mode }}
+          사용자 {{ isNew ? '추가' : '수정' }}
           <v-spacer />
           <v-btn text small :ripple="false" style="cursor: default">
             <v-icon> mdi-cursor-move</v-icon>
           </v-btn>
-          <v-btn text small @click="$modal.hide('MemberEditDialog')">
+          <v-btn text small @click="syncedDialog = false">
             <v-icon> mdi-window-close</v-icon>
           </v-btn>
         </v-card-title>
@@ -36,7 +36,7 @@
                     label="*사용자아이디"
                     :counter="50"
                     :error-messages="errors"
-                    :disabled="mode !== '추가'"
+                    :disabled="!isNew"
                   />
                 </ValidationProvider>
               </v-col>
@@ -102,7 +102,7 @@
                   vid="password"
                   rules="max:20"
                   v-slot="{ errors }"
-                  v-if="mode === '추가'"
+                  v-if="isNew"
                 >
                   <v-text-field
                     v-model="editItem.password"
@@ -120,7 +120,7 @@
                   name="비밀번호 확인"
                   rules="required|confirmed:password|max:20"
                   v-slot="{ errors }"
-                  v-if="mode === '추가' && editItem.password"
+                  v-if="isNew && editItem.password"
                 >
                   <v-text-field
                     v-model="password2"
@@ -136,7 +136,7 @@
                 <v-btn
                   color="warning"
                   @click="resetPassword"
-                  v-if="mode !== '추가'"
+                  v-if="!isNew"
                   outlined
                 >
                   비밀번호 초기화
@@ -148,7 +148,7 @@
         <v-divider />
         <v-card-actions class="py-1">
           <v-spacer />
-          <v-btn text @click="$modal.hide('MemberEditDialog')">
+          <v-btn text @click="syncedDialog = false">
             <v-icon> mdi-window-close</v-icon>
             닫기
           </v-btn>
@@ -163,7 +163,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Component, Prop, PropSync, Vue, Watch } from 'vue-property-decorator';
 import { SelectItem, TableMemberEntity } from '@/common/types';
 import { deleteApi, getCodesApi, patchApi, postApi } from '@/utils/apis';
 import _ from 'lodash';
@@ -177,8 +177,8 @@ const pbkdf2 = require('pbkdf2');
   components: { DatetimePicker },
 })
 export default class extends Vue {
+  @PropSync('dialog', { required: true, type: Boolean }) syncedDialog!: boolean;
   @Prop({ required: true }) readonly editItem!: TableMemberEntity;
-  @Prop({ required: true }) readonly mode!: string | null;
 
   readonly ENDPOINT_URL: string = 'admin/members/';
   loading: boolean = false;
@@ -186,9 +186,24 @@ export default class extends Vue {
   password2: string | null = null;
   show1: boolean = false;
   show2: boolean = false;
+  isNew: boolean = false;
 
   async mounted() {
     this.AUTHORITY = await getCodesApi('AUTHORITY');
+  }
+
+  @Watch('syncedDialog', { immediate: true })
+  watchDialog(val: boolean) {
+    if (val) {
+      this.password2 = '';
+      this.show1 = false;
+      this.show2 = false;
+      this.isNew = !this.editItem.id;
+      this.$refs.observer && (this.$refs.observer as any).reset();
+      this.$modal.show('MemberEditDialog');
+    } else {
+      this.$modal.hide('MemberEditDialog');
+    }
   }
 
   async save() {
@@ -196,7 +211,7 @@ export default class extends Vue {
     if (!isValid) {
       return;
     }
-    this.mode === '수정' ? await this.patch() : await this.create();
+    this.isNew ? await this.create() : await this.patch();
   }
 
   async create() {
@@ -214,7 +229,7 @@ export default class extends Vue {
     this.loading = false;
     if (_.startsWith(response.code, `S`)) {
       await this.$store.dispatch('setMemberCodes');
-      this.$modal.hide('MemberEditDialog');
+      this.syncedDialog = false;
       this.$emit('finished');
     }
   }
@@ -238,7 +253,7 @@ export default class extends Vue {
         await this.$store.dispatch('setUser');
       }
       await this.$store.dispatch('setMemberCodes');
-      this.$modal.hide('MemberEditDialog');
+      this.syncedDialog = false;
       this.$emit('finished');
     }
   }

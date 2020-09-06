@@ -3,9 +3,9 @@
     <v-dialog v-model="syncedDialog" persistent max-width="50%">
       <v-card :loading="loading">
         <v-card-title class="py-2 modal-header">
-          <v-icon v-if="mode === '추가'">mdi-pencil-plus-outline</v-icon>
+          <v-icon v-if="isNew">mdi-pencil-plus-outline</v-icon>
           <v-icon v-else>mdi-pencil-outline</v-icon>
-          시스템코드관리-MST {{ mode }}
+          코드그룹 {{ isNew ? '추가' : '수정' }}
           <v-spacer />
           <v-btn text small @click="syncedDialog = false">
             <v-icon> mdi-window-close</v-icon>
@@ -25,7 +25,7 @@
                     label="*그룹코드"
                     :counter="32"
                     :error-messages="errors"
-                    :disabled="mode !== '추가'"
+                    :disabled="!isNew"
                   />
                 </ValidationProvider>
               </v-col>
@@ -76,14 +76,15 @@ import { confirmDelete } from '@/utils/alerts';
 export default class extends Vue {
   @PropSync('dialog', { required: true, type: Boolean }) syncedDialog!: boolean;
   @Prop({ required: true }) readonly editItem!: TableCodeGroupEntity;
-  @Prop({ required: true }) readonly mode!: string | null;
 
   readonly ENDPOINT_URL = 'admin/codeGroups/';
   loading: boolean = false;
+  isNew: boolean = false;
 
   @Watch('dialog')
   watchDialog(val: boolean) {
     if (val) {
+      this.isNew = !this.editItem.codeGroup;
       this.$refs.observer && (this.$refs.observer as any).reset();
     }
   }
@@ -93,7 +94,7 @@ export default class extends Vue {
     if (!isValid) {
       return;
     }
-    this.mode === '수정' ? await this.patch() : await this.create();
+    this.isNew ? await this.create() : await this.patch();
   }
 
   async create() {

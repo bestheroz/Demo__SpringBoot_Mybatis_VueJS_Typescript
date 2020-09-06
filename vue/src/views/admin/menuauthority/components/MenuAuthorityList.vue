@@ -78,7 +78,6 @@ export default class extends Vue {
   @Prop({ required: true }) readonly height!: number;
   readonly envs: typeof envs = envs;
   readonly ENDPOINT_URL = 'admin/menuAuthority/';
-  mode: string | null = null;
   items: AdminMenuAuthorityVO[] = [];
   loading: boolean = false;
 
