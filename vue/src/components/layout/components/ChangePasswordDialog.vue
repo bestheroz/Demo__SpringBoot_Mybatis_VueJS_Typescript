@@ -11,7 +11,6 @@
     >
       <v-card :loading="loading">
         <v-card-title class="py-2 modal-header">
-          <v-icon>mdi-key-change</v-icon>
           비밀번호 변경
           <v-spacer />
           <v-btn text small :ripple="false" style="cursor: default;">
@@ -124,7 +123,12 @@ export default class extends Vue {
   @Watch('syncedDialog')
   watchDialog(val: boolean) {
     if (val) {
-      this.password2 = '';
+      this.oldPassword = null;
+      this.password = null;
+      this.password2 = null;
+      this.show1 = false;
+      this.show2 = false;
+      this.show3 = false;
       this.$refs.observer && (this.$refs.observer as any).reset();
       this.$modal.show('ChangePasswordDialog');
     } else {
