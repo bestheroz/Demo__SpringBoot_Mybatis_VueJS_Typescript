@@ -20,24 +20,24 @@
         <template v-slot:top>
           <button-set
             add-button
-            delete-button
-            reload-button
             @click:add="
               () => {
-                mode = '추가';
                 editItem = {
                   expired: dayjs().add(1, 'year').toDate(),
                   timeout: 7200,
                 };
-                $modal.show('MemberEditDialog');
+                dialog = true;
               }
             "
+            delete-button
+            :delete-disabled="!selected || selected.length < 1"
             @click:delete="
               () => {
                 editItem = selected[0];
                 $refs.refEditDialog.delete();
               }
             "
+            reload-button
             @click:reload="getList"
           />
         </template>
@@ -53,9 +53,8 @@
             :style="{ 'font-weight': 'bold' }"
             @click="
               () => {
-                mode = '수정';
                 editItem = { ...item, password: undefined };
-                $modal.show('MemberEditDialog');
+                dialog = true;
               }
             "
           >
@@ -93,7 +92,7 @@
       <member-edit-dialog
         ref="refEditDialog"
         :edit-item="editItem"
-        :mode="mode"
+        :dialog.sync="dialog"
         @finished="getList"
       />
     </v-card-text>
@@ -123,7 +122,6 @@ export default class extends Vue {
   readonly envs: typeof envs = envs;
   readonly dayjs: typeof dayjs = dayjs;
   readonly ENDPOINT_URL: string = 'admin/members/';
-  mode: string | null = null;
   sortBy: string[] = ['authority'];
   sortDesc: boolean[] = [true];
   items: TableMemberEntity[] = [];
@@ -131,6 +129,8 @@ export default class extends Vue {
   editItem: TableMemberEntity = Object.create(null);
   selected: TableMemberEntity[] = [];
   loading: boolean = false;
+  dialog: boolean = false;
+
   AUTHORITY: SelectItem[] | null = null;
 
   headers: DataTableHeader[] = [

@@ -16,7 +16,7 @@
           <v-btn text small :ripple="false" style="cursor: default;">
             <v-icon> mdi-cursor-move</v-icon>
           </v-btn>
-          <v-btn text small @click="$modal.hide('EditMeDialog')">
+          <v-btn text small @click="syncedDialog = false">
             <v-icon> mdi-window-close</v-icon>
           </v-btn>
         </v-card-title>
@@ -65,7 +65,7 @@
               <v-col cols="5" class="text-right pt-7">
                 <v-btn
                   color="button-edit"
-                  @click="$modal.show('ChangePasswordDialog')"
+                  @click="newPasswordDialog = true"
                   outlined
                   small
                 >
@@ -85,7 +85,7 @@
         <v-divider />
         <v-card-actions class="py-1">
           <v-spacer />
-          <v-btn text @click="$modal.hide('EditMeDialog')">
+          <v-btn text @click="syncedDialog = false">
             <v-icon> mdi-window-close</v-icon>
             닫기
           </v-btn>
@@ -96,12 +96,12 @@
         </v-card-actions>
       </v-card>
     </modal>
-    <change-password-dialog />
+    <change-password-dialog :dialog.sync="newPasswordDialog" />
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, PropSync, Vue, Watch } from 'vue-property-decorator';
 import { TableMemberEntity } from '@/common/types';
 import { getApi, patchApi } from '@/utils/apis';
 import _ from 'lodash';
@@ -115,16 +115,29 @@ const pbkdf2 = require('pbkdf2');
   components: { ChangePasswordDialog, DatetimePicker },
 })
 export default class extends Vue {
+  @PropSync('dialog', { required: true, type: Boolean }) syncedDialog!: boolean;
+
   readonly ENDPOINT_URL: string = `members/`;
   editItem: TableMemberEntity = Object.create(null);
   loading: boolean = false;
   show1: boolean = false;
+  newPasswordDialog: boolean = false;
 
   async mounted() {
     const response = await getApi<TableMemberEntity>(
       `${this.ENDPOINT_URL}mine`,
     );
     this.editItem = response.data!;
+  }
+
+  @Watch('syncedDialog')
+  watchDialog(val: boolean) {
+    if (val) {
+      this.$refs.observer && (this.$refs.observer as any).reset();
+      this.$modal.show('EditMeDialog');
+    } else {
+      this.$modal.hide('EditMeDialog');
+    }
   }
 
   async save() {
@@ -146,7 +159,7 @@ export default class extends Vue {
     if (_.startsWith(response.code, `S`)) {
       await this.$store.dispatch('setUser');
       await this.$store.dispatch('setMemberCodes');
-      this.$modal.hide('EditMeDialog');
+      this.syncedDialog = false;
       this.$emit('finished');
     }
   }

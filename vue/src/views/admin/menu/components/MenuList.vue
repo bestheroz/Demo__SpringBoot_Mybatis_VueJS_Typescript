@@ -39,11 +39,10 @@
             small
             @click="
               () => {
-                mode = '추가';
                 editItem = {
                   parentId: item.id,
                 };
-                $modal.show('MenuEditDialog');
+                dialog = true;
               }
             "
             :disabled="item.level === 3"
@@ -58,9 +57,8 @@
             :disabled="item.name === '///'"
             @click="
               () => {
-                mode = '수정';
-                editItem = Object.assign(Object.create(null), item);
-                $modal.show('MenuEditDialog');
+                editItem = { ...item };
+                dialog = true;
               }
             "
           >
@@ -73,7 +71,7 @@
             small
             @click="
               () => {
-                editItem = item;
+                editItem = { ...item };
                 $refs.refEditDialog.delete();
               }
             "
@@ -87,7 +85,7 @@
     <menu-edit-dialog
       ref="refEditDialog"
       :edit-item="editItem"
-      :mode="mode"
+      :dialog.sync="dialog"
       @finished="getList"
     />
   </div>
@@ -116,11 +114,11 @@ export default class extends Vue {
   @Prop({ required: true }) readonly height!: number;
   readonly envs: typeof envs = envs;
   readonly ENDPOINT_URL: string = 'admin/menus/';
-  mode: string | null = null;
   items: TableMenuEntity[] = [];
   editItem: TableMenuEntity = Object.create(null);
   selected: TableMenuEntity[] = [];
   loading: boolean = false;
+  dialog: boolean = false;
 
   MENU_TYPE: SelectItem[] | null = null;
 

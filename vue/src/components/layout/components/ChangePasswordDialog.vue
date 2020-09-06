@@ -16,7 +16,7 @@
           <v-btn text small :ripple="false" style="cursor: default;">
             <v-icon> mdi-cursor-move</v-icon>
           </v-btn>
-          <v-btn text small @click="$modal.hide('ChangePasswordDialog')">
+          <v-btn text small @click="syncedDialog = false">
             <v-icon> mdi-window-close</v-icon>
           </v-btn>
         </v-card-title>
@@ -83,7 +83,7 @@
         <v-divider />
         <v-card-actions class="py-1">
           <v-spacer />
-          <v-btn text @click="$modal.hide('ChangePasswordDialog')">
+          <v-btn text @click="syncedDialog = false">
             <v-icon> mdi-window-close</v-icon>
             닫기
           </v-btn>
@@ -98,7 +98,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, PropSync, Vue, Watch } from 'vue-property-decorator';
 import { postApi } from '@/utils/apis';
 import _ from 'lodash';
 
@@ -109,6 +109,8 @@ const pbkdf2 = require('pbkdf2');
   components: {},
 })
 export default class extends Vue {
+  @PropSync('dialog', { required: true, type: Boolean }) syncedDialog!: boolean;
+
   readonly ENDPOINT_URL: string = `members/`;
   loading: boolean = false;
   oldPassword: string | null = null;
@@ -117,6 +119,17 @@ export default class extends Vue {
   show1: boolean = false;
   show2: boolean = false;
   show3: boolean = false;
+
+  @Watch('syncedDialog')
+  watchDialog(val: boolean) {
+    if (val) {
+      this.password2 = '';
+      this.$refs.observer && (this.$refs.observer as any).reset();
+      this.$modal.show('ChangePasswordDialog');
+    } else {
+      this.$modal.hide('ChangePasswordDialog');
+    }
+  }
 
   async save() {
     const isValid = await (this.$refs.observer as any).validate();
@@ -138,7 +151,7 @@ export default class extends Vue {
     });
     this.loading = false;
     if (_.startsWith(response.code, `S`)) {
-      this.$modal.hide('ChangePasswordDialog');
+      this.syncedDialog = false;
       this.$emit('finished');
     }
   }
