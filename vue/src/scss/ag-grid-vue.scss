@@ -1,5 +1,162 @@
-.text-link {
-  font-weight: bold;
-  color: var(--v-primary-base);
-  cursor: pointer;
+.vue-grid-item {
+  .ag-root-wrapper {
+    background-color: var(--v-table-background-base) !important;
+  }
+
+  .ag-root {
+    .ag-header {
+      height: 61px !important;
+      min-height: 61px !important;
+    }
+  }
+
+  .ag-header-row {
+    background-color: var(--v-table-header-base);
+    height: 30px !important;
+
+    .ag-header-cell {
+      //height: 20px;
+      padding-left: 8px;
+      padding-right: 4px;
+
+      .ag-header-cell-label {
+        height: 30px;
+
+        .ag-header-cell-text {
+          color: var(--v-table-font-base);
+        }
+
+        .ag-header-icon {
+          color: var(--v-table-font-base);
+        }
+      }
+    }
+  }
+
+  .ag-header-row-floating-filter {
+    top: 30px !important;
+
+    .ag-header-cell {
+      padding-left: 4px;
+      padding-right: 4px;
+
+      .ag-header-cell-resize::after {
+        height: 45%;
+      }
+
+      .ag-floating-filter-full-body {
+        .v-input {
+          background-color: var(--ag-background-color, #fff);
+          border-radius: 3px;
+
+          .v-input__control {
+            height: 24px;
+
+            .v-input__slot {
+              height: 24px;
+              min-height: 24px;
+              padding-left: 6px;
+              padding-right: 0;
+
+              fieldset {
+                height: 29px;
+                border-color: var(--ag-input-border-color, var(--ag-border-color, #babfc7));
+              }
+
+              .v-select__slot {
+                height: 24px;
+                width: 95%;
+
+                :nth-child(3) {
+                  display: none;
+                }
+
+                .v-input__append-inner {
+                  margin-top: 0;
+                  padding-left: 0;
+                  width: 20px;
+
+                  .v-input__icon {
+                    width: 20px;
+
+                    i {
+                      width: 20px;
+                    }
+                  }
+
+                  .v-input__icon--clear {
+                    width: 20px;
+
+                    .v-icon {
+                      font-size: 16px;
+                    }
+                  }
+                }
+
+
+                .v-select__selections {
+                  .v-select__selection {
+                    font-size: 13px;
+                    margin-right: 0;
+                    width: 100%;
+                    max-width: 100%;
+                  }
+
+                  input {
+                    max-width: 0;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .ag-body-viewport {
+    .ag-row {
+      border-color: var(--v-table-border-base);
+      background-color: var(--v-table-background-base) !important;
+      color: var(--v-table-font-base) !important;
+
+      .ag-cell {
+        border-right: thin solid var(--v-table-border-base);
+        padding-left: 8px;
+        padding-right: 8px;
+
+        :last-child {
+          border-right: 0;
+        }
+
+        .ag-cell-value {
+          word-break: break-all;
+        }
+
+        .ag-checkbox {
+          .ag-checkbox-input-wrapper.ag-checked::after {
+            color: var(--v-primary-base) !important;
+          }
+        }
+      }
+
+      .ag-cell.text-link {
+        font-weight: bold;
+        color: var(--v-primary-base);
+        cursor: pointer;
+      }
+    }
+  }
+
+  .ag-paging-panel {
+    color: var(--v-table-font-base) !important;
+
+    .ag-paging-button-wrapper {
+      color: var(--v-table-font-base) !important;
+    }
+
+    .ag-paging-button-wrapper.ag-disabled {
+      color: var(--v-button-disabled-base) !important;
+    }
+  }
 }

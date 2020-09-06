@@ -7,6 +7,8 @@
         { value: 'false', text: '아니요' },
       ]"
       outlined
+      hide-details
+      dense
       clearable
     />
   </div>

@@ -1,6 +1,12 @@
 <template>
   <span>
-    <v-checkbox v-model="params.value" readonly hide-details class="mt-1" />
+    <v-checkbox
+      v-model="params.value"
+      readonly
+      hide-details
+      class="mt-1"
+      :ripple="false"
+    />
   </span>
 </template>
 

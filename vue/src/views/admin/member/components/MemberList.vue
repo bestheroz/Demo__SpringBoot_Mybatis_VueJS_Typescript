@@ -25,17 +25,9 @@
         class="ag-theme-alpine"
         :columnDefs="columnDefs"
         :rowData="items"
-        @cell-clicked="
-          (params) => {
-            selected = gridOptions.api.getSelectedRows();
-            if (params.column.colId === 'id') {
-              mode = '수정';
-              editItem = {
-                ...selected[0],
-                password: undefined,
-              };
-              $modal.show('MemberEditDialog');
-            }
+        @selection-changed="
+          (event) => {
+            selected = event.api.getSelectedRows();
           }
         "
       >
@@ -63,7 +55,6 @@ import {
   CellClickedEvent,
   ColDef,
   GridOptions,
-  RowSelectedEvent,
   ValueFormatterParams,
   ValueGetterParams,
 } from 'ag-grid-community';
@@ -93,7 +84,7 @@ export default class extends Vue {
   AUTHORITY: SelectItem[] | null = null;
   gridOptions: GridOptions = {
     defaultColDef: {
-      minWidth: 100,
+      minWidth: 70,
       filter: true,
       sortable: true,
       resizable: true,
@@ -114,15 +105,11 @@ export default class extends Vue {
       RenderColumnCheckbox: RenderColumnCheckbox,
     },
     onGridSizeChanged: onGridSizeChanged,
-    onRowSelected: (event: RowSelectedEvent) => {
-      this.selected = event.data;
-    },
   };
 
   columnDefs: ColDef[] = [];
 
-  async mounted() {
-    this.AUTHORITY = await getCodesApi('AUTHORITY');
+  beforeMount() {
     this.columnDefs = [
       {
         headerName: '사용자아이디',
@@ -136,6 +123,9 @@ export default class extends Vue {
             password: undefined,
           };
           this.$modal.show('MemberEditDialog');
+        },
+        checkboxSelection: (params: any) => {
+          return params.columnApi.getRowGroupColumns().length === 0;
         },
       },
       {
@@ -157,7 +147,7 @@ export default class extends Vue {
       {
         headerName: '만료일',
         field: 'expired',
-        minWidth: 180,
+        minWidth: 150,
         cellClass: ['text-center'],
         valueGetter: (params: ValueGetterParams) => {
           return formatDatetime(params.data.expired);
@@ -166,7 +156,7 @@ export default class extends Vue {
       {
         headerName: '사용 가능',
         field: 'available',
-        minWidth: 120,
+        minWidth: 70,
         floatingFilterComponent: 'FloatingFilterSwitch',
         floatingFilterComponentParams: {
           suppressFilterButton: true,
@@ -186,7 +176,7 @@ export default class extends Vue {
       {
         headerName: '작업 일시',
         field: 'updated',
-        minWidth: 180,
+        minWidth: 150,
         cellClass: ['text-center'],
         sort: 'desc',
         valueGetter: (params: ValueGetterParams) => {
@@ -196,13 +186,17 @@ export default class extends Vue {
       {
         headerName: '작업자',
         field: 'updatedBy',
-        minWidth: 150,
+        minWidth: 130,
         type: [],
         valueFormatter: (params: ValueFormatterParams) => {
           return getMemberNm(params.value);
         },
       },
     ];
+  }
+
+  async mounted() {
+    this.AUTHORITY = await getCodesApi('AUTHORITY');
     await this.getList();
   }
 
