@@ -20,7 +20,7 @@
         <template v-slot:activator="{ on }">
           <v-btn
             fab
-            :dark="$vuetify.theme.dark || !disabled"
+            dark
             x-small
             color="button-reload"
             @click="clickReload"
@@ -36,7 +36,7 @@
         <template v-slot:activator="{ on }">
           <v-btn
             fab
-            :dark="$vuetify.theme.dark || !disabled"
+            dark
             x-small
             color="primary"
             @click="clickSave"
@@ -52,7 +52,7 @@
         <template v-slot:activator="{ on }">
           <v-btn
             fab
-            :dark="$vuetify.theme.dark || !disabled"
+            dark
             x-small
             color="button-add"
             @click="clickExcel"
@@ -68,7 +68,7 @@
         <template v-slot:activator="{ on }">
           <v-btn
             fab
-            :dark="$vuetify.theme.dark || !disabled"
+            dark
             x-small
             color="button-delete"
             @click="clickDelete"
@@ -84,7 +84,7 @@
         <template v-slot:activator="{ on }">
           <v-btn
             fab
-            :dark="$vuetify.theme.dark || !disabled"
+            dark
             x-small
             color="button-add"
             @click="clickAdd"
@@ -100,7 +100,7 @@
         <template v-slot:activator="{ on }">
           <v-btn
             fab
-            :dark="$vuetify.theme.dark || !disabled"
+            dark
             x-small
             color="button-default"
             @click="clickInquiry"
