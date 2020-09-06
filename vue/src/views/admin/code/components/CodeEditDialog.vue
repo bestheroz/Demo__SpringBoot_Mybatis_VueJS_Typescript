@@ -133,12 +133,8 @@ export default class extends Vue {
 
   readonly ENDPOINT_URL = 'admin/codes/';
   AUTHORITY: SelectItem[] | null = null;
-
+  isNew: boolean = false;
   loading: boolean = false;
-
-  get isNew() {
-    return !this.editItem.code;
-  }
 
   async mounted() {
     this.AUTHORITY = await getCodesApi('AUTHORITY');
@@ -147,6 +143,7 @@ export default class extends Vue {
   @Watch('dialog')
   watchDialog(val: boolean) {
     if (val) {
+      this.isNew = !this.editItem.code;
       this.$refs.observer && (this.$refs.observer as any).reset();
     }
   }

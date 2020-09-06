@@ -186,10 +186,7 @@ export default class extends Vue {
   password2: string | null = null;
   show1: boolean = false;
   show2: boolean = false;
-
-  get isNew() {
-    return !this.editItem.id;
-  }
+  isNew: boolean = false;
 
   async mounted() {
     this.AUTHORITY = await getCodesApi('AUTHORITY');
@@ -199,6 +196,7 @@ export default class extends Vue {
   watchDialog(val: boolean) {
     if (val) {
       this.password2 = '';
+      this.isNew = !this.editItem.id;
       this.$refs.observer && (this.$refs.observer as any).reset();
       this.$modal.show('MemberEditDialog');
     } else {

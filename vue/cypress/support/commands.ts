@@ -135,7 +135,8 @@ Cypress.Commands.add('setSelectValue', (label: string, value: string) => {
           });
         } else {
           cy.root()
-            .parent('div.v-application')
+            .parentsUntil('body')
+            .last()
             .within(() => {
               cy.get(`#${id} div.v-list-item__title`).contains(value).click();
             });

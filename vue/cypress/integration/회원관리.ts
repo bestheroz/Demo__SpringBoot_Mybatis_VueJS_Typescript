@@ -19,7 +19,7 @@ describe('관리자>회원관리', () => {
     cy.server();
     cy.route('POST', '**/api/admin/members/').as('save');
     cy.clickFunction(0, 2);
-    cy.get('div.v-dialog__content--active').within(() => {
+    cy.get('div.vm--modal').within(() => {
       cy.setInputValue('사용자아이디', 'tester')
         .setInputValue('사용자명', '테스터')
         .setSelectValue('권한', '손님')
@@ -60,7 +60,7 @@ describe('관리자>회원관리', () => {
     cy.server();
     cy.route('PATCH', '**/api/admin/members/tester/').as('save');
     cy.get('td>a').contains('tester').click();
-    cy.get('div.v-dialog__content--active').within(() => {
+    cy.get('div.vm--modal').within(() => {
       cy.clickSelection('사용안함');
       cy.get('button').contains('저장').click();
     });
@@ -90,7 +90,7 @@ describe('관리자>회원관리', () => {
     );
     cy.route('PATCH', '**/api/admin/members/tester').as('save');
     cy.get('td>a').contains('tester').click();
-    cy.get('div.v-dialog__content--active').within(() => {
+    cy.get('div.vm--modal').within(() => {
       cy.get('button').contains('비밀번호 초기화').click();
       cy.wait('@resetPassword')
         .wait(4000)
@@ -110,7 +110,7 @@ describe('관리자>회원관리', () => {
     cy.contains(' Go').click();
     cy.wait('@login');
     cy.get('div.v-dialog--active').within(() => {
-      cy.get('div.v-alert__content').contains('비밀번호 초기화');
+      cy.get('div.v-card__title').contains('비밀번호 초기화');
       cy.setInputValue('비밀번호', 'tester1234').setInputValue(
         '비밀번호 확인',
         'tester1234',

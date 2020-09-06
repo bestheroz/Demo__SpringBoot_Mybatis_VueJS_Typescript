@@ -129,10 +129,7 @@ export default class extends Vue {
   readonly ENDPOINT_URL = 'admin/menus/';
   loading: boolean = false;
   MENU_TYPE: SelectItem[] | null = null;
-
-  get isNew() {
-    return !this.editItem.id;
-  }
+  isNew: boolean = false;
 
   async mounted() {
     this.MENU_TYPE = await getCodesApi(`MENU_TYPE`);
@@ -141,6 +138,7 @@ export default class extends Vue {
   @Watch('syncedDialog')
   watchDialog(val: boolean) {
     if (val) {
+      this.isNew = !this.editItem.id;
       this.$refs.observer && (this.$refs.observer as any).reset();
       this.$modal.show('MenuEditDialog');
     } else {

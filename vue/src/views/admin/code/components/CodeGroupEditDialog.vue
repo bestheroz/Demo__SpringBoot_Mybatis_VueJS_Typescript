@@ -79,14 +79,12 @@ export default class extends Vue {
 
   readonly ENDPOINT_URL = 'admin/codeGroups/';
   loading: boolean = false;
-
-  get isNew() {
-    return !this.editItem.codeGroup;
-  }
+  isNew: boolean = false;
 
   @Watch('dialog')
   watchDialog(val: boolean) {
     if (val) {
+      this.isNew = !this.editItem.codeGroup;
       this.$refs.observer && (this.$refs.observer as any).reset();
     }
   }
