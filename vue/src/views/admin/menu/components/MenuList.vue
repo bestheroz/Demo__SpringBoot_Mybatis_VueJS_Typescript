@@ -11,6 +11,7 @@
         disable-filtering
         disable-pagination
         dense
+        hide-default-footer
         :height="height"
       >
         <template v-slot:top>

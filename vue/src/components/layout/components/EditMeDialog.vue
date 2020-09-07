@@ -6,7 +6,7 @@
       width="25%"
       height="auto"
       :shiftX="0.97"
-      :shiftY="0.05"
+      :shiftY="0.15"
       :clickToClose="false"
     >
       <v-card :loading="loading">

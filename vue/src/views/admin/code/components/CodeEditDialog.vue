@@ -1,12 +1,23 @@
 <template>
   <div>
-    <v-dialog v-model="syncedDialog" persistent max-width="50%">
+    <modal
+      name="CodeEditDialog"
+      draggable
+      width="50%"
+      height="auto"
+      :shiftX="0.4"
+      :shiftY="0.1"
+      :clickToClose="false"
+    >
       <v-card :loading="loading">
         <v-card-title class="py-2 modal-header">
           <v-icon v-if="isNew">mdi-pencil-plus-outline</v-icon>
           <v-icon v-else>mdi-pencil-outline</v-icon>
           코드 {{ isNew ? '추가' : '수정' }}
           <v-spacer />
+          <v-btn text small :ripple="false" style="cursor: default;">
+            <v-icon> mdi-cursor-move</v-icon>
+          </v-btn>
           <v-btn text small @click="syncedDialog = false">
             <v-icon> mdi-window-close</v-icon>
           </v-btn>
@@ -113,7 +124,7 @@
           </v-btn>
         </v-card-actions>
       </v-card>
-    </v-dialog>
+    </modal>
   </div>
 </template>
 
@@ -140,11 +151,14 @@ export default class extends Vue {
     this.AUTHORITY = await getCodesApi('AUTHORITY');
   }
 
-  @Watch('dialog')
+  @Watch('syncedDialog', { immediate: true })
   watchDialog(val: boolean) {
     if (val) {
       this.isNew = !this.editItem.code;
       this.$refs.observer && (this.$refs.observer as any).reset();
+      this.$modal.show('CodeEditDialog');
+    } else {
+      this.$modal.hide('CodeEditDialog');
     }
   }
 
