@@ -48,7 +48,8 @@ axiosInstance.interceptors.response.use(
         // 로컬환경때문에 추가
         return axios.request((await apiRefreshToken(error)).config);
       }
-      if ([403, 404, 500].includes(error.response.status)) {
+      // api 404는 그냥... 로그보면서 판단하자
+      if ([403, 500].includes(error.response.status)) {
         await errorPage(error.response.status);
         return;
       }
