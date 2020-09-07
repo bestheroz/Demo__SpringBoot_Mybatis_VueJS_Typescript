@@ -1,5 +1,5 @@
-import com.aot.standard.context.db.checker.DbTableVOCheckerContext;
-import com.aot.standard.context.web.WebConfig;
+import com.github.bestheroz.standard.context.db.checker.DbTableVOCheckerContext;
+import com.github.bestheroz.standard.context.web.WebConfiguration;
 import com.google.common.base.CaseFormat;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -16,7 +16,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 
 @Slf4j
-@SpringBootTest(classes = {WebConfig.class})
+@SpringBootTest(classes = {WebConfiguration.class})
 @AutoConfigureMybatis
 public class TestCreateTableEntity {
     @Qualifier("dataSource") @Resource
@@ -31,14 +31,17 @@ public class TestCreateTableEntity {
                 final ResultSetMetaData metaInfo = rs.getMetaData();
                 System.out.println("Table" + CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, tableName) + "Entity\n");
                 // 1. VO만들기
-                final StringBuilder voSb = new StringBuilder();
+                final StringBuilder entityString = new StringBuilder();
+                final StringBuilder esString = new StringBuilder();
                 for (int i = 0; i < metaInfo.getColumnCount(); i++) {
                     final String fieldType;
+                    final String tsType;
                     final String columnTypeName = metaInfo.getColumnTypeName(i + 1);
                     final String columnName = metaInfo.getColumnName(i + 1);
                     final String camelColumnName = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, columnName);
                     if (DbTableVOCheckerContext.STRING_JDBC_TYPE_SET.contains(columnTypeName)) {
                         fieldType = "String";
+                        tsType = "string";
                     } else if (StringUtils.equalsAny(columnTypeName, "NUMBER", "DECIMAL", "BIGINT UNSIGNED", "BIGINT", "SMALLINT UNSIGNED", "SMALLINT")) {
                         if (metaInfo.getScale(i + 1) > 0) { // 소수점이 있으면
                             fieldType = "Double";
@@ -55,22 +58,31 @@ public class TestCreateTableEntity {
                                 // fieldType = "Double";
                             }
                         }
+                        tsType = "number";
                     } else if (DbTableVOCheckerContext.NUMBER_JDBC_TYPE_SET.contains(columnTypeName)) {
                         fieldType = "Integer";
+                        tsType = "number";
                     } else if (DbTableVOCheckerContext.DATETIME_JDBC_TYPE_SET.contains(columnTypeName)) {
                         fieldType = DbTableVOCheckerContext.DEFAULT_DATE_TYPE;
+                        tsType = "Date | number |";
                     } else if (DbTableVOCheckerContext.BOOLEAN_JDBC_TYPE_SET.contains(columnTypeName)) {
                         fieldType = "Boolean";
+                        tsType = "boolean";
                     } else if (DbTableVOCheckerContext.BYTE_JDBC_TYPE_SET.contains(columnTypeName)) {
                         fieldType = "Byte[];";
+                        tsType = "any[]";
                         log.debug("private Byte[] {}{}", camelColumnName, "; // XXX: spotbugs 피하기 : Arrays.copyOf(value, value.length)");
                     } else {
                         fieldType = "Unknown";
+                        tsType = "unknown";
                         log.warn("케이스 빠짐 {} : {}", columnName, columnTypeName);
                     }
-                    voSb.append("private ").append(fieldType).append(" ").append(camelColumnName).append(";\n");
+                    entityString.append("private ").append(fieldType).append(" ").append(camelColumnName).append(";\n");
+                    esString.append(camelColumnName).append("?: ").append(tsType).append(" | null;\n");
                 }
-                System.out.println(voSb);
+                System.out.println(entityString);
+                System.out.println("\n\n\n");
+                System.out.println(esString);
             }
             System.out.println();
         } catch (final Throwable e) {
