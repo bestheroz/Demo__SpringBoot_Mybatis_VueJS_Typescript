@@ -17,6 +17,7 @@ export interface DataTableHeader {
   // 아래는 filter 를 위한 property 추가
   filterType?: 'input' | 'select' | 'switch';
   filterSelectItem?: SelectItem[] | null;
+  filterDefaultValue?: string | null;
 }
 
 // export interface Pagination {

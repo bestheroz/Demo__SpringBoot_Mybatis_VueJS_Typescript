@@ -9,7 +9,7 @@
         dense
         clearable
         hide-details
-        style="width: 95%"
+        style="width: 95%;"
         v-if="
           data.filterable !== false &&
           data.filterType === 'select' &&
@@ -23,7 +23,7 @@
         dense
         clearable
         hide-details
-        style="width: 95%"
+        style="width: 95%;"
         v-else-if="data.filterable !== false && data.filterType === 'switch'"
       />
       <v-text-field
@@ -32,7 +32,7 @@
         dense
         hide-details
         clearable
-        style="width: 95%"
+        style="width: 95%;"
         v-else-if="data.filterable !== false"
       />
     </td>
@@ -63,7 +63,7 @@ export default class extends Vue {
     const filterMap: string[] = [];
     val.forEach((value: DataTableHeader) => {
       filterMap.push(value.value);
-      filter.push('');
+      filter.push(value.filterDefaultValue || '');
       value.filterSelectItem &&
         value.filterSelectItem!.forEach((item: SelectItem) => {
           item.text = item.text || '-';

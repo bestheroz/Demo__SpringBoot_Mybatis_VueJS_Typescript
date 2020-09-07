@@ -61,7 +61,7 @@ export default class extends Vue {
     const filterMap: string[] = [];
     val.forEach((value: DataTableHeader) => {
       filterMap.push(value.value);
-      filter.push('');
+      filter.push(value.filterDefaultValue || '');
       value.filterSelectItem &&
         value.filterSelectItem!.forEach((item: SelectItem) => {
           item.text = item.text || '-';
