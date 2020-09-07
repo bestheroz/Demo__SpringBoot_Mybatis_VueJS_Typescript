@@ -118,6 +118,7 @@
 
 <script lang="ts">
 import { Component, Emit, Prop, Vue } from 'vue-property-decorator';
+import colors from 'vuetify/lib/util/colors';
 
 @Component({ name: 'ButtonSet' })
 export default class extends Vue {
