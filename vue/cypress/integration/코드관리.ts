@@ -18,7 +18,7 @@ describe('관리자>코드관리', () => {
     cy.server();
     cy.route('POST', '**/api/admin/codeGroups/').as('save');
     cy.clickFunction(0, 2);
-    cy.get('div.v-dialog__content--active').within(() => {
+    cy.get('div.vm--modal').within(() => {
       cy.setInputAutoValue(['그룹코드', '그룹코드명']);
       cy.get('button').contains('저장').click();
     });
@@ -36,7 +36,7 @@ describe('관리자>코드관리', () => {
       .click();
     cy.wait(200).clickFunction(1, 2);
 
-    cy.get('div.v-dialog__content--active').within(() => {
+    cy.get('div.vm--modal').within(() => {
       cy.setInputValue('상세 코드', 'TEST_CODE_1');
       cy.setInputAutoValue(['상세 코드명']);
       cy.setSelectValue('권한', '마스터 개발자');
@@ -51,7 +51,7 @@ describe('관리자>코드관리', () => {
     cy.route('POST', '**/api/admin/codes/(cypress)그룹코드').as('save');
     cy.clickFunction(1, 2);
 
-    cy.get('div.v-dialog__content--active').within(() => {
+    cy.get('div.vm--modal').within(() => {
       cy.setInputValue('상세 코드', 'TEST_CODE_2');
       cy.setInputAutoValue(['상세 코드명']);
       cy.setSelectValue('권한', '마스터 개발자');
@@ -65,7 +65,7 @@ describe('관리자>코드관리', () => {
     cy.server();
     cy.route('PATCH', '**/api/admin/codeGroups/(cypress)그룹코드').as('save');
     cy.get('tr>td>a').contains('(cypress)그룹코드').click();
-    cy.get('div.v-dialog__content--active').within(() => {
+    cy.get('div.vm--modal').within(() => {
       cy.setInputValue('그룹코드명', '(cypress)코드 그룹_수정');
       cy.get('button').contains('저장').click();
     });
@@ -84,7 +84,7 @@ describe('관리자>코드관리', () => {
       .children('div.v-simple-checkbox')
       .click();
     cy.wait(200).get('tr>td>a').contains('TEST_CODE_1').click();
-    cy.get('div.v-dialog__content--active').within(() => {
+    cy.get('div.vm--modal').within(() => {
       cy.setInputValue('상세 코드명', '(cypress)하위코드1111');
       cy.setSelectValue('권한', '마스터 개발자');
       cy.setInputValue('정렬순서', '9992');
@@ -113,7 +113,7 @@ describe('관리자>코드관리', () => {
       .children('a')
       .click();
     cy.wait(200)
-      .get('div.v-dialog__content--active')
+      .get('div.vm--modal')
       .within(() => {
         cy.setInputValue('상세 코드명', '페이쥐_테스트');
         cy.get('button').contains('저장').click();
@@ -145,7 +145,7 @@ describe('관리자>코드관리', () => {
       .prev()
       .children('a')
       .click();
-    cy.get('div.v-dialog__content--active').within(() => {
+    cy.get('div.vm--modal').within(() => {
       cy.setInputValue('상세 코드명', '페이지');
       cy.get('button').contains('저장').click();
     });
