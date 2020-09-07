@@ -48,7 +48,6 @@ export default class extends Vue {
         if (drawer.children && drawer.children.length > 0) {
           const find = drawer.children.find((child: DrawerItem) => {
             if (child.to) {
-              this.$store.dispatch('setLayoutMenuId', child.id);
               return child.to === this.$route.fullPath;
             }
           });
@@ -59,7 +58,6 @@ export default class extends Vue {
     if (!result) {
       errorPage(403);
     }
-    this.$store.dispatch('setLayoutMenuId', result.id);
     return result;
   }
 

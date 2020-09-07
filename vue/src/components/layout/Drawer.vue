@@ -50,25 +50,13 @@
     <template v-slot:append>
       <div class="ma-2">
         <v-row no-gutters>
-          <v-col cols="8">
-            <v-btn outlined @click="logout">
+          <v-col cols="10">
+            <v-btn outlined @click="logout" class="px-10">
               <v-icon>mdi-logout</v-icon>
               Logout
             </v-btn>
           </v-col>
-          <v-col cols="4" class="text-right">
-            <v-btn
-              icon
-              outlined
-              @click="
-                $store.state.layout.lockLayout = !$store.state.layout.lockLayout
-              "
-            >
-              <v-icon v-if="$store.state.layout.lockLayout">
-                mdi-arrow-vertical-lock
-              </v-icon>
-              <v-icon v-else> mdi-arrow-expand-all</v-icon>
-            </v-btn>
+          <v-col cols="2" class="text-right">
             <v-btn icon outlined @click="changeTheme">
               <v-icon v-if="$vuetify.theme.dark"> mdi-weather-night</v-icon>
               <v-icon v-else> mdi-weather-sunny</v-icon>
@@ -139,11 +127,6 @@ export default class extends Vue {
     if (!item.to || item.to === this.$route.fullPath) {
       return;
     }
-    if (!this.$store.state.layout.lockLayout) {
-      this.$store.state.layout.lockLayout = !this.$store.state.layout
-        .lockLayout;
-    }
-    this.$store.dispatch('setLayoutMenuId', item.id); // ViewNoDrawer 때문에 존재
     if (item.type === 'W') {
       this.popupWindow(item.to);
     } else {

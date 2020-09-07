@@ -16,7 +16,6 @@ export default class extends Vue {
     document.title = await getVariableApi('title');
     this.$vuetify.theme.dark =
       (window.localStorage.getItem('theme') || 'light') === 'dark';
-    await this.$store.dispatch('getLayouts');
   }
 }
 </script>

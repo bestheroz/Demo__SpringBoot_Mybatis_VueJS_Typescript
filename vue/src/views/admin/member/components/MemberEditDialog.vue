@@ -5,8 +5,8 @@
       draggable
       width="50%"
       height="auto"
-      :shiftX="0.2"
-      :shiftY="0.05"
+      :shiftX="0.4"
+      :shiftY="0.15"
       :clickToClose="false"
     >
       <v-card :loading="loading">
