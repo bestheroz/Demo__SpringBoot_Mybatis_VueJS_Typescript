@@ -54,7 +54,7 @@
             fab
             dark
             x-small
-            color="button-add"
+            :color="excelColor"
             @click="clickExcel"
             :disabled="disabled || excelDisabled"
             v-on="on"
@@ -142,6 +142,10 @@ export default class extends Vue {
   @Prop({ type: String, default: '저장' }) readonly saveText!: string;
 
   fab: boolean = false;
+
+  get excelColor() {
+    return this.$vuetify.theme.dark ? colors.teal.darken4 : colors.teal.darken2;
+  }
 
   @Emit('click:add') clickAdd() {}
 
