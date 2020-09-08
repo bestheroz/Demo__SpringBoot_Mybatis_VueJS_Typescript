@@ -7,7 +7,8 @@
         background-color: var(--v-table-header-base) !important;
         border-top: thin solid var(--v-table-border-base);
         border-left: thin solid var(--v-table-border-base);
-        min-width: 100px;
+        min-width: 6rem;
+        max-width: 20rem;
 
         span {
           font-size: 0.8rem;
