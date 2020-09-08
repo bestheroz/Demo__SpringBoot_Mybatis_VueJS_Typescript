@@ -9,7 +9,7 @@
       :shiftY="0.1"
       :clickToClose="false"
     >
-      <v-card :loading="loading">
+      <v-card>
         <v-card-title class="py-2 modal-header">
           <v-icon v-if="isNew">mdi-pencil-plus-outline</v-icon>
           <v-icon v-else>mdi-pencil-outline</v-icon>

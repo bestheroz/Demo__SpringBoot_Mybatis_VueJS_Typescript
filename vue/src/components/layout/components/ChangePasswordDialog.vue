@@ -9,7 +9,7 @@
       :shiftY="0.2"
       :clickToClose="false"
     >
-      <v-card :loading="loading">
+      <v-card>
         <v-card-title class="py-2 modal-header">
           비밀번호 변경
           <v-spacer />

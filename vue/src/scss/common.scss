@@ -8,6 +8,10 @@
         border-top: thin solid var(--v-table-border-base);
         border-left: thin solid var(--v-table-border-base);
         min-width: 100px;
+
+        span {
+          font-weight: bold;
+        }
       }
 
       th:last-child {
@@ -77,4 +81,9 @@
   .theme--dark.v-btn.v-btn--disabled:not(.v-btn--flat):not(.v-btn--text):not(.v-btn--outlined) {
     background-color: var(--v-button-disabled-base) !important;
   }
+}
+
+.v-data-table > .v-data-table__wrapper > table > tbody > tr > td, .v-data-table > .v-data-table__wrapper > table > tbody > tr > th, .v-data-table > .v-data-table__wrapper > table > thead > tr > td, .v-data-table > .v-data-table__wrapper > table > thead > tr > th, .v-data-table > .v-data-table__wrapper > table > tfoot > tr > td, .v-data-table > .v-data-table__wrapper > table > tfoot > tr > th {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
 }

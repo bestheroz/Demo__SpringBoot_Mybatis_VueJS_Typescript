@@ -9,7 +9,7 @@
       :shiftY="0.15"
       :clickToClose="false"
     >
-      <v-card :loading="loading">
+      <v-card>
         <v-card-title class="py-2 modal-header">
           내 정보 수정
           <v-spacer />
