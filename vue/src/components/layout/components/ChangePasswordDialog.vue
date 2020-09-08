@@ -120,6 +120,10 @@ export default class extends Vue {
   show2: boolean = false;
   show3: boolean = false;
 
+  beforeDestroy() {
+    this.syncedDialog = false;
+  }
+
   @Watch('syncedDialog')
   watchDialog(val: boolean) {
     if (val) {

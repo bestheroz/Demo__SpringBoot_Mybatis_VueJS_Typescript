@@ -92,6 +92,10 @@ export default class extends Vue {
   loading: boolean = false;
   isNew: boolean = false;
 
+  beforeDestroy() {
+    this.syncedDialog = false;
+  }
+
   @Watch('syncedDialog', { immediate: true })
   watchDialog(val: boolean) {
     if (val) {

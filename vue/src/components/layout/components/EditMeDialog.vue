@@ -123,6 +123,10 @@ export default class extends Vue {
   show1: boolean = false;
   newPasswordDialog: boolean = false;
 
+  beforeDestroy() {
+    this.syncedDialog = false;
+  }
+
   @Watch('syncedDialog')
   async watchDialog(val: boolean) {
     if (val) {

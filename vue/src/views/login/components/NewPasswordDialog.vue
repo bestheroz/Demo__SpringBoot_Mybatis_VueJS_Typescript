@@ -85,6 +85,10 @@ export default class extends Vue {
   show1: boolean = false;
   show2: boolean = false;
 
+  beforeDestroy() {
+    this.syncedDialog = false;
+  }
+
   async save() {
     const inValid = await (this.$refs.observer as any).validate();
     if (!inValid) {
