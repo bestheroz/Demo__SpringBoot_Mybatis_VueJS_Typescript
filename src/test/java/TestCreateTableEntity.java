@@ -64,7 +64,7 @@ public class TestCreateTableEntity {
                         tsType = "number";
                     } else if (DbTableVOCheckerContext.DATETIME_JDBC_TYPE_SET.contains(columnTypeName)) {
                         fieldType = DbTableVOCheckerContext.DEFAULT_DATE_TYPE;
-                        tsType = "Date | number |";
+                        tsType = "Date | number";
                     } else if (DbTableVOCheckerContext.BOOLEAN_JDBC_TYPE_SET.contains(columnTypeName)) {
                         fieldType = "Boolean";
                         tsType = "boolean";
