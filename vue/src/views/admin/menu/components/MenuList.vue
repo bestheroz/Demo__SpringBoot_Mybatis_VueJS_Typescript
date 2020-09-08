@@ -130,7 +130,7 @@ export default class extends Vue {
       value: `type`,
       filterType: 'select',
       filterSelectItem: [],
-      width: '7rem',
+      width: '5rem',
     },
     {
       text: `메뉴명`,
@@ -141,7 +141,7 @@ export default class extends Vue {
       text: `메뉴 순서`,
       align: `end`,
       value: `displayOrder`,
-      width: '6rem',
+      width: '5rem',
     },
     {
       text: `Action`,
@@ -155,14 +155,14 @@ export default class extends Vue {
       align: `center`,
       value: `updated`,
       filterable: false,
-      width: '11rem',
+      width: '10rem',
     },
     {
       text: `작업자`,
       align: `start`,
       value: `updatedBy`,
       filterable: false,
-      width: '8rem',
+      width: '7rem',
     },
   ];
 

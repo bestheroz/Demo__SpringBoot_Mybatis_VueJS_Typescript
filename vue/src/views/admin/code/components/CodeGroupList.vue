@@ -127,14 +127,14 @@ export default class extends Vue {
       align: `center`,
       value: `updated`,
       filterable: false,
-      width: '11rem',
+      width: '10rem',
     },
     {
       text: `작업자`,
       align: `start`,
       value: `updatedBy`,
       filterable: false,
-      width: '8rem',
+      width: '7rem',
     },
   ];
 

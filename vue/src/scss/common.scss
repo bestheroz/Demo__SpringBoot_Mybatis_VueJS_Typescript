@@ -10,6 +10,7 @@
         min-width: 100px;
 
         span {
+          font-size: 0.8rem;
           font-weight: bold;
         }
       }
@@ -25,6 +26,12 @@
         .v-progress-linear {
           height: 25px !important;
         }
+      }
+    }
+
+    #datatable-header-filter {
+      .v-input {
+        font-size: 0.8rem;
       }
     }
 

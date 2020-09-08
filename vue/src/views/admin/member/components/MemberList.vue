@@ -150,19 +150,20 @@ export default class extends Vue {
       value: `authority`,
       filterType: 'select',
       filterSelectItem: [],
+      width: '8rem',
     },
     {
       text: `만료일`,
       align: `center`,
       value: `expired`,
-      width: '11rem',
+      width: '10rem',
     },
     {
       text: `사용 가능`,
       align: `center`,
       value: `available`,
       filterType: 'switch',
-      width: '7rem',
+      width: '6rem',
     },
     {
       text: `자동로그아웃시간(초)`,
@@ -175,14 +176,14 @@ export default class extends Vue {
       align: `center`,
       value: `updated`,
       filterable: false,
-      width: '11rem',
+      width: '10rem',
     },
     {
       text: `작업자`,
       align: `start`,
       value: `updatedBy`,
       filterable: false,
-      width: '8rem',
+      width: '7rem',
     },
   ];
 
