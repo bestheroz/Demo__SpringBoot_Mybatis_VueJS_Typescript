@@ -47,8 +47,9 @@ jobs:
           name: Send Via SFTP
           command: |
             cd target;
-            ls -l;
-            lftp -u $username,''$password'' $hostname -e "bash /home/$project_name/WAS/bin/wasctl stop; sleep 5; cd /home/$project_name/WAS; put ./$project_name-1.jar; bash /home/$project_name/WAS/bin/wasctl start; quit";
+            sshpass -p ''$password'' ssh $username@$hostname /home/$username/WAS/bin/wasctl stop;
+            lftp -u $username,''$password'' $hostname -e "sleep 5; cd /home/$username/WAS; put ./$project_name-1.jar; quit";
+            sshpass -p ''$password'' ssh $username@$hostname /home/$username/WAS/bin/wasctl start;
 
 workflows:
   build-and-deploy:
