@@ -7,7 +7,7 @@ jobs:
   build-and-deploy:
     working_directory: ~/circleci
     docker:
-      - image: 'bestheroz/jdk8-maven-node-lastest'
+      - image: 'bestheroz/jdk11-maven-node-lastest'
     steps:
       - checkout
       - restore_cache:
