@@ -38,9 +38,7 @@ jobs:
       - run:
           name: move front-end dist to target
           command: |
-            mkdir ~/circleci/target
-            mkdir ~/circleci/target/classes
-            mkdir ~/circleci/target/classes/static
+            mkdir -p ~/circleci/target/classes/static
             mv -f ~/circleci/vue/dist/* ~/circleci/target/classes/static/
       - run: mvn package -Dmaven.test.skip=true -Dspring.profiles.active=dev
       - run:
