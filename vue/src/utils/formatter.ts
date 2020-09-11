@@ -4,14 +4,10 @@ import dayjs from 'dayjs';
 import _ from 'lodash';
 
 export function getMemberNm(value: string | undefined | null): string {
-  if (value && store.state.cache.members) {
-    const find: SelectItem = store.state.cache.members.find(
-      (value1: SelectItem) => value1!.value === value,
-    );
-    return find ? find.text : value;
-  } else {
-    return value || '';
-  }
+  const find: SelectItem = store.state.cache.members.find(
+    (value1: SelectItem) => value1!.value === value,
+  );
+  return find?.text || value || '';
 }
 
 export function formatDatetime(

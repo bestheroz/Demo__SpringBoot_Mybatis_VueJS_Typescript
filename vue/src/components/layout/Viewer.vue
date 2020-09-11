@@ -31,34 +31,31 @@ export default class extends Vue {
     if (this.$route.fullPath === '/index') {
       return '';
     }
-    let result: string = '';
-    if (this.drawers && this.drawers.length > 0) {
-      result = this.findThisPage().title;
+    if (this.drawers?.length > 0) {
+      return this.findThisPage().title.split('(팝업)').join('');
     }
-    return result.split('(팝업)').join('');
+    return '';
   }
 
   findThisPage(): DrawerItem {
-    let result: DrawerItem = { id: 0, title: '' };
-    if (this.drawers && this.drawers.length > 0) {
-      this.drawers.forEach((drawer) => {
-        if (this.$route.name) {
-          return { title: null };
-        }
-        if (drawer.children && drawer.children.length > 0) {
-          const find = drawer.children.find((child: DrawerItem) => {
-            if (child.to) {
-              return child.to === this.$route.fullPath;
-            }
-          });
-          find && (result = find);
-        }
-      });
+    let result: DrawerItem | undefined;
+    if (this.$route.name) {
+      return { id: 0, title: '' };
     }
+    this.drawers?.forEach((drawer) => {
+      if (!result) {
+        result = drawer.children?.find((child: DrawerItem) => {
+          if (child.to) {
+            return child.to === this.$route.fullPath;
+          }
+        });
+      }
+    });
     if (!result) {
       errorPage(403);
+      return { id: 0, title: '' };
     }
-    return result;
+    return result!;
   }
 
   @Watch('$store.state.drawer.drawers', { immediate: true })
