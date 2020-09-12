@@ -32,7 +32,7 @@ export default class extends Vue {
       return '';
     }
     if (this.drawers?.length > 0) {
-      return this.findThisPage().title.split('(팝업)').join('');
+      return this.findThisPage()!.title.split('(팝업)').join('');
     }
     return '';
   }
