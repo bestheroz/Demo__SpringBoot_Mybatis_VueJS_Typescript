@@ -141,18 +141,14 @@ export async function getCodesApi<SelectItem>(
       const response = await axiosInstance.get<ApiDataResult<SelectItem[]>>(
         `api/codes/${codeGroup}`,
       );
-      if (response && response.data && response.data.data) {
-        const result = response.data.data || [];
-        if (result.length > 0) {
-          window.localStorage.setItem(
-            `code__${codeGroup}`,
-            JSON.stringify(result),
-          );
-        }
-        return result;
-      } else {
-        return [];
+      const result = response?.data?.data || [];
+      if (result.length > 0) {
+        window.localStorage.setItem(
+          `code__${codeGroup}`,
+          JSON.stringify(result),
+        );
       }
+      return result;
     } catch (error) {
       // console.warn(getErrorResult(error).message);
       return [];
@@ -229,7 +225,7 @@ export async function getExcelApi(url: string): Promise<void> {
 }
 
 async function apiRefreshToken(error: AxiosError) {
-  if (error.response && error.response.headers.refreshtoken === 'must') {
+  if (error.response?.headers?.refreshtoken === 'must') {
     try {
       const response = await axios
         .create({

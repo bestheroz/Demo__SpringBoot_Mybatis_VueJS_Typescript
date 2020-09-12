@@ -64,7 +64,7 @@
             </a>
           </template>
           <template v-slot:item.available="{ item }">
-            <span style="display: inline-flex;">
+            <span style="display: inline-flex">
               <v-checkbox
                 readonly
                 :input-value="item.available"
@@ -190,9 +190,7 @@ export default class extends Vue {
   @Watch('parentItem', { immediate: true })
   watchParentItem(val: TableCodeGroupEntity): void {
     this.items = [];
-    if (val && val.codeGroup) {
-      this.getList();
-    }
+    val?.codeGroup && this.getList();
   }
 
   async getList() {

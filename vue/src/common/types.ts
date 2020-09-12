@@ -44,15 +44,15 @@ export interface TableMemberEntity {
   password?: string | null;
   name?: string | null;
   loginFailCnt?: number | null;
-  expired?: Date | number | null;
+  expired?: Date | string | null;
   available?: boolean | null;
   theme?: string | null;
   authority?: number | null;
   timeout?: number | null;
   token?: string | null;
-  created?: Date | number | null;
+  created?: Date | string | null;
   createdBy?: string | null;
-  updated?: Date | number | null;
+  updated?: Date | string | null;
   updatedBy?: string | null;
 }
 
@@ -65,27 +65,27 @@ export interface TableMenuEntity {
   displayOrder?: number | null;
   icon?: string | null;
   url?: string | null;
-  created?: Date | number | null;
+  created?: Date | string | null;
   createdBy?: string | null;
-  updated?: Date | number | null;
+  updated?: Date | string | null;
   updatedBy?: string | null;
 }
 
 // export interface TableMenuAuthorityVO {
 //   authority?: number | null;
 //   menuIdList?: string | null;
-//   created?: Date | number | null;
+//   created?: Date | string | null;
 //   createdBy?: string | null;
-//   updated?: Date | number | null;
+//   updated?: Date | string | null;
 //   updatedBy?: string | null;
 // }
 
 export interface TableCodeGroupEntity {
   codeGroup?: string | null;
   name?: string | null;
-  created?: Date | number | null;
+  created?: Date | string | null;
   createdBy?: string | null;
-  updated?: Date | number | null;
+  updated?: Date | string | null;
   updatedBy?: string | null;
 }
 
@@ -96,8 +96,8 @@ export interface TableCodeEntity {
   available?: boolean | null;
   displayOrder?: number | null;
   authority?: number | null;
-  created?: Date | number | null;
+  created?: Date | string | null;
   createdBy?: string | null;
-  updated?: Date | number | null;
+  updated?: Date | string | null;
   updatedBy?: string | null;
 }

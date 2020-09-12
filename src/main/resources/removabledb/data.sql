@@ -289,10 +289,57 @@ INTO MENU
  CREATED,
  UPDATED_BY,
  UPDATED)
-SELECT '메뉴그룹1',
+SELECT '개발자',
        'G',
        ID,
        30,
+       'mdi-numeric-1-box-outline',
+       'developer',
+       SYSDATE,
+       'developer',
+       SYSDATE
+FROM MENU
+WHERE NAME = '///최상위(삭제하지마세요.)';
+
+INSERT
+INTO MENU
+(NAME,
+ TYPE,
+ PARENT_ID,
+ DISPLAY_ORDER,
+ URL,
+ CREATED_BY,
+ CREATED,
+ UPDATED_BY,
+ UPDATED)
+SELECT 'Picker',
+       'P',
+       ID,
+       100,
+       '/developer/picker',
+       'developer',
+       SYSDATE,
+       'developer',
+       SYSDATE
+FROM MENU
+WHERE NAME = '개발자';
+
+
+INSERT
+INTO MENU
+(NAME,
+ TYPE,
+ PARENT_ID,
+ DISPLAY_ORDER,
+ ICON,
+ CREATED_BY,
+ CREATED,
+ UPDATED_BY,
+ UPDATED)
+SELECT '메뉴그룹1',
+       'G',
+       ID,
+       50,
        'mdi-numeric-1-box-outline',
        'developer',
        SYSDATE,
@@ -358,7 +405,7 @@ INTO MENU
 SELECT '메뉴그룹2',
        'G',
        ID,
-       50,
+       70,
        'mdi-numeric-2-box-outline',
        'developer',
        SYSDATE,
@@ -409,72 +456,6 @@ SELECT '메뉴2',
        SYSDATE
 FROM MENU
 WHERE NAME = '메뉴그룹2';
-
-INSERT
-INTO MENU
-(NAME,
- TYPE,
- PARENT_ID,
- DISPLAY_ORDER,
- ICON,
- CREATED_BY,
- CREATED,
- UPDATED_BY,
- UPDATED)
-SELECT '메뉴그룹3',
-       'G',
-       ID,
-       70,
-       'mdi-numeric-3-box-outline',
-       'developer',
-       SYSDATE,
-       'developer',
-       SYSDATE
-FROM MENU
-WHERE NAME = '///최상위(삭제하지마세요.)';
-
-INSERT
-INTO MENU
-(NAME,
- TYPE,
- PARENT_ID,
- DISPLAY_ORDER,
- CREATED_BY,
- CREATED,
- UPDATED_BY,
- UPDATED)
-SELECT '메뉴1',
-       'P',
-       ID,
-       100,
-       'developer',
-       SYSDATE,
-       'developer',
-       SYSDATE
-FROM MENU
-WHERE NAME = '메뉴그룹3';
-
-
-INSERT
-INTO MENU
-(NAME,
- TYPE,
- PARENT_ID,
- DISPLAY_ORDER,
- CREATED_BY,
- CREATED,
- UPDATED_BY,
- UPDATED)
-SELECT '메뉴2',
-       'P',
-       ID,
-       200,
-       'developer',
-       SYSDATE,
-       'developer',
-       SYSDATE
-FROM MENU
-WHERE NAME = '메뉴그룹3';
 
 INSERT INTO MENU_AUTHORITY
 (AUTHORITY, MENU_ID_LIST,

@@ -67,10 +67,7 @@ export function alertWarning(message: string): void {
 
 export function alertError(e: string | AxiosError): void {
   let message;
-  if (
-    typeof e === 'string' ||
-    !(e.response && e.response.data && e.response.data.message)
-  ) {
+  if (typeof e === 'string' || !e?.response?.data?.message) {
     message = e;
   } else {
     message = e.response.data.message;

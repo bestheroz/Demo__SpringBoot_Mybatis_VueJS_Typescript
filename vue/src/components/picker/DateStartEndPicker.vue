@@ -1,196 +1,107 @@
 <template>
   <div>
-    <v-row>
-      <v-col cols="5">
-        <v-dialog
-          ref="refStartDialog"
-          v-model="startDayDialog"
-          :return-value.sync="localStartDay"
-          persistent
-          :width="460"
-          @keydown.esc="startDayDialog = false"
-          @keydown.enter="$refs.refStartDialog.save(localStartDay)"
-        >
-          <template v-slot:activator="{ on }">
-            <v-text-field
-              v-model="localStartDay"
-              :label="localStartDayLabel"
-              :messages="startDayHint"
-              prepend-icon="mdi-calendar"
-              readonly
-              :disabled="disabled"
-              :dense="dense"
-              :hide-details="dense"
-              v-on="on"
-            />
-          </template>
-          <v-date-picker
-            v-model="localStartDay"
-            :locale="envs.LOCALE"
-            landscape
-            reactive
-            scrollable
-          >
-            <v-btn text color="primary" @click="startDayDialog = false">
-              취소
-            </v-btn>
-            <div class="flex-grow-1"></div>
-            <v-btn
-              text
-              color="primary"
-              @click="
-                $emit('update:start-day', dayjs().startOf('day').toDate())
-              "
-            >
-              오늘
-            </v-btn>
-            <v-btn
-              text
-              color="primary"
-              @click="$refs.refStartDialog.save(localStartDay)"
-            >
-              확인
-            </v-btn>
-          </v-date-picker>
-        </v-dialog>
-      </v-col>
-      <v-col cols="1" class="my-auto mx-0 text-center">
-        <v-icon>mdi-tilde</v-icon>
-      </v-col>
-      <v-col cols="5">
-        <v-dialog
-          ref="refEndDialog"
-          v-model="endDayDialog"
-          :return-value.sync="localEndDay"
-          persistent
-          :width="460"
-          @keydown.esc="endDayDialog = false"
-          @keydown.enter="$refs.refEndDialog.save(localEndDay)"
-        >
-          <template v-slot:activator="{ on }">
-            <v-text-field
-              v-model="localEndDay"
-              :label="localEndDayLabel"
-              :messages="endDayHint"
-              prepend-icon="mdi-calendar"
-              readonly
-              :disabled="disabled"
-              :dense="dense"
-              :hide-details="dense"
-              v-on="on"
-            />
-          </template>
-          <v-date-picker
-            v-model="localEndDay"
-            :locale="envs.LOCALE"
-            landscape
-            reactive
-            scrollable
-          >
-            <v-btn text color="primary" @click="endDayDialog = false">
-              취소
-            </v-btn>
-            <div class="flex-grow-1"></div>
-            <v-btn
-              text
-              color="primary"
-              @click="$emit('update:end-day', dayjs().endOf('day').toDate())"
-            >
-              오늘
-            </v-btn>
-            <v-btn
-              text
-              color="primary"
-              @click="$refs.refEndDialog.save(localEndDay)"
-            >
-              확인
-            </v-btn>
-          </v-date-picker>
-        </v-dialog>
-      </v-col>
-    </v-row>
+    <ValidationObserver ref="observer">
+      <v-row no-gutters>
+        <v-col cols="6">
+          <date-picker
+            ref="refStart"
+            v-model="syncedStart"
+            :label="startLabel"
+            :message="startMessage"
+            :required="required"
+            :disabled="disabled || startDisabled"
+            :dense="dense"
+            :hide-details="hideDetails"
+            :clearable="clearable"
+            :max="maxDate"
+            start-type
+          />
+        </v-col>
+        <v-col cols="6">
+          <date-picker
+            ref="refEnd"
+            v-model="syncedEnd"
+            :label="endLabel"
+            :message="endMessage"
+            :required="required"
+            :disabled="disabled || endDisabled"
+            :dense="dense"
+            :hide-details="hideDetails"
+            :clearable="clearable"
+            :min="minDate"
+            end-type
+            end-of-day
+          />
+        </v-col>
+      </v-row>
+    </ValidationObserver>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Emit, Prop, Vue, Watch } from 'vue-property-decorator';
+import { Component, Prop, PropSync, Vue } from 'vue-property-decorator';
 import envs from '@/constants/envs';
 import dayjs from 'dayjs';
-import { alertWarning } from '@/utils/alerts';
+import DatePicker from '@/components/picker/DatePicker.vue';
 
-@Component({ name: 'DateStartEndPicker' })
+@Component({
+  name: 'DateStartEndPicker',
+  components: { DatePicker },
+})
 export default class extends Vue {
-  @Prop({ required: true }) readonly startDay!: string | number | Date | null;
-  @Prop({ required: true }) readonly endDay!: string | number | Date | null;
-  @Prop({ type: String }) readonly startDayLabel!: string | null;
-  @Prop({ type: String }) readonly startDayHint!: string | null;
-  @Prop({ type: String }) readonly endDayLabel!: string | null;
-  @Prop({ type: String }) readonly endDayHint!: string | null;
+  @PropSync('start', { required: true }) syncedStart!:
+    | Date
+    | string
+    | number
+    | null;
+
+  @PropSync('end', { required: true }) readonly syncedEnd!:
+    | Date
+    | string
+    | number
+    | null;
+
+  @Prop({ type: String, default: '시작날짜' }) readonly startLabel!:
+    | string
+    | null;
+
+  @Prop({ type: String, default: '종료날짜' }) readonly endLabel!:
+    | string
+    | null;
+
+  @Prop({ type: String }) readonly startMessage!: string | null;
+  @Prop({ type: String }) readonly endMessage!: string | null;
+  @Prop({ type: Boolean, default: false }) readonly required!: boolean;
   @Prop({ type: Boolean, default: false }) readonly disabled!: boolean;
+  @Prop({ type: Boolean, default: false }) readonly startDisabled!: boolean;
+  @Prop({ type: Boolean, default: false }) readonly endDisabled!: boolean;
   @Prop({ type: Boolean, default: false }) readonly dense!: boolean;
+  @Prop({ type: Boolean, default: false }) readonly hideDetails!: boolean;
+  @Prop({ type: Boolean, default: false }) readonly clearable!: boolean;
 
-  readonly dayjs: typeof dayjs = dayjs;
   readonly envs: typeof envs = envs;
+  startDialog: boolean = false;
+  endDialog: boolean = false;
 
-  localStartDay: string | null = null;
-  localEndDay: string | null = null;
-  startDayDialog: boolean = false;
-  endDayDialog: boolean = false;
-
-  get localStartDayLabel(): string {
-    return this.startDayLabel || '날짜선택(From)';
-  }
-
-  get localEndDayLabel(): string {
-    return this.endDayLabel || '날짜선택(To)';
-  }
-
-  @Watch('startDay', { immediate: true })
-  watchStartDayHandler(val: string | number | Date): void {
-    if (!val || isNaN(new Date(val).getTime())) {
-      this.$emit('update:start-day', dayjs().startOf('day').toDate());
-      return;
+  get minDate() {
+    if (!this.syncedStart) {
+      return undefined;
     }
-    this.localStartDay = dayjs(val).format('YYYY-MM-DD');
+    return dayjs(this.syncedStart).format(envs.DATE_FORMAT_STRING);
   }
 
-  @Watch(`endDay`, { immediate: true })
-  watchEndDayHandler(val: string | number | Date): void {
-    if (!val || isNaN(new Date(val).getTime())) {
-      this.$emit('update:end-day', dayjs().endOf('day').toDate());
-      return;
+  get maxDate() {
+    if (!this.syncedEnd) {
+      return undefined;
     }
-    this.localEndDay = dayjs(val).format('YYYY-MM-DD');
+    return dayjs(this.syncedEnd).format(envs.DATE_FORMAT_STRING);
   }
 
-  @Watch('localStartDay')
-  @Emit('update:start-day')
-  updateStartDay(): Date {
-    if (
-      this.localEndDay &&
-      this.localStartDay &&
-      this.localStartDay > this.localEndDay
-    ) {
-      alertWarning('시작/종료 날짜가 유효하지 않습니다.');
-    }
-    return dayjs(
-      `${this.localStartDay}T00:00:00${envs.TIMEZONE_OFFSET_STRING}`,
-    ).toDate();
-  }
-
-  @Watch('localEndDay')
-  @Emit('update:end-day')
-  updateEndDay(): Date {
-    if (
-      this.localEndDay &&
-      this.localStartDay &&
-      this.localEndDay < this.localStartDay
-    ) {
-      alertWarning('시작/종료 날짜가 유효하지 않습니다.');
-    }
-    return dayjs(
-      `${this.localEndDay}T23:59:59.999${envs.TIMEZONE_OFFSET_STRING}`,
-    ).toDate();
+  async validate() {
+    return (
+      (await (this.$refs.refStart as any).validate()) &&
+      (await (this.$refs.refEnd as any).validate())
+    );
   }
 }
 </script>

@@ -80,7 +80,7 @@
                 />
               </v-col>
               <v-col cols="12" md="8" class="pa-0">
-                <datetime-picker :date="editItem.expired" day-label="만료일" />
+                <datetime-picker v-model="editItem.expired" label="만료일" />
               </v-col>
               <v-col cols="12" md="4">
                 <ValidationProvider

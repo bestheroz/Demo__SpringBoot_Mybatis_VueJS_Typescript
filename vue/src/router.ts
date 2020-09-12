@@ -34,6 +34,12 @@ const routes = () => {
       component: () => import('@/views/admin/member/Member.vue'),
     },
   ];
+  const developer = [
+    {
+      path: 'picker',
+      component: () => import('@/views/developer/picker/Picker.vue'),
+    },
+  ];
 
   return [
     {
@@ -67,6 +73,12 @@ const routes = () => {
       component: () => import('@/views/index/Index.vue'),
       beforeEnter: requireAuth(),
       children: admin,
+    },
+    {
+      path: '/developer',
+      component: () => import('@/views/index/Index.vue'),
+      beforeEnter: requireAuth(),
+      children: developer,
     },
     {
       path: '/error',

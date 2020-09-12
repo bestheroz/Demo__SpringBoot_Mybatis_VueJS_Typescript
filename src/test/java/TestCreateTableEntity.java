@@ -2,6 +2,7 @@ import com.github.bestheroz.standard.context.db.checker.DbTableVOCheckerContext;
 import com.github.bestheroz.standard.context.web.WebConfiguration;
 import com.google.common.base.CaseFormat;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.junit.jupiter.api.Test;
@@ -11,6 +12,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
@@ -19,20 +25,26 @@ import java.sql.Statement;
 @SpringBootTest(classes = {WebConfiguration.class})
 @AutoConfigureMybatis
 public class TestCreateTableEntity {
+    private final String tableName = "member";
+    private final String javaPackageEndPoint = this.tableName.replaceAll("_", "").toLowerCase();
+    private final String javaProjectRootPackageName = "com.github.bestheroz.";
+    private final String javaPackageName = this.javaProjectRootPackageName + "sample.api.entity.";
+    private final String javaFilePath = "src/main/java/" + this.javaPackageName.replaceAll("\\.", "/");
+    private final String tsFilePath = "vue/src/common/types.ts";
     @Qualifier("dataSource") @Resource
     private DataSource dataSource;
 
     @Test
-    public void test11() {
+    public void makeEntityRepositoryFilesAuto() {
         try (final Statement stmt = this.dataSource.getConnection().createStatement()) {
+            try (final ResultSet rs = stmt.executeQuery("SELECT * FROM " + this.tableName + " LIMIT 0")) {
+                final String tableEntityName = "Table" + CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, this.tableName) + "Entity";
 
-            final String tableName = "member";
-            try (final ResultSet rs = stmt.executeQuery("SELECT * FROM " + tableName + " LIMIT 0")) {
                 final ResultSetMetaData metaInfo = rs.getMetaData();
-                System.out.println("Table" + CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, tableName) + "Entity\n");
+                System.out.println(tableEntityName);
                 // 1. VO만들기
-                final StringBuilder entityString = new StringBuilder();
-                final StringBuilder esString = new StringBuilder();
+                final StringBuilder javaString = new StringBuilder();
+                final StringBuilder tsString = new StringBuilder();
                 for (int i = 0; i < metaInfo.getColumnCount(); i++) {
                     final String fieldType;
                     final String tsType;
@@ -64,7 +76,7 @@ public class TestCreateTableEntity {
                         tsType = "number";
                     } else if (DbTableVOCheckerContext.DATETIME_JDBC_TYPE_SET.contains(columnTypeName)) {
                         fieldType = DbTableVOCheckerContext.DEFAULT_DATE_TYPE;
-                        tsType = "Date | number";
+                        tsType = "Date | string";
                     } else if (DbTableVOCheckerContext.BOOLEAN_JDBC_TYPE_SET.contains(columnTypeName)) {
                         fieldType = "Boolean";
                         tsType = "boolean";
@@ -77,16 +89,62 @@ public class TestCreateTableEntity {
                         tsType = "unknown";
                         log.warn("케이스 빠짐 {} : {}", columnName, columnTypeName);
                     }
-                    entityString.append("private ").append(fieldType).append(" ").append(camelColumnName).append(";\n");
-                    esString.append(camelColumnName).append("?: ").append(tsType).append(" | null;\n");
+                    javaString.append("private ").append(fieldType).append(" ").append(camelColumnName).append(";\n");
+                    tsString.append(camelColumnName).append("?: ").append(tsType).append(" | null;\n");
                 }
-                System.out.println(entityString);
-                System.out.println("\n\n\n");
-                System.out.println(esString);
+                this.writeToFile(tableEntityName, javaString, tsString);
             }
-            System.out.println();
         } catch (final Throwable e) {
             log.warn(ExceptionUtils.getStackTrace(e));
         }
+    }
+
+    private void writeToFile(final String tableEntityName, final StringBuilder javaString, final StringBuilder tsString) throws IOException {
+        final String javaHeader;
+        if (StringUtils.contains(javaString, " crtId") && StringUtils.contains(javaString, " crtDt") && StringUtils.contains(javaString, " updId") &&
+                StringUtils.contains(javaString, " updDt")) {
+            javaHeader = "package " + this.javaPackageName + this.javaPackageEndPoint + ";\n" +
+                    "\n" +
+                    "import " + this.javaPackageName + "AbstractCreatedUpdateEntity;\n" +
+                    "import lombok.Data;\n" +
+                    "import lombok.EqualsAndHashCode;\n" +
+                    "\n" +
+                    "import java.io.Serializable;\n" +
+                    "\n" +
+                    "@EqualsAndHashCode(callSuper = true)\n" +
+                    "@Data\n" +
+                    "public class " + tableEntityName + " extends AbstractCreatedUpdateEntity implements Serializable {\n";
+        } else {
+            javaHeader = "package " + this.javaPackageName + this.javaPackageEndPoint + ";\n" +
+                    "\n" +
+                    "import lombok.Data;\n" +
+                    "\n" +
+                    "import java.io.Serializable;\n" +
+                    "import java.time.Instant;\n" +
+                    "\n" +
+                    "@Data\n" +
+                    "public class " + tableEntityName + " implements Serializable {\n";
+        }
+        if (Files.notExists(Paths.get(this.javaFilePath + this.javaPackageEndPoint))) {
+            FileUtils.forceMkdir(Paths.get(this.javaFilePath + this.javaPackageEndPoint).toFile());
+        }
+        final Path javaEntityFilePath = Paths.get(this.javaFilePath + this.javaPackageEndPoint + "/" + tableEntityName + ".java");
+        Files.write(javaEntityFilePath, (javaHeader + javaString + "}").getBytes(),
+                Files.notExists(javaEntityFilePath) ? StandardOpenOption.CREATE_NEW : StandardOpenOption.TRUNCATE_EXISTING);
+        final String repositoryString = "package " + this.javaPackageName + this.javaPackageEndPoint + ";\n" +
+                "\n" +
+                "import " + this.javaProjectRootPackageName + "standard.common.mybatis.SqlRepository;\n" +
+                "import org.apache.ibatis.annotations.Mapper;\n" +
+                "import org.springframework.stereotype.Repository;\n" +
+                "\n" +
+                "@Mapper\n" +
+                "@Repository\n" +
+                "public interface " + tableEntityName.replace("Entity", "Repository") + " extends SqlRepository<" + tableEntityName + "> {\n" +
+                "}\n";
+        final Path javaRepositoryFilePath = Paths.get(this.javaFilePath + this.javaPackageEndPoint + "/" + tableEntityName.replace("Entity", "Repository") + ".java");
+        Files.write(javaRepositoryFilePath, repositoryString.getBytes(),
+                Files.notExists(javaRepositoryFilePath) ? StandardOpenOption.CREATE_NEW : StandardOpenOption.TRUNCATE_EXISTING);
+        final String tsHeader = "export interface " + tableEntityName + " {\n";
+        Files.write(Paths.get(this.tsFilePath), (tsHeader + tsString + "}\n").getBytes(), StandardOpenOption.APPEND);
     }
 }

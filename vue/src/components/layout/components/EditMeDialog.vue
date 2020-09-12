@@ -74,9 +74,9 @@
               </v-col>
               <v-col cols="12">
                 <datetime-picker
-                  :date="editItem.created"
+                  v-model="editItem.created"
                   disabled
-                  day-label="가입일"
+                  label="가입일"
                 />
               </v-col>
             </v-row>

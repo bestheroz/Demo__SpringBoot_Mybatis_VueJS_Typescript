@@ -42,11 +42,7 @@ export default class extends Vue {
   }
 
   get accessToken() {
-    if (window && window.localStorage) {
-      return window.localStorage.getItem('accessToken');
-    } else {
-      return null;
-    }
+    return window?.localStorage?.getItem('accessToken');
   }
 
   async mounted() {
