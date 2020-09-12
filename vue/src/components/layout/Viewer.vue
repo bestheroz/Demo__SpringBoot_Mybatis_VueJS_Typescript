@@ -37,7 +37,7 @@ export default class extends Vue {
     return '';
   }
 
-  findThisPage(): DrawerItem {
+  findThisPage(): DrawerItem | undefined {
     let result: DrawerItem | undefined;
     if (this.$route.name) {
       return { id: 0, title: '' };
