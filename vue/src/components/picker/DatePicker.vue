@@ -4,10 +4,10 @@
       <v-dialog
         ref="refDialog"
         v-model="dialog"
-        :return-value.sync="date"
+        :return-value.sync="value"
         :width="470"
         @keydown.esc="dialog = false"
-        @keydown.enter="$refs.refDialog.save(date)"
+        @keydown.enter="$refs.refDialog.save(value)"
       >
         <template v-slot:activator="{ on }">
           <ValidationProvider
@@ -16,7 +16,7 @@
             v-slot="{ errors }"
           >
             <v-text-field
-              v-model="date"
+              v-model="value"
               :label="label"
               :messages="message"
               prepend-inner-icon="mdi-calendar-cursor"
@@ -34,7 +34,7 @@
           </ValidationProvider>
         </template>
         <v-date-picker
-          v-model="date"
+          v-model="value"
           :locale="envs.LOCALE"
           landscape
           reactive
@@ -43,14 +43,10 @@
           :max="max"
           :min="min"
         >
-          <v-btn text color="primary" @click="dialog = false">
-            취소
-          </v-btn>
+          <v-btn text color="primary" @click="setToday"> 오늘 </v-btn>
           <div class="flex-grow-1"></div>
-          <v-btn text color="primary" @click="setToday">
-            오늘
-          </v-btn>
-          <v-btn text color="primary" @click="$refs.refDialog.save(date)">
+          <v-btn text color="primary" @click="dialog = false"> 취소 </v-btn>
+          <v-btn text color="primary" @click="$refs.refDialog.save(value)">
             확인
           </v-btn>
         </v-date-picker>
@@ -66,7 +62,7 @@ import dayjs from 'dayjs';
 
 @Component({ name: 'DatePicker' })
 export default class extends Vue {
-  @Model('input', { required: true }) readonly value!:
+  @Model('input', { required: true }) readonly date!:
     | Date
     | string
     | number
@@ -82,18 +78,18 @@ export default class extends Vue {
   @Prop({ type: Boolean, default: false }) readonly endOfDay!: boolean;
   @Prop({ type: Boolean, default: false }) readonly startType!: boolean;
   @Prop({ type: Boolean, default: false }) readonly endType!: boolean;
-  @Prop({ type: String }) readonly max: string;
-  @Prop({ type: String }) readonly min: string;
+  @Prop({ type: String }) readonly max!: string;
+  @Prop({ type: String }) readonly min!: string;
 
   readonly envs: typeof envs = envs;
-  date: string | null = null;
+  value: string | null = null;
   dialog: boolean = false;
 
   get format() {
     return envs.DATE_FORMAT_STRING;
   }
 
-  @Watch('value', { immediate: true })
+  @Watch('date', { immediate: true })
   watchDate(
     val: Date | string | number | null,
     oldVal: Date | string | number | null,
@@ -101,12 +97,12 @@ export default class extends Vue {
     if (!val || val === oldVal || isNaN(dayjs(val).toDate().getTime())) {
       return;
     }
-    this.date = this.endOfDay
+    this.value = this.endOfDay
       ? dayjs(val).endOf('day').format(this.format)
       : dayjs(val).startOf('day').format(this.format);
   }
 
-  @Watch('date', { immediate: true })
+  @Watch('value', { immediate: true })
   watchValue(val: string, oldVal: string) {
     if (
       val !== oldVal &&
@@ -122,7 +118,7 @@ export default class extends Vue {
   }
 
   setToday() {
-    this.date = this.endOfDay
+    this.value = this.endOfDay
       ? dayjs().endOf('day').format(this.format)
       : dayjs().startOf('day').format(this.format);
   }

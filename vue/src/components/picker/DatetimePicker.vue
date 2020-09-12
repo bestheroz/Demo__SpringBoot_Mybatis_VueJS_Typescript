@@ -1,147 +1,165 @@
 <template>
   <div>
-    <v-row>
-      <v-col>
-        <v-dialog
-          ref="refDayDialog"
-          v-model="dayDialog"
-          :return-value.sync="day"
-          persistent
-          :width="460"
-          @keydown.esc="dayDialog = false"
-          @keydown.enter="$refs.refDayDialog.save(day)"
-        >
-          <template v-slot:activator="{ on }">
-            <v-text-field
-              v-model="day"
-              :label="localDayLabel"
-              :messages="dayHint"
-              prepend-icon="mdi-calendar"
-              readonly
-              :disabled="disabled"
-              :dense="dense"
-              :hide-details="dense"
-              v-on="on"
-              :error-messages="errorMessages"
-            />
-          </template>
-          <v-date-picker
-            v-model="day"
-            :locale="envs.LOCALE"
-            landscape
-            reactive
-            scrollable
+    <ValidationObserver ref="observer">
+      <v-dialog
+        ref="refDialog"
+        v-model="dialog"
+        :return-value.sync="timeValue"
+        :width="470"
+        @keydown.esc="dialog = false"
+        @keydown.enter="$refs.refDialog.save(timeValue)"
+      >
+        <template v-slot:activator="{ on }">
+          <ValidationProvider
+            :name="label"
+            :rules="required ? 'required' : ''"
+            v-slot="{ errors }"
           >
-            <v-btn text color="primary" @click="dayDialog = false">
-              취소
-            </v-btn>
-            <div class="flex-grow-1"></div>
-            <v-btn
-              text
-              color="primary"
-              @click="day = dayjs().format('YYYY-MM-DD')"
-            >
-              오늘
-            </v-btn>
-            <v-btn text color="primary" @click="$refs.refDayDialog.save(day)">
-              확인
-            </v-btn>
-          </v-date-picker>
-        </v-dialog>
-      </v-col>
-      <v-col>
-        <v-dialog
-          ref="refTimeDialog"
-          v-model="timeDialog"
-          :return-value.sync="time"
-          persistent
-          :width="460"
-          @keydown.esc="timeDialog = false"
-          @keydown.enter="$refs.refTimeDialog.save(time)"
-        >
-          <template v-slot:activator="{ on }">
             <v-text-field
-              v-model="time"
-              :label="localTimeLabel"
-              :messages="timeHint"
-              prepend-icon="mdi-clock-outline"
+              v-model="value"
+              :label="label"
+              :messages="message"
+              prepend-inner-icon="mdi-calendar-clock"
+              @click:prepend-inner="dialog = true"
               readonly
               :disabled="disabled"
               :dense="dense"
-              :hide-details="dense"
+              :hide-details="hideDetails"
+              :clearable="clearable"
+              :error-messages="errors"
+              :append-outer-icon="startType ? 'mdi-tilde' : undefined"
+              :class="endType ? 'ml-3' : undefined"
               v-on="on"
             />
-          </template>
-          <v-time-picker v-model="time" format="24hr" landscape>
-            <v-btn text color="primary" @click="timeDialog = false">
-              취소
-            </v-btn>
-            <div class="flex-grow-1"></div>
-            <v-btn
-              text
-              color="primary"
-              @click="$emit('update:date', new Date())"
-            >
-              지금
-            </v-btn>
-            <v-btn text color="primary" @click="$refs.refTimeDialog.save(time)">
-              확인
-            </v-btn>
-          </v-time-picker>
-        </v-dialog>
-      </v-col>
-    </v-row>
+          </ValidationProvider>
+        </template>
+        <v-date-picker
+          v-model="value"
+          :locale="envs.LOCALE"
+          landscape
+          reactive
+          scrollable
+          header-color="primary"
+          :max="maxDate"
+          :min="minDate"
+        >
+        </v-date-picker>
+        <v-time-picker
+          v-model="timeValue"
+          format="24hr"
+          landscape
+          scrollable
+          :use-seconds="useSeconds"
+          header-color="primary"
+          :max="maxTime"
+          :min="minTime"
+        >
+          <v-btn text color="primary" @click="setNow"> 지금 </v-btn>
+          <div class="flex-grow-1"></div>
+          <v-btn text color="primary" @click="dialog = false"> 취소 </v-btn>
+          <v-btn text color="primary" @click="$refs.refDialog.save(timeValue)">
+            확인
+          </v-btn>
+        </v-time-picker>
+      </v-dialog>
+    </ValidationObserver>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Emit, Prop, Vue, Watch } from 'vue-property-decorator';
+import { Component, Model, Prop, Vue, Watch } from 'vue-property-decorator';
 import envs from '@/constants/envs';
 import dayjs from 'dayjs';
 
 @Component({ name: 'DatetimePicker' })
 export default class extends Vue {
-  @Prop({ required: true }) readonly date!: string | number | Date | null;
-  @Prop({ type: String }) readonly dayLabel!: string | null;
-  @Prop({ type: String }) readonly dayHint!: string | null;
-  @Prop({ type: String }) readonly timeLabel!: string | null;
-  @Prop({ type: String }) readonly timeHint!: string | null;
+  @Model('input', { required: true }) readonly date!:
+    | Date
+    | string
+    | number
+    | null;
+
+  @Prop({ type: String, default: '날짜선택' }) readonly label!: string | null;
+  @Prop({ type: String }) readonly message!: string | null;
+  @Prop({ type: Boolean, default: false }) readonly required!: boolean;
   @Prop({ type: Boolean, default: false }) readonly disabled!: boolean;
   @Prop({ type: Boolean, default: false }) readonly dense!: boolean;
-  @Prop({ required: false }) readonly errorMessages?: string[];
+  @Prop({ type: Boolean, default: false }) readonly hideDetails!: boolean;
+  @Prop({ type: Boolean, default: false }) readonly clearable!: boolean;
+  @Prop({ type: Boolean, default: false }) readonly useSeconds!: boolean;
+  @Prop({ type: Boolean, default: false }) readonly startType!: boolean;
+  @Prop({ type: Boolean, default: false }) readonly endType!: boolean;
+  @Prop() readonly max!: string[];
+  @Prop() readonly min!: string[];
 
-  readonly dayjs: typeof dayjs = dayjs;
   readonly envs: typeof envs = envs;
-  day: string | null = null;
-  dayDialog: boolean = false;
-  time: string | null = null;
-  timeDialog: boolean = false;
+  value: string | null = null;
+  dialog: boolean = false;
+  timeValue: string | null = null;
 
-  get localDayLabel(): string {
-    return this.dayLabel || '날짜선택';
+  get format() {
+    return this.useSeconds
+      ? envs.DATETIME_FORMAT_STRING
+      : envs.DATETIME_MINUTE_FORMAT_STRING;
   }
 
-  get localTimeLabel(): string {
-    return this.timeLabel || '시간선택';
+  get formatTime() {
+    return this.useSeconds
+      ? envs.TIME_FORMAT_STRING
+      : envs.TIME_MINUTE_FORMAT_STRING;
+  }
+
+  get maxDate() {
+    return this.max?.length > 0 ? this.max[0] : undefined;
+  }
+
+  get maxTime() {
+    return this.max?.length > 1 ? this.max[1] : undefined;
+  }
+
+  get minDate() {
+    return this.min?.length > 0 ? this.min[0] : undefined;
+  }
+
+  get minTime() {
+    return this.min?.length > 1 ? this.min[1] : undefined;
   }
 
   @Watch('date', { immediate: true })
-  watchStartDtHandler(val: string | number | Date): void {
-    if (!val || isNaN(new Date(val).getTime())) {
-      this.$emit('update:day', new Date());
+  watchDate(
+    val: Date | string | number | null,
+    oldVal: Date | string | number | null,
+  ) {
+    if (!val || val === oldVal || isNaN(dayjs(val).toDate().getTime())) {
       return;
     }
-    this.day = dayjs(val).format(`YYYY-MM-DD`);
-    this.time = dayjs(val).format(`HH:mm`);
+    this.value = dayjs(val).format(this.format);
+    this.timeValue = this.value.split(' ')[1];
   }
 
-  @Watch('day')
-  @Watch('time')
-  @Emit('update:date')
-  updateDt(): Date {
-    return dayjs(
-      `${this.day}T${this.time}:00${envs.TIMEZONE_OFFSET_STRING}`,
-    ).toDate();
+  @Watch('timeValue')
+  watchTimeValue(val: string) {
+    if (this.value) {
+      this.value = `${this.value.split(' ')[0]} ${val}`;
+    }
+  }
+
+  @Watch('value', { immediate: true })
+  watchValue(val: string, oldVal: string) {
+    if (
+      val !== oldVal &&
+      dayjs(val).toDate().getTime() !== dayjs(oldVal).toDate().getTime()
+    ) {
+      this.$emit('input', dayjs(val).toDate());
+    }
+  }
+
+  setNow() {
+    this.value = dayjs().format(this.format);
+  }
+
+  async validate() {
+    return await (this.$refs.observer as any).validate();
   }
 }
 </script>

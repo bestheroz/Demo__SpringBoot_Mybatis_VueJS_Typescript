@@ -8,7 +8,7 @@
         </v-btn>
       </v-toolbar-title>
       <v-spacer />
-      <v-btn x-large text :ripple="false" style="cursor: default;" class="pr-0">
+      <v-btn x-large text :ripple="false" style="cursor: default" class="pr-0">
         <countdown
           ref="countdown"
           :end-time="logoutTimer"
