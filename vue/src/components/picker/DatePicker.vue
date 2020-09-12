@@ -1,95 +1,134 @@
 <template>
   <div>
-    <v-row>
-      <v-col>
-        <v-dialog
-          ref="refDayDialog"
-          v-model="dayDialog"
-          :return-value.sync="day"
-          persistent
-          :width="460"
-          @keydown.esc="dayDialog = false"
-          @keydown.enter="$refs.refDayDialog.save(day)"
-        >
-          <template v-slot:activator="{ on }">
+    <ValidationObserver ref="observer">
+      <v-dialog
+        ref="refDialog"
+        v-model="dialog"
+        :return-value.sync="date"
+        :width="470"
+        @keydown.esc="dialog = false"
+        @keydown.enter="$refs.refDialog.save(date)"
+      >
+        <template v-slot:activator="{ on }">
+          <ValidationProvider
+            :name="label"
+            :rules="required ? 'required' : ''"
+            v-slot="{ errors }"
+          >
             <v-text-field
-              v-model="day"
-              :label="localDayLabel"
-              :messages="dayHint"
-              prepend-icon="mdi-calendar"
+              v-model="date"
+              :label="label"
+              :messages="message"
+              prepend-inner-icon="mdi-calendar-cursor"
+              @click:prepend-inner="dialog = true"
               readonly
               :disabled="disabled"
               :dense="dense"
-              :hide-details="dense"
+              :hide-details="hideDetails"
+              :clearable="clearable"
+              :error-messages="errors"
+              :append-outer-icon="startType ? 'mdi-tilde' : undefined"
+              :class="endType ? 'ml-3' : undefined"
               v-on="on"
             />
-          </template>
-          <v-date-picker
-            v-model="day"
-            :locale="envs.LOCALE"
-            landscape
-            reactive
-            scrollable
-          >
-            <v-btn text color="primary" @click="dayDialog = false">
-              취소
-            </v-btn>
-            <div class="flex-grow-1"></div>
-            <v-btn
-              text
-              color="primary"
-              @click="$emit('update:date', dayjs().startOf('day').toDate())"
-            >
-              오늘
-            </v-btn>
-            <v-btn text color="primary" @click="$refs.refDayDialog.save(day)">
-              확인
-            </v-btn>
-          </v-date-picker>
-        </v-dialog>
-      </v-col>
-    </v-row>
+          </ValidationProvider>
+        </template>
+        <v-date-picker
+          v-model="date"
+          :locale="envs.LOCALE"
+          landscape
+          reactive
+          scrollable
+          header-color="primary"
+          :max="max"
+          :min="min"
+        >
+          <v-btn text color="primary" @click="dialog = false">
+            취소
+          </v-btn>
+          <div class="flex-grow-1"></div>
+          <v-btn text color="primary" @click="setToday">
+            오늘
+          </v-btn>
+          <v-btn text color="primary" @click="$refs.refDialog.save(date)">
+            확인
+          </v-btn>
+        </v-date-picker>
+      </v-dialog>
+    </ValidationObserver>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Emit, Prop, Vue, Watch } from 'vue-property-decorator';
+import { Component, Model, Prop, Vue, Watch } from 'vue-property-decorator';
 import envs from '@/constants/envs';
 import dayjs from 'dayjs';
 
 @Component({ name: 'DatePicker' })
 export default class extends Vue {
-  @Prop({ required: true }) readonly date!: string | number | Date | null;
-  @Prop({ type: String }) readonly dayLabel!: string | null;
-  @Prop({ type: String }) readonly dayHint!: string | null;
-  @Prop({ type: String }) readonly timeLabel!: string | null;
-  @Prop({ type: String }) readonly timeHint!: string | null;
+  @Model('input', { required: true }) readonly value!:
+    | Date
+    | string
+    | number
+    | null;
+
+  @Prop({ type: String, default: '날짜선택' }) readonly label!: string | null;
+  @Prop({ type: String }) readonly message!: string | null;
+  @Prop({ type: Boolean, default: false }) readonly required!: boolean;
   @Prop({ type: Boolean, default: false }) readonly disabled!: boolean;
   @Prop({ type: Boolean, default: false }) readonly dense!: boolean;
+  @Prop({ type: Boolean, default: false }) readonly hideDetails!: boolean;
+  @Prop({ type: Boolean, default: false }) readonly clearable!: boolean;
+  @Prop({ type: Boolean, default: false }) readonly endOfDay!: boolean;
+  @Prop({ type: Boolean, default: false }) readonly startType!: boolean;
+  @Prop({ type: Boolean, default: false }) readonly endType!: boolean;
+  @Prop({ type: String }) readonly max: string;
+  @Prop({ type: String }) readonly min: string;
 
-  readonly dayjs: typeof dayjs = dayjs;
   readonly envs: typeof envs = envs;
+  date: string | null = null;
+  dialog: boolean = false;
 
-  day: string | null = null;
-  dayDialog: boolean = false;
+  get format() {
+    return envs.DATE_FORMAT_STRING;
+  }
 
-  get localDayLabel(): string {
-    return this.dayLabel || '날짜선택';
+  @Watch('value', { immediate: true })
+  watchDate(
+    val: Date | string | number | null,
+    oldVal: Date | string | number | null,
+  ) {
+    if (!val || val === oldVal || isNaN(dayjs(val).toDate().getTime())) {
+      return;
+    }
+    this.date = this.endOfDay
+      ? dayjs(val).endOf('day').format(this.format)
+      : dayjs(val).startOf('day').format(this.format);
   }
 
   @Watch('date', { immediate: true })
-  watchStartDtHandler(val: string | number | Date): void {
-    if (!val || isNaN(new Date(val).getTime())) {
-      this.$emit('update:day', new Date());
-      return;
+  watchValue(val: string, oldVal: string) {
+    if (
+      val !== oldVal &&
+      dayjs(val).toDate().getTime() !== dayjs(oldVal).toDate().getTime()
+    ) {
+      this.$emit(
+        'input',
+        this.endOfDay
+          ? dayjs(val).endOf('day').toDate()
+          : dayjs(val).startOf('day').toDate(),
+      );
     }
-    this.day = dayjs(val).format(`YYYY-MM-DD`);
   }
 
-  @Watch('day')
-  @Emit('update:date')
-  update(val: string): Date {
-    return dayjs(val).toDate();
+  setToday() {
+    this.date = this.endOfDay
+      ? dayjs().endOf('day').format(this.format)
+      : dayjs().startOf('day').format(this.format);
+  }
+
+  async validate() {
+    return await (this.$refs.observer as any).validate();
   }
 }
 </script>
