@@ -1,7 +1,5 @@
 package com.github.bestheroz.standard.context.converter;
 
-import com.github.bestheroz.standard.common.util.DateUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
@@ -11,6 +9,6 @@ import java.time.Instant;
 public class InstantConverter implements Converter<String, Instant> {
     @Override
     public Instant convert(final String arg0) {
-        return StringUtils.isNumeric(arg0) ? Instant.ofEpochMilli(Long.parseLong(arg0)) : DateUtils.parseOffsetDateTimeAtUTC(arg0).toInstant();
+        return Instant.parse(arg0);
     }
 }

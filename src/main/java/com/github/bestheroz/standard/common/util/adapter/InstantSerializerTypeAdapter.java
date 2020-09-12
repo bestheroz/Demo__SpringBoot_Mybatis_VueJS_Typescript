@@ -11,6 +11,6 @@ import java.time.Instant;
 public class InstantSerializerTypeAdapter implements JsonSerializer<Instant> {
     @Override
     public JsonElement serialize(final Instant date, final Type typeOfSrc, final JsonSerializationContext context) {
-        return new JsonPrimitive(date.toEpochMilli());
+        return new JsonPrimitive(date.toString());
     }
 }
