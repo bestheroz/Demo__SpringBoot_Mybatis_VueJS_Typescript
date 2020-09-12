@@ -1,0 +1,125 @@
+<template>
+  <div>
+    <ValidationObserver ref="observer">
+      <v-row no-gutters>
+        <v-col cols="6">
+          <datetime-picker
+            ref="refStart"
+            v-model="syncedStart"
+            :label="startLabel"
+            :message="startMessage"
+            :required="required"
+            :disabled="disabled || startDisabled"
+            :dense="dense"
+            :hide-details="hideDetails"
+            :clearable="clearable"
+            :max="maxDate"
+            start-type
+          />
+        </v-col>
+        <v-col cols="6">
+          <datetime-picker
+            ref="refEnd"
+            v-model="syncedEnd"
+            :label="endLabel"
+            :message="endMessage"
+            :required="required"
+            :disabled="disabled || endDisabled"
+            :dense="dense"
+            :hide-details="hideDetails"
+            :clearable="clearable"
+            :min="minDate"
+            end-type
+          />
+        </v-col>
+      </v-row>
+    </ValidationObserver>
+  </div>
+</template>
+
+<script lang="ts">
+import { Component, Prop, PropSync, Vue } from 'vue-property-decorator';
+import envs from '@/constants/envs';
+import dayjs from 'dayjs';
+import DatetimePicker from '@/components/picker/DatetimePicker.vue';
+
+@Component({
+  name: 'DatetimeStartEndPicker',
+  components: { DatetimePicker },
+})
+export default class extends Vue {
+  @PropSync('start', { required: true }) syncedStart!:
+    | Date
+    | string
+    | number
+    | null;
+
+  @PropSync('end', { required: true }) readonly syncedEnd!:
+    | Date
+    | string
+    | number
+    | null;
+
+  @Prop({ type: String, default: '시작날짜' }) readonly startLabel!:
+    | string
+    | null;
+
+  @Prop({ type: String, default: '종료날짜' }) readonly endLabel!:
+    | string
+    | null;
+
+  @Prop({ type: String }) readonly startMessage!: string | null;
+  @Prop({ type: String }) readonly endMessage!: string | null;
+  @Prop({ type: Boolean, default: false }) readonly required!: boolean;
+  @Prop({ type: Boolean, default: false }) readonly disabled!: boolean;
+  @Prop({ type: Boolean, default: false }) readonly startDisabled!: boolean;
+  @Prop({ type: Boolean, default: false }) readonly endDisabled!: boolean;
+  @Prop({ type: Boolean, default: false }) readonly dense!: boolean;
+  @Prop({ type: Boolean, default: false }) readonly hideDetails!: boolean;
+  @Prop({ type: Boolean, default: false }) readonly clearable!: boolean;
+  @Prop({ type: Boolean, default: false }) readonly useSeconds!: boolean;
+
+  readonly envs: typeof envs = envs;
+  startDialog: boolean = false;
+  endDialog: boolean = false;
+
+  get minDate() {
+    if (!this.syncedStart || !this.syncedEnd) {
+      return undefined;
+    }
+    const start = dayjs(this.syncedStart);
+    return [
+      start.format(envs.DATE_FORMAT_STRING),
+      start.format(envs.DATE_FORMAT_STRING) ===
+      dayjs(this.syncedEnd).format(envs.DATE_FORMAT_STRING)
+        ? this.useSeconds
+          ? start.format(envs.TIME_MINUTE_FORMAT_STRING)
+          : start.format(envs.TIME_FORMAT_STRING)
+        : undefined,
+    ];
+  }
+
+  get maxDate() {
+    if (!this.syncedStart || !this.syncedEnd) {
+      return undefined;
+    }
+    const end = dayjs(this.syncedEnd);
+    return [
+      end.format(envs.DATE_FORMAT_STRING),
+      end.format(envs.DATE_FORMAT_STRING) ===
+      dayjs(this.syncedStart).format(envs.DATE_FORMAT_STRING)
+        ? this.useSeconds
+          ? end.format(envs.TIME_MINUTE_FORMAT_STRING)
+          : end.format(envs.TIME_FORMAT_STRING)
+        : undefined,
+    ];
+  }
+
+  async validate() {
+    return (
+      (await (this.$refs.refStart as any).validate()) &&
+      (await (this.$refs.refEnd as any).validate())
+    );
+  }
+}
+</script>

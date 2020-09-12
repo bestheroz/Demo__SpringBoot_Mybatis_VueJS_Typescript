@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "strict": true,
+    "alwaysStrict": true,
+    "strictNullChecks": true,
+    "jsx": "preserve",
+    "importHelpers": true,
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "emitDecoratorMetadata": true,
+    "sourceMap": true,
+    "baseUrl": ".",
+    "locale": "ko",
+    "types": ["webpack-env", "vuetify"],
+    "paths": {
+      "@/*": ["src/*"]
+    },
+    "lib": ["esnext", "dom"],
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "pretty": true
+  },
+  "include": ["src/**/*.ts", "src/**/*.vue"],
+  "exclude": ["node_modules"]
+}

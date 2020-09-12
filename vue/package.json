@@ -1,0 +1,72 @@
+{
+  "name": "vue",
+  "version": "20.07.30",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve --port 8081",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint"
+  },
+  "dependencies": {
+    "@sentry/browser": "^5.23.0",
+    "@types/lodash": "^4.14.161",
+    "axios": "^0.20.0",
+    "dayjs": "^1.8.35",
+    "fibers": "^5.0.0",
+    "lru-cache": "^6.0.0",
+    "pbkdf2": "^3.1.1",
+    "query-string": "^6.13.1",
+    "register-service-worker": "^1.7.1",
+    "sweetalert2": "^10.0.2",
+    "vee-validate": "^3.3.11",
+    "vue": "^2.6.12",
+    "vue-awesome-countdown": "^1.1.2",
+    "vue-class-component": "^7.2.5",
+    "vue-js-modal": "^2.0.0-rc.6",
+    "vue-property-decorator": "^9.0.0",
+    "vue-router": "^3.4.3",
+    "vue-toasted": "^1.1.28",
+    "vuetify": "^2.3.10",
+    "vuex": "^3.5.1"
+  },
+  "devDependencies": {
+    "@mdi/font": "^5.5.55",
+    "@sentry/integrations": "^5.23.0",
+    "@typescript-eslint/eslint-plugin": "^4.1.0",
+    "@typescript-eslint/parser": "^4.1.0",
+    "@vue/cli-plugin-babel": "^4.5.6",
+    "@vue/cli-plugin-eslint": "^4.5.6",
+    "@vue/cli-plugin-pwa": "^4.5.6",
+    "@vue/cli-plugin-typescript": "^4.5.6",
+    "@vue/cli-service": "^4.5.6",
+    "@vue/eslint-config-prettier": "^6.0.0",
+    "@vue/eslint-config-standard": "^5.1.2",
+    "@vue/eslint-config-typescript": "^5.1.0",
+    "babel-eslint": "^10.1.0",
+    "cypress": "^5.1.0",
+    "cypress-localstorage-commands": "^1.2.2",
+    "eslint": "^7.8.1",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
+    "eslint-plugin-vue": "^6.2.2",
+    "prettier": "2.1.1",
+    "sass": "^1.26.10",
+    "sass-loader": "^10.0.2",
+    "typescript": "^4.0.2",
+    "vue-cli-plugin-vuetify": "^2.0.7",
+    "vue-template-compiler": "^2.6.12",
+    "vuetify-loader": "^1.6.0"
+  },
+  "postcss": {
+    "plugins": {
+      "autoprefixer": {}
+    }
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions"
+  ]
+}
