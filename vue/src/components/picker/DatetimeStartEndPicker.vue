@@ -1,8 +1,42 @@
 <template>
   <div>
     <ValidationObserver ref="observer">
-      <v-row no-gutters>
+      <v-row no-gutters v-if="fullWidth">
         <v-col cols="6">
+          <datetime-picker
+            ref="refStart"
+            v-model="syncedStart"
+            :label="startLabel"
+            :message="startMessage"
+            :required="required"
+            :disabled="disabled || startDisabled"
+            :dense="dense"
+            :hide-details="hideDetails"
+            :clearable="clearable"
+            :max="maxDate"
+            full-width
+            start-type
+          />
+        </v-col>
+        <v-col cols="6">
+          <datetime-picker
+            ref="refEnd"
+            v-model="syncedEnd"
+            :label="endLabel"
+            :message="endMessage"
+            :required="required"
+            :disabled="disabled || endDisabled"
+            :dense="dense"
+            :hide-details="hideDetails"
+            :clearable="clearable"
+            :min="minDate"
+            full-width
+            end-type
+          />
+        </v-col>
+      </v-row>
+      <v-row no-gutters v-else>
+        <v-col cols="12" style="display: inline-flex;">
           <datetime-picker
             ref="refStart"
             v-model="syncedStart"
@@ -16,8 +50,6 @@
             :max="maxDate"
             start-type
           />
-        </v-col>
-        <v-col cols="6">
           <datetime-picker
             ref="refEnd"
             v-model="syncedEnd"
@@ -78,6 +110,7 @@ export default class extends Vue {
   @Prop({ type: Boolean, default: false }) readonly hideDetails!: boolean;
   @Prop({ type: Boolean, default: false }) readonly clearable!: boolean;
   @Prop({ type: Boolean, default: false }) readonly useSeconds!: boolean;
+  @Prop({ type: Boolean, default: false }) readonly fullWidth!: boolean;
 
   readonly envs: typeof envs = envs;
   startDialog: boolean = false;

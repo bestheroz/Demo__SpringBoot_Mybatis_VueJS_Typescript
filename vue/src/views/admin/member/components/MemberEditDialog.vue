@@ -79,8 +79,12 @@
                   :label="editItem.available | getSwitchLabel"
                 />
               </v-col>
-              <v-col cols="12" md="8" class="pa-0">
-                <datetime-picker v-model="editItem.expired" label="만료일" />
+              <v-col cols="12" md="4">
+                <datetime-picker
+                  v-model="editItem.expired"
+                  label="만료일"
+                  full-width
+                />
               </v-col>
               <v-col cols="12" md="4">
                 <ValidationProvider
