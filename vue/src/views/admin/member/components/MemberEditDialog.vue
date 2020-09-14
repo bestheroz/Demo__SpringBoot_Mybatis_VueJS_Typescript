@@ -15,7 +15,7 @@
           <v-icon v-else>mdi-pencil-outline</v-icon>
           사용자 {{ isNew ? '추가' : '수정' }}
           <v-spacer />
-          <v-btn text small :ripple="false" style="cursor: default">
+          <v-btn text small :ripple="false" style="cursor: default;">
             <v-icon> mdi-cursor-move</v-icon>
           </v-btn>
           <v-btn text small @click="syncedDialog = false">
@@ -55,6 +55,12 @@
                 </ValidationProvider>
               </v-col>
               <v-col cols="12" md="4">
+                <v-switch
+                  v-model="editItem.available"
+                  :label="editItem.available | getSwitchLabel"
+                />
+              </v-col>
+              <v-col cols="12" md="4">
                 <ValidationProvider
                   name="권한"
                   rules="required"
@@ -72,12 +78,6 @@
                     v-if="AUTHORITY"
                   />
                 </ValidationProvider>
-              </v-col>
-              <v-col cols="12" md="4">
-                <v-switch
-                  v-model="editItem.available"
-                  :label="editItem.available | getSwitchLabel"
-                />
               </v-col>
               <v-col cols="12" md="4">
                 <datetime-picker
