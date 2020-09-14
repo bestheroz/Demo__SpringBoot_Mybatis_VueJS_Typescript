@@ -1,7 +1,7 @@
 package com.github.bestheroz.standard.common.code;
 
-import com.github.bestheroz.sample.api.entity.code.TableCodeEntity;
-import com.github.bestheroz.sample.api.entity.code.TableCodeRepository;
+import com.github.bestheroz.demo.api.entity.code.TableCodeEntity;
+import com.github.bestheroz.demo.api.entity.code.TableCodeRepository;
 import com.github.bestheroz.standard.common.util.AuthenticationUtils;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;

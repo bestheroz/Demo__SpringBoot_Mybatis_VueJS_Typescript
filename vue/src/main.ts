@@ -4,7 +4,6 @@ import App from './App.vue';
 import router from './router';
 import store from './store';
 import './registerServiceWorker';
-import './plugins/dayjs';
 import './plugins/vue-toasted';
 import './plugins/vee-validate';
 import './plugins/vue-filter';
