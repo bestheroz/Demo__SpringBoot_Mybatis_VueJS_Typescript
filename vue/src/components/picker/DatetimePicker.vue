@@ -29,6 +29,7 @@
               :error-messages="errors"
               :append-outer-icon="startType ? 'mdi-tilde' : undefined"
               :class="endType ? 'ml-3' : undefined"
+              :style="style"
               v-on="on"
             />
           </ValidationProvider>
@@ -54,9 +55,9 @@
           :max="maxTime"
           :min="minTime"
         >
-          <v-btn text color="primary" @click="setNow"> 지금 </v-btn>
+          <v-btn text color="primary" @click="setNow"> 지금</v-btn>
           <div class="flex-grow-1"></div>
-          <v-btn text color="primary" @click="dialog = false"> 취소 </v-btn>
+          <v-btn text color="primary" @click="dialog = false"> 취소</v-btn>
           <v-btn text color="primary" @click="$refs.refDialog.save(timeValue)">
             확인
           </v-btn>
@@ -89,6 +90,7 @@ export default class extends Vue {
   @Prop({ type: Boolean, default: false }) readonly useSeconds!: boolean;
   @Prop({ type: Boolean, default: false }) readonly startType!: boolean;
   @Prop({ type: Boolean, default: false }) readonly endType!: boolean;
+  @Prop({ type: Boolean, default: false }) readonly fullWidth!: boolean;
   @Prop() readonly max!: string[];
   @Prop() readonly min!: string[];
 
@@ -123,6 +125,16 @@ export default class extends Vue {
 
   get minTime() {
     return this.min?.length > 1 ? this.min[1] : undefined;
+  }
+
+  get style() {
+    if (this.fullWidth) {
+      return undefined;
+    }
+    let defaultWidth = 10.5;
+    this.clearable && (defaultWidth += 1.2);
+    this.startType && (defaultWidth += 2.2);
+    return `max-width: ${defaultWidth}rem;`;
   }
 
   @Watch('date', { immediate: true })

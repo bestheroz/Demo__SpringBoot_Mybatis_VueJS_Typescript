@@ -13,10 +13,10 @@
               {{ new Date() }}}
             </v-subheader>
           </v-col>
-          <v-col cols="5" class="text-right">
+          <v-col cols="4" class="text-right">
             <date-picker v-model="date" clearable required />
           </v-col>
-          <v-col cols="4" class="text-left">
+          <v-col cols="5">
             <span v-if="date">
               typeof =>
               {{ getType(date) }}
@@ -31,10 +31,10 @@
               {{ dayjs().toISOString() }}
             </v-subheader>
           </v-col>
-          <v-col cols="5" class="text-right">
+          <v-col cols="4" class="text-right">
             <date-picker v-model="dateParseISOString" />
           </v-col>
-          <v-col cols="4" class="text-left">
+          <v-col cols="5">
             <span v-if="dateParseISOString">
               typeof =>
               {{ getType(dateParseISOString) }}
@@ -49,10 +49,10 @@
               {{ dayjs().toDate().getTime() }}
             </v-subheader>
           </v-col>
-          <v-col cols="5" class="text-right">
+          <v-col cols="4" class="text-right">
             <date-picker v-model="dateParseNumber" />
           </v-col>
-          <v-col cols="4" class="text-left">
+          <v-col cols="5">
             <span v-if="dateParseNumber">
               typeof =>
               {{ getType(dateParseNumber) }}
@@ -71,10 +71,10 @@
               {{ new Date() }}}
             </v-subheader>
           </v-col>
-          <v-col cols="5" class="text-right">
+          <v-col cols="4" class="text-right">
             <datetime-picker v-model="date2" />
           </v-col>
-          <v-col cols="4" class="text-left">
+          <v-col cols="5">
             <span v-if="date2">
               typeof =>
               {{ getType(date2) }}
@@ -86,10 +86,10 @@
           <v-col cols="12">
             <h2>DateStartEndPicker.vue</h2>
           </v-col>
-          <v-col cols="5" class="text-right" offset="3">
+          <v-col cols="4" class="text-right" offset="3">
             <date-start-end-picker :start.sync="start1" :end.sync="end1" />
           </v-col>
-          <v-col cols="4">
+          <v-col cols="5">
             {{ start1 }}
             <br />
             {{ end1 }}
@@ -98,10 +98,10 @@
           <v-col cols="12">
             <h2>DatetimeStartEndPicker.vue</h2>
           </v-col>
-          <v-col cols="5" class="text-right" offset="3">
+          <v-col cols="4" class="text-right" offset="3">
             <datetime-start-end-picker :start.sync="start2" :end.sync="end2" />
           </v-col>
-          <v-col cols="4">
+          <v-col cols="5">
             {{ start2 }}
             <br />
             {{ end2 }}

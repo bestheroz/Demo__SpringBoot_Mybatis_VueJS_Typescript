@@ -1,7 +1,7 @@
 <template>
   <div>
     <ValidationObserver ref="observer">
-      <v-row no-gutters>
+      <v-row no-gutters v-if="fullWidth">
         <v-col cols="6">
           <date-picker
             ref="refStart"
@@ -15,9 +15,42 @@
             :clearable="clearable"
             :max="maxDate"
             start-type
+            full-width
           />
         </v-col>
         <v-col cols="6">
+          <date-picker
+            ref="refEnd"
+            v-model="syncedEnd"
+            :label="endLabel"
+            :message="endMessage"
+            :required="required"
+            :disabled="disabled || endDisabled"
+            :dense="dense"
+            :hide-details="hideDetails"
+            :clearable="clearable"
+            :min="minDate"
+            end-type
+            end-of-day
+            full-width
+          />
+        </v-col>
+      </v-row>
+      <v-row no-gutters v-else>
+        <v-col cols="12" style="display: inline-flex">
+          <date-picker
+            ref="refStart"
+            v-model="syncedStart"
+            :label="startLabel"
+            :message="startMessage"
+            :required="required"
+            :disabled="disabled || startDisabled"
+            :dense="dense"
+            :hide-details="hideDetails"
+            :clearable="clearable"
+            :max="maxDate"
+            start-type
+          />
           <date-picker
             ref="refEnd"
             v-model="syncedEnd"
@@ -78,6 +111,7 @@ export default class extends Vue {
   @Prop({ type: Boolean, default: false }) readonly dense!: boolean;
   @Prop({ type: Boolean, default: false }) readonly hideDetails!: boolean;
   @Prop({ type: Boolean, default: false }) readonly clearable!: boolean;
+  @Prop({ type: Boolean, default: false }) readonly fullWidth!: boolean;
 
   readonly envs: typeof envs = envs;
   startDialog: boolean = false;
