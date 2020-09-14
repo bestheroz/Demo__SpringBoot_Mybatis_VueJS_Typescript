@@ -37,7 +37,7 @@
         </v-col>
       </v-row>
       <v-row no-gutters v-else>
-        <v-col cols="12" style="display: inline-flex;">
+        <v-col cols="12" style="display: inline-flex">
           <date-picker
             ref="refStart"
             v-model="syncedStart"
