@@ -139,7 +139,7 @@ export default class extends Vue {
   start1: Date = dayjs().add(-1, 'day').toDate();
   end1: Date = dayjs().add(1, 'day').toDate();
   start2: Date = dayjs().add(-1, 'day').toDate();
-  end2: Date = dayjs().add(1, 'day').toDate();
+  end2: Date = dayjs().add(1, 'day').endOf('day').toDate();
 
   getType(val: any): string {
     return typeof val === 'object'
