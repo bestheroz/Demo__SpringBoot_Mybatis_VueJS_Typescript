@@ -167,7 +167,9 @@ export default class extends Vue {
         this.$emit(
           'input',
           dayjs(
-            `${split[0]} ${split[1]}:${this.useSeconds ? '' : '59'}.999999`,
+            `${split[0]} ${split[1] || '23:59'}:${
+              this.useSeconds ? '' : '59'
+            }.999999`,
           ).toDate(),
         );
       } else {
