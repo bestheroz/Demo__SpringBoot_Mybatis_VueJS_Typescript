@@ -100,38 +100,30 @@ public class TestCreateTableEntity {
     }
 
     private void writeToFile(final String tableEntityName, final StringBuilder javaString, final StringBuilder tsString) throws IOException {
-        final String javaHeader;
-        if (StringUtils.contains(javaString, " crtId") && StringUtils.contains(javaString, " crtDt") && StringUtils.contains(javaString, " updId") &&
-                StringUtils.contains(javaString, " updDt")) {
-            javaHeader = "package " + this.javaPackageName + this.javaPackageEndPoint + ";\n" +
-                    "\n" +
-                    "import " + this.javaPackageName + "AbstractCreatedUpdateEntity;\n" +
-                    "import lombok.Data;\n" +
-                    "import lombok.EqualsAndHashCode;\n" +
-                    "\n" +
-                    "import java.io.Serializable;\n" +
-                    "\n" +
-                    "@EqualsAndHashCode(callSuper = true)\n" +
-                    "@Data\n" +
-                    "public class " + tableEntityName + " extends AbstractCreatedUpdateEntity implements Serializable {\n";
-        } else {
-            javaHeader = "package " + this.javaPackageName + this.javaPackageEndPoint + ";\n" +
-                    "\n" +
-                    "import lombok.Data;\n" +
-                    "\n" +
-                    "import java.io.Serializable;\n" +
-                    "import java.time.Instant;\n" +
-                    "\n" +
-                    "@Data\n" +
-                    "public class " + tableEntityName + " implements Serializable {\n";
-        }
+        final boolean hasAbstractCreatedUpdateEntity = StringUtils.contains(javaString, " crtId") && StringUtils.contains(javaString, " crtDt") && StringUtils.contains(javaString, " updId") &&
+                StringUtils.contains(javaString, " updDt");
+        final String javaHeader = "package " + this.javaPackageName + this.javaPackageEndPoint + ";\n" +
+                "\n" +
+                (hasAbstractCreatedUpdateEntity ? "import " + this.javaPackageName + "AbstractCreatedUpdateEntity;\n" : "") +
+                "import lombok.Data;\n" +
+                "import lombok.EqualsAndHashCode;\n" +
+                "\n" +
+                "import java.io.Serializable;\n" +
+                "\n" +
+                (hasAbstractCreatedUpdateEntity ? "@EqualsAndHashCode(callSuper = true)\n" : "") +
+                "@Data\n" +
+                "public class " + tableEntityName + (hasAbstractCreatedUpdateEntity ? " extends AbstractCreatedUpdateEntity" : "") + " implements Serializable {\n";
+        final String javaBody = hasAbstractCreatedUpdateEntity ?
+                javaString.toString().replace("private String crtId;\n", "").replace("private Instant crtDt;\n", "").replace("private String updId;\n", "").replace("private Instant updDt;\n", "") :
+                javaString.toString();
         if (Files.notExists(Paths.get(this.javaFilePath + this.javaPackageEndPoint))) {
             FileUtils.forceMkdir(Paths.get(this.javaFilePath + this.javaPackageEndPoint).toFile());
         }
         final Path javaEntityFilePath = Paths.get(this.javaFilePath + this.javaPackageEndPoint + "/" + tableEntityName + ".java");
-        Files.write(javaEntityFilePath, (javaHeader + javaString + "}").getBytes(),
+        Files.write(javaEntityFilePath,
+                (javaHeader + javaBody + "}").getBytes(),
                 Files.notExists(javaEntityFilePath) ? StandardOpenOption.CREATE_NEW : StandardOpenOption.TRUNCATE_EXISTING);
-        final String repositoryString = "package " + this.javaPackageName + this.javaPackageEndPoint + ";\n" +
+        final String repositoryHeader = "package " + this.javaPackageName + this.javaPackageEndPoint + ";\n" +
                 "\n" +
                 "import " + this.javaProjectRootPackageName + "standard.common.mybatis.SqlRepository;\n" +
                 "import org.apache.ibatis.annotations.Mapper;\n" +
@@ -142,7 +134,8 @@ public class TestCreateTableEntity {
                 "public interface " + tableEntityName.replace("Entity", "Repository") + " extends SqlRepository<" + tableEntityName + "> {\n" +
                 "}\n";
         final Path javaRepositoryFilePath = Paths.get(this.javaFilePath + this.javaPackageEndPoint + "/" + tableEntityName.replace("Entity", "Repository") + ".java");
-        Files.write(javaRepositoryFilePath, repositoryString.getBytes(),
+        Files.write(javaRepositoryFilePath,
+                repositoryHeader.getBytes(),
                 Files.notExists(javaRepositoryFilePath) ? StandardOpenOption.CREATE_NEW : StandardOpenOption.TRUNCATE_EXISTING);
         final String tsHeader = "export interface " + tableEntityName + " {\n";
         Files.write(Paths.get(this.tsFilePath), (tsHeader + tsString + "}\n").getBytes(), StandardOpenOption.APPEND);
