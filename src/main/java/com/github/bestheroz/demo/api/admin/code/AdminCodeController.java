@@ -16,7 +16,8 @@ import java.util.Map;
 @RestController
 @RequestMapping(value = "api/admin/codes")
 public class AdminCodeController {
-    @Resource private TableCodeRepository tableCodeRepository;
+    @Resource
+    private TableCodeRepository tableCodeRepository;
 
     @GetMapping(value = "{codeGroup}")
     ResponseEntity<ApiResult> getItems(@PathVariable(value = "codeGroup") final String codeGroup) {
@@ -30,6 +31,7 @@ public class AdminCodeController {
 
     @PostMapping(value = "{codeGroup}")
     public ResponseEntity<ApiResult> insert(@PathVariable(value = "codeGroup") final String codeGroup, @RequestBody final TableCodeEntity tableCodeEntity) {
+        tableCodeEntity.setCodeGroup(codeGroup);
         this.tableCodeRepository.insert(tableCodeEntity);
         return Result.created();
     }
