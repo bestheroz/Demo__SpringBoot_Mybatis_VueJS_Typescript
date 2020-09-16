@@ -257,6 +257,11 @@
                     <target>${java-version}</target>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>com.hubspot.maven.plugins</groupId>
+                <artifactId>prettier-maven-plugin</artifactId>
+                <version>0.10</version>
+            </plugin>
         </plugins>
     </build>
 

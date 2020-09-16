@@ -6,5 +6,4 @@ import org.springframework.stereotype.Repository;
 
 @Mapper
 @Repository
-public interface TableCodeRepository extends SqlRepository<TableCodeEntity> {
-}
+public interface TableCodeRepository extends SqlRepository<TableCodeEntity> {}

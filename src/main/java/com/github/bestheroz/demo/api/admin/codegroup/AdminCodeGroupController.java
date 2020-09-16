@@ -4,46 +4,66 @@ import com.github.bestheroz.demo.api.entity.codegroup.TableCodeGroupEntity;
 import com.github.bestheroz.demo.api.entity.codegroup.TableCodeGroupRepository;
 import com.github.bestheroz.standard.common.response.ApiResult;
 import com.github.bestheroz.standard.common.response.Result;
+import java.util.Map;
+import javax.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.annotation.Resource;
-import java.util.Map;
 
 @Slf4j
 @RestController
 @RequestMapping(value = "api/admin/codeGroups")
 public class AdminCodeGroupController {
-    @Resource private TableCodeGroupRepository tableCodeGroupRepository;
-    @Resource private AdminCodeGroupService adminCodeGroupService;
+  @Resource
+  private TableCodeGroupRepository tableCodeGroupRepository;
 
-    @GetMapping
-    ResponseEntity<ApiResult> getItems() {
-        return Result.ok(this.tableCodeGroupRepository.getItems(TableCodeGroupEntity.class));
-    }
+  @Resource
+  private AdminCodeGroupService adminCodeGroupService;
 
-    @GetMapping(value = "{codeGroup}")
-    ResponseEntity<ApiResult> getItem(@PathVariable(value = "codeGroup", required = false) final String codeGroup) {
-        return Result.ok(this.tableCodeGroupRepository.getItem(TableCodeGroupEntity.class, Map.of("codeGroup", codeGroup)));
-    }
+  @GetMapping
+  ResponseEntity<ApiResult> getItems() {
+    return Result.ok(
+      this.tableCodeGroupRepository.getItems(TableCodeGroupEntity.class)
+    );
+  }
 
-    @PostMapping
-    ResponseEntity<ApiResult> post(@RequestBody final TableCodeGroupEntity tableCodeGroupEntity) {
-        this.tableCodeGroupRepository.insert(tableCodeGroupEntity);
-        return Result.created();
-    }
+  @GetMapping(value = "{codeGroup}")
+  ResponseEntity<ApiResult> getItem(
+    @PathVariable(value = "codeGroup", required = false) final String codeGroup
+  ) {
+    return Result.ok(
+      this.tableCodeGroupRepository.getItem(
+          TableCodeGroupEntity.class,
+          Map.of("codeGroup", codeGroup)
+        )
+    );
+  }
 
-    @PatchMapping(value = "{codeGroup}")
-    ResponseEntity<ApiResult> patch(@PathVariable(value = "codeGroup") final String codeGroup, @RequestBody final TableCodeGroupEntity tableCodeGroupEntity) {
-        this.tableCodeGroupRepository.update(tableCodeGroupEntity, Map.of("codeGroup", codeGroup));
-        return Result.ok();
-    }
+  @PostMapping
+  ResponseEntity<ApiResult> post(
+    @RequestBody final TableCodeGroupEntity tableCodeGroupEntity
+  ) {
+    this.tableCodeGroupRepository.insert(tableCodeGroupEntity);
+    return Result.created();
+  }
 
-    @DeleteMapping(value = "{codeGroup}")
-    ResponseEntity<ApiResult> delete(@PathVariable(value = "codeGroup") final String codeGroup) {
-        this.adminCodeGroupService.delete(codeGroup);
-        return Result.ok();
-    }
+  @PatchMapping(value = "{codeGroup}")
+  ResponseEntity<ApiResult> patch(
+    @PathVariable(value = "codeGroup") final String codeGroup,
+    @RequestBody final TableCodeGroupEntity tableCodeGroupEntity
+  ) {
+    this.tableCodeGroupRepository.update(
+        tableCodeGroupEntity,
+        Map.of("codeGroup", codeGroup)
+      );
+    return Result.ok();
+  }
 
+  @DeleteMapping(value = "{codeGroup}")
+  ResponseEntity<ApiResult> delete(
+    @PathVariable(value = "codeGroup") final String codeGroup
+  ) {
+    this.adminCodeGroupService.delete(codeGroup);
+    return Result.ok();
+  }
 }

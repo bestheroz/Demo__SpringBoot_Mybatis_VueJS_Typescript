@@ -4,22 +4,30 @@ import com.github.bestheroz.demo.api.entity.code.TableCodeEntity;
 import com.github.bestheroz.demo.api.entity.code.TableCodeRepository;
 import com.github.bestheroz.demo.api.entity.codegroup.TableCodeGroupEntity;
 import com.github.bestheroz.demo.api.entity.codegroup.TableCodeGroupRepository;
+import java.util.Map;
+import javax.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
-import java.util.Map;
-
 @Slf4j
 @Service
 public class AdminCodeGroupService {
-    @Resource private TableCodeGroupRepository tableCodeGroupRepository;
-    @Resource private TableCodeRepository tableCodeRepository;
+  @Resource
+  private TableCodeGroupRepository tableCodeGroupRepository;
 
-    @Transactional
-    public void delete(final String codeGroup) {
-        this.tableCodeRepository.delete(TableCodeEntity.class, Map.of("codeGroup", codeGroup));
-        this.tableCodeGroupRepository.delete(TableCodeGroupEntity.class, Map.of("codeGroup", codeGroup));
-    }
+  @Resource
+  private TableCodeRepository tableCodeRepository;
+
+  @Transactional
+  public void delete(final String codeGroup) {
+    this.tableCodeRepository.delete(
+        TableCodeEntity.class,
+        Map.of("codeGroup", codeGroup)
+      );
+    this.tableCodeGroupRepository.delete(
+        TableCodeGroupEntity.class,
+        Map.of("codeGroup", codeGroup)
+      );
+  }
 }
