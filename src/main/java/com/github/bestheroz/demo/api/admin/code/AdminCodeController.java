@@ -24,9 +24,9 @@ public class AdminCodeController {
   ) {
     return Result.ok(
       this.tableCodeRepository.getItemsByKey(
-        TableCodeEntity.class,
-        Map.of("codeGroup", codeGroup)
-      )
+          TableCodeEntity.class,
+          Map.of("codeGroup", codeGroup)
+        )
     );
   }
 
@@ -37,9 +37,9 @@ public class AdminCodeController {
   ) {
     return Result.ok(
       this.tableCodeRepository.getItem(
-        TableCodeEntity.class,
-        Map.of("codeGroup", codeGroup, "code", code)
-      )
+          TableCodeEntity.class,
+          Map.of("codeGroup", codeGroup, "code", code)
+        )
     );
   }
 
@@ -61,9 +61,9 @@ public class AdminCodeController {
     @RequestBody final TableCodeEntity tableCodeEntity
   ) {
     this.tableCodeRepository.update(
-      tableCodeEntity,
-      Map.of("codeGroup", codeGroup, "code", code)
-    );
+        tableCodeEntity,
+        Map.of("codeGroup", codeGroup, "code", code)
+      );
     return Result.ok();
   }
 
@@ -74,9 +74,9 @@ public class AdminCodeController {
     @PathVariable(value = "code") final String code
   ) {
     this.tableCodeRepository.delete(
-      TableCodeEntity.class,
-      Map.of("codeGroup", codeGroup, "code", code)
-    );
+        TableCodeEntity.class,
+        Map.of("codeGroup", codeGroup, "code", code)
+      );
     return Result.ok();
   }
 }
