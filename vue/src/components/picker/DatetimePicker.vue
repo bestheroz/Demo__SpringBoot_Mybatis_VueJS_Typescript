@@ -162,7 +162,19 @@ export default class extends Vue {
       val !== oldVal &&
       dayjs(val).toDate().getTime() !== dayjs(oldVal).toDate().getTime()
     ) {
-      this.$emit('input', dayjs(val).toDate());
+      if (this.endType) {
+        const split = val.split(' ');
+        this.$emit(
+          'input',
+          dayjs(
+            `${split[0]} ${split[1] || '23:59'}:${
+              this.useSeconds ? '' : '59'
+            }.999999`,
+          ).toDate(),
+        );
+      } else {
+        this.$emit('input', dayjs(val).toDate());
+      }
     }
   }
 
