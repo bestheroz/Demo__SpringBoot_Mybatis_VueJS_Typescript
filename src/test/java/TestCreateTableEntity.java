@@ -31,7 +31,8 @@ public class TestCreateTableEntity {
     private final String javaPackageName = this.javaProjectRootPackageName + "demo.api.entity.";
     private final String javaFilePath = "src/main/java/" + this.javaPackageName.replaceAll("\\.", "/");
     private final String tsFilePath = "vue/src/common/types.ts";
-    @Qualifier("dataSource") @Resource
+    @Qualifier("dataSource")
+    @Resource
     private DataSource dataSource;
 
     @Test
