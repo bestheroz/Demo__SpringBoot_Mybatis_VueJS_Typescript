@@ -34,7 +34,7 @@
     <maven-resources-plugin-version>3.2.0</maven-resources-plugin-version>
     <!-- circleCI 이용시 제거 가능 END -->
     <maven-clean-plugin-version>3.1.0</maven-clean-plugin-version>
-    <maven-compiler-plugin-version>3.8.0</maven-compiler-plugin-version>
+    <maven-compiler-plugin-version>3.8.1</maven-compiler-plugin-version>
   </properties>
 
   <dependencies>
