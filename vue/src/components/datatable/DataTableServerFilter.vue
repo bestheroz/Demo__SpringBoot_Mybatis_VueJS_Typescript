@@ -1,5 +1,5 @@
 <template>
-  <tr id="datatable-header-filter" class="text-center">
+  <tr class="text-center datatable-header-filter">
     <td v-if="!filterFirstColumn" />
     <td v-for="(data, index) in filterHeader" :key="data.value">
       <v-select
@@ -89,8 +89,8 @@ export default class extends Vue {
   }
 }
 </script>
-<style lang="scss">
-#datatable-header-filter {
+<style lang="scss" scoped>
+tr.datatable-header-filter {
   text-align: center;
 
   td {
