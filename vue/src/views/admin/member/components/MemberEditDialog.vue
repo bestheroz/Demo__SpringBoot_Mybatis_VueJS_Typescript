@@ -15,7 +15,7 @@
           <v-icon v-else>mdi-pencil-outline</v-icon>
           사용자 {{ isNew ? '추가' : '수정' }}
           <v-spacer />
-          <v-btn text small :ripple="false" style="cursor: default;">
+          <v-btn text small :ripple="false" style="cursor: default">
             <v-icon> mdi-cursor-move</v-icon>
           </v-btn>
           <v-btn text small @click="syncedDialog = false">
@@ -124,7 +124,7 @@
                   name="비밀번호 확인"
                   rules="required|confirmed:password|max:20"
                   v-slot="{ errors }"
-                  v-if="isNew && editItem.password"
+                  v-if="isNew"
                 >
                   <v-text-field
                     v-model="password2"
