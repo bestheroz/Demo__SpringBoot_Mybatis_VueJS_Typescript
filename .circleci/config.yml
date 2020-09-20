@@ -46,7 +46,7 @@ jobs:
           command: |
             cd target;
             sshpass -p ''$password'' ssh $username@$hostname /home/$username/WAS/bin/wasctl stop;
-            lftp -u $username,''$password'' $hostname -e "sleep 5; cd /home/$username/WAS; put ./$project_name-1.jar; quit";
+            lftp -u $username,''$password'' $hostname -e "sleep 5; cd /home/$username/WAS; put ./classes/application.yml; put ./$project_name-1.jar; quit";
             sshpass -p ''$password'' ssh $username@$hostname /home/$username/WAS/bin/wasctl start;
 
 workflows:
