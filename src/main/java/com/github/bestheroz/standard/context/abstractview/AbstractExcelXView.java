@@ -146,13 +146,13 @@ public abstract class AbstractExcelXView extends AbstractView {
 
       this.numberStyle = (XSSFCellStyle) workbook.createCellStyle();
       this.numberStyle.setDataFormat(
-        workbook.getCreationHelper().createDataFormat().getFormat("#,##0")
-      );
+          workbook.getCreationHelper().createDataFormat().getFormat("#,##0")
+        );
 
       this.doubleStyle = (XSSFCellStyle) workbook.createCellStyle();
       this.doubleStyle.setDataFormat(
-        workbook.getCreationHelper().createDataFormat().getFormat("#,##0.00")
-      );
+          workbook.getCreationHelper().createDataFormat().getFormat("#,##0.00")
+        );
 
       this.dateStyle = (XSSFCellStyle) workbook.createCellStyle();
       this.dateStyle.setAlignment(HorizontalAlignment.CENTER);
@@ -277,12 +277,12 @@ public abstract class AbstractExcelXView extends AbstractView {
       this.setDouble(cell, data);
     } else if (
       excelVOs.get(columnIdx).getCellType().equals(CellType.DATE) ||
-        excelVOs.get(columnIdx).getCellType().equals(CellType.DATE_YYYYMMDDHHMMSS)
+      excelVOs.get(columnIdx).getCellType().equals(CellType.DATE_YYYYMMDDHHMMSS)
     ) {
       this.setDate(
-        cell,
-        DateUtils.toString(Instant.parse(data), "yyyy-MM-dd HH:mm:ss")
-      );
+          cell,
+          DateUtils.toString(Instant.parse(data), "yyyy-MM-dd HH:mm:ss")
+        );
     } else if (
       excelVOs.get(columnIdx).getCellType().equals(CellType.DATE_YYYYMMDD)
     ) {
