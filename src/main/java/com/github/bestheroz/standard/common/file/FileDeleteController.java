@@ -10,15 +10,20 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class FileDeleteController {
-    @DeleteMapping(value = "/common/file/delete/fileDelete")
-    ResponseEntity<ApiResult> deleteFile(@RequestParam("filePath") final String filePath) {
-        FileUtils.deleteFile(filePath);
-        return Result.ok();
-    }
 
-    @DeleteMapping(value = "/common/file/delete/deleteAllFiles")
-    ResponseEntity<ApiResult> deleteAllFiles(@RequestParam("filePath") final String filePath) {
-        FileUtils.deleteDirectory(filePath);
-        return Result.ok();
-    }
+  @DeleteMapping(value = "/common/file/delete/fileDelete")
+  ResponseEntity<ApiResult> deleteFile(
+    @RequestParam("filePath") final String filePath
+  ) {
+    FileUtils.deleteFile(filePath);
+    return Result.ok();
+  }
+
+  @DeleteMapping(value = "/common/file/delete/deleteAllFiles")
+  ResponseEntity<ApiResult> deleteAllFiles(
+    @RequestParam("filePath") final String filePath
+  ) {
+    FileUtils.deleteDirectory(filePath);
+    return Result.ok();
+  }
 }

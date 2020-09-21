@@ -55,6 +55,12 @@
                 </ValidationProvider>
               </v-col>
               <v-col cols="12" md="4">
+                <v-switch
+                  v-model="editItem.available"
+                  :label="editItem.available | getSwitchLabel"
+                />
+              </v-col>
+              <v-col cols="12" md="4">
                 <ValidationProvider
                   name="권한"
                   rules="required"
@@ -72,12 +78,6 @@
                     v-if="AUTHORITY"
                   />
                 </ValidationProvider>
-              </v-col>
-              <v-col cols="12" md="4">
-                <v-switch
-                  v-model="editItem.available"
-                  :label="editItem.available | getSwitchLabel"
-                />
               </v-col>
               <v-col cols="12" md="4">
                 <datetime-picker
@@ -124,7 +124,7 @@
                   name="비밀번호 확인"
                   rules="required|confirmed:password|max:20"
                   v-slot="{ errors }"
-                  v-if="isNew && editItem.password"
+                  v-if="isNew"
                 >
                   <v-text-field
                     v-model="password2"
@@ -170,9 +170,9 @@
 import { Component, Prop, PropSync, Vue, Watch } from 'vue-property-decorator';
 import { SelectItem, TableMemberEntity } from '@/common/types';
 import { deleteApi, getCodesApi, patchApi, postApi } from '@/utils/apis';
-import _ from 'lodash';
 import DatetimePicker from '@/components/picker/DatetimePicker.vue';
 import { confirmDelete } from '@/utils/alerts';
+import { ValidationObserver } from 'vee-validate';
 
 const pbkdf2 = require('pbkdf2');
 
@@ -207,7 +207,10 @@ export default class extends Vue {
       this.show1 = false;
       this.show2 = false;
       this.isNew = !this.editItem.id;
-      this.$refs.observer && (this.$refs.observer as any).reset();
+      this.$refs.observer &&
+        (this.$refs.observer as InstanceType<
+          typeof ValidationObserver
+        >).reset();
       this.$modal.show('MemberEditDialog');
     } else {
       this.$modal.hide('MemberEditDialog');
@@ -215,7 +218,9 @@ export default class extends Vue {
   }
 
   async save() {
-    const isValid = await (this.$refs.observer as any).validate();
+    const isValid = await (this.$refs.observer as InstanceType<
+      typeof ValidationObserver
+    >).validate();
     if (!isValid) {
       return;
     }
@@ -235,7 +240,7 @@ export default class extends Vue {
       params,
     );
     this.loading = false;
-    if (_.startsWith(response.code, `S`)) {
+    if (response.code.startsWith(`S`)) {
       await this.$store.dispatch('setMemberCodes');
       this.syncedDialog = false;
       this.$emit('finished');
@@ -255,7 +260,7 @@ export default class extends Vue {
       params,
     );
     this.loading = false;
-    if (_.startsWith(response.code, `S`)) {
+    if (response.code.startsWith(`S`)) {
       const user = await this.$store.dispatch('getUser');
       if (this.editItem.id === user.id) {
         await this.$store.dispatch('setUser');
@@ -274,7 +279,7 @@ export default class extends Vue {
         `${this.ENDPOINT_URL}${this.editItem.id}/`,
       );
       this.loading = false;
-      if (_.startsWith(response.code, `S`)) {
+      if (response.code.startsWith(`S`)) {
         await this.$store.dispatch('setMemberCodes');
         this.$emit('finished');
       }

@@ -8,10 +8,13 @@ import org.springframework.context.annotation.Configuration;
 @Slf4j
 @Configuration
 public class InitWebConstantConfiguration {
-    @Autowired
-    public void setConstant() throws IllegalArgumentException {
-        log.info("\n{}\nThis Framework is managed by bestheroz.\nIf you have any questions, send me feedback.\nE-mail: bestheroz@gmail.com\ngithub: https://github.com/bestheroz\n{}",
-                StringUtils.repeat("=", 80),
-                StringUtils.repeat("=", 80));
-    }
+
+  @Autowired
+  public void setConstant() throws IllegalArgumentException {
+    log.info(
+      "\n{}\nThis Framework is managed by bestheroz.\nIf you have any questions, send me feedback.\nE-mail: bestheroz@gmail.com\ngithub: https://github.com/bestheroz\n{}",
+      StringUtils.repeat("=", 80),
+      StringUtils.repeat("=", 80)
+    );
+  }
 }

@@ -71,6 +71,7 @@
 import { Component, Model, Prop, Vue, Watch } from 'vue-property-decorator';
 import envs from '@/constants/envs';
 import dayjs from 'dayjs';
+import { ValidationObserver } from 'vee-validate';
 
 @Component({ name: 'DatetimePicker' })
 export default class extends Vue {
@@ -162,7 +163,19 @@ export default class extends Vue {
       val !== oldVal &&
       dayjs(val).toDate().getTime() !== dayjs(oldVal).toDate().getTime()
     ) {
-      this.$emit('input', dayjs(val).toDate());
+      if (this.endType) {
+        const split = val.split(' ');
+        this.$emit(
+          'input',
+          dayjs(
+            `${split[0]} ${split[1] || '23:59'}:${
+              this.useSeconds ? '' : '59'
+            }.999999`,
+          ).toDate(),
+        );
+      } else {
+        this.$emit('input', dayjs(val).toDate());
+      }
     }
   }
 
@@ -171,7 +184,9 @@ export default class extends Vue {
   }
 
   async validate() {
-    return await (this.$refs.observer as any).validate();
+    return await (this.$refs.observer as InstanceType<
+      typeof ValidationObserver
+    >).validate();
   }
 }
 </script>

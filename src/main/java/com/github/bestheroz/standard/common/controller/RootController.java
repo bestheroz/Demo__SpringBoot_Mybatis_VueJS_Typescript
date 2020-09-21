@@ -6,16 +6,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class RootController implements ErrorController {
-    final static private String INDEX_HTML = "index.html";
+  private static final String INDEX_HTML = "index.html";
 
-    @GetMapping(value = {"/", "/login", "/error"})
-    public String root() {
-        return INDEX_HTML;
-    }
+  @GetMapping(value = { "/", "/login", "/error" })
+  public String root() {
+    return INDEX_HTML;
+  }
 
-    @Override
-    public String getErrorPath() {
-        return null;
-    }
+  @Override
+  public String getErrorPath() {
+    return null;
+  }
 }
-

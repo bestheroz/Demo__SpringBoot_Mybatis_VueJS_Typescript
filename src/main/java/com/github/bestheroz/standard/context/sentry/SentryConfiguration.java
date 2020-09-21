@@ -6,10 +6,11 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
 @Configuration
-@Profile(value = {"dev", "production"})
+@Profile(value = { "dev", "production" })
 public class SentryConfiguration {
-    @Bean
-    public HandlerExceptionResolver sentryExceptionResolver() {
-        return new io.sentry.spring.SentryExceptionResolver();
-    }
+
+  @Bean
+  public HandlerExceptionResolver sentryExceptionResolver() {
+    return new io.sentry.spring.SentryExceptionResolver();
+  }
 }

@@ -60,6 +60,7 @@
 import { Component, Model, Prop, Vue, Watch } from 'vue-property-decorator';
 import envs from '@/constants/envs';
 import dayjs from 'dayjs';
+import { ValidationObserver } from 'vee-validate';
 
 @Component({ name: 'DatePicker' })
 export default class extends Vue {
@@ -136,7 +137,9 @@ export default class extends Vue {
   }
 
   async validate() {
-    return await (this.$refs.observer as any).validate();
+    return await (this.$refs.observer as InstanceType<
+      typeof ValidationObserver
+    >).validate();
   }
 }
 </script>

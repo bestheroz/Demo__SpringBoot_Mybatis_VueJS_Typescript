@@ -7,13 +7,4 @@
         <setting name="logImpl" value="SLF4J"/>
     </settings>
 
-    <typeAliases>
-        <typeAlias alias="Instant" type="java.time.Instant"/>
-    </typeAliases>
-
-    <typeHandlers>
-        <!-- java.time.Instant 로 변경 -->
-        <typeHandler handler="com.github.bestheroz.standard.context.db.typehandler.InstantTypeHandler"/>
-    </typeHandlers>
-
 </configuration>

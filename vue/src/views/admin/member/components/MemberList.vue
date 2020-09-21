@@ -188,9 +188,11 @@ export default class extends Vue {
   ];
 
   async mounted() {
-    this.headers[2].filterSelectItem = this.AUTHORITY = await getCodesApi(
-      'AUTHORITY',
-    );
+    this.headers[
+      this.headers.indexOf(
+        this.headers.find((item) => item.value === 'authority')!,
+      )
+    ].filterSelectItem = this.AUTHORITY = await getCodesApi('AUTHORITY');
     await this.getList();
   }
 
