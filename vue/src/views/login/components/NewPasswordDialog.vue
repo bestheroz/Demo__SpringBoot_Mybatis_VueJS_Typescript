@@ -7,7 +7,7 @@
       class="elevation-12"
     >
       <v-card>
-        <v-card-title class="py-2 modal-header"> 비밀번호 초기화 </v-card-title>
+        <v-card-title class="py-2 modal-header"> 비밀번호 초기화</v-card-title>
         <v-card-text>
           <ValidationObserver ref="observer">
             <v-row>
@@ -65,8 +65,8 @@
 <script lang="ts">
 import { Component, Prop, PropSync, Vue } from 'vue-property-decorator';
 import { alertAxiosError, ApiDataResult, axiosInstance } from '@/utils/apis';
-import _ from 'lodash';
 import { alertError } from '@/utils/alerts';
+import { ValidationObserver } from 'vee-validate';
 
 const pbkdf2 = require('pbkdf2');
 
@@ -88,7 +88,9 @@ export default class extends Vue {
   }
 
   async save() {
-    const inValid = await (this.$refs.observer as any).validate();
+    const inValid = await (this.$refs.observer as InstanceType<
+      typeof ValidationObserver
+    >).validate();
     if (!inValid) {
       return;
     }
@@ -106,7 +108,7 @@ export default class extends Vue {
         id: this.id,
         password: pbkdf2Password,
       });
-      if (_.startsWith(response.data.code, `S`)) {
+      if (response.data.code.startsWith(`S`)) {
         this.$toasted.info('패스워드 설정 완료, 재 로그인 해주세요.');
         this.syncedDialog = false;
       } else {

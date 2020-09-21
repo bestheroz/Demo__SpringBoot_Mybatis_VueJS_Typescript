@@ -30,7 +30,7 @@ export default class extends Vue {
   color: string = '';
 
   async mounted() {
-    this.title = await getVariableApi('appTitle');
+    this.title = await getVariableApi('title');
     this.now = dayjs().format('YYYY년 MM월 DD일 HH시 mm분 ss초');
     this.color = this.getRandomColor();
     this.interval = setInterval(() => {

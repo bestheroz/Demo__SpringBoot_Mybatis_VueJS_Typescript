@@ -5,7 +5,7 @@ import { needLogin } from '@/utils/authentications';
 Vue.use(Router);
 
 // @ts-ignore
-const requireAuth = () => async (to: any, from: any, next: any) => {
+const requireAuth = () => async (to: Route, from: Route, next: Route) => {
   if (
     window.localStorage.getItem('accessToken') &&
     window.localStorage.getItem('refreshToken')

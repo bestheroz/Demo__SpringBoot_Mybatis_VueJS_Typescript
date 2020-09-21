@@ -1,5 +1,4 @@
 import axios, { AxiosError } from 'axios';
-import _ from 'lodash';
 import store from '@/store';
 import { alertError, alertSuccess, alertWarning } from '@/utils/alerts';
 import envs from '@/constants/envs';
@@ -182,7 +181,7 @@ export async function getVariableApi<T = string>(
 }
 
 function alertResponseMessage(data: ApiDataResult<any>): void {
-  if (_.startsWith(data.code, `S`)) {
+  if (data.code.startsWith(`S`)) {
     alertSuccess(data.message);
   } else {
     alertError(data.message);
