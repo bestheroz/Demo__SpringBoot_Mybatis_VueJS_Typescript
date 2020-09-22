@@ -112,8 +112,8 @@
 import { Component, Prop, PropSync, Vue, Watch } from 'vue-property-decorator';
 import { SelectItem, TableMenuEntity } from '@/common/types';
 import { deleteApi, getCodesApi, patchApi, postApi } from '@/utils/apis';
-import _ from 'lodash';
 import { confirmDelete } from '@/utils/alerts';
+import { ValidationObserver } from 'vee-validate';
 
 interface MenuVO extends TableMenuEntity {
   level: number;
@@ -143,7 +143,10 @@ export default class extends Vue {
   watchDialog(val: boolean) {
     if (val) {
       this.isNew = !this.editItem.id;
-      this.$refs.observer && (this.$refs.observer as any).reset();
+      this.$refs.observer &&
+        (this.$refs.observer as InstanceType<
+          typeof ValidationObserver
+        >).reset();
       this.$modal.show('MenuEditDialog');
     } else {
       this.$modal.hide('MenuEditDialog');
@@ -151,7 +154,9 @@ export default class extends Vue {
   }
 
   async save() {
-    const isValid = await (this.$refs.observer as any).validate();
+    const isValid = await (this.$refs.observer as InstanceType<
+      typeof ValidationObserver
+    >).validate();
     if (!isValid) {
       return;
     }
@@ -165,7 +170,7 @@ export default class extends Vue {
       this.editItem,
     );
     this.loading = false;
-    if (_.startsWith(response.code, `S`)) {
+    if (response.code.startsWith(`S`)) {
       await this.$store.dispatch('setDrawers');
       this.syncedDialog = false;
       this.$emit('finished');
@@ -179,7 +184,7 @@ export default class extends Vue {
       this.editItem,
     );
     this.loading = false;
-    if (_.startsWith(response.code, `S`)) {
+    if (response.code.startsWith(`S`)) {
       await this.$store.dispatch('setDrawers');
       this.syncedDialog = false;
       this.$emit('finished');
@@ -194,7 +199,7 @@ export default class extends Vue {
         `${this.ENDPOINT_URL}${this.editItem.id}/`,
       );
       this.loading = false;
-      if (_.startsWith(response.code, `S`)) {
+      if (response.code.startsWith(`S`)) {
         await this.$store.dispatch('setDrawers');
         this.$emit('finished');
       }

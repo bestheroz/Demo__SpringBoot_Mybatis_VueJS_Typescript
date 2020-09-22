@@ -14,10 +14,11 @@
             </v-list-item-content>
           </template>
           <v-list-item
-            v-for="(child, i) in item.children"
-            :key="i"
-            :link="!!item.to"
-            @click="movePage(child)"
+            :key="child.title"
+            :to="child.type === 'W' || !child.to ? undefined : child.to"
+            @click="child.type === 'W' ? popupWindow(child.to) : undefined"
+            v-for="child in item.children"
+            link
           >
             <v-list-item-action>
               <v-icon>mdi-menu-right</v-icon>

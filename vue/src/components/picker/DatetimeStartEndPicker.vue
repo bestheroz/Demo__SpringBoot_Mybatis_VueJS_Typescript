@@ -74,6 +74,7 @@ import { Component, Prop, PropSync, Vue } from 'vue-property-decorator';
 import envs from '@/constants/envs';
 import dayjs from 'dayjs';
 import DatetimePicker from '@/components/picker/DatetimePicker.vue';
+import { ValidationObserver } from 'vee-validate';
 
 @Component({
   name: 'DatetimeStartEndPicker',
@@ -150,8 +151,12 @@ export default class extends Vue {
 
   async validate() {
     return (
-      (await (this.$refs.refStart as any).validate()) &&
-      (await (this.$refs.refEnd as any).validate())
+      (await (this.$refs.refStart as InstanceType<
+        typeof ValidationObserver
+      >).validate()) &&
+      (await (this.$refs.refEnd as InstanceType<
+        typeof ValidationObserver
+      >).validate())
     );
   }
 }

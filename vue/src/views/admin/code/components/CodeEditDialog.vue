@@ -132,8 +132,8 @@
 import { Component, Prop, PropSync, Vue, Watch } from 'vue-property-decorator';
 import { SelectItem, TableCodeEntity } from '@/common/types';
 import { deleteApi, getCodesApi, patchApi, postApi } from '@/utils/apis';
-import _ from 'lodash';
 import { confirmDelete } from '@/utils/alerts';
+import { ValidationObserver } from 'vee-validate';
 
 @Component({
   name: 'CodeEditDialog',
@@ -159,7 +159,10 @@ export default class extends Vue {
   watchDialog(val: boolean) {
     if (val) {
       this.isNew = !this.editItem.code;
-      this.$refs.observer && (this.$refs.observer as any).reset();
+      this.$refs.observer &&
+        (this.$refs.observer as InstanceType<
+          typeof ValidationObserver
+        >).reset();
       this.$modal.show('CodeEditDialog');
     } else {
       this.$modal.hide('CodeEditDialog');
@@ -167,7 +170,9 @@ export default class extends Vue {
   }
 
   async save() {
-    const isValid = await (this.$refs.observer as any).validate();
+    const isValid = await (this.$refs.observer as InstanceType<
+      typeof ValidationObserver
+    >).validate();
     if (!isValid) {
       return;
     }
@@ -181,7 +186,7 @@ export default class extends Vue {
       this.editItem,
     );
     this.loading = false;
-    if (_.startsWith(response.code, `S`)) {
+    if (response.code.startsWith(`S`)) {
       this.syncedDialog = false;
       this.$emit('finished');
     }
@@ -194,7 +199,7 @@ export default class extends Vue {
       this.editItem,
     );
     this.loading = false;
-    if (_.startsWith(response.code, `S`)) {
+    if (response.code.startsWith(`S`)) {
       this.syncedDialog = false;
       window.localStorage.removeItem(`code__${this.editItem.codeGroup}`);
       this.$emit('finished');
@@ -209,7 +214,7 @@ export default class extends Vue {
         `${this.ENDPOINT_URL}${this.editItem.codeGroup}/${this.editItem.code}/`,
       );
       this.loading = false;
-      if (_.startsWith(response.code, `S`)) {
+      if (response.code.startsWith(`S`)) {
         window.localStorage.removeItem(`code__${this.editItem.codeGroup}`);
         this.$emit('finished');
       }

@@ -1,5 +1,5 @@
 <template>
-  <tr id="datatable-header-filter" class="text-center">
+  <tr class="datatable-header-filter">
     <td v-if="!filterFirstColumn" />
     <td v-for="(data, index) in filterHeader" :key="data.value">
       <v-select
@@ -89,73 +89,3 @@ export default class extends Vue {
   }
 }
 </script>
-<style lang="scss">
-#datatable-header-filter {
-  text-align: center;
-
-  td {
-    height: 1.5rem;
-    padding-right: 2px;
-    padding-left: 2px;
-    border-bottom: thin solid var(--v-table-border-base);
-    border-left: thin solid var(--v-table-border-base);
-
-    div.v-input {
-      div.v-input__append-inner {
-        div.v-input__icon {
-          width: 1rem;
-          min-width: 1rem;
-        }
-      }
-
-      div.v-input__control {
-        div.v-input__slot {
-          padding-left: 0.25rem;
-        }
-      }
-    }
-
-    .v-input__control {
-      width: 0;
-
-      .v-input__slot {
-        padding-left: 0.5rem;
-        padding-right: 3px;
-        min-height: 0;
-        height: 1.5rem;
-
-        fieldset {
-          height: 1.75rem;
-        }
-
-        .v-text-field__slot {
-          height: 1.46rem;
-
-          input {
-            padding-top: 0;
-            padding-bottom: 0;
-          }
-        }
-
-        .v-input__append-inner {
-          margin-top: 0;
-          padding-left: 0;
-        }
-
-        .v-select__slot {
-          height: 1.45rem;
-
-          input {
-            padding-top: 0;
-            padding-bottom: 0;
-          }
-        }
-      }
-    }
-  }
-
-  td:last-child {
-    border-right: thin solid var(--v-table-border-base);
-  }
-}
-</style>
