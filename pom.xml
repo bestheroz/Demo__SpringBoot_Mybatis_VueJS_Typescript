@@ -10,7 +10,7 @@
     <relativePath/>
   </parent>
   <groupId>com.github.bestheroz</groupId>
-  <artifactId>myapp</artifactId>
+  <artifactId>demo</artifactId>
   <version>1</version>
   <packaging>jar</packaging>
 
