@@ -60,8 +60,8 @@ public class BusinessException extends RuntimeException {
       return ExceptionCode.FAIL_INVALID_PARAMETER;
     } else if (
       e instanceof HttpMediaTypeNotAcceptableException ||
-        e instanceof HttpMediaTypeNotSupportedException ||
-        e instanceof HttpRequestMethodNotSupportedException
+      e instanceof HttpMediaTypeNotSupportedException ||
+      e instanceof HttpRequestMethodNotSupportedException
     ) {
       return ExceptionCode.FAIL_INVALID_REQUEST;
     } else if (e instanceof FileNotFoundException) {
