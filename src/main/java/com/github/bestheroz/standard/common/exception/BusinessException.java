@@ -55,18 +55,13 @@ public class BusinessException extends RuntimeException {
     this.apiResult = ApiResult.code(this.getExceptionCode(throwable));
   }
 
-  @Override
-  public synchronized Throwable fillInStackTrace() {
-    return this;
-  }
-
   private ExceptionCode getExceptionCode(final Throwable e) {
     if (e instanceof UncategorizedSQLException || e instanceof BindException) {
       return ExceptionCode.FAIL_INVALID_PARAMETER;
     } else if (
       e instanceof HttpMediaTypeNotAcceptableException ||
-      e instanceof HttpMediaTypeNotSupportedException ||
-      e instanceof HttpRequestMethodNotSupportedException
+        e instanceof HttpMediaTypeNotSupportedException ||
+        e instanceof HttpRequestMethodNotSupportedException
     ) {
       return ExceptionCode.FAIL_INVALID_REQUEST;
     } else if (e instanceof FileNotFoundException) {
