@@ -180,7 +180,7 @@ export default class extends Vue {
     this.loading = true;
     const response = await getApi<MenuVO[]>(this.ENDPOINT_URL);
     this.loading = false;
-    this.items = response.data || [];
+    this.items = response?.data || [];
   }
 }
 </script>

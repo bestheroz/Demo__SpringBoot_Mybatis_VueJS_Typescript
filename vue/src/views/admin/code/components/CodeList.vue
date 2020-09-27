@@ -203,7 +203,7 @@ export default class extends Vue {
       `admin/codes/${this.parentItem.codeGroup}`,
     );
     this.loading = false;
-    this.items = response.data || [];
+    this.items = response?.data || [];
   }
 }
 </script>

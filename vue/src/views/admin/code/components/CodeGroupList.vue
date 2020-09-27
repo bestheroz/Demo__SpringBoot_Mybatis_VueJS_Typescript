@@ -155,7 +155,7 @@ export default class extends Vue {
     this.loading = true;
     const response = await getApi<TableCodeGroupEntity[]>(`admin/codeGroups/`);
     this.loading = false;
-    this.items = response.data || [];
+    this.items = response?.data || [];
   }
 }
 </script>

@@ -142,7 +142,7 @@ export default class extends Vue {
       `${this.ENDPOINT_URL}${this.authority}`,
     );
     this.loading = false;
-    this.items = response.data || [];
+    this.items = response?.data || [];
   }
 
   async save() {
