@@ -2,7 +2,7 @@ package com.github.bestheroz.standard.common.util;
 
 import java.time.Instant;
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Optional;
@@ -12,7 +12,6 @@ import org.springframework.util.Assert;
 
 @UtilityClass
 public class DateUtils {
-
   public String toStringNow(final String pattern) {
     Assert.hasText(pattern, "pattern parameter must not be empty or null");
     return OffsetDateTime.now().format(DateTimeFormatter.ofPattern(pattern));
@@ -20,12 +19,21 @@ public class DateUtils {
 
   public String toString(final Instant instant, final String pattern) {
     Assert.hasText(pattern, "pattern parameter must not be empty or null");
+    return toString(instant, pattern, ZoneId.of("Asia/Seoul"));
+  }
+
+  public String toString(
+    final Instant instant,
+    final String pattern,
+    final ZoneId zoneId
+  ) {
+    Assert.hasText(pattern, "pattern parameter must not be empty or null");
     return Optional
       .ofNullable(instant)
       .map(
         item ->
           OffsetDateTime
-            .ofInstant(item, ZoneOffset.UTC)
+            .ofInstant(item, zoneId)
             .format(DateTimeFormatter.ofPattern(pattern))
       )
       .orElse(null);
@@ -33,12 +41,21 @@ public class DateUtils {
 
   public String toString(final Long timestamp, final String pattern) {
     Assert.hasText(pattern, "pattern parameter must not be empty or null");
+    return toString(timestamp, pattern, ZoneId.of("Asia/Seoul"));
+  }
+
+  public String toString(
+    final Long timestamp,
+    final String pattern,
+    final ZoneId zoneId
+  ) {
+    Assert.hasText(pattern, "pattern parameter must not be empty or null");
     return Optional
       .ofNullable(timestamp)
       .map(
         item ->
           OffsetDateTime
-            .ofInstant(Instant.ofEpochMilli(item), ZoneOffset.UTC)
+            .ofInstant(Instant.ofEpochMilli(item), zoneId)
             .format(DateTimeFormatter.ofPattern(pattern))
       )
       .orElse(null);
@@ -48,7 +65,7 @@ public class DateUtils {
     Assert.hasText(pattern, "pattern parameter must not be empty or null");
     return Optional
       .ofNullable(date)
-      .map(item -> DateUtils.toString(item.getTime(), pattern))
+      .map(item -> toString(item.getTime(), pattern, ZoneId.of("Asia/Seoul")))
       .orElse(StringUtils.EMPTY);
   }
 
