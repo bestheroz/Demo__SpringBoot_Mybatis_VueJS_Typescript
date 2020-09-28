@@ -247,6 +247,28 @@ axiosInstanceForExcel.interceptors.response.use(
   },
 );
 
+export async function getExcelApi(url: string): Promise<void> {
+  const response = await axiosInstanceForExcel.get<any>(`api/${url}`);
+  const newUrl = window.URL.createObjectURL(
+    new Blob([response?.data], { type: response.headers['content-type'] }),
+  );
+  const tempLink = document.createElement('a');
+  tempLink.style.display = 'none';
+  tempLink.href = newUrl;
+  tempLink.setAttribute(
+    'download',
+    response.headers['content-disposition']
+      .split('=')
+      .pop()
+      .split(';')
+      .join(''),
+  );
+  document.body.appendChild(tempLink);
+  tempLink.click();
+  document.body.removeChild(tempLink);
+  window.URL.revokeObjectURL(newUrl);
+}
+
 async function apiRefreshToken(error: AxiosError) {
   if (error.response?.headers?.refreshtoken === 'must') {
     try {
