@@ -11,7 +11,7 @@ export function getCodes(
 
 export function getText(
   codes: SelectItem[] | null,
-  value: string | null,
+  value?: string | null,
   defaultText?: string,
 ): string {
   const filterElement = (codes || []).find(

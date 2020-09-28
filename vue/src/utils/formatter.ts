@@ -39,7 +39,7 @@ export function getEllipseText(
 }
 
 export function getSwitchLabel(yn: boolean, prefix?: string) {
-  return _.trim((prefix || '') + (yn ? ' 사용' : ' 사용안함'));
+  return (prefix?.trim() || '') + (yn ? ' 사용' : ' 사용안함');
 }
 
 export function textEllipsis(): void {

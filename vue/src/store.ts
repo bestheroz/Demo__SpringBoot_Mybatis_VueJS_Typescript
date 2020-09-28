@@ -23,11 +23,8 @@ const moduleUser = {
   },
   mutations: {
     resetTimer(state: any) {
-      if (state.user?.timeout) {
-        state.logoutTimer = new Date().getTime() + state.user?.timeout * 1000;
-      } else {
-        state.logoutTimer = new Date().getTime() + 7200 * 1000;
-      }
+      state.logoutTimer =
+        new Date().getTime() + (state.user?.timeout || 7200) * 1000;
     },
   },
   actions: {
