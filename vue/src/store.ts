@@ -13,18 +13,18 @@ const moduleUser = {
   getters: {
     user: (state: any) => {
       return {
-        id: state.user.id,
-        name: state.user.name,
-        timeout: state.user.timeout,
-        authority: state.user.authority,
-        theme: state.user.theme,
+        id: state.user?.id,
+        name: state.user?.name,
+        timeout: state.user?.timeout,
+        authority: state.user?.authority,
+        theme: state.user?.theme,
       };
     },
   },
   mutations: {
     resetTimer(state: any) {
-      if (state.user && state.user.timeout) {
-        state.logoutTimer = new Date().getTime() + state.user.timeout * 1000;
+      if (state.user?.timeout) {
+        state.logoutTimer = new Date().getTime() + state.user?.timeout * 1000;
       } else {
         state.logoutTimer = new Date().getTime() + 7200 * 1000;
       }
