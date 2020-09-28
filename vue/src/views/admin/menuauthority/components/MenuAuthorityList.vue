@@ -113,9 +113,9 @@ export default class extends Vue {
   ];
 
   async mounted() {
-    this.headers[0].filterSelectItem = this.MENU_TYPE = await getCodesApi(
-      `MENU_TYPE`,
-    );
+    this.headers[
+      this.headers.indexOf(this.headers.find((item) => item.value === 'type')!)
+    ].filterSelectItem = this.MENU_TYPE = await getCodesApi(`MENU_TYPE`);
   }
 
   @Watch('authority', { immediate: true })
@@ -142,7 +142,7 @@ export default class extends Vue {
       `${this.ENDPOINT_URL}${this.authority}`,
     );
     this.loading = false;
-    this.items = response.data || [];
+    this.items = response?.data || [];
   }
 
   async save() {

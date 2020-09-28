@@ -182,9 +182,11 @@ export default class extends Vue {
   ];
 
   async mounted() {
-    this.headers[4].filterSelectItem = this.AUTHORITY = await getCodesApi(
-      'AUTHORITY',
-    );
+    this.headers[
+      this.headers.indexOf(
+        this.headers.find((item) => item.value === 'authority')!,
+      )
+    ].filterSelectItem = this.AUTHORITY = await getCodesApi('AUTHORITY');
   }
 
   @Watch('parentItem', { immediate: true })
@@ -201,7 +203,7 @@ export default class extends Vue {
       `admin/codes/${this.parentItem.codeGroup}`,
     );
     this.loading = false;
-    this.items = response.data || [];
+    this.items = response?.data || [];
   }
 }
 </script>

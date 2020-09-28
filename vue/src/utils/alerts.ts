@@ -34,8 +34,8 @@ export function alertInfo(message: string, timer = 3500): void {
     confirmButtonText: message,
     timer: timer,
     html: '<b>3</b> 초 후에 자동으로 닫힙니다.',
-    onBeforeOpen: countdownDialog,
-    onClose: () => {
+    willOpen: countdownDialog,
+    willClose: () => {
       timerInterval && clearInterval(timerInterval);
       timerInterval = undefined;
     },
@@ -49,8 +49,8 @@ export function alertSuccess(message: string, timer = 3500): void {
     confirmButtonText: message,
     timer: timer,
     html: '<b>3</b> 초 후에 자동으로 닫힙니다.',
-    onBeforeOpen: countdownDialog,
-    onClose: () => {
+    willOpen: countdownDialog,
+    willClose: () => {
       timerInterval && clearInterval(timerInterval);
       timerInterval = undefined;
     },
@@ -70,7 +70,7 @@ export function alertError(e: string | AxiosError): void {
   if (typeof e === 'string' || !e?.response?.data?.message) {
     message = e;
   } else {
-    message = e.response.data.message;
+    message = e?.response?.data?.message;
   }
   Swal.fire({
     icon: 'error',

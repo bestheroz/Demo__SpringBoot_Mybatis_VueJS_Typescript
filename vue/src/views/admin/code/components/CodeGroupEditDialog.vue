@@ -78,8 +78,8 @@
 import { Component, Prop, PropSync, Vue, Watch } from 'vue-property-decorator';
 import { TableCodeGroupEntity } from '@/common/types';
 import { deleteApi, patchApi, postApi } from '@/utils/apis';
-import _ from 'lodash';
 import { confirmDelete } from '@/utils/alerts';
+import { ValidationObserver } from 'vee-validate';
 
 @Component({
   name: 'CodeGroupEditDialog',
@@ -92,15 +92,22 @@ export default class extends Vue {
   loading: boolean = false;
   isNew: boolean = false;
 
+  // observer: InstanceType<typeof ValidationObserver> | null = null;
+
   beforeDestroy() {
     this.syncedDialog = false;
   }
+
+  mounted() {}
 
   @Watch('syncedDialog', { immediate: true })
   watchDialog(val: boolean) {
     if (val) {
       this.isNew = !this.editItem.codeGroup;
-      this.$refs.observer && (this.$refs.observer as any).reset();
+      this.$refs.observer &&
+        (this.$refs.observer as InstanceType<
+          typeof ValidationObserver
+        >).reset();
       this.$modal.show('CodeGroupEditDialog');
     } else {
       this.$modal.hide('CodeGroupEditDialog');
@@ -108,7 +115,9 @@ export default class extends Vue {
   }
 
   async save() {
-    const isValid = await (this.$refs.observer as any).validate();
+    const isValid = await (this.$refs.observer as InstanceType<
+      typeof ValidationObserver
+    >).validate();
     if (!isValid) {
       return;
     }
@@ -122,7 +131,7 @@ export default class extends Vue {
       this.editItem,
     );
     this.loading = false;
-    if (_.startsWith(response.code, `S`)) {
+    if (response?.code?.startsWith(`S`)) {
       this.syncedDialog = false;
       this.$emit('finished');
     }
@@ -135,7 +144,7 @@ export default class extends Vue {
       this.editItem,
     );
     this.loading = false;
-    if (_.startsWith(response.code, `S`)) {
+    if (response?.code?.startsWith(`S`)) {
       this.syncedDialog = false;
       this.$emit('finished');
     }
@@ -149,7 +158,7 @@ export default class extends Vue {
         `${this.ENDPOINT_URL}${this.editItem.codeGroup}/`,
       );
       this.loading = false;
-      if (_.startsWith(response.code, `S`)) {
+      if (response?.code?.startsWith(`S`)) {
         this.$emit('finished');
       }
     }

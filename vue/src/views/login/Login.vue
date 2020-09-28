@@ -89,9 +89,9 @@ import {
   getVariableApi,
 } from '@/utils/apis';
 import { alertError } from '@/utils/alerts';
-import _ from 'lodash';
 import NewPasswordDialog from '@/views/login/components/NewPasswordDialog.vue';
 import { saveToken } from '@/utils/authentications';
+import { ValidationObserver } from 'vee-validate';
 
 const pbkdf2 = require('pbkdf2');
 
@@ -116,7 +116,9 @@ export default class extends Vue {
   }
 
   async login() {
-    const inValid = await (this.$refs.observer as any).validate();
+    const inValid = await (this.$refs.observer as InstanceType<
+      typeof ValidationObserver
+    >).validate();
     if (!inValid) {
       return;
     }
@@ -134,18 +136,18 @@ export default class extends Vue {
         id: this.id,
         password: pbkdf2Password,
       });
-      if (response.data.code === 'S002') {
+      if (response?.data?.code === 'S002') {
         this.dialog = true;
         this.password = null;
-      } else if (_.startsWith(response.data.code, `S`)) {
+      } else if (response?.data?.code?.startsWith(`S`)) {
         saveToken({
-          accessToken: response.data.data!.accessToken,
-          refreshToken: response.data.data!.refreshToken,
+          accessToken: response?.data?.data!.accessToken,
+          refreshToken: response?.data?.data!.refreshToken,
         });
         this.$toasted.clear();
         await this.$router.push('/');
       } else {
-        alertError(response.data.message);
+        alertError(response?.data?.message);
       }
     } catch (e) {
       alertAxiosError(e);

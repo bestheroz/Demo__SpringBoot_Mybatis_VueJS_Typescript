@@ -100,7 +100,7 @@
 <script lang="ts">
 import { Component, PropSync, Vue, Watch } from 'vue-property-decorator';
 import { postApi } from '@/utils/apis';
-import _ from 'lodash';
+import { ValidationObserver } from 'vee-validate';
 
 const pbkdf2 = require('pbkdf2');
 
@@ -133,7 +133,10 @@ export default class extends Vue {
       this.show1 = false;
       this.show2 = false;
       this.show3 = false;
-      this.$refs.observer && (this.$refs.observer as any).reset();
+      this.$refs.observer &&
+        (this.$refs.observer as InstanceType<
+          typeof ValidationObserver
+        >).reset();
       this.$modal.show('ChangePasswordDialog');
     } else {
       this.$modal.hide('ChangePasswordDialog');
@@ -141,7 +144,9 @@ export default class extends Vue {
   }
 
   async save() {
-    const isValid = await (this.$refs.observer as any).validate();
+    const isValid = await (this.$refs.observer as InstanceType<
+      typeof ValidationObserver
+    >).validate();
     if (!isValid) {
       return;
     }
@@ -159,7 +164,7 @@ export default class extends Vue {
         .toString(),
     });
     this.loading = false;
-    if (_.startsWith(response.code, `S`)) {
+    if (response?.code?.startsWith(`S`)) {
       this.syncedDialog = false;
       this.$emit('finished');
     }

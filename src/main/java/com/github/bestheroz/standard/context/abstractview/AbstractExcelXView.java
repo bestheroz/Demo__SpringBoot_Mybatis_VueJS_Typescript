@@ -4,17 +4,16 @@ import com.github.bestheroz.standard.common.code.CodeVO;
 import com.github.bestheroz.standard.common.exception.BusinessException;
 import com.github.bestheroz.standard.common.file.excel.ExcelVO;
 import com.github.bestheroz.standard.common.util.DateUtils;
-import com.github.bestheroz.standard.common.util.NullUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.time.Instant;
 import java.util.*;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
@@ -272,36 +271,36 @@ public abstract class AbstractExcelXView extends AbstractView {
     final SXSSFCell cell,
     final String data
   ) {
-    String strData = data;
     if (excelVOs.get(columnIdx).getCellType().equals(CellType.INTEGER)) {
-      this.setInteger(cell, strData);
+      this.setInteger(cell, data);
     } else if (excelVOs.get(columnIdx).getCellType().equals(CellType.DOUBLE)) {
-      this.setDouble(cell, strData);
+      this.setDouble(cell, data);
     } else if (
       excelVOs.get(columnIdx).getCellType().equals(CellType.DATE) ||
       excelVOs.get(columnIdx).getCellType().equals(CellType.DATE_YYYYMMDDHHMMSS)
     ) {
-      strData = RegExUtils.removeAll(strData, "\\.0");
-      if (StringUtils.isNumeric(strData)) {
-        strData =
-          DateUtils.toString(Long.parseLong(strData), "yyyy-MM-dd HH:mm:ss");
-      }
-      this.setDate(cell, strData);
+      this.setDate(
+          cell,
+          DateUtils.toString(Instant.parse(data), "yyyy-MM-dd HH:mm:ss")
+        );
     } else if (
       excelVOs.get(columnIdx).getCellType().equals(CellType.DATE_YYYYMMDD)
     ) {
-      strData = RegExUtils.removeAll(strData, "\\.0");
-      if (StringUtils.isNumeric(strData)) {
-        strData = DateUtils.toString(Long.parseLong(strData), "yyyy-MM-dd");
-      }
-      this.setDate(cell, strData);
+      this.setDate(cell, DateUtils.toString(Instant.parse(data), "yyyy-MM-dd"));
     } else {
       try {
-        final List<CodeVO> codeList = excelVOs.get(columnIdx).getCodeList();
-        if (NullUtils.isNotEmpty(codeList)) {
-          for (final CodeVO codeVO : codeList) {
-            if (strData.equals(codeVO.getValue())) {
-              final String value = codeVO.getText();
+        Optional
+          .ofNullable(excelVOs.get(columnIdx).getCodeList())
+          .flatMap(
+            items ->
+              items
+                .stream()
+                .filter(item -> item.getValue().equals(data))
+                .findFirst()
+          )
+          .ifPresent(
+            item -> {
+              final String value = item.getText();
               if (
                 excelVOs
                   .get(columnIdx)
@@ -319,24 +318,22 @@ public abstract class AbstractExcelXView extends AbstractView {
               } else {
                 this.setString(cell, value);
               }
-              return;
             }
-          }
-        }
+          );
         if (
           excelVOs.get(columnIdx).getCellType().equals(CellType.STRING_CENTER)
         ) {
-          this.setStringCenter(cell, strData);
+          this.setStringCenter(cell, data);
         } else if (
           excelVOs.get(columnIdx).getCellType().equals(CellType.STRING_RIGHT)
         ) {
-          this.setStringRight(cell, strData);
+          this.setStringRight(cell, data);
         } else {
-          this.setString(cell, strData);
+          this.setString(cell, data);
         }
       } catch (final Throwable e) {
         log.warn(ExceptionUtils.getStackTrace(e));
-        this.setString(cell, strData);
+        this.setString(cell, data);
       }
     }
   }
@@ -405,19 +402,12 @@ public abstract class AbstractExcelXView extends AbstractView {
 
   public enum CellType {
     STRING,
-
     STRING_CENTER,
-
     STRING_RIGHT,
-
     INTEGER,
-
     DOUBLE,
-
     DATE,
-
     DATE_YYYYMMDD,
-
     DATE_YYYYMMDDHHMMSS,
   }
 }

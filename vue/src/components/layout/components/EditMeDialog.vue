@@ -104,9 +104,9 @@
 import { Component, PropSync, Vue, Watch } from 'vue-property-decorator';
 import { TableMemberEntity } from '@/common/types';
 import { getApi, patchApi } from '@/utils/apis';
-import _ from 'lodash';
 import DatetimePicker from '@/components/picker/DatetimePicker.vue';
 import ChangePasswordDialog from '@/components/layout/components/ChangePasswordDialog.vue';
+import { ValidationObserver } from 'vee-validate';
 
 const pbkdf2 = require('pbkdf2');
 
@@ -134,8 +134,11 @@ export default class extends Vue {
       const response = await getApi<TableMemberEntity>(
         `${this.ENDPOINT_URL}mine`,
       );
-      this.editItem = response.data!;
-      this.$refs.observer && (this.$refs.observer as any).reset();
+      this.editItem = response?.data!;
+      this.$refs.observer &&
+        (this.$refs.observer as InstanceType<
+          typeof ValidationObserver
+        >).reset();
       this.$modal.show('EditMeDialog');
     } else {
       this.$modal.hide('EditMeDialog');
@@ -143,7 +146,9 @@ export default class extends Vue {
   }
 
   async save() {
-    const isValid = await (this.$refs.observer as any).validate();
+    const isValid = await (this.$refs.observer as InstanceType<
+      typeof ValidationObserver
+    >).validate();
     if (!isValid) {
       return;
     }
@@ -158,7 +163,7 @@ export default class extends Vue {
       payload,
     );
     this.loading = false;
-    if (_.startsWith(response.code, `S`)) {
+    if (response?.code?.startsWith(`S`)) {
       await this.$store.dispatch('setUser');
       await this.$store.dispatch('setMemberCodes');
       this.syncedDialog = false;
