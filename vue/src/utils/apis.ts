@@ -69,7 +69,7 @@ export interface ApiDataResult<T> {
 
 export async function getApi<T>(url: string): Promise<ApiDataResult<T>> {
   const response = await axiosInstance.get<ApiDataResult<T>>(`api/${url}`);
-  return response.data;
+  return response?.data;
 }
 
 export async function postApi<T>(
@@ -83,9 +83,9 @@ export async function postApi<T>(
   );
   // response.status === 201
   if (alert) {
-    alertResponseMessage(response.data);
+    alertResponseMessage(response?.data);
   }
-  return response.data;
+  return response?.data;
 }
 
 export async function putApi<T>(
@@ -99,9 +99,9 @@ export async function putApi<T>(
   );
   // response.status === 200
   if (alert) {
-    alertResponseMessage(response.data);
+    alertResponseMessage(response?.data);
   }
-  return response.data;
+  return response?.data;
 }
 
 export async function patchApi<T>(
@@ -115,9 +115,9 @@ export async function patchApi<T>(
   );
   // response.status === 200
   if (alert) {
-    alertResponseMessage(response.data);
+    alertResponseMessage(response?.data);
   }
-  return response.data;
+  return response?.data;
 }
 
 export async function deleteApi<T>(
@@ -127,9 +127,9 @@ export async function deleteApi<T>(
   const response = await axiosInstance.delete(`api/${url}`);
   // response.status === 204
   if (alert) {
-    alertResponseMessage(response.data);
+    alertResponseMessage(response?.data);
   }
-  return response.data;
+  return response?.data;
 }
 
 export async function getCodesApi<SelectItem>(
@@ -167,7 +167,7 @@ export async function getVariableApi<T = string>(
       const response = await axiosInstance.get<ApiDataResult<T>>(
         `api/variables/${variable}`,
       );
-      const result = response.data.data!;
+      const result = response?.data?.data!;
       if (result) {
         window.localStorage.setItem(
           `variable__${variable}`,
@@ -204,7 +204,7 @@ export async function getExcelApi(url: string): Promise<void> {
     })
     .get<any>(`api/${url}`);
   const newUrl = window.URL.createObjectURL(
-    new Blob([response.data], { type: response.headers['content-type'] }),
+    new Blob([response?.data], { type: response.headers['content-type'] }),
   );
   const tempLink = document.createElement('a');
   tempLink.style.display = 'none';
@@ -222,7 +222,7 @@ export async function getExcelApi(url: string): Promise<void> {
   document.body.removeChild(tempLink);
   window.URL.revokeObjectURL(newUrl);
   await store.dispatch('resetTimer');
-  return response.data;
+  return response?.data;
 }
 
 async function apiRefreshToken(error: AxiosError) {
@@ -238,7 +238,7 @@ async function apiRefreshToken(error: AxiosError) {
           },
         })
         .get('api/auth/refreshToken');
-      await refreshToken(response.data.data);
+      await refreshToken(response?.data?.data);
       await store.dispatch('resetTimer');
     } catch (e) {
       if (e.response.status === 401) {
@@ -257,5 +257,5 @@ async function apiRefreshToken(error: AxiosError) {
 }
 
 export function alertAxiosError(e: AxiosError): void {
-  e.response && alertError(e.response.data.message || 'System Error');
+  e.response && alertError(e?.response?.data?.message || 'System Error');
 }

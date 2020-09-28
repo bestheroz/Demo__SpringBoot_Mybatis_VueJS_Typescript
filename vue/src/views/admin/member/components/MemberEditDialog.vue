@@ -240,7 +240,7 @@ export default class extends Vue {
       params,
     );
     this.loading = false;
-    if (response.code.startsWith(`S`)) {
+    if (response?.code?.startsWith(`S`)) {
       await this.$store.dispatch('setMemberCodes');
       this.syncedDialog = false;
       this.$emit('finished');
@@ -260,7 +260,7 @@ export default class extends Vue {
       params,
     );
     this.loading = false;
-    if (response.code.startsWith(`S`)) {
+    if (response?.code?.startsWith(`S`)) {
       const user = await this.$store.dispatch('getUser');
       if (this.editItem.id === user.id) {
         await this.$store.dispatch('setUser');
@@ -279,7 +279,7 @@ export default class extends Vue {
         `${this.ENDPOINT_URL}${this.editItem.id}/`,
       );
       this.loading = false;
-      if (response.code.startsWith(`S`)) {
+      if (response?.code?.startsWith(`S`)) {
         await this.$store.dispatch('setMemberCodes');
         this.$emit('finished');
       }

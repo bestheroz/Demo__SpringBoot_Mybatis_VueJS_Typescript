@@ -136,18 +136,18 @@ export default class extends Vue {
         id: this.id,
         password: pbkdf2Password,
       });
-      if (response.data.code === 'S002') {
+      if (response?.data?.code === 'S002') {
         this.dialog = true;
         this.password = null;
-      } else if (response.data.code.startsWith(`S`)) {
+      } else if (response?.data?.code?.startsWith(`S`)) {
         saveToken({
-          accessToken: response.data.data!.accessToken,
-          refreshToken: response.data.data!.refreshToken,
+          accessToken: response?.data?.data!.accessToken,
+          refreshToken: response?.data?.data!.refreshToken,
         });
         this.$toasted.clear();
         await this.$router.push('/');
       } else {
-        alertError(response.data.message);
+        alertError(response?.data?.message);
       }
     } catch (e) {
       alertAxiosError(e);

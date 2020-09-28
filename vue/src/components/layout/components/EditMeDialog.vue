@@ -134,7 +134,7 @@ export default class extends Vue {
       const response = await getApi<TableMemberEntity>(
         `${this.ENDPOINT_URL}mine`,
       );
-      this.editItem = response.data!;
+      this.editItem = response?.data!;
       this.$refs.observer &&
         (this.$refs.observer as InstanceType<
           typeof ValidationObserver
@@ -163,7 +163,7 @@ export default class extends Vue {
       payload,
     );
     this.loading = false;
-    if (response.code.startsWith(`S`)) {
+    if (response?.code?.startsWith(`S`)) {
       await this.$store.dispatch('setUser');
       await this.$store.dispatch('setMemberCodes');
       this.syncedDialog = false;

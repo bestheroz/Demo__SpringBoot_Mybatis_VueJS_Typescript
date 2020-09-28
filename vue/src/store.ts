@@ -33,7 +33,7 @@ const moduleUser = {
   actions: {
     async setUser({ commit, state }: ActionContext<any, any>) {
       const response = await getApi<TableMemberEntity>(`auth/me`);
-      state.user = response.data;
+      state.user = response?.data;
       commit('resetTimer');
     },
     async getUser({
@@ -64,7 +64,7 @@ const moduleDrawer = {
   actions: {
     async setDrawers({ state }: ActionContext<any, any>) {
       const response = await getApi<DrawerItem[]>('menus/drawer');
-      state.drawers = response.data;
+      state.drawers = response?.data;
     },
     async getDrawers({
       state,
@@ -90,7 +90,7 @@ const moduleCache = {
   actions: {
     async setMemberCodes({ state }: ActionContext<any, any>) {
       const response = await getApi<SelectItem[]>('members/lists/codes');
-      state.members = response.data;
+      state.members = response?.data;
     },
     async getMemberCodes({ state, dispatch }: ActionContext<any, any>) {
       if (!state.members) {

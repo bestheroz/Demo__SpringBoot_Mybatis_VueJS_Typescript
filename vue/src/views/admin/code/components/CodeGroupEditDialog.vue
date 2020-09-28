@@ -131,7 +131,7 @@ export default class extends Vue {
       this.editItem,
     );
     this.loading = false;
-    if (response.code.startsWith(`S`)) {
+    if (response?.code?.startsWith(`S`)) {
       this.syncedDialog = false;
       this.$emit('finished');
     }
@@ -144,7 +144,7 @@ export default class extends Vue {
       this.editItem,
     );
     this.loading = false;
-    if (response.code.startsWith(`S`)) {
+    if (response?.code?.startsWith(`S`)) {
       this.syncedDialog = false;
       this.$emit('finished');
     }
@@ -158,7 +158,7 @@ export default class extends Vue {
         `${this.ENDPOINT_URL}${this.editItem.codeGroup}/`,
       );
       this.loading = false;
-      if (response.code.startsWith(`S`)) {
+      if (response?.code?.startsWith(`S`)) {
         this.$emit('finished');
       }
     }

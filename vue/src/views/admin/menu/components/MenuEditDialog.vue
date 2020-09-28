@@ -170,7 +170,7 @@ export default class extends Vue {
       this.editItem,
     );
     this.loading = false;
-    if (response.code.startsWith(`S`)) {
+    if (response?.code?.startsWith(`S`)) {
       await this.$store.dispatch('setDrawers');
       this.syncedDialog = false;
       this.$emit('finished');
@@ -184,7 +184,7 @@ export default class extends Vue {
       this.editItem,
     );
     this.loading = false;
-    if (response.code.startsWith(`S`)) {
+    if (response?.code?.startsWith(`S`)) {
       await this.$store.dispatch('setDrawers');
       this.syncedDialog = false;
       this.$emit('finished');
@@ -199,7 +199,7 @@ export default class extends Vue {
         `${this.ENDPOINT_URL}${this.editItem.id}/`,
       );
       this.loading = false;
-      if (response.code.startsWith(`S`)) {
+      if (response?.code?.startsWith(`S`)) {
         await this.$store.dispatch('setDrawers');
         this.$emit('finished');
       }

@@ -70,7 +70,7 @@ export function alertError(e: string | AxiosError): void {
   if (typeof e === 'string' || !e?.response?.data?.message) {
     message = e;
   } else {
-    message = e.response.data.message;
+    message = e?.response?.data?.message;
   }
   Swal.fire({
     icon: 'error',

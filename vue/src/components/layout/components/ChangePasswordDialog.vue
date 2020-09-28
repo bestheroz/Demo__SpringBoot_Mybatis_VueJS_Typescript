@@ -164,7 +164,7 @@ export default class extends Vue {
         .toString(),
     });
     this.loading = false;
-    if (response.code.startsWith(`S`)) {
+    if (response?.code?.startsWith(`S`)) {
       this.syncedDialog = false;
       this.$emit('finished');
     }
