@@ -29,8 +29,9 @@ public class TraceLogger {
     "{} E N D ....... Execute Time ....... : {} - return Value({}) : {}";
 
   @Around(
-    "execution(!private * com.github.bestheroz..*Controller.*(..)) || execution(!private * com.github.bestheroz..*Service.*(..)) " +
-    "|| execution(!private * com.github.bestheroz..*Repository.*(..)) || execution(!private * com.github.bestheroz..*DAO.*(..))"
+    "execution(!private * com.github.bestheroz..*Controller.*(..)) || execution(!private * com.github.bestheroz..*Service.*(..)) "
+      +
+      "|| execution(!private * com.github.bestheroz..*Repository.*(..)) || execution(!private * com.github.bestheroz..*DAO.*(..))"
   )
   public Object writeLog(final ProceedingJoinPoint pjp) throws Throwable {
     final Object retVal;
@@ -58,14 +59,15 @@ public class TraceLogger {
       retVal = pjp.proceed();
 
       stopWatch.stop();
+      final String str = MapperUtils.toString(retVal);
       log.info(
         STR_END_EXECUTE_TIME,
         formatClassMethod,
         stopWatch.toString(),
         ((MethodSignature) pjp.getSignature()).getReturnType().getSimpleName(),
         StringUtils.abbreviate(
-          StringUtils.defaultString(MapperUtils.toString(retVal), "null"),
-          "--skip long text--",
+          StringUtils.defaultString(str, "null"),
+          "--skip massive text-- total length : " + StringUtils.length(str),
           1000
         )
       );
