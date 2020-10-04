@@ -49,7 +49,7 @@
               :original-items="items"
             />
           </template>
-          <template v-slot:item.codeGroup="{ item }">
+          <template v-slot:[`item.codeGroup`]="{ item }">
             <a
               :style="{ 'font-weight': 'bold' }"
               @click="
@@ -62,10 +62,10 @@
               {{ item.codeGroup }}
             </a>
           </template>
-          <template v-slot:item.updated="{ item }">
+          <template v-slot:[`item.updated`]="{ item }">
             {{ item.updated | formatDatetime }}
           </template>
-          <template v-slot:item.updatedBy="{ item }">
+          <template v-slot:[`item.updatedBy`]="{ item }">
             {{ item.updatedBy | formatMemberNm }}
           </template>
         </v-data-table>

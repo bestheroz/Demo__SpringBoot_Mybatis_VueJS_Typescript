@@ -15,6 +15,10 @@ spring:
       preferred-json-mapper: gson
   autoconfigure:
     exclude: org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration
+#  datasource:
+#    hikari:
+#      driver-class-name: org.jdbcdslog.DriverLoggingProxy
+#      connection-test-query: SELECT 1
 mybatis:
   mapper-locations: classpath:**/*Mapper.xml
   type-aliases-super-type: java.io.Serializable
@@ -52,6 +56,9 @@ spring:
     sql-script-encoding: UTF-8
 server:
   port: 8080
+sentry:
+  logging:
+    enabled: false
 variable:
   app:
     title: My SpringBoot + Mybatis + VueJs + Typescript
@@ -63,9 +70,14 @@ spring:
       username:
       password:
       driver-class-name: org.jdbcdslog.DriverLoggingProxy
-      jdbc-url: jdbc:jdbcdslog:mysql://127.0.0.1:3306/dbname?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&&zeroDateTimeBehavior=convertToNull;targetDriver=org.gjt.mm.mysql.Driver
+      jdbc-url: jdbc:jdbcdslog:mysql://127.0.0.1:3306/dbname?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&validationQuery=select 1&zeroDateTimeBehavior=convertToNull;targetDriver=org.gjt.mm.mysql.Driver
+      connection-test-query: SELECT 1
 server:
   port: 8080
+sentry:
+  dsn: https://7bb0a4fc0ddc4803998ee772401e3cfc@o368486.ingest.sentry.io/5197118
+  environment: dev
+  server-name:
 variable:
   app:
     title:
@@ -77,9 +89,14 @@ spring:
       username:
       password:
       driver-class-name: org.jdbcdslog.DriverLoggingProxy
-      jdbc-url: jdbc:jdbcdslog:mysql://127.0.0.1:3306/dbname?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&&zeroDateTimeBehavior=convertToNull;targetDriver=org.gjt.mm.mysql.Driver
+      jdbc-url: jdbc:jdbcdslog:mysql://127.0.0.1:3306/dbname?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&validationQuery=select 1&zeroDateTimeBehavior=convertToNull;targetDriver=org.gjt.mm.mysql.Driver
+      connection-test-query: SELECT 1
 server:
   port:
+sentry:
+  dsn: https://7bb0a4fc0ddc4803998ee772401e3cfc@o368486.ingest.sentry.io/5197118
+  environment: production
+  server-name:
 variable:
   app:
     title:

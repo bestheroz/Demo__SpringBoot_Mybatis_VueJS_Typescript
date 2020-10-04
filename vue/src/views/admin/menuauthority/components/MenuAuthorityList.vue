@@ -25,10 +25,10 @@
             @click:save="save"
           />
         </template>
-        <template v-slot:item.type="{ item }" v-if="MENU_TYPE">
+        <template v-slot:[`item.type`]="{ item }" v-if="MENU_TYPE">
           {{ item.type | getCodeText(MENU_TYPE) }}
         </template>
-        <template v-slot:item.name="{ item }">
+        <template v-slot:[`item.name`]="{ item }">
           <span
             :style="`padding-left: ${
               80 * (item.level - 1)

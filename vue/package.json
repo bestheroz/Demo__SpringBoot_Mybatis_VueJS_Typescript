@@ -16,7 +16,7 @@
     "fibers": "^5.0.0",
     "lru-cache": "^6.0.0",
     "pbkdf2": "^3.1.1",
-    "query-string": "^6.13.4",
+    "query-string": "^6.13.5",
     "register-service-worker": "^1.7.1",
     "sweetalert2": "^10.3.5",
     "vee-validate": "^3.4.0",
@@ -27,7 +27,7 @@
     "vue-property-decorator": "^9.0.0",
     "vue-router": "^3.4.5",
     "vue-toasted": "^1.1.28",
-    "vuetify": "^2.3.10",
+    "vuetify": "^2.3.12",
     "vuex": "^3.5.1"
   },
   "devDependencies": {
@@ -52,7 +52,7 @@
     "eslint-plugin-prettier": "^3.1.4",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
-    "eslint-plugin-vue": "^6.2.2",
+    "eslint-plugin-vue": "^7.0.0",
     "prettier": "^2.1.2",
     "prettier-plugin-java": "^0.8.2",
     "sass": "^1.26.11",

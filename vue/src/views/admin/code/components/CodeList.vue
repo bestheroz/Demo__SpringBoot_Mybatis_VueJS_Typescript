@@ -50,7 +50,7 @@
               :original-items="items"
             />
           </template>
-          <template v-slot:item.code="{ item }">
+          <template v-slot:[`item.code`]="{ item }">
             <a
               :style="{ 'font-weight': 'bold' }"
               @click="
@@ -63,7 +63,7 @@
               {{ item.code }}
             </a>
           </template>
-          <template v-slot:item.available="{ item }">
+          <template v-slot:[`item.available`]="{ item }">
             <span style="display: inline-flex">
               <v-checkbox
                 readonly
@@ -75,13 +75,13 @@
               />
             </span>
           </template>
-          <template v-slot:item.authority="{ item }" v-if="AUTHORITY">
+          <template v-slot:[`item.authority`]="{ item }" v-if="AUTHORITY">
             {{ item.authority | getCodeText(AUTHORITY) }}
           </template>
-          <template v-slot:item.updatedBy="{ item }">
+          <template v-slot:[`item.updatedBy`]="{ item }">
             {{ item.updatedBy | formatMemberNm }}
           </template>
-          <template v-slot:item.updated="{ item }">
+          <template v-slot:[`item.updated`]="{ item }">
             {{ item.updated | formatDatetime }}
           </template>
         </v-data-table>

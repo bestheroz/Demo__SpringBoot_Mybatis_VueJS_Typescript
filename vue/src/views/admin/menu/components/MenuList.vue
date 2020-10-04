@@ -17,22 +17,22 @@
         <template v-slot:top>
           <button-set reload-button @click:reload="getList" />
         </template>
-        <template v-slot:item.type="{ item }" v-if="MENU_TYPE">
+        <template v-slot:[`item.type`]="{ item }" v-if="MENU_TYPE">
           {{ item.type | getCodeText(MENU_TYPE) }}
         </template>
-        <template v-slot:item.name="{ item }">
+        <template v-slot:[`item.name`]="{ item }">
           <span :style="`padding-left: ${80 * (item.level - 1)}px;`">
             <v-icon v-if="item.icon"> {{ item.icon }} </v-icon>
             {{ item.name }}
           </span>
         </template>
-        <template v-slot:item.updated="{ item }">
+        <template v-slot:[`item.updated`]="{ item }">
           {{ item.updated | formatDatetime }}
         </template>
-        <template v-slot:item.updatedBy="{ item }">
+        <template v-slot:[`item.updatedBy`]="{ item }">
           {{ item.updatedBy | formatMemberNm }}
         </template>
-        <template v-slot:item.action="{ item }">
+        <template v-slot:[`item.action`]="{ item }">
           <v-btn
             class="mx-1"
             tile

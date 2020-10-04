@@ -48,7 +48,7 @@
             :original-items="items"
           />
         </template>
-        <template v-slot:item.id="{ item }">
+        <template v-slot:[`item.id`]="{ item }">
           <a
             :style="{ 'font-weight': 'bold' }"
             @click="
@@ -61,7 +61,7 @@
             {{ item.id }}
           </a>
         </template>
-        <template v-slot:item.available="{ item }">
+        <template v-slot:[`item.available`]="{ item }">
           <span style="display: inline-flex">
             <v-checkbox
               readonly
@@ -73,19 +73,19 @@
             />
           </span>
         </template>
-        <template v-slot:item.authority="{ item }" v-if="AUTHORITY">
+        <template v-slot:[`item.authority`]="{ item }" v-if="AUTHORITY">
           {{ item.authority | getCodeText(AUTHORITY) }}
         </template>
-        <template v-slot:item.timeout="{ item }">
+        <template v-slot:[`item.timeout`]="{ item }">
           {{ item.timeout.toLocaleString() }}
         </template>
-        <template v-slot:item.expired="{ item }">
+        <template v-slot:[`item.expired`]="{ item }">
           {{ item.expired | formatDatetime }}
         </template>
-        <template v-slot:item.updated="{ item }">
+        <template v-slot:[`item.updated`]="{ item }">
           {{ item.updated | formatDatetime }}
         </template>
-        <template v-slot:item.updatedBy="{ item }">
+        <template v-slot:[`item.updatedBy`]="{ item }">
           {{ item.updatedBy | formatMemberNm }}
         </template>
       </v-data-table>
