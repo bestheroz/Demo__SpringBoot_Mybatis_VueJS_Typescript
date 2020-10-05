@@ -29,9 +29,8 @@ public class TraceLogger {
     "{} E N D ....... Execute Time ....... : {} - return Value({}) : {}";
 
   @Around(
-    "execution(!private * com.github.bestheroz..*Controller.*(..)) || execution(!private * com.github.bestheroz..*Service.*(..)) "
-      +
-      "|| execution(!private * com.github.bestheroz..*Repository.*(..)) || execution(!private * com.github.bestheroz..*DAO.*(..))"
+    "execution(!private * com.github.bestheroz..*Controller.*(..)) || execution(!private * com.github.bestheroz..*Service.*(..)) " +
+    "|| execution(!private * com.github.bestheroz..*Repository.*(..)) || execution(!private * com.github.bestheroz..*DAO.*(..))"
   )
   public Object writeLog(final ProceedingJoinPoint pjp) throws Throwable {
     final Object retVal;

@@ -1,8 +1,6 @@
 package com.github.bestheroz.demo.api.admin.menu;
 
-import com.github.bestheroz.demo.api.entity.menu.TableMenuEntity;
 import com.github.bestheroz.demo.api.entity.menu.TableMenuRepository;
-import com.github.bestheroz.demo.api.entity.menuauthority.TableMenuAuthorityEntity;
 import com.github.bestheroz.demo.api.entity.menuauthority.TableMenuAuthorityRepository;
 import java.util.Map;
 import javax.annotation.Resource;
@@ -20,20 +18,16 @@ public class AdminMenuService {
 
   @Transactional
   public void delete(final Integer id) {
-    this.tableMenuRepository.delete(
-        TableMenuEntity.class,
-        Map.of("parentId", id)
-      );
-    this.tableMenuRepository.delete(TableMenuEntity.class, Map.of("id", id));
-    this.tableMenuAuthorityRepository.getItems(TableMenuAuthorityEntity.class)
+    this.tableMenuRepository.deleteByKey(Map.of("parentId", id));
+    this.tableMenuRepository.deleteByKey(Map.of("id", id));
+    this.tableMenuAuthorityRepository.getItems()
       .parallelStream()
       .filter(
         item -> StringUtils.contains(item.getMenuIdList(), "^|" + id + ",")
       )
       .forEach(
         item -> {
-          this.tableMenuAuthorityRepository.updateMap(
-              TableMenuAuthorityEntity.class,
+          this.tableMenuAuthorityRepository.updateMapByKey(
               Map.of(
                 "menuIdList",
                 StringUtils.remove(item.getMenuIdList(), "^|" + id + ",")

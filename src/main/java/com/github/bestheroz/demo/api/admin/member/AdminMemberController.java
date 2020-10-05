@@ -22,7 +22,7 @@ public class AdminMemberController {
   @GetMapping
   ResponseEntity<ApiResult> getItems() {
     return Result.ok(
-      this.tableMemberRepository.getItems(TableMemberEntity.class)
+      this.tableMemberRepository.getItems()
         .stream()
         .peek(item -> item.setPassword(null))
         .collect(Collectors.toList())
@@ -34,10 +34,7 @@ public class AdminMemberController {
     @PathVariable(value = "id") final String id
   ) {
     return Result.ok(
-      this.tableMemberRepository.getItem(
-          TableMemberEntity.class,
-          Map.of("id", id)
-        )
+      this.tableMemberRepository.getItemByKey(Map.of("id", id))
         .map(
           item -> {
             item.setPassword(null);
@@ -49,7 +46,7 @@ public class AdminMemberController {
 
   @PostMapping
   @CacheEvict(value = "memberCache", allEntries = true)
-  public ResponseEntity<ApiResult> insert(
+  public ResponseEntity<ApiResult> post(
     @RequestBody final TableMemberEntity tableMemberEntity
   ) {
     this.tableMemberRepository.insert(tableMemberEntity);
@@ -58,12 +55,11 @@ public class AdminMemberController {
 
   @PatchMapping(value = "{id}")
   @CacheEvict(value = "memberCache", allEntries = true)
-  public ResponseEntity<ApiResult> update(
+  public ResponseEntity<ApiResult> patch(
     @PathVariable(value = "id") final String id,
     @RequestBody final TableMemberEntity tableMemberEntity
   ) {
-    this.tableMemberRepository.updateMap(
-        TableMemberEntity.class,
+    this.tableMemberRepository.updateMapByKey(
         Map.of(
           "name",
           tableMemberEntity.getName(),
@@ -86,10 +82,7 @@ public class AdminMemberController {
   public ResponseEntity<ApiResult> delete(
     @PathVariable(value = "id") final String id
   ) {
-    this.tableMemberRepository.delete(
-        TableMemberEntity.class,
-        Map.of("id", id)
-      );
+    this.tableMemberRepository.deleteByKey(Map.of("id", id));
     return Result.ok();
   }
 

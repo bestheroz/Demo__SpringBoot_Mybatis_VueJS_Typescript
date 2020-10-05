@@ -9,14 +9,13 @@ import com.google.common.base.CaseFormat;
 import java.lang.reflect.Field;
 import java.text.MessageFormat;
 import java.time.Instant;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.jdbc.SQL;
+import org.apache.tika.utils.ExceptionUtils;
 import org.springframework.lang.NonNull;
 
 @Slf4j
@@ -26,7 +25,7 @@ public class SqlCommand {
   public static final String SELECT_ITEMS_BY_KEY = "getItemsByKey";
   public static final String SELECT_ITEMS_BY_KEY_WITH_ORDER =
     "getItemsByKeyWithOrder";
-  public static final String SELECT_ITEM = "getItemByKey";
+  public static final String SELECT_ITEM_BY_KEY = "getItemByKey";
   public static final String COUNT_ALL = "countAll";
   public static final String COUNT_BY_KEY = "countByKey";
   public static final String INSERT = "insert";
@@ -87,14 +86,10 @@ public class SqlCommand {
     "{0} = FNC_GET_ENCRYPT (#'{'param{3}.{1}{2}'}')";
 
   public static String getTableName(final String javaClassName) {
-    String tableName = CaseFormat.LOWER_CAMEL.to(
+    return CaseFormat.LOWER_CAMEL.to(
       CaseFormat.UPPER_UNDERSCORE,
       StringUtils.substringBetween(javaClassName, "Table", "Entity")
     );
-    if (StringUtils.containsAny(tableName, "5MIN")) {
-      tableName = StringUtils.replace(tableName, "5MIN", "_5MIN");
-    }
-    return tableName;
   }
 
   private void getSelectSql(final SQL sql, final Field[] fields) {
@@ -128,28 +123,32 @@ public class SqlCommand {
   private void getWhereSql(
     final SQL sql,
     final Map<String, Object> whereConditions,
-    final int entityPosition
+    final int whereEntityPosition
   ) {
     whereConditions.forEach(
       (key, value) -> {
         if (ENCRYPTED_COLUMN_LIST.contains(key)) {
           sql.WHERE(
             MessageFormat.format(
-              WHERE_BIND_ENCRYPTED_STRING,
+              whereEntityPosition == 0
+                ? WHERE_BIND_ENCRYPTED_STRING.replace("param{3}.", "")
+                : WHERE_BIND_ENCRYPTED_STRING,
               this.getCamelCaseToSnakeCase(key),
               key,
               this.getJdbcType(value),
-              entityPosition
+              whereEntityPosition
             )
           );
         } else {
           sql.WHERE(
             MessageFormat.format(
-              WHERE_BIND_STRING,
+              whereEntityPosition == 0
+                ? WHERE_BIND_STRING.replace("param{3}.", "")
+                : WHERE_BIND_STRING,
               this.getCamelCaseToSnakeCase(key),
               key,
               this.getJdbcType(value),
-              entityPosition
+              whereEntityPosition
             )
           );
         }
@@ -157,45 +156,107 @@ public class SqlCommand {
     );
   }
 
-  public <T> String countAll(final Class<T> tClass) {
-    return this.countByKey(tClass, Map.of());
+  public String countAll() {
+    return this.countByKey(Map.of());
   }
 
-  public <T> String countByKey(
-    final Class<T> tClass,
-    final Map<String, Object> whereConditions
-  ) {
+  public String countByKey(final Map<String, Object> whereConditions) {
     final SQL sql = new SQL();
-    sql.SELECT("COUNT(1) AS CNT").FROM(getTableName(tClass.getSimpleName()));
-    this.getWhereSql(sql, whereConditions, 2);
+    sql
+      .SELECT("COUNT(1) AS CNT")
+      .FROM(getTableName(this.getEntityClass().getSimpleName()));
+    this.getWhereSql(sql, whereConditions, 0);
     log.debug(sql.toString());
     return sql.toString();
   }
 
-  public <T> String getItems(final Class<T> tClass) {
-    return this.getItemsByKeyWithOrder(tClass, Map.of(), Set.of());
+  public String getItems() {
+    return this.select(Map.of(), Set.of(), 0);
   }
 
-  public <T> String getItemsWithOrder(
-    final Class<T> tClass,
-    final Set<String> orderByConditions
-  ) {
-    return this.getItemsByKeyWithOrder(tClass, Map.of(), orderByConditions);
+  private Class<?> getEntityClass() {
+    final StackTraceElement[] stackTrace = new Throwable().getStackTrace();
+    final Optional<StackTraceElement> getItems = Arrays
+      .stream(stackTrace)
+      .filter(
+        item -> {
+          try {
+            return (
+              item.getClassName().startsWith("com.sun.proxy.$Proxy") &&
+              List
+                .of(
+                  SELECT_ITEMS,
+                  SELECT_ITEMS_WITH_ORDER,
+                  SELECT_ITEMS_BY_KEY,
+                  SELECT_ITEMS_BY_KEY_WITH_ORDER,
+                  SELECT_ITEM_BY_KEY,
+                  COUNT_ALL,
+                  COUNT_BY_KEY,
+                  INSERT,
+                  UPDATE_BY_KEY,
+                  UPDATE_MAP_BY_KEY,
+                  DELETE_BY_KEY
+                )
+                .contains(item.getMethodName()) &&
+              Class.forName(item.getClassName()).getInterfaces().length > 0 &&
+              Class
+                .forName(item.getClassName())
+                .getInterfaces()[0].getGenericInterfaces()
+                .length >
+              0
+            );
+          } catch (final ClassNotFoundException e) {
+            log.warn(ExceptionUtils.getStackTrace(e));
+            throw BusinessException.ERROR_SYSTEM;
+          }
+        }
+      )
+      .findFirst();
+    getItems.orElseThrow(
+      () -> {
+        throw BusinessException.ERROR_SYSTEM;
+      }
+    );
+    final StackTraceElement item = getItems.get();
+    try {
+      final Class<?> cInterface = Class
+        .forName(item.getClassName())
+        .getInterfaces()[0];
+      return Class.forName(
+        StringUtils.substringBetween(
+          cInterface.getGenericInterfaces()[0].getTypeName(),
+          "<",
+          ">"
+        )
+      );
+    } catch (final ClassNotFoundException e) {
+      log.warn(ExceptionUtils.getStackTrace(e));
+      throw BusinessException.ERROR_SYSTEM;
+    }
   }
 
-  public <T> String getItemsByKey(
-    final Class<T> tClass,
-    final Map<String, Object> whereConditions
-  ) {
-    return this.getItemsByKeyWithOrder(tClass, whereConditions, Set.of());
+  public String getItemsWithOrder(final Set<String> orderByConditions) {
+    return this.select(Map.of(), orderByConditions, 0);
   }
 
-  public <T> String getItemsByKeyWithOrder(
-    final Class<T> tClass,
+  public String getItemsByKey(final Map<String, Object> whereConditions) {
+    return this.select(whereConditions, Set.of(), 0);
+  }
+
+  public String getItemsByKeyWithOrder(
     final Map<String, Object> whereConditions,
     final Set<String> orderByConditions
   ) {
+    return this.select(whereConditions, orderByConditions, 1);
+  }
+
+  public String select(
+    final Map<String, Object> whereConditions,
+    final Set<String> orderByConditions,
+    final Integer whereEntityPosition
+  ) {
     final SQL sql = new SQL();
+    final Class<?> tClass = this.getEntityClass();
     this.getSelectSql(
         sql,
         ArrayUtils.addAll(
@@ -204,7 +265,7 @@ public class SqlCommand {
         )
       );
     sql.FROM(getTableName(tClass.getSimpleName()));
-    this.getWhereSql(sql, whereConditions, 2);
+    this.getWhereSql(sql, whereConditions, whereEntityPosition);
     orderByConditions.forEach(
       columns -> sql.ORDER_BY(this.getCamelCaseToSnakeCase(columns))
     );
@@ -212,12 +273,11 @@ public class SqlCommand {
     return sql.toString();
   }
 
-  public <T> String getItemByKey(
-    @NonNull final Class<T> tClass,
+  public String getItemByKey(
     @NonNull final Map<String, Object> whereConditions
   ) {
     this.verifyWhereKey(whereConditions);
-    return this.getItemsByKeyWithOrder(tClass, whereConditions, Set.of());
+    return this.select(whereConditions, Set.of(), 0);
   }
 
   public <T> String insert(@NonNull final T entity) {
@@ -359,7 +419,7 @@ public class SqlCommand {
               dbColumnName,
               key,
               this.getJdbcType(value),
-              1
+              2
             )
           );
         } else {
@@ -369,7 +429,7 @@ public class SqlCommand {
               dbColumnName,
               key,
               this.getJdbcType(value),
-              1
+              2
             )
           );
         }
@@ -395,12 +455,13 @@ public class SqlCommand {
     return sql.toString();
   }
 
-  public <T> String updateMapByKey(
-    final Class<T> tClass,
+  public String updateMapByKey(
     final Map<String, Object> updateMap,
     final Map<String, Object> whereConditions
   ) {
     this.verifyWhereKey(whereConditions);
+
+    final Class<?> tClass = this.getEntityClass();
 
     final SQL sql = new SQL();
     sql.UPDATE(getTableName(tClass.getSimpleName()));
@@ -413,7 +474,7 @@ public class SqlCommand {
               this.getCamelCaseToSnakeCase(javaFieldName),
               javaFieldName,
               this.getJdbcType(value),
-              2
+              1
             )
           );
         } else {
@@ -423,7 +484,7 @@ public class SqlCommand {
               this.getCamelCaseToSnakeCase(javaFieldName),
               javaFieldName,
               this.getJdbcType(value),
-              2
+              1
             )
           );
         }
@@ -440,7 +501,7 @@ public class SqlCommand {
               dbColumnName,
               key,
               this.getJdbcType(value),
-              3
+              2
             )
           );
         } else {
@@ -450,7 +511,7 @@ public class SqlCommand {
               dbColumnName,
               key,
               this.getJdbcType(value),
-              3
+              2
             )
           );
         }
@@ -491,14 +552,11 @@ public class SqlCommand {
     }
   }
 
-  public <T> String deleteByKey(
-    final Class<T> tClass,
-    final Map<String, Object> whereConditions
-  ) {
+  public String deleteByKey(final Map<String, Object> whereConditions) {
     this.verifyWhereKey(whereConditions);
     final SQL sql = new SQL();
-    sql.DELETE_FROM(getTableName(tClass.getSimpleName()));
-    this.getWhereSql(sql, whereConditions, 2);
+    sql.DELETE_FROM(getTableName(this.getEntityClass().getSimpleName()));
+    this.getWhereSql(sql, whereConditions, 0);
     this.requiredWhereConditions(sql);
     log.debug(sql.toString());
     return sql.toString();
@@ -515,7 +573,7 @@ public class SqlCommand {
     return CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, javaFileName);
   }
 
-  private <T> String getJdbcType(final Object object) {
+  private String getJdbcType(final Object object) {
     final String jdbcType;
     if (object instanceof String || object instanceof Character) {
       jdbcType = ", jdbcType=VARCHAR";

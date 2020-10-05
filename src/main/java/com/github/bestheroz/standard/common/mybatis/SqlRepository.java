@@ -12,65 +12,57 @@ import org.apache.ibatis.annotations.UpdateProvider;
 
 public interface SqlRepository<T extends Serializable> {
   @SelectProvider(type = SqlCommand.class, method = SqlCommand.SELECT_ITEMS)
-  List<T> getItems(Class<T> tClass);
+  List<T> getItems();
 
   @SelectProvider(
     type = SqlCommand.class,
     method = SqlCommand.SELECT_ITEMS_WITH_ORDER
   )
-  List<T> getItemsWithOrder(
-    Class<T> tClass,
-    final Set<String> orderByConditions
-  );
+  List<T> getItemsWithOrder(final Set<String> orderByConditions);
 
   @SelectProvider(
     type = SqlCommand.class,
     method = SqlCommand.SELECT_ITEMS_BY_KEY
   )
-  List<T> getItemsByKey(
-    Class<T> tClass,
-    final Map<String, Object> whereConditions
-  );
+  List<T> getItemsByKey(final Map<String, Object> whereConditions);
 
   @SelectProvider(
     type = SqlCommand.class,
     method = SqlCommand.SELECT_ITEMS_BY_KEY_WITH_ORDER
   )
   List<T> getItemsByKeyWithOrder(
-    Class<T> tClass,
     final Map<String, Object> whereConditions,
     Set<String> orderByConditions
   );
 
-  @SelectProvider(type = SqlCommand.class, method = SqlCommand.SELECT_ITEM)
-  Optional<T> getItem(
-    Class<T> tClass,
-    final Map<String, Object> whereConditions
-  );
+  @SelectProvider(
+    type = SqlCommand.class,
+    method = SqlCommand.SELECT_ITEM_BY_KEY
+  )
+  Optional<T> getItemByKey(final Map<String, Object> whereConditions);
 
   @SelectProvider(type = SqlCommand.class, method = SqlCommand.COUNT_ALL)
-  int countAll(Class<T> tClass);
+  int countAll();
 
   @SelectProvider(type = SqlCommand.class, method = SqlCommand.COUNT_BY_KEY)
-  int countByKey(Class<T> tClass, final Map<String, Object> whereConditions);
+  int countByKey(final Map<String, Object> whereConditions);
 
   @InsertProvider(type = SqlCommand.class, method = SqlCommand.INSERT)
   // @SelectKey(statement = "SELECT SEQSEQSEQSEQ.NEXTVAL FROM DUAL", keyProperty = "seq", before = true, resultType = Long.class)
   void insert(final T entity);
 
   @UpdateProvider(type = SqlCommand.class, method = SqlCommand.UPDATE_BY_KEY)
-  void update(final T entity, final Map<String, Object> whereConditions);
+  void updateByKey(final T entity, final Map<String, Object> whereConditions);
 
   @UpdateProvider(
     type = SqlCommand.class,
     method = SqlCommand.UPDATE_MAP_BY_KEY
   )
-  void updateMap(
-    final Class<T> tClass,
+  void updateMapByKey(
     final Map<String, Object> updateMap,
     final Map<String, Object> whereConditions
   );
 
   @DeleteProvider(type = SqlCommand.class, method = SqlCommand.DELETE_BY_KEY)
-  void delete(Class<T> tClass, final Map<String, Object> whereConditions);
+  void deleteByKey(final Map<String, Object> whereConditions);
 }

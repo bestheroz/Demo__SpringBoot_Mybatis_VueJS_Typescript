@@ -32,14 +32,12 @@ public class AdminMenuController {
   ResponseEntity<ApiResult> getItem(
     @PathVariable(value = "id", required = false) final Integer id
   ) {
-    return Result.ok(
-      this.tableMenuRepository.getItem(TableMenuEntity.class, Map.of("id", id))
-    );
+    return Result.ok(this.tableMenuRepository.getItemByKey(Map.of("id", id)));
   }
 
   @PostMapping
   @CacheEvict(value = "drawerCache", allEntries = true)
-  public ResponseEntity<ApiResult> insert(
+  public ResponseEntity<ApiResult> post(
     @RequestBody final TableMenuEntity tableMenuEntity
   ) {
     this.tableMenuRepository.insert(tableMenuEntity);
@@ -48,11 +46,11 @@ public class AdminMenuController {
 
   @PatchMapping(value = "{id}")
   @CacheEvict(value = "drawerCache", allEntries = true)
-  public ResponseEntity<ApiResult> update(
+  public ResponseEntity<ApiResult> patch(
     @PathVariable(value = "id") final Integer id,
     @RequestBody final TableMenuEntity tableMenuEntity
   ) {
-    this.tableMenuRepository.update(tableMenuEntity, Map.of("id", id));
+    this.tableMenuRepository.updateByKey(tableMenuEntity, Map.of("id", id));
     return Result.ok();
   }
 

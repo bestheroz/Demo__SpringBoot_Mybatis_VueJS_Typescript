@@ -23,10 +23,7 @@ public class AdminCodeController {
     @PathVariable(value = "codeGroup") final String codeGroup
   ) {
     return Result.ok(
-      this.tableCodeRepository.getItemsByKey(
-          TableCodeEntity.class,
-          Map.of("codeGroup", codeGroup)
-        )
+      this.tableCodeRepository.getItemsByKey(Map.of("codeGroup", codeGroup))
     );
   }
 
@@ -36,15 +33,14 @@ public class AdminCodeController {
     @PathVariable(value = "code", required = false) final String code
   ) {
     return Result.ok(
-      this.tableCodeRepository.getItem(
-          TableCodeEntity.class,
+      this.tableCodeRepository.getItemByKey(
           Map.of("codeGroup", codeGroup, "code", code)
         )
     );
   }
 
   @PostMapping(value = "{codeGroup}")
-  public ResponseEntity<ApiResult> insert(
+  public ResponseEntity<ApiResult> post(
     @PathVariable(value = "codeGroup") final String codeGroup,
     @RequestBody final TableCodeEntity tableCodeEntity
   ) {
@@ -55,12 +51,12 @@ public class AdminCodeController {
 
   @PatchMapping(value = "{codeGroup}/{code}")
   @CacheEvict(value = "codeCache", key = "#codeGroup")
-  public ResponseEntity<ApiResult> update(
+  public ResponseEntity<ApiResult> patch(
     @PathVariable(value = "codeGroup") final String codeGroup,
     @PathVariable(value = "code") final String code,
     @RequestBody final TableCodeEntity tableCodeEntity
   ) {
-    this.tableCodeRepository.update(
+    this.tableCodeRepository.updateByKey(
         tableCodeEntity,
         Map.of("codeGroup", codeGroup, "code", code)
       );
@@ -73,8 +69,7 @@ public class AdminCodeController {
     @PathVariable(value = "codeGroup") final String codeGroup,
     @PathVariable(value = "code") final String code
   ) {
-    this.tableCodeRepository.delete(
-        TableCodeEntity.class,
+    this.tableCodeRepository.deleteByKey(
         Map.of("codeGroup", codeGroup, "code", code)
       );
     return Result.ok();

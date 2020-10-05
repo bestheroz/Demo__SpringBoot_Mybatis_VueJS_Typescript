@@ -28,7 +28,6 @@ public class CodeService {
   @Cacheable(value = "codeCache", key = "#codeGroup")
   public List<TableCodeEntity> getCodeVOList(final String codeGroup) {
     return this.tableCodeRepository.getItemsByKeyWithOrder(
-        TableCodeEntity.class,
         Map.of("codeGroup", codeGroup),
         Set.of("displayOrder")
       );

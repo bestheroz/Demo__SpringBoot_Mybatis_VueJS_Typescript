@@ -1,8 +1,6 @@
 package com.github.bestheroz.demo.api.admin.codegroup;
 
-import com.github.bestheroz.demo.api.entity.code.TableCodeEntity;
 import com.github.bestheroz.demo.api.entity.code.TableCodeRepository;
-import com.github.bestheroz.demo.api.entity.codegroup.TableCodeGroupEntity;
 import com.github.bestheroz.demo.api.entity.codegroup.TableCodeGroupRepository;
 import java.util.Map;
 import javax.annotation.Resource;
@@ -21,13 +19,7 @@ public class AdminCodeGroupService {
 
   @Transactional
   public void delete(final String codeGroup) {
-    this.tableCodeRepository.delete(
-        TableCodeEntity.class,
-        Map.of("codeGroup", codeGroup)
-      );
-    this.tableCodeGroupRepository.delete(
-        TableCodeGroupEntity.class,
-        Map.of("codeGroup", codeGroup)
-      );
+    this.tableCodeRepository.deleteByKey(Map.of("codeGroup", codeGroup));
+    this.tableCodeGroupRepository.deleteByKey(Map.of("codeGroup", codeGroup));
   }
 }

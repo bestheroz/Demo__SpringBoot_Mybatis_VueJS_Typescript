@@ -21,8 +21,7 @@ public class AdminMenuAuthorityService {
 
   public List<AdminMenuAuthorityVO> getItems(final Integer authority) {
     final String menuIdList =
-      this.tableMenuAuthorityRepository.getItem(
-          TableMenuAuthorityEntity.class,
+      this.tableMenuAuthorityRepository.getItemByKey(
           Map.of("authority", authority)
         )
         .orElseGet(TableMenuAuthorityEntity::new)

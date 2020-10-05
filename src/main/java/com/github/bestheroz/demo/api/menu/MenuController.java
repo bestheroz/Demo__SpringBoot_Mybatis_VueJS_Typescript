@@ -16,7 +16,7 @@ public class MenuController {
   private MenuService menuService;
 
   @GetMapping(value = "drawer")
-  ResponseEntity<ApiResult> getDrawerList() {
+  ResponseEntity<ApiResult> getItems() {
     return Result.ok(
       this.menuService.getDrawerList(
           AuthenticationUtils.getLoginVO().getAuthority()

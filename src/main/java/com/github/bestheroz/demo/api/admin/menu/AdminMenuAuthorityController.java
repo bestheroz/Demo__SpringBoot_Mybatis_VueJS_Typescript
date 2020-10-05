@@ -33,7 +33,7 @@ public class AdminMenuAuthorityController {
 
   @PutMapping(value = "{authority}")
   @CacheEvict(value = "drawerCache", key = "#authority")
-  public ResponseEntity<ApiResult> save(
+  public ResponseEntity<ApiResult> put(
     @PathVariable("authority") final Integer authority,
     @RequestBody final Map<String, String> payload
   ) {
@@ -42,14 +42,12 @@ public class AdminMenuAuthorityController {
       .map(item -> "^|" + item + ",")
       .collect(Collectors.joining(StringUtils.EMPTY));
 
-    this.tableMenuAuthorityRepository.getItem(
-        TableMenuAuthorityEntity.class,
+    this.tableMenuAuthorityRepository.getItemByKey(
         Map.of("authority", authority)
       )
       .ifPresentOrElse(
         item ->
-          this.tableMenuAuthorityRepository.updateMap(
-              TableMenuAuthorityEntity.class,
+          this.tableMenuAuthorityRepository.updateMapByKey(
               Map.of("menuIdList", menuIdList),
               Map.of("authority", authority)
             ),

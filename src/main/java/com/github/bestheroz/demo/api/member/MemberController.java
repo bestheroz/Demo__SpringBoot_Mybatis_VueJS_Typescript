@@ -34,8 +34,7 @@ public class MemberController {
   @GetMapping(value = "mine")
   ResponseEntity<ApiResult> getMyInfo() {
     return Result.ok(
-      this.tableMemberRepository.getItem(
-          TableMemberEntity.class,
+      this.tableMemberRepository.getItemByKey(
           ImmutableMap.of("id", AuthenticationUtils.getUserPk())
         )
         .map(
@@ -58,8 +57,7 @@ public class MemberController {
   public ResponseEntity<ApiResult> editMe(
     @RequestBody final TableMemberEntity payload
   ) {
-    return this.tableMemberRepository.getItem(
-        TableMemberEntity.class,
+    return this.tableMemberRepository.getItemByKey(
         Map.of("id", AuthenticationUtils.getUserPk())
       )
       .map(
@@ -75,8 +73,7 @@ public class MemberController {
             log.warn(ExceptionCode.FAIL_MATCH_PASSWORD.toString());
             throw new BusinessException(ExceptionCode.FAIL_MATCH_PASSWORD);
           }
-          this.tableMemberRepository.updateMap(
-              TableMemberEntity.class,
+          this.tableMemberRepository.updateMapByKey(
               Map.of("name", payload.getName()),
               Map.of("id", AuthenticationUtils.getUserPk())
             );
@@ -96,8 +93,7 @@ public class MemberController {
   public ResponseEntity<ApiResult> changePassword(
     @RequestBody final Map<String, String> payload
   ) {
-    return this.tableMemberRepository.getItem(
-        TableMemberEntity.class,
+    return this.tableMemberRepository.getItemByKey(
         Map.of("id", AuthenticationUtils.getUserPk())
       )
       .map(
@@ -113,8 +109,7 @@ public class MemberController {
             log.warn(ExceptionCode.FAIL_MATCH_OLD_PASSWORD.toString());
             throw new BusinessException(ExceptionCode.FAIL_MATCH_OLD_PASSWORD);
           }
-          this.tableMemberRepository.updateMap(
-              TableMemberEntity.class,
+          this.tableMemberRepository.updateMapByKey(
               Map.of("password", payload.get("newPassword")),
               Map.of("id", AuthenticationUtils.getUserPk())
             );
@@ -134,14 +129,12 @@ public class MemberController {
   public ResponseEntity<ApiResult> changeTheme(
     @RequestBody final Map<String, String> payload
   ) {
-    return this.tableMemberRepository.getItem(
-        TableMemberEntity.class,
+    return this.tableMemberRepository.getItemByKey(
         Map.of("id", AuthenticationUtils.getUserPk())
       )
       .map(
         tableMemberEntity -> {
-          this.tableMemberRepository.updateMap(
-              TableMemberEntity.class,
+          this.tableMemberRepository.updateMapByKey(
               Map.of("theme", payload.get("theme")),
               Map.of("id", AuthenticationUtils.getUserPk())
             );

@@ -12,6 +12,7 @@ import org.springframework.util.Assert;
 
 @UtilityClass
 public class DateUtils {
+
   public String toStringNow(final String pattern) {
     Assert.hasText(pattern, "pattern parameter must not be empty or null");
     return OffsetDateTime.now().format(DateTimeFormatter.ofPattern(pattern));

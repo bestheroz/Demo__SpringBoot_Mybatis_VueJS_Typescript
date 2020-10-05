@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
   annotationClass = Mapper.class
 )
 public class DbMybatisContext {
+
   @Bean(name = "transactionManager")
   @Primary
   @Autowired

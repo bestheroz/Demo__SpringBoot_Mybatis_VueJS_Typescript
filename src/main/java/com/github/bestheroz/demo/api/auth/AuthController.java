@@ -35,12 +35,11 @@ public class AuthController {
   }
 
   @GetMapping(value = "/me")
-  public ResponseEntity<ApiResult> getMyData(
+  public ResponseEntity<ApiResult> getMine(
     @RequestHeader(value = "Authorization") final String token
   ) {
     return Result.ok(
-      this.tableMemberRepository.getItem(
-          TableMemberEntity.class,
+      this.tableMemberRepository.getItemByKey(
           Map.of("id", JwtTokenProvider.getUserPk(token))
         )
         .orElseThrow(() -> BusinessException.FAIL_TRY_LOGIN_FIRST)

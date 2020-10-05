@@ -22,9 +22,7 @@ public class AdminCodeGroupController {
 
   @GetMapping
   ResponseEntity<ApiResult> getItems() {
-    return Result.ok(
-      this.tableCodeGroupRepository.getItems(TableCodeGroupEntity.class)
-    );
+    return Result.ok(this.tableCodeGroupRepository.getItems());
   }
 
   @GetMapping(value = "{codeGroup}")
@@ -32,10 +30,7 @@ public class AdminCodeGroupController {
     @PathVariable(value = "codeGroup", required = false) final String codeGroup
   ) {
     return Result.ok(
-      this.tableCodeGroupRepository.getItem(
-          TableCodeGroupEntity.class,
-          Map.of("codeGroup", codeGroup)
-        )
+      this.tableCodeGroupRepository.getItemByKey(Map.of("codeGroup", codeGroup))
     );
   }
 
@@ -52,7 +47,7 @@ public class AdminCodeGroupController {
     @PathVariable(value = "codeGroup") final String codeGroup,
     @RequestBody final TableCodeGroupEntity tableCodeGroupEntity
   ) {
-    this.tableCodeGroupRepository.update(
+    this.tableCodeGroupRepository.updateByKey(
         tableCodeGroupEntity,
         Map.of("codeGroup", codeGroup)
       );

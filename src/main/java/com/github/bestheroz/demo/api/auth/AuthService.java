@@ -1,6 +1,5 @@
 package com.github.bestheroz.demo.api.auth;
 
-import com.github.bestheroz.demo.api.entity.member.TableMemberEntity;
 import com.github.bestheroz.demo.api.entity.member.TableMemberRepository;
 import com.github.bestheroz.standard.common.authenticate.JwtTokenProvider;
 import com.github.bestheroz.standard.common.authenticate.UserVO;
@@ -34,10 +33,7 @@ public class AuthService implements UserDetailsService {
     if (StringUtils.isEmpty(username)) {
       throw new UsernameNotFoundException("No user found");
     }
-    return this.tableMemberRepository.getItem(
-        TableMemberEntity.class,
-        Map.of("id", username)
-      )
+    return this.tableMemberRepository.getItemByKey(Map.of("id", username))
       .map(
         tableMemberEntity ->
           new UserVO(
@@ -55,10 +51,7 @@ public class AuthService implements UserDetailsService {
   }
 
   Map<String, String> login(final String id, final String password) {
-    return this.tableMemberRepository.getItem(
-        TableMemberEntity.class,
-        Map.of("id", id)
-      )
+    return this.tableMemberRepository.getItemByKey(Map.of("id", id))
       .map(
         tableMemberEntity -> {
           // 2. 패스워드를 생성한 적이 없으면
@@ -110,8 +103,7 @@ public class AuthService implements UserDetailsService {
           SecurityContextHolder
             .getContext()
             .setAuthentication(JwtTokenProvider.getAuthentication(accessToken));
-          this.tableMemberRepository.updateMap(
-              TableMemberEntity.class,
+          this.tableMemberRepository.updateMapByKey(
               Map.of("token", refreshToken),
               Map.of("id", id)
             );
@@ -133,16 +125,14 @@ public class AuthService implements UserDetailsService {
   }
 
   void logout() {
-    this.tableMemberRepository.updateMap(
-        TableMemberEntity.class,
+    this.tableMemberRepository.updateMapByKey(
         Map.of("token", ""),
         Map.of("id", AuthenticationUtils.getUserPk())
       );
   }
 
   String getNewAccessToken(final String refreshToken) {
-    return this.tableMemberRepository.getItem(
-        TableMemberEntity.class,
+    return this.tableMemberRepository.getItemByKey(
         Map.of(
           "token",
           refreshToken,
@@ -176,10 +166,7 @@ public class AuthService implements UserDetailsService {
   }
 
   void initPassword(final String id, final String password) {
-    this.tableMemberRepository.getItem(
-        TableMemberEntity.class,
-        Map.of("id", id)
-      )
+    this.tableMemberRepository.getItemByKey(Map.of("id", id))
       .ifPresentOrElse(
         tableMemberEntity -> {
           if (StringUtils.isNotEmpty(tableMemberEntity.getPassword())) {
@@ -187,8 +174,7 @@ public class AuthService implements UserDetailsService {
             throw new BusinessException(ExceptionCode.FAIL_INVALID_REQUEST);
           }
 
-          this.tableMemberRepository.updateMap(
-              TableMemberEntity.class,
+          this.tableMemberRepository.updateMapByKey(
               Map.of("password", password),
               Map.of("id", id)
             );
