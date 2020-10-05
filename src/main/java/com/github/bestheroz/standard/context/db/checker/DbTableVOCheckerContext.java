@@ -1,5 +1,7 @@
 package com.github.bestheroz.standard.context.db.checker;
 
+import static com.github.bestheroz.standard.common.mybatis.SqlCommand.EXCLUDE_FIELD_SET;
+
 import com.github.bestheroz.standard.common.mybatis.SqlCommand;
 import com.google.common.base.CaseFormat;
 import java.io.IOException;
@@ -126,7 +128,7 @@ public class DbTableVOCheckerContext {
             )
             .map(Field::getName)
             .distinct()
-            .filter(item -> !"serialVersionUID".equalsIgnoreCase(item))
+            .filter(item -> !EXCLUDE_FIELD_SET.contains(item))
             .collect(Collectors.toSet());
           final long fieldSize = fieldsSet.size();
           if (metaInfo.getColumnCount() != fieldSize) {

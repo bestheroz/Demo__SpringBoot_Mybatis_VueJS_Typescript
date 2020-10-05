@@ -66,7 +66,7 @@ public class SqlCommand {
   private static final String VARIABLE_NAME_UPDATED_BY = "updatedBy";
   private static final String VARIABLE_NAME_UPDATED = "updated";
   private static final String SYSDATE = "NOW()";
-  private static final Set<String> EXCLUDE_FIELD_SET = Set.of(
+  public static final Set<String> EXCLUDE_FIELD_SET = Set.of(
     "SERIAL_VERSION_U_I_D",
     "serialVersionUID",
     "E_N_C_R_Y_P_T_E_D__C_O_L_U_M_N__L_I_S_T"
