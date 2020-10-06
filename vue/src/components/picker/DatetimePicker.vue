@@ -140,14 +140,21 @@ export default class extends Vue {
 
   @Watch('date', { immediate: true })
   watchDate(
-    val: Date | string | number | null,
+    val: Date | string | number | null | undefined,
     oldVal: Date | string | number | null,
   ) {
-    if (!val || val === oldVal || isNaN(dayjs(val).toDate().getTime())) {
-      return;
+    if (
+      val &&
+      val !== oldVal &&
+      !isNaN(dayjs(val).toDate().getTime()) &&
+      dayjs(val).toDate().getTime() !==
+        dayjs(oldVal || '')
+          .toDate()
+          .getTime()
+    ) {
+      this.value = dayjs(val).format(this.format);
+      this.timeValue = this.value.split(' ')[1];
     }
-    this.value = dayjs(val).format(this.format);
-    this.timeValue = this.value.split(' ')[1];
   }
 
   @Watch('timeValue')
@@ -161,7 +168,10 @@ export default class extends Vue {
   watchValue(val: string, oldVal: string) {
     if (
       val !== oldVal &&
-      dayjs(val).toDate().getTime() !== dayjs(oldVal).toDate().getTime()
+      dayjs(val).toDate().getTime() !==
+        dayjs(oldVal || '')
+          .toDate()
+          .getTime()
     ) {
       if (this.endType) {
         const split = val.split(' ');
