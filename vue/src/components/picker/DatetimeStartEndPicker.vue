@@ -114,8 +114,6 @@ export default class extends Vue {
   @Prop({ type: Boolean, default: false }) readonly fullWidth!: boolean;
 
   readonly envs: typeof envs = envs;
-  startDialog: boolean = false;
-  endDialog: boolean = false;
 
   get minDate() {
     if (!this.syncedStart || !this.syncedEnd) {
