@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import Vuex, { ActionContext } from 'vuex';
+import createPersistedState from 'vuex-persistedstate';
 import { DrawerItem, SelectItem, TableMemberEntity } from '@/common/types';
 import { getApi } from '@/utils/apis';
 
@@ -86,7 +87,7 @@ const moduleCache = {
   mutations: {},
   actions: {
     async setMemberCodes({ state }: ActionContext<any, any>) {
-      const response = await getApi<SelectItem[]>('members/lists/codes');
+      const response = await getApi<SelectItem[]>('members/codes');
       state.members = response?.data;
     },
     async getMemberCodes({ state, dispatch }: ActionContext<any, any>) {
@@ -103,8 +104,9 @@ const moduleCache = {
 
 export default new Vuex.Store({
   modules: {
-    user: moduleUser,
-    drawer: moduleDrawer,
-    cache: moduleCache,
+    moduleUser,
+    moduleDrawer,
+    moduleCache,
   },
+  plugins: [createPersistedState()],
 });
