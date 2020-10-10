@@ -82,31 +82,31 @@ const moduleDrawer = {
 
 const moduleCache = {
   state: {
-    members: null,
+    codeMembers: null,
   },
   mutations: {},
   actions: {
     async setMemberCodes({ state }: ActionContext<any, any>) {
       const response = await getApi<SelectItem[]>('members/codes');
-      state.members = response?.data;
+      state.codeMembers = response?.data;
     },
     async getMemberCodes({ state, dispatch }: ActionContext<any, any>) {
-      if (!state.members) {
+      if (!state.codeMembers) {
         await dispatch('setMemberCodes');
       }
-      return state.members;
+      return state.codeMembers;
     },
     clearCache({ state }: ActionContext<any, any>) {
-      state.members = null;
+      state.codeMembers = null;
     },
   },
 };
 
 export default new Vuex.Store({
   modules: {
-    moduleUser,
-    moduleDrawer,
-    moduleCache,
+    user: moduleUser,
+    drawer: moduleDrawer,
+    cache: moduleCache,
   },
   plugins: [createPersistedState()],
 });
