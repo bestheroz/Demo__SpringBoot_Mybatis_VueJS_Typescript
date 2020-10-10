@@ -22,11 +22,10 @@ import org.springframework.web.bind.annotation.*;
 public class MemberController {
   @Resource
   private TableMemberRepository tableMemberRepository;
-
   @Resource
   private MemberRepository memberRepository;
 
-  @GetMapping(value = "lists/codes")
+  @GetMapping(value = "codes")
   ResponseEntity<ApiResult> getItems() {
     return Result.ok(this.memberRepository.getCodeItems());
   }
@@ -35,8 +34,8 @@ public class MemberController {
   ResponseEntity<ApiResult> getMyInfo() {
     return Result.ok(
       this.tableMemberRepository.getItemByKey(
-          ImmutableMap.of("id", AuthenticationUtils.getUserPk())
-        )
+        ImmutableMap.of("id", AuthenticationUtils.getUserPk())
+      )
         .map(
           item -> {
             item.setPassword(null);
@@ -58,8 +57,8 @@ public class MemberController {
     @RequestBody final TableMemberEntity payload
   ) {
     return this.tableMemberRepository.getItemByKey(
-        Map.of("id", AuthenticationUtils.getUserPk())
-      )
+      Map.of("id", AuthenticationUtils.getUserPk())
+    )
       .map(
         tableMemberEntity -> {
           final Pbkdf2PasswordEncoder pbkdf2PasswordEncoder = new Pbkdf2PasswordEncoder();
@@ -74,9 +73,9 @@ public class MemberController {
             throw new BusinessException(ExceptionCode.FAIL_MATCH_PASSWORD);
           }
           this.tableMemberRepository.updateMapByKey(
-              Map.of("name", payload.getName()),
-              Map.of("id", AuthenticationUtils.getUserPk())
-            );
+            Map.of("name", payload.getName()),
+            Map.of("id", AuthenticationUtils.getUserPk())
+          );
           return Result.ok();
         }
       )
@@ -94,8 +93,8 @@ public class MemberController {
     @RequestBody final Map<String, String> payload
   ) {
     return this.tableMemberRepository.getItemByKey(
-        Map.of("id", AuthenticationUtils.getUserPk())
-      )
+      Map.of("id", AuthenticationUtils.getUserPk())
+    )
       .map(
         tableMemberEntity -> {
           final Pbkdf2PasswordEncoder pbkdf2PasswordEncoder = new Pbkdf2PasswordEncoder();
@@ -110,9 +109,9 @@ public class MemberController {
             throw new BusinessException(ExceptionCode.FAIL_MATCH_OLD_PASSWORD);
           }
           this.tableMemberRepository.updateMapByKey(
-              Map.of("password", payload.get("newPassword")),
-              Map.of("id", AuthenticationUtils.getUserPk())
-            );
+            Map.of("password", payload.get("newPassword")),
+            Map.of("id", AuthenticationUtils.getUserPk())
+          );
           return Result.ok();
         }
       )
@@ -130,14 +129,14 @@ public class MemberController {
     @RequestBody final Map<String, String> payload
   ) {
     return this.tableMemberRepository.getItemByKey(
-        Map.of("id", AuthenticationUtils.getUserPk())
-      )
+      Map.of("id", AuthenticationUtils.getUserPk())
+    )
       .map(
         tableMemberEntity -> {
           this.tableMemberRepository.updateMapByKey(
-              Map.of("theme", payload.get("theme")),
-              Map.of("id", AuthenticationUtils.getUserPk())
-            );
+            Map.of("theme", payload.get("theme")),
+            Map.of("id", AuthenticationUtils.getUserPk())
+          );
           return Result.ok();
         }
       )
