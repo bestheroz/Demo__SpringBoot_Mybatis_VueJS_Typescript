@@ -4,7 +4,7 @@ import dayjs from 'dayjs';
 import _ from 'lodash';
 
 export function getMemberNm(value: string | undefined | null): string {
-  const find: SelectItem = store.state?.cache?.members?.find(
+  const find: SelectItem = store.state?.cache?.memberCodes?.find(
     (value1: SelectItem) => value1!.value === value,
   );
   return find?.text || value || '';

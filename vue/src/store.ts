@@ -82,22 +82,22 @@ const moduleDrawer = {
 
 const moduleCache = {
   state: {
-    codeMembers: null,
+    memberCodes: null,
   },
   mutations: {},
   actions: {
     async setMemberCodes({ state }: ActionContext<any, any>) {
       const response = await getApi<SelectItem[]>('members/codes');
-      state.codeMembers = response?.data;
+      state.memberCodes = response?.data;
     },
     async getMemberCodes({ state, dispatch }: ActionContext<any, any>) {
-      if (!state.codeMembers) {
+      if (!state.memberCodes) {
         await dispatch('setMemberCodes');
       }
-      return state.codeMembers;
+      return state.memberCodes;
     },
     clearCache({ state }: ActionContext<any, any>) {
-      state.codeMembers = null;
+      state.memberCodes = null;
     },
   },
 };
