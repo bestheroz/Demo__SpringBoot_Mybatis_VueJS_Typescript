@@ -52,7 +52,7 @@ const user = {
     },
     clearUser({ commit }: ActionContext<any, any>) {
       commit('setUser', null);
-      commit('resetTimer', new Date().getTime() + 7200 * 1000);
+      commit('resetTimer');
     },
   },
 };
