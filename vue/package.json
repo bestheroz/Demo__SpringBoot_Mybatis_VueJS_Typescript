@@ -10,7 +10,7 @@
   "dependencies": {
     "@sentry/browser": "^5.25.0",
     "@sentry/tracing": "^5.25.0",
-    "@types/lodash": "^4.14.161",
+    "@types/lodash": "^4.14.162",
     "axios": "^0.20.0",
     "dayjs": "^1.9.1",
     "fibers": "^5.0.0",
