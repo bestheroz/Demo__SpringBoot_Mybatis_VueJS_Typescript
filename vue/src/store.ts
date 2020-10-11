@@ -6,7 +6,7 @@ import { getApi } from '@/utils/apis';
 
 Vue.use(Vuex);
 
-const moduleUser = {
+const user = {
   state: {
     user: null,
     logoutTimer: new Date().getTime() + 7200 * 1000,
@@ -23,15 +23,18 @@ const moduleUser = {
     },
   },
   mutations: {
+    setUser(state: any, user: TableMemberEntity) {
+      state.user = user;
+    },
     resetTimer(state: any) {
       state.logoutTimer =
         new Date().getTime() + (state.user?.timeout || 7200) * 1000;
     },
   },
   actions: {
-    async setUser({ commit, state }: ActionContext<any, any>) {
+    async setUser({ commit }: ActionContext<any, any>) {
       const response = await getApi<TableMemberEntity>(`auth/me`);
-      state.user = response?.data;
+      commit('setUser', response?.data);
       commit('resetTimer');
     },
     async getUser({
@@ -47,22 +50,26 @@ const moduleUser = {
     async resetTimer({ commit }: ActionContext<any, any>) {
       commit('resetTimer');
     },
-    clearUser({ state }: ActionContext<any, any>) {
-      state.user = null;
-      state.logoutTimer = new Date().getTime() + 7200 * 1000;
+    clearUser({ commit }: ActionContext<any, any>) {
+      commit('setUser', null);
+      commit('resetTimer', new Date().getTime() + 7200 * 1000);
     },
   },
 };
 
-const moduleDrawer = {
+const drawer = {
   state: {
     drawers: null,
   },
-  mutations: {},
+  mutations: {
+    setDrawers(state: any, drawers: DrawerItem[]) {
+      state.drawers = drawers;
+    },
+  },
   actions: {
-    async setDrawers({ state }: ActionContext<any, any>) {
+    async setDrawers({ commit }: ActionContext<any, any>) {
       const response = await getApi<DrawerItem[]>('menus/drawer');
-      state.drawers = response?.data;
+      commit('setDrawers', response?.data);
     },
     async getDrawers({
       state,
@@ -73,22 +80,25 @@ const moduleDrawer = {
       }
       return state.drawers;
     },
-    clearDrawer({ state }: ActionContext<any, any>) {
-      state.drawers = null;
-      state.menus = null;
+    clearDrawer({ commit }: ActionContext<any, any>) {
+      commit('setDrawers', null);
     },
   },
 };
 
-const moduleCache = {
+const cache = {
   state: {
     memberCodes: null,
   },
-  mutations: {},
+  mutations: {
+    setMemberCodes(state: any, memberCodes: SelectItem[]) {
+      state.memberCodes = memberCodes;
+    },
+  },
   actions: {
-    async setMemberCodes({ state }: ActionContext<any, any>) {
+    async setMemberCodes({ commit }: ActionContext<any, any>) {
       const response = await getApi<SelectItem[]>('members/codes');
-      state.memberCodes = response?.data;
+      commit('setMemberCodes', response?.data);
     },
     async getMemberCodes({ state, dispatch }: ActionContext<any, any>) {
       if (!state.memberCodes) {
@@ -96,17 +106,18 @@ const moduleCache = {
       }
       return state.memberCodes;
     },
-    clearCache({ state }: ActionContext<any, any>) {
-      state.memberCodes = null;
+    clearCache({ commit }: ActionContext<any, any>) {
+      commit('setMemberCodes', null);
     },
   },
 };
 
 export default new Vuex.Store({
+  strict: true,
   modules: {
-    user: moduleUser,
-    drawer: moduleDrawer,
-    cache: moduleCache,
+    user,
+    drawer,
+    cache,
   },
   plugins: [createPersistedState()],
 });
