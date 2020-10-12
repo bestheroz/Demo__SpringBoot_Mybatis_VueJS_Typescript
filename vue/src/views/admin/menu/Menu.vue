@@ -2,7 +2,7 @@
   <v-card>
     <v-row no-gutters>
       <v-col cols="12">
-        <menu-list :height="760" />
+        <menu-list height="80vh" />
       </v-col>
     </v-row>
   </v-card>

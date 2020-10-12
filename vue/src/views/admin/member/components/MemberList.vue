@@ -118,7 +118,7 @@ import dayjs from 'dayjs';
   },
 })
 export default class extends Vue {
-  @Prop({ required: true }) readonly height!: number;
+  @Prop({ required: true }) readonly height!: number | string;
   readonly envs: typeof envs = envs;
   readonly dayjs: typeof dayjs = dayjs;
   readonly ENDPOINT_URL: string = 'admin/members/';

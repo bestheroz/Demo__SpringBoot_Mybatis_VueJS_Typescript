@@ -120,7 +120,7 @@ import DataTableFilter from '@/components/datatable/DataTableFilter.vue';
 })
 export default class extends Vue {
   @Prop({ required: true }) readonly parentItem!: TableCodeGroupEntity;
-  @Prop({ required: true }) readonly height!: number;
+  @Prop({ required: true }) readonly height!: number | string;
 
   readonly envs: typeof envs = envs;
   AUTHORITY: SelectItem[] | null = null;

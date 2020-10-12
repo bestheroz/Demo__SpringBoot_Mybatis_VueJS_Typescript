@@ -76,7 +76,7 @@ interface AdminMenuAuthorityVO extends TableMenuEntity {
 })
 export default class extends Vue {
   @Prop({ required: true }) readonly authority!: string;
-  @Prop({ required: true }) readonly height!: number;
+  @Prop({ required: true }) readonly height!: number | string;
   readonly envs: typeof envs = envs;
   readonly ENDPOINT_URL = 'admin/menuAuthority/';
   items: AdminMenuAuthorityVO[] = [];

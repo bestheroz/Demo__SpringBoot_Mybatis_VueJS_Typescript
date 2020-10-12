@@ -14,7 +14,7 @@
           </v-card-text>
         </v-col>
         <v-col cols="12">
-          <menu-authority-list :authority="authority" :height="720" />
+          <menu-authority-list :authority="authority" height="75vh" />
         </v-col>
       </v-row>
     </v-card>

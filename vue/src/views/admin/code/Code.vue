@@ -10,10 +10,10 @@
               }
             "
             @updated="parentItem = Object.create(null)"
-            :height="250"
+            height="23vh"
           />
           <v-divider class="mr-1" />
-          <code-list :parent-item="parentItem" :height="350" />
+          <code-list :parent-item="parentItem" height="36vh" />
         </v-col>
       </v-row>
     </v-card>

@@ -112,12 +112,32 @@ const cache = {
   },
 };
 
+const temp = {
+  state: {
+    finishTextEllipsis: false,
+  },
+  mutations: {
+    setFinishTextEllipsis(state: any, isFinishTextEllipsis: boolean) {
+      state.finishTextEllipsis = isFinishTextEllipsis;
+    },
+  },
+  actions: {
+    setFinishTextEllipsis(
+      { commit }: ActionContext<any, any>,
+      isFinishTextEllipsis: boolean,
+    ) {
+      commit('setFinishTextEllipsis', isFinishTextEllipsis);
+    },
+  },
+};
+
 export default new Vuex.Store({
   strict: true,
   modules: {
     user,
     drawer,
     cache,
+    temp,
   },
   plugins: [createPersistedState()],
 });

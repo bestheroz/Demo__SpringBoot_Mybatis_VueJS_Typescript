@@ -3,7 +3,7 @@
     <v-card>
       <v-row no-gutters>
         <v-col cols="12">
-          <member-list :height="720" />
+          <member-list height="74vh" />
         </v-col>
       </v-row>
     </v-card>
