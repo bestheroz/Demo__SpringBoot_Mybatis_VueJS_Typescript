@@ -17,7 +17,7 @@ public class RootController implements ErrorController {
       RequestMethod.POST,
       RequestMethod.PUT,
       RequestMethod.PATCH,
-      RequestMethod.DELETE,
+      RequestMethod.DELETE
     }
   )
   public String root() {
