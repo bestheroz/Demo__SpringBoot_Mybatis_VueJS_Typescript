@@ -14,10 +14,8 @@ export default Object.freeze({
   TIME_MINUTE_FORMAT_STRING:
     process.env.VUE_APP_TIME_MINUTE_FORMAT_STRING || 'HH:mm',
   // DataTables
-  FOOTER_PROPS_100: {
+  FOOTER_PROPS_MAX_1000: {
     showFirstLastPage: true,
-    firstIcon: 'mdi-page-first',
-    lastIcon: 'mdi-page-last',
-    itemsPerPageOptions: [100, 300, 500, 1000, 3000, 5000, 10000],
+    itemsPerPageOptions: [100, 300, 500, 1000],
   },
 });

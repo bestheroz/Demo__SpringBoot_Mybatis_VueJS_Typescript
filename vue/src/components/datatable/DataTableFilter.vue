@@ -1,7 +1,7 @@
 <template>
   <tr class="datatable-header-filter">
     <td v-if="!filterFirstColumn" />
-    <td v-for="(data, index) in filterHeader" :key="data.value">
+    <td v-for="(data, index) in header" :key="data.value">
       <v-select
         v-model.trim="filter[index]"
         :items="data.filterSelectItem"
@@ -42,9 +42,9 @@ import { DataTableHeader, SelectItem } from '@/common/types';
 
 @Component({ name: 'DataTableFilter' })
 export default class extends Vue {
-  @Prop({ required: true }) readonly filteredItems!: any[];
-  @Prop({ required: true }) readonly filterHeader!: DataTableHeader[];
-  @Prop({ required: true }) readonly originalItems!: any[];
+  @Prop({ required: true }) readonly output!: any[];
+  @Prop({ required: true }) readonly header!: DataTableHeader[];
+  @Prop({ required: true }) readonly input!: any[];
   @Prop({ type: Boolean, default: false }) readonly filterFirstColumn!: boolean;
 
   readonly USE_YN: SelectItem[] = [
@@ -55,7 +55,7 @@ export default class extends Vue {
   filter: string[] | null = null;
   filterMap: string[] | null = null;
 
-  @Watch('filterHeader', { deep: true, immediate: true })
+  @Watch('header', { deep: true, immediate: true })
   watchFilterData(val: DataTableHeader[]) {
     const filter: string[] = [];
     const filterMap: string[] = [];
@@ -71,17 +71,17 @@ export default class extends Vue {
     this.filterMap = filterMap;
   }
 
-  @Watch('originalItems', { deep: true, immediate: true })
+  @Watch('input', { deep: true, immediate: true })
   @Watch('filter', { deep: true })
-  @Emit('update:filtered-items')
+  @Emit('update:output')
   watchFilter() {
-    let filteredItems = this.originalItems;
+    let output = this.input;
     this.filter &&
       this.filter.forEach((filter: string | undefined | null, index) => {
         if (filter === undefined || filter === '' || filter === null) {
           return;
         }
-        filteredItems = filteredItems.filter(
+        output = output.filter(
           (value) =>
             // console.log(filter);
             // @ts-ignore
@@ -103,7 +103,7 @@ export default class extends Vue {
               .indexOf(filter.toUpperCase()) !== -1,
         );
       });
-    return filteredItems;
+    return output;
   }
 }
 </script>

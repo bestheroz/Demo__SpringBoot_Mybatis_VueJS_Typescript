@@ -32,7 +32,7 @@
                   v-slot="{ errors }"
                 >
                   <v-text-field
-                    v-model="editItem.id"
+                    v-model="item.id"
                     label="*사용자아이디"
                     :counter="50"
                     :error-messages="errors"
@@ -47,7 +47,7 @@
                   v-slot="{ errors }"
                 >
                   <v-text-field
-                    v-model="editItem.name"
+                    v-model="item.name"
                     label="*사용자명"
                     :counter="100"
                     :error-messages="errors"
@@ -56,8 +56,8 @@
               </v-col>
               <v-col cols="12" md="4">
                 <v-switch
-                  v-model="editItem.available"
-                  :label="editItem.available | getSwitchLabel"
+                  v-model="item.available"
+                  :label="item.available | getSwitchLabel"
                 />
               </v-col>
               <v-col cols="12" md="4">
@@ -67,7 +67,7 @@
                   v-slot="{ errors }"
                 >
                   <v-select
-                    v-model.number="editItem.authority"
+                    v-model.number="item.authority"
                     :items="
                       AUTHORITY.map((item) => {
                         return { value: parseInt(item.value), text: item.text };
@@ -81,7 +81,7 @@
               </v-col>
               <v-col cols="12" md="4">
                 <datetime-picker
-                  v-model="editItem.expired"
+                  v-model="item.expired"
                   label="만료일"
                   full-width
                 />
@@ -93,7 +93,7 @@
                   v-slot="{ errors }"
                 >
                   <v-text-field
-                    v-model.number="editItem.timeout"
+                    v-model.number="item.timeout"
                     label="*세션타임아웃시간(초)"
                     :error-messages="errors"
                     clearable
@@ -109,7 +109,7 @@
                   v-if="isNew"
                 >
                   <v-text-field
-                    v-model="editItem.password"
+                    v-model="item.password"
                     label="비밀번호"
                     :counter="20"
                     :error-messages="errors"
@@ -182,7 +182,7 @@ const pbkdf2 = require('pbkdf2');
 })
 export default class extends Vue {
   @PropSync('dialog', { required: true, type: Boolean }) syncedDialog!: boolean;
-  @Prop({ required: true }) readonly editItem!: TableMemberEntity;
+  @Prop({ required: true }) readonly item!: TableMemberEntity;
 
   readonly ENDPOINT_URL: string = 'admin/members/';
   loading: boolean = false;
@@ -206,7 +206,7 @@ export default class extends Vue {
       this.password2 = '';
       this.show1 = false;
       this.show2 = false;
-      this.isNew = !this.editItem.id;
+      this.isNew = !this.item.id;
       this.$refs.observer &&
         (this.$refs.observer as InstanceType<
           typeof ValidationObserver
@@ -229,7 +229,7 @@ export default class extends Vue {
 
   async create() {
     this.loading = true;
-    const params = { ...this.editItem };
+    const params = { ...this.item };
     if (params.password) {
       params.password = pbkdf2
         .pbkdf2Sync(params.password, 'salt', 1, 32, 'sha512')
@@ -249,20 +249,20 @@ export default class extends Vue {
 
   async patch() {
     this.loading = true;
-    const params = { ...this.editItem };
+    const params = { ...this.item };
     if (params.password) {
       params.password = pbkdf2
         .pbkdf2Sync(params.password, 'salt', 1, 32, 'sha512')
         .toString();
     }
     const response = await patchApi<TableMemberEntity>(
-      `${this.ENDPOINT_URL}${this.editItem.id}/`,
+      `${this.ENDPOINT_URL}${this.item.id}/`,
       params,
     );
     this.loading = false;
     if (response?.code?.startsWith(`S`)) {
       const user = await this.$store.dispatch('getUser');
-      if (this.editItem.id === user.id) {
+      if (this.item.id === user.id) {
         await this.$store.dispatch('setUser');
       }
       await this.$store.dispatch('setMemberCodes');
@@ -276,7 +276,7 @@ export default class extends Vue {
     if (result.value) {
       this.loading = true;
       const response = await deleteApi<TableMemberEntity>(
-        `${this.ENDPOINT_URL}${this.editItem.id}/`,
+        `${this.ENDPOINT_URL}${this.item.id}/`,
       );
       this.loading = false;
       if (response?.code?.startsWith(`S`)) {
@@ -289,8 +289,8 @@ export default class extends Vue {
   async resetPassword() {
     this.loading = true;
     await postApi<TableMemberEntity>(
-      `${this.ENDPOINT_URL}${this.editItem.id}/resetPassword`,
-      this.editItem,
+      `${this.ENDPOINT_URL}${this.item.id}/resetPassword`,
+      this.item,
     );
     this.loading = false;
   }

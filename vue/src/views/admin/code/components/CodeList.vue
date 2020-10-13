@@ -19,7 +19,7 @@
           show-select
           dense
           :height="height"
-          :footer-props="envs.FOOTER_PROPS_100"
+          :footer-props="envs.FOOTER_PROPS_MAX_1000"
         >
           <template v-slot:top>
             <button-set
@@ -45,9 +45,9 @@
           </template>
           <template v-slot:header>
             <data-table-filter
-              :filter-header="headers"
-              :filtered-items.sync="filteredItems"
-              :original-items="items"
+              :header="headers"
+              :output.sync="filteredItems"
+              :input="items"
             />
           </template>
           <template v-slot:[`item.code`]="{ item }">

@@ -4,7 +4,7 @@
       <v-data-table
         must-sort
         fixed-header
-        v-model="selected"
+        v-model="syncedSelected"
         :loading="loading"
         :headers="headers"
         :items="filteredItems"
@@ -15,48 +15,19 @@
         show-select
         dense
         :height="height"
-        :footer-props="envs.FOOTER_PROPS_100"
+        :footer-props="envs.FOOTER_PROPS_MAX_1000"
       >
-        <template v-slot:top>
-          <button-set
-            add-button
-            @click:add="
-              () => {
-                editItem = {
-                  expired: dayjs().add(1, 'year').toDate(),
-                  timeout: 7200,
-                };
-                dialog = true;
-              }
-            "
-            delete-button
-            :delete-disabled="!selected || selected.length === 0"
-            @click:delete="
-              () => {
-                editItem = selected[0];
-                $refs.refEditDialog.delete();
-              }
-            "
-            reload-button
-            @click:reload="getList"
-          />
-        </template>
         <template v-slot:header>
           <data-table-filter
-            :filter-header="headers"
-            :filtered-items.sync="filteredItems"
-            :original-items="items"
+            :header="headers"
+            :output.sync="filteredItems"
+            :input="items"
           />
         </template>
         <template v-slot:[`item.id`]="{ item }">
           <a
             :style="{ 'font-weight': 'bold' }"
-            @click="
-              () => {
-                editItem = { ...item, password: undefined };
-                dialog = true;
-              }
-            "
+            @click="rowIdClicked({ ...item, password: undefined })"
           >
             {{ item.id }}
           </a>
@@ -89,25 +60,18 @@
           {{ item.updatedBy | formatMemberNm }}
         </template>
       </v-data-table>
-      <member-edit-dialog
-        ref="refEditDialog"
-        :edit-item="editItem"
-        :dialog.sync="dialog"
-        @finished="getList"
-      />
     </v-card-text>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Component, Emit, Prop, PropSync, Vue } from 'vue-property-decorator';
 import { DataTableHeader, SelectItem, TableMemberEntity } from '@/common/types';
 import { getApi, getCodesApi } from '@/utils/apis';
 import envs from '@/constants/envs';
 import ButtonSet from '@/components/speeddial/ButtonSet.vue';
 import DataTableFilter from '@/components/datatable/DataTableFilter.vue';
 import MemberEditDialog from '@/views/admin/member/components/MemberEditDialog.vue';
-import dayjs from 'dayjs';
 
 @Component({
   name: 'MemberList',
@@ -119,17 +83,15 @@ import dayjs from 'dayjs';
 })
 export default class extends Vue {
   @Prop({ required: true }) readonly height!: number | string;
+  @PropSync('selected') syncedSelected!: TableMemberEntity[];
+  @Prop({ default: true }) readonly singleSelect!: boolean;
   readonly envs: typeof envs = envs;
-  readonly dayjs: typeof dayjs = dayjs;
   readonly ENDPOINT_URL: string = 'admin/members/';
   sortBy: string[] = ['authority'];
   sortDesc: boolean[] = [true];
   items: TableMemberEntity[] = [];
   filteredItems: TableMemberEntity[] = [];
-  editItem: TableMemberEntity = { expired: null };
-  selected: TableMemberEntity[] = [];
   loading: boolean = false;
-  dialog: boolean = false;
 
   AUTHORITY: SelectItem[] | null = null;
 
@@ -197,12 +159,17 @@ export default class extends Vue {
   }
 
   async getList() {
-    this.selected = [];
+    this.syncedSelected = [];
     this.items = [];
     this.loading = true;
     const response = await getApi<TableMemberEntity[]>(this.ENDPOINT_URL);
     this.loading = false;
     this.items = response?.data || [];
+  }
+
+  @Emit('row-id-clicked')
+  rowIdClicked(value: TableMemberEntity) {
+    return value;
   }
 }
 </script>
