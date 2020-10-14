@@ -3,17 +3,13 @@
     <v-card>
       <v-row no-gutters>
         <v-col cols="12">
-          <code-group-list
-            @select="
-              (item) => {
-                parentItem = (item && item[0]) || Object.create(null);
-              }
-            "
-            @updated="parentItem = Object.create(null)"
-            height="23vh"
-          />
-          <v-divider class="mr-1" />
-          <code-list :parent-item="parentItem" height="36vh" />
+          <code-group-wrapper :selected.sync="selected" height="23vh" />
+        </v-col>
+        <v-col cols="12">
+          <v-divider />
+        </v-col>
+        <v-col cols="12">
+          <code-wrapper :parent-item="item" height="36vh" />
         </v-col>
       </v-row>
     </v-card>
@@ -25,15 +21,25 @@ import { Component, Vue } from 'vue-property-decorator';
 import { TableCodeGroupEntity } from '@/common/types';
 import CodeList from '@/views/admin/code/components/CodeList.vue';
 import CodeGroupList from '@/views/admin/code/components/CodeGroupList.vue';
+import CodeGroupWrapper from '@/views/admin/code/components/CodeGroupWrapper.vue';
+import CodeWrapper from '@/views/admin/code/components/CodeWrapper.vue';
 
 @Component({
   name: 'Code',
   components: {
+    CodeWrapper,
+    CodeGroupWrapper,
     CodeGroupList,
     CodeList,
   },
 })
 export default class extends Vue {
-  parentItem: TableCodeGroupEntity = Object.create(null);
+  selected: TableCodeGroupEntity[] = [];
+
+  get item() {
+    return (
+      (this.selected && this.selected.length > 0 && this.selected[0]) || []
+    );
+  }
 }
 </script>

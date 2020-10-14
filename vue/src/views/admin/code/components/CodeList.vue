@@ -1,103 +1,63 @@
 <template>
   <div>
-    <v-card>
-      <v-card-text class="py-1">
-        <v-alert icon="mdi-format-list-checkbox" dense class="mb-0">
-          코드 관리 - Detail
-        </v-alert>
-        <v-data-table
-          must-sort
-          fixed-header
-          v-model="selected"
-          :loading="loading"
-          :headers="headers"
-          :items="filteredItems"
-          :sort-by="sortBy"
-          :sort-desc="sortDesc"
-          item-key="code"
-          single-select
-          show-select
-          dense
-          :height="height"
-          :footer-props="envs.FOOTER_PROPS_MAX_1000"
-        >
-          <template v-slot:top>
-            <button-set
-              :disabled="!parentItem.codeGroup"
-              add-button
-              delete-button
-              reload-button
-              :delete-disabled="!selected || selected.length === 0"
-              @click:add="
-                () => {
-                  editItem = { codeGroup: parentItem.codeGroup };
-                  dialog = true;
-                }
-              "
-              @click:delete="
-                () => {
-                  editItem = selected[0];
-                  $refs.refEditDialog.delete();
-                }
-              "
-              @click:reload="getList"
-            />
-          </template>
-          <template v-slot:header>
-            <data-table-filter
-              :header="headers"
-              :output.sync="filteredItems"
-              :input="items"
-            />
-          </template>
-          <template v-slot:[`item.code`]="{ item }">
-            <a
-              :style="{ 'font-weight': 'bold' }"
-              @click="
-                () => {
-                  editItem = Object.assign({}, item);
-                  dialog = true;
-                }
-              "
-            >
-              {{ item.code }}
-            </a>
-          </template>
-          <template v-slot:[`item.available`]="{ item }">
-            <span style="display: inline-flex">
-              <v-checkbox
-                readonly
-                :input-value="item.available"
-                :ripple="false"
-                dense
-                hide-details
-                class="mt-0"
-              />
-            </span>
-          </template>
-          <template v-slot:[`item.authority`]="{ item }" v-if="AUTHORITY">
-            {{ item.authority | getCodeText(AUTHORITY) }}
-          </template>
-          <template v-slot:[`item.updatedBy`]="{ item }">
-            {{ item.updatedBy | formatMemberNm }}
-          </template>
-          <template v-slot:[`item.updated`]="{ item }">
-            {{ item.updated | formatDatetime }}
-          </template>
-        </v-data-table>
-        <code-edit-dialog
-          ref="refEditDialog"
-          :edit-item="editItem"
-          :dialog.sync="dialog"
-          @finished="getList"
+    <v-data-table
+      must-sort
+      fixed-header
+      v-model="syncedSelected"
+      :loading="loading"
+      :headers="headers"
+      :items="filteredItems"
+      :sort-by="sortBy"
+      :sort-desc="sortDesc"
+      item-key="code"
+      single-select
+      show-select
+      dense
+      :height="height"
+      :footer-props="envs.FOOTER_PROPS_MAX_1000"
+    >
+      <template v-slot:header>
+        <data-table-filter
+          :header="headers"
+          :output.sync="filteredItems"
+          :input="items"
         />
-      </v-card-text>
-    </v-card>
+      </template>
+      <template v-slot:[`item.code`]="{ item }">
+        <a
+          :style="{ 'font-weight': 'bold' }"
+          @click="$emit('row-id-clicked', { ...item })"
+        >
+          {{ item.code }}
+        </a>
+      </template>
+      <template v-slot:[`item.available`]="{ item }">
+        <span style="display: inline-flex">
+          <v-checkbox
+            readonly
+            :input-value="item.available"
+            :ripple="false"
+            dense
+            hide-details
+            class="mt-0"
+          />
+        </span>
+      </template>
+      <template v-slot:[`item.authority`]="{ item }" v-if="AUTHORITY">
+        {{ item.authority | getCodeText(AUTHORITY) }}
+      </template>
+      <template v-slot:[`item.updatedBy`]="{ item }">
+        {{ item.updatedBy | formatMemberNm }}
+      </template>
+      <template v-slot:[`item.updated`]="{ item }">
+        {{ item.updated | formatDatetime }}
+      </template>
+    </v-data-table>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
+import { Component, Prop, PropSync, Vue, Watch } from 'vue-property-decorator';
 import {
   DataTableHeader,
   SelectItem,
@@ -106,21 +66,18 @@ import {
 } from '@/common/types';
 import { getApi, getCodesApi } from '@/utils/apis';
 import envs from '@/constants/envs';
-import ButtonSet from '@/components/speeddial/ButtonSet.vue';
-import CodeEditDialog from '@/views/admin/code/components/CodeEditDialog.vue';
 import DataTableFilter from '@/components/datatable/DataTableFilter.vue';
 
 @Component({
   name: 'CodeList',
   components: {
     DataTableFilter,
-    CodeEditDialog,
-    ButtonSet,
   },
 })
 export default class extends Vue {
   @Prop({ required: true }) readonly parentItem!: TableCodeGroupEntity;
   @Prop({ required: true }) readonly height!: number | string;
+  @PropSync('selected') syncedSelected!: TableCodeGroupEntity[];
 
   readonly envs: typeof envs = envs;
   AUTHORITY: SelectItem[] | null = null;
@@ -130,9 +87,6 @@ export default class extends Vue {
   sortDesc: boolean[] = [false];
   items: TableCodeEntity[] = [];
   filteredItems: TableCodeEntity[] = [];
-  editItem: TableCodeEntity = Object.create(null);
-  selected: TableCodeEntity[] = [];
-  dialog: boolean = false;
   headers: DataTableHeader[] = [
     {
       text: `상세 코드`,
@@ -189,14 +143,14 @@ export default class extends Vue {
     ].filterSelectItem = this.AUTHORITY = await getCodesApi('AUTHORITY');
   }
 
-  @Watch('parentItem', { immediate: true })
+  @Watch('parentItem')
   watchParentItem(val: TableCodeGroupEntity): void {
     this.items = [];
     val?.codeGroup && this.getList();
   }
 
   async getList() {
-    this.selected = [];
+    this.syncedSelected = [];
     this.items = [];
     this.loading = true;
     const response = await getApi<TableCodeEntity[]>(

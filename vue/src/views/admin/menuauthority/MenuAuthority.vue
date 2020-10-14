@@ -3,7 +3,7 @@
     <v-card>
       <v-row no-gutters>
         <v-col cols="12">
-          <v-card-text class="py-1">
+          <v-card-text class="pt-0 pb-1">
             <v-select
               v-model="authority"
               label="권한 선택"

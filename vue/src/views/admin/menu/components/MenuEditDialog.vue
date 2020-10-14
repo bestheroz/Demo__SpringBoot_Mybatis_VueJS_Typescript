@@ -32,7 +32,7 @@
                   v-slot="{ errors }"
                 >
                   <v-text-field
-                    v-model="editItem.name"
+                    v-model="item.name"
                     label="*메뉴명"
                     :counter="50"
                     :error-messages="errors"
@@ -46,8 +46,8 @@
                   v-slot="{ errors }"
                 >
                   <v-select
-                    v-model="editItem.type"
-                    :items="filterMenuType(editItem)"
+                    v-model="item.type"
+                    :items="filterMenuType(item)"
                     label="*타입"
                     :error-messages="errors"
                   />
@@ -60,10 +60,10 @@
                   v-slot="{ errors }"
                 >
                   <v-text-field
-                    v-model="editItem.url"
+                    v-model="item.url"
                     label="링크 URL"
                     :counter="255"
-                    :disabled="editItem.type === 'G'"
+                    :disabled="item.type === 'G'"
                     :error-messages="errors"
                     clearable
                   />
@@ -76,17 +76,17 @@
                   v-slot="{ errors }"
                 >
                   <v-text-field
-                    v-model.number="editItem.displayOrder"
+                    v-model.number="item.displayOrder"
                     label="*메뉴 순서"
                     :error-messages="errors"
                   />
                 </ValidationProvider>
               </v-col>
-              <v-col cols="12" md="4" v-if="editItem.level === 2">
-                <v-text-field v-model="editItem.icon" label="메뉴 아이콘" />
+              <v-col cols="12" md="4" v-if="item.level === 2">
+                <v-text-field v-model="item.icon" label="메뉴 아이콘" />
               </v-col>
-              <v-col cols="12" md="1" v-if="editItem.level === 2">
-                <v-icon> {{ editItem.icon }}</v-icon>
+              <v-col cols="12" md="1" v-if="item.level === 2">
+                <v-icon> {{ item.icon }}</v-icon>
               </v-col>
             </v-row>
           </ValidationObserver>
@@ -124,7 +124,7 @@ interface MenuVO extends TableMenuEntity {
 })
 export default class extends Vue {
   @PropSync('dialog', { required: true, type: Boolean }) syncedDialog!: boolean;
-  @Prop({ required: true }) readonly editItem!: MenuVO;
+  @Prop({ required: true }) readonly item!: MenuVO;
 
   readonly ENDPOINT_URL = 'admin/menus/';
   loading: boolean = false;
@@ -142,7 +142,7 @@ export default class extends Vue {
   @Watch('syncedDialog')
   watchDialog(val: boolean) {
     if (val) {
-      this.isNew = !this.editItem.id;
+      this.isNew = !this.item.id;
       this.$refs.observer &&
         (this.$refs.observer as InstanceType<
           typeof ValidationObserver
@@ -167,7 +167,7 @@ export default class extends Vue {
     this.loading = true;
     const response = await postApi<TableMenuEntity>(
       this.ENDPOINT_URL,
-      this.editItem,
+      this.item,
     );
     this.loading = false;
     if (response?.code?.startsWith(`S`)) {
@@ -180,8 +180,8 @@ export default class extends Vue {
   async patch() {
     this.loading = true;
     const response = await patchApi<TableMenuEntity>(
-      `${this.ENDPOINT_URL}${this.editItem.id}/`,
-      this.editItem,
+      `${this.ENDPOINT_URL}${this.item.id}/`,
+      this.item,
     );
     this.loading = false;
     if (response?.code?.startsWith(`S`)) {
@@ -196,7 +196,7 @@ export default class extends Vue {
     if (result.value) {
       this.loading = true;
       const response = await deleteApi<TableMenuEntity>(
-        `${this.ENDPOINT_URL}${this.editItem.id}/`,
+        `${this.ENDPOINT_URL}${this.item.id}/`,
       );
       this.loading = false;
       if (response?.code?.startsWith(`S`)) {

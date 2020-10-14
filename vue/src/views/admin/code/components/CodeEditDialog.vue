@@ -32,7 +32,7 @@
                   v-slot="{ errors }"
                 >
                   <v-text-field
-                    v-model="editItem.codeGroup"
+                    v-model="item.codeGroup"
                     label="*그룹 코드"
                     disabled
                     :error-messages="errors"
@@ -41,8 +41,8 @@
               </v-col>
               <v-col cols="12" md="4">
                 <v-switch
-                  v-model="editItem.available"
-                  :label="editItem.available | getSwitchLabel"
+                  v-model="item.available"
+                  :label="item.available | getSwitchLabel"
                 />
               </v-col>
               <v-col cols="0" md="4" />
@@ -53,7 +53,7 @@
                   v-slot="{ errors }"
                 >
                   <v-text-field
-                    v-model="editItem.code"
+                    v-model="item.code"
                     label="*상세 코드"
                     :counter="50"
                     :error-messages="errors"
@@ -68,7 +68,7 @@
                   v-slot="{ errors }"
                 >
                   <v-text-field
-                    v-model="editItem.name"
+                    v-model="item.name"
                     label="상세 코드명"
                     :counter="100"
                     :error-messages="errors"
@@ -83,7 +83,7 @@
                   v-slot="{ errors }"
                 >
                   <v-select
-                    v-model.number="editItem.authority"
+                    v-model.number="item.authority"
                     :items="
                       AUTHORITY.map((item) => {
                         return { value: parseInt(item.value), text: item.text };
@@ -102,7 +102,7 @@
                   v-slot="{ errors }"
                 >
                   <v-text-field
-                    v-model.number="editItem.displayOrder"
+                    v-model.number="item.displayOrder"
                     label="*정렬순서"
                     :error-messages="errors"
                   />
@@ -140,7 +140,7 @@ import { ValidationObserver } from 'vee-validate';
 })
 export default class extends Vue {
   @PropSync('dialog', { required: true, type: Boolean }) syncedDialog!: boolean;
-  @Prop({ required: true }) readonly editItem!: TableCodeEntity;
+  @Prop({ required: true }) readonly item!: TableCodeEntity;
 
   readonly ENDPOINT_URL = 'admin/codes/';
   AUTHORITY: SelectItem[] | null = null;
@@ -158,7 +158,7 @@ export default class extends Vue {
   @Watch('syncedDialog', { immediate: true })
   watchDialog(val: boolean) {
     if (val) {
-      this.isNew = !this.editItem.code;
+      this.isNew = !this.item.code;
       this.$refs.observer &&
         (this.$refs.observer as InstanceType<
           typeof ValidationObserver
@@ -182,8 +182,8 @@ export default class extends Vue {
   async create() {
     this.loading = true;
     const response = await postApi<TableCodeEntity>(
-      `${this.ENDPOINT_URL}${this.editItem.codeGroup}`,
-      this.editItem,
+      `${this.ENDPOINT_URL}${this.item.codeGroup}`,
+      this.item,
     );
     this.loading = false;
     if (response?.code?.startsWith(`S`)) {
@@ -195,13 +195,13 @@ export default class extends Vue {
   async patch() {
     this.loading = true;
     const response = await patchApi<TableCodeEntity>(
-      `${this.ENDPOINT_URL}${this.editItem.codeGroup}/${this.editItem.code}/`,
-      this.editItem,
+      `${this.ENDPOINT_URL}${this.item.codeGroup}/${this.item.code}/`,
+      this.item,
     );
     this.loading = false;
     if (response?.code?.startsWith(`S`)) {
       this.syncedDialog = false;
-      window.localStorage.removeItem(`code__${this.editItem.codeGroup}`);
+      window.localStorage.removeItem(`code__${this.item.codeGroup}`);
       this.$emit('finished');
     }
   }
@@ -211,11 +211,11 @@ export default class extends Vue {
     if (result.value) {
       this.loading = true;
       const response = await deleteApi<TableCodeEntity>(
-        `${this.ENDPOINT_URL}${this.editItem.codeGroup}/${this.editItem.code}/`,
+        `${this.ENDPOINT_URL}${this.item.codeGroup}/${this.item.code}/`,
       );
       this.loading = false;
       if (response?.code?.startsWith(`S`)) {
-        window.localStorage.removeItem(`code__${this.editItem.codeGroup}`);
+        window.localStorage.removeItem(`code__${this.item.codeGroup}`);
         this.$emit('finished');
       }
     }
