@@ -27,7 +27,7 @@
         <template v-slot:[`item.id`]="{ item }">
           <a
             :style="{ 'font-weight': 'bold' }"
-            @click="rowIdClicked({ ...item, password: undefined })"
+            @click="$emit('row-id-clicked', { ...item, password: undefined })"
           >
             {{ item.id }}
           </a>
@@ -69,22 +69,17 @@ import { Component, Emit, Prop, PropSync, Vue } from 'vue-property-decorator';
 import { DataTableHeader, SelectItem, TableMemberEntity } from '@/common/types';
 import { getApi, getCodesApi } from '@/utils/apis';
 import envs from '@/constants/envs';
-import ButtonSet from '@/components/speeddial/ButtonSet.vue';
 import DataTableFilter from '@/components/datatable/DataTableFilter.vue';
-import MemberEditDialog from '@/views/admin/member/components/MemberEditDialog.vue';
 
 @Component({
   name: 'MemberList',
   components: {
-    MemberEditDialog,
     DataTableFilter,
-    ButtonSet,
   },
 })
 export default class extends Vue {
   @Prop({ required: true }) readonly height!: number | string;
   @PropSync('selected') syncedSelected!: TableMemberEntity[];
-  @Prop({ default: true }) readonly singleSelect!: boolean;
   readonly envs: typeof envs = envs;
   readonly ENDPOINT_URL: string = 'admin/members/';
   sortBy: string[] = ['authority'];

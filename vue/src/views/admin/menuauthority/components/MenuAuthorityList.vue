@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-card-text class="py-1">
+    <v-card-text class="pt-0 pb-1">
       <v-data-table
         must-sort
         fixed-header

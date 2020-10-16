@@ -32,7 +32,7 @@
                   v-slot="{ errors }"
                 >
                   <v-text-field
-                    v-model="editItem.codeGroup"
+                    v-model="item.codeGroup"
                     label="*그룹코드"
                     :counter="32"
                     :error-messages="errors"
@@ -47,7 +47,7 @@
                   v-slot="{ errors }"
                 >
                   <v-text-field
-                    v-model="editItem.name"
+                    v-model="item.name"
                     label="그룹코드명"
                     :counter="100"
                     :error-messages="errors"
@@ -86,13 +86,11 @@ import { ValidationObserver } from 'vee-validate';
 })
 export default class extends Vue {
   @PropSync('dialog', { required: true, type: Boolean }) syncedDialog!: boolean;
-  @Prop({ required: true }) readonly editItem!: TableCodeGroupEntity;
+  @Prop({ required: true }) readonly item!: TableCodeGroupEntity;
 
   readonly ENDPOINT_URL = 'admin/codeGroups/';
   loading: boolean = false;
   isNew: boolean = false;
-
-  // observer: InstanceType<typeof ValidationObserver> | null = null;
 
   beforeDestroy() {
     this.syncedDialog = false;
@@ -103,7 +101,7 @@ export default class extends Vue {
   @Watch('syncedDialog', { immediate: true })
   watchDialog(val: boolean) {
     if (val) {
-      this.isNew = !this.editItem.codeGroup;
+      this.isNew = !this.item.codeGroup;
       this.$refs.observer &&
         (this.$refs.observer as InstanceType<
           typeof ValidationObserver
@@ -128,7 +126,7 @@ export default class extends Vue {
     this.loading = true;
     const response = await postApi<TableCodeGroupEntity>(
       this.ENDPOINT_URL,
-      this.editItem,
+      this.item,
     );
     this.loading = false;
     if (response?.code?.startsWith(`S`)) {
@@ -140,8 +138,8 @@ export default class extends Vue {
   async patch() {
     this.loading = true;
     const response = await patchApi<TableCodeGroupEntity>(
-      `${this.ENDPOINT_URL}${this.editItem.codeGroup}/`,
-      this.editItem,
+      `${this.ENDPOINT_URL}${this.item.codeGroup}/`,
+      this.item,
     );
     this.loading = false;
     if (response?.code?.startsWith(`S`)) {
@@ -155,7 +153,7 @@ export default class extends Vue {
     if (result.value) {
       this.loading = true;
       const response = await deleteApi<TableCodeGroupEntity>(
-        `${this.ENDPOINT_URL}${this.editItem.codeGroup}/`,
+        `${this.ENDPOINT_URL}${this.item.codeGroup}/`,
       );
       this.loading = false;
       if (response?.code?.startsWith(`S`)) {

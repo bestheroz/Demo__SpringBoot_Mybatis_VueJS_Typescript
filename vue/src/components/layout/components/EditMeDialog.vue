@@ -25,7 +25,7 @@
             <v-row>
               <v-col cols="12">
                 <v-text-field
-                  v-model="editItem.id"
+                  v-model="item.id"
                   label="사용자아이디"
                   :counter="50"
                   disabled
@@ -38,7 +38,7 @@
                   v-slot="{ errors }"
                 >
                   <v-text-field
-                    v-model="editItem.name"
+                    v-model="item.name"
                     label="*사용자명"
                     :counter="100"
                     :error-messages="errors"
@@ -52,7 +52,7 @@
                   v-slot="{ errors }"
                 >
                   <v-text-field
-                    v-model="editItem.password"
+                    v-model="item.password"
                     label="*비빌번호"
                     :counter="20"
                     :error-messages="errors"
@@ -74,7 +74,7 @@
               </v-col>
               <v-col cols="12">
                 <datetime-picker
-                  v-model="editItem.created"
+                  v-model="item.created"
                   disabled
                   label="가입일"
                 />
@@ -118,7 +118,7 @@ export default class extends Vue {
   @PropSync('dialog', { required: true, type: Boolean }) syncedDialog!: boolean;
 
   readonly ENDPOINT_URL: string = `members/`;
-  editItem: TableMemberEntity = Object.create(null);
+  item: TableMemberEntity = Object.create(null);
   loading: boolean = false;
   show1: boolean = false;
   newPasswordDialog: boolean = false;
@@ -134,7 +134,7 @@ export default class extends Vue {
       const response = await getApi<TableMemberEntity>(
         `${this.ENDPOINT_URL}mine`,
       );
-      this.editItem = response?.data!;
+      this.item = response?.data!;
       this.$refs.observer &&
         (this.$refs.observer as InstanceType<
           typeof ValidationObserver
@@ -154,9 +154,9 @@ export default class extends Vue {
     }
 
     this.loading = true;
-    const payload = { ...this.editItem };
+    const payload = { ...this.item };
     payload.password = pbkdf2
-      .pbkdf2Sync(this.editItem.password, 'salt', 1, 32, 'sha512')
+      .pbkdf2Sync(this.item.password, 'salt', 1, 32, 'sha512')
       .toString();
     const response = await patchApi<TableMemberEntity>(
       `${this.ENDPOINT_URL}mine`,

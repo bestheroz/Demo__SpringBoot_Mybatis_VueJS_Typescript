@@ -14,9 +14,6 @@
         hide-default-footer
         :height="height"
       >
-        <template v-slot:top>
-          <button-set reload-button @click:reload="getList" />
-        </template>
         <template v-slot:[`item.type`]="{ item }" v-if="MENU_TYPE">
           {{ item.type | getCodeText(MENU_TYPE) }}
         </template>
@@ -38,14 +35,7 @@
             tile
             color="button-add"
             small
-            @click="
-              () => {
-                editItem = {
-                  parentId: item.id,
-                };
-                dialog = true;
-              }
-            "
+            @click="$emit('add-item', item)"
             :disabled="item.level === 3"
           >
             하위메뉴입력
@@ -56,12 +46,7 @@
             color="button-edit"
             small
             :disabled="item.name === '///'"
-            @click="
-              () => {
-                editItem = { ...item };
-                dialog = true;
-              }
-            "
+            @click="$emit('edit-item', item)"
           >
             수정
           </v-btn>
@@ -70,12 +55,7 @@
             tile
             color="button-delete"
             small
-            @click="
-              () => {
-                editItem = { ...item };
-                $refs.refEditDialog.delete();
-              }
-            "
+            @click="$emit('delete-item', item)"
             :disabled="!item.parentId"
           >
             삭제
@@ -83,12 +63,6 @@
         </template>
       </v-data-table>
     </v-card-text>
-    <menu-edit-dialog
-      ref="refEditDialog"
-      :edit-item="editItem"
-      :dialog.sync="dialog"
-      @finished="getList"
-    />
   </div>
 </template>
 
@@ -96,9 +70,6 @@
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { DataTableHeader, SelectItem, TableMenuEntity } from '@/common/types';
 import { getApi, getCodesApi } from '@/utils/apis';
-import envs from '@/constants/envs';
-import MenuEditDialog from '@/views/admin/menu/components/MenuEditDialog.vue';
-import ButtonSet from '@/components/speeddial/ButtonSet.vue';
 
 interface MenuVO extends TableMenuEntity {
   level: number;
@@ -106,21 +77,13 @@ interface MenuVO extends TableMenuEntity {
 
 @Component({
   name: 'MenuList',
-  components: {
-    ButtonSet,
-    MenuEditDialog,
-  },
+  components: {},
 })
 export default class extends Vue {
   @Prop({ required: true }) readonly height!: number | string;
-  readonly envs: typeof envs = envs;
   readonly ENDPOINT_URL: string = 'admin/menus/';
   items: TableMenuEntity[] = [];
-  editItem: TableMenuEntity = Object.create(null);
-  selected: TableMenuEntity[] = [];
   loading: boolean = false;
-  dialog: boolean = false;
-
   MENU_TYPE: SelectItem[] | null = null;
 
   headers: DataTableHeader[] = [
@@ -175,7 +138,6 @@ export default class extends Vue {
   }
 
   async getList() {
-    this.selected = [];
     this.items = [];
     this.loading = true;
     const response = await getApi<MenuVO[]>(this.ENDPOINT_URL);

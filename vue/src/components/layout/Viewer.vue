@@ -9,7 +9,7 @@
       class="mx-3 mt-3 mb-0 pl-6 elevation-1"
       v-if="title"
     >
-      <v-icon class="pb-1">mdi-file-document-outline</v-icon>
+      <v-icon class="pb-1">{{ icon }}</v-icon>
       {{ title }}
     </v-alert>
     <v-container fluid class="pt-0 elevation-1">
@@ -26,6 +26,7 @@ import { errorPage } from '@/utils/errors';
 @Component({ name: 'Viewer' })
 export default class extends Vue {
   drawers: DrawerItem[] = [];
+  icon: string = 'mdi-file-document-outline';
 
   get title(): string {
     if (this.$route.fullPath === '/index') {
@@ -49,6 +50,7 @@ export default class extends Vue {
             return child.to === this.$route.fullPath;
           }
         });
+        this.icon = drawer.icon || 'mdi-file-document-outline';
       }
     });
     if (!result) {
