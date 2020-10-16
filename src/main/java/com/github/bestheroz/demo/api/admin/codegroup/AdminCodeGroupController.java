@@ -1,7 +1,7 @@
 package com.github.bestheroz.demo.api.admin.codegroup;
 
-import com.github.bestheroz.demo.api.entity.codegroup.TableCodeGroupEntity;
-import com.github.bestheroz.demo.api.entity.codegroup.TableCodeGroupRepository;
+import com.github.bestheroz.demo.api.entity.code.group.TableCodeGroupEntity;
+import com.github.bestheroz.demo.api.entity.code.group.TableCodeGroupRepository;
 import com.github.bestheroz.standard.common.response.ApiResult;
 import com.github.bestheroz.standard.common.response.Result;
 import java.util.Map;
@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 public class AdminCodeGroupController {
   @Resource
   private TableCodeGroupRepository tableCodeGroupRepository;
-
   @Resource
   private AdminCodeGroupService adminCodeGroupService;
 
@@ -48,9 +47,9 @@ public class AdminCodeGroupController {
     @RequestBody final TableCodeGroupEntity tableCodeGroupEntity
   ) {
     this.tableCodeGroupRepository.updateByKey(
-        tableCodeGroupEntity,
-        Map.of("codeGroup", codeGroup)
-      );
+      tableCodeGroupEntity,
+      Map.of("codeGroup", codeGroup)
+    );
     return Result.ok();
   }
 
