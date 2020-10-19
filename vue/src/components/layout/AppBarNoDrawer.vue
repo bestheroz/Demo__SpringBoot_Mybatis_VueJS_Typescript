@@ -9,7 +9,11 @@
   >
     <v-container>
       <v-row align="center">
-        <v-toolbar-title v-text="title" :style="{ cursor: 'pointer' }" />
+        <v-toolbar-title>
+          <v-btn x-large text @click="goHome" color="primary">
+            {{ title }}
+          </v-btn>
+        </v-toolbar-title>
         <v-spacer />
         <v-toolbar-title
           class="font-weight-light"
@@ -47,6 +51,10 @@ export default class extends Vue {
 
   async mounted() {
     this.title = await getVariableApi('title');
+  }
+
+  goHome() {
+    this.$router.currentRoute.path !== '/' && this.$router.push('/');
   }
 }
 </script>
