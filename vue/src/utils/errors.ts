@@ -6,6 +6,6 @@ export async function errorPage(statusCode: number | string) {
       router.currentRoute.path,
     )
   ) {
-    await router.replace(`/error/${statusCode}`);
+    await router.push(`/error/${statusCode}`);
   }
 }

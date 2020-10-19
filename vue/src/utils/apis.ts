@@ -34,28 +34,22 @@ axiosInstance.interceptors.response.use(
       return;
     }
     if (error?.response) {
-      if ([400, 401].includes(error.response.status)) {
-        if (error.response.headers.refreshtoken === 'must') {
-          const refreshToken = await apiRefreshToken(error);
-          return refreshToken && axios.request(refreshToken.config);
-        }
-        await needLogin();
-        return;
-      } else if (
-        error.response.status === 404 &&
-        error.response.headers.refreshtoken === 'must'
-      ) {
-        // 로컬환경때문에 추가
+      if (error.response.headers.refreshtoken === 'must') {
         const refreshToken = await apiRefreshToken(error);
         return refreshToken && axios.request(refreshToken.config);
       }
-      // api 404는 그냥... 로그보면서 판단하자
-      if ([403, 500].includes(error.response.status)) {
+      if ([400, 401].includes(error.response?.status)) {
+        await needLogin();
+        return;
+      } else if ([403, 404, 500].includes(error.response.status)) {
         await errorPage(error.response.status);
         return;
       }
     }
-    alertAxiosError(error);
+    if (process.env.NODE_ENV === 'local') {
+      alertAxiosError(error);
+    }
+    console.warn(error);
     return Promise.reject(error);
   },
 );
