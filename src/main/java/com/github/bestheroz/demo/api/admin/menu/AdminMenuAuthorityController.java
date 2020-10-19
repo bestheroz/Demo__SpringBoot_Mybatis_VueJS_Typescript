@@ -1,7 +1,7 @@
 package com.github.bestheroz.demo.api.admin.menu;
 
-import com.github.bestheroz.demo.api.entity.menuauthority.TableMenuAuthorityEntity;
-import com.github.bestheroz.demo.api.entity.menuauthority.TableMenuAuthorityRepository;
+import com.github.bestheroz.demo.api.entity.menu.authority.TableMenuAuthorityEntity;
+import com.github.bestheroz.demo.api.entity.menu.authority.TableMenuAuthorityRepository;
 import com.github.bestheroz.standard.common.response.ApiResult;
 import com.github.bestheroz.standard.common.response.Result;
 import java.util.Arrays;
@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 public class AdminMenuAuthorityController {
   @Resource
   private TableMenuAuthorityRepository tableMenuAuthorityRepository;
-
   @Resource
   private AdminMenuAuthorityService adminMenuAuthorityService;
 
@@ -43,18 +42,18 @@ public class AdminMenuAuthorityController {
       .collect(Collectors.joining(StringUtils.EMPTY));
 
     this.tableMenuAuthorityRepository.getItemByKey(
-        Map.of("authority", authority)
-      )
+      Map.of("authority", authority)
+    )
       .ifPresentOrElse(
         item ->
           this.tableMenuAuthorityRepository.updateMapByKey(
-              Map.of("menuIdList", menuIdList),
-              Map.of("authority", authority)
-            ),
+            Map.of("menuIdList", menuIdList),
+            Map.of("authority", authority)
+          ),
         () ->
           this.tableMenuAuthorityRepository.insert(
-              new TableMenuAuthorityEntity(authority, menuIdList)
-            )
+            new TableMenuAuthorityEntity(authority, menuIdList)
+          )
       );
     return Result.ok();
   }

@@ -1,7 +1,7 @@
 package com.github.bestheroz.demo.api.admin.menu;
 
 import com.github.bestheroz.demo.api.entity.menu.TableMenuRepository;
-import com.github.bestheroz.demo.api.entity.menuauthority.TableMenuAuthorityRepository;
+import com.github.bestheroz.demo.api.entity.menu.authority.TableMenuAuthorityRepository;
 import java.util.Map;
 import javax.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class AdminMenuService {
   @Resource
   private TableMenuRepository tableMenuRepository;
-
   @Resource
   private TableMenuAuthorityRepository tableMenuAuthorityRepository;
 
@@ -28,12 +27,12 @@ public class AdminMenuService {
       .forEach(
         item -> {
           this.tableMenuAuthorityRepository.updateMapByKey(
-              Map.of(
-                "menuIdList",
-                StringUtils.remove(item.getMenuIdList(), "^|" + id + ",")
-              ),
-              Map.of("authority", item.getAuthority())
-            );
+            Map.of(
+              "menuIdList",
+              StringUtils.remove(item.getMenuIdList(), "^|" + id + ",")
+            ),
+            Map.of("authority", item.getAuthority())
+          );
         }
       );
   }

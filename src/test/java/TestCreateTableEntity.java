@@ -21,19 +21,18 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @Slf4j
-@SpringBootTest(classes = { WebConfiguration.class })
+@SpringBootTest(classes = {WebConfiguration.class})
 @AutoConfigureMybatis
 public class TestCreateTableEntity {
-  private final String tableName = "member";
+  private final String tableName = "code_group";
   private final String javaPackageEndPoint =
-    this.tableName.replaceAll("_", "").toLowerCase();
+    this.tableName.replaceAll("_", ".").toLowerCase();
   private final String javaProjectRootPackageName = "com.github.bestheroz.";
   private final String javaPackageName =
     this.javaProjectRootPackageName + "demo.api.entity.";
   private final String javaFilePath =
     "src/main/java/" + this.javaPackageName.replaceAll("\\.", "/");
   private final String tsFilePath = "vue/src/common/types.ts";
-
   @Qualifier("dataSource")
   @Resource
   private DataSource dataSource;
@@ -50,11 +49,11 @@ public class TestCreateTableEntity {
       ) {
         final String tableEntityName =
           "Table" +
-          CaseFormat.LOWER_UNDERSCORE.to(
-            CaseFormat.UPPER_CAMEL,
-            this.tableName
-          ) +
-          "Entity";
+            CaseFormat.LOWER_UNDERSCORE.to(
+              CaseFormat.UPPER_CAMEL,
+              this.tableName
+            ) +
+            "Entity";
 
         final ResultSetMetaData metaInfo = rs.getMetaData();
         System.out.println(tableEntityName);
@@ -169,61 +168,62 @@ public class TestCreateTableEntity {
   )
     throws IOException {
     final boolean hasAbstractCreatedUpdateEntity =
-      StringUtils.contains(javaString, " crtId") &&
-      StringUtils.contains(javaString, " crtDt") &&
-      StringUtils.contains(javaString, " updId") &&
-      StringUtils.contains(javaString, " updDt");
+      StringUtils.contains(javaString, " createdBy") &&
+        StringUtils.contains(javaString, " created") &&
+        StringUtils.contains(javaString, " updatedBy") &&
+        StringUtils.contains(javaString, " updated");
     final String javaHeader =
       "package " +
-      this.javaPackageName +
-      this.javaPackageEndPoint +
-      ";\n" +
-      "\n" +
-      (
-        hasAbstractCreatedUpdateEntity
-          ? "import " + this.javaPackageName + "AbstractCreatedUpdateEntity;\n"
-          : ""
-      ) +
-      "import lombok.Data;\n" +
-      "import lombok.EqualsAndHashCode;\n" +
-      "\n" +
-      "import java.io.Serializable;\n" +
-      "\n" +
-      (
-        hasAbstractCreatedUpdateEntity
-          ? "@EqualsAndHashCode(callSuper = true)\n"
-          : ""
-      ) +
-      "@Data\n" +
-      "public class " +
-      tableEntityName +
-      (
-        hasAbstractCreatedUpdateEntity
-          ? " extends AbstractCreatedUpdateEntity"
-          : ""
-      ) +
-      " implements Serializable {\n";
+        this.javaPackageName +
+        this.javaPackageEndPoint +
+        ";\n" +
+        "\n" +
+        (
+          hasAbstractCreatedUpdateEntity
+            ? "import " + this.javaPackageName + "AbstractCreatedUpdateEntity;\n"
+            : ""
+        ) +
+        "import lombok.Data;\n" +
+        "import lombok.EqualsAndHashCode;\n" +
+        "\n" +
+        "import java.io.Serializable;\n" +
+        "\n" +
+        (
+          hasAbstractCreatedUpdateEntity
+            ? "@EqualsAndHashCode(callSuper = true)\n"
+            : ""
+        ) +
+        "@Data\n" +
+        "public class " +
+        tableEntityName +
+        (
+          hasAbstractCreatedUpdateEntity
+            ? " extends AbstractCreatedUpdateEntity"
+            : ""
+        ) +
+        " implements Serializable {\n";
     final String javaBody = hasAbstractCreatedUpdateEntity
       ? javaString
-        .toString()
-        .replace("private String crtId;\n", "")
-        .replace("private Instant crtDt;\n", "")
-        .replace("private String updId;\n", "")
-        .replace("private Instant updDt;\n", "")
+      .toString()
+      .replace("private String createdBy;\n", "")
+      .replace("private Instant created;\n", "")
+      .replace("private String updatedBy;\n", "")
+      .replace("private Instant updated;\n", "")
       : javaString.toString();
     if (
-      Files.notExists(Paths.get(this.javaFilePath + this.javaPackageEndPoint))
+      Files
+        .notExists(Paths.get(this.javaFilePath + this.javaPackageEndPoint.replaceAll("\\.", "/")))
     ) {
       FileUtils.forceMkdir(
-        Paths.get(this.javaFilePath + this.javaPackageEndPoint).toFile()
+        Paths.get(this.javaFilePath + this.javaPackageEndPoint.replaceAll("\\.", "/")).toFile()
       );
     }
     final Path javaEntityFilePath = Paths.get(
       this.javaFilePath +
-      this.javaPackageEndPoint +
-      "/" +
-      tableEntityName +
-      ".java"
+        this.javaPackageEndPoint.replaceAll("\\.", "/") +
+        "/" +
+        tableEntityName +
+        ".java"
     );
     Files.write(
       javaEntityFilePath,
@@ -234,30 +234,30 @@ public class TestCreateTableEntity {
     );
     final String repositoryHeader =
       "package " +
-      this.javaPackageName +
-      this.javaPackageEndPoint +
-      ";\n" +
-      "\n" +
-      "import " +
-      this.javaProjectRootPackageName +
-      "standard.common.mybatis.SqlRepository;\n" +
-      "import org.apache.ibatis.annotations.Mapper;\n" +
-      "import org.springframework.stereotype.Repository;\n" +
-      "\n" +
-      "@Mapper\n" +
-      "@Repository\n" +
-      "public interface " +
-      tableEntityName.replace("Entity", "Repository") +
-      " extends SqlRepository<" +
-      tableEntityName +
-      "> {\n" +
-      "}\n";
+        this.javaPackageName +
+        this.javaPackageEndPoint +
+        ";\n" +
+        "\n" +
+        "import " +
+        this.javaProjectRootPackageName +
+        "standard.common.mybatis.SqlRepository;\n" +
+        "import org.apache.ibatis.annotations.Mapper;\n" +
+        "import org.springframework.stereotype.Repository;\n" +
+        "\n" +
+        "@Mapper\n" +
+        "@Repository\n" +
+        "public interface " +
+        tableEntityName.replace("Entity", "Repository") +
+        " extends SqlRepository<" +
+        tableEntityName +
+        "> {\n" +
+        "}\n";
     final Path javaRepositoryFilePath = Paths.get(
       this.javaFilePath +
-      this.javaPackageEndPoint +
-      "/" +
-      tableEntityName.replace("Entity", "Repository") +
-      ".java"
+        this.javaPackageEndPoint.replaceAll("\\.", "/") +
+        "/" +
+        tableEntityName.replace("Entity", "Repository") +
+        ".java"
     );
     Files.write(
       javaRepositoryFilePath,
