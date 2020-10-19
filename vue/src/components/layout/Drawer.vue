@@ -103,14 +103,14 @@ export default class extends Vue {
     );
   }
 
-  changeTheme() {
+  async changeTheme() {
     this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
     window.localStorage.setItem(
       'theme',
       this.$vuetify.theme.dark ? 'dark' : 'light',
     );
     try {
-      postApi<{
+      await postApi<{
         theme: string;
       }>(
         `members/mine/changeTheme/`,
@@ -119,6 +119,7 @@ export default class extends Vue {
         },
         false,
       );
+      await this.$store.dispatch('setUser');
     } catch (e) {
       console.warn(e);
     }
