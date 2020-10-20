@@ -39,6 +39,7 @@
 <script lang="ts">
 import { Component, Emit, Prop, Vue, Watch } from 'vue-property-decorator';
 import { DataTableHeader, SelectItem } from '@/common/types';
+import _, { DebouncedFunc } from 'lodash';
 
 @Component({ name: 'DataTableFilter' })
 export default class extends Vue {
@@ -47,19 +48,39 @@ export default class extends Vue {
   @Prop({ required: true }) readonly input!: any[];
   @Prop({ type: Boolean, default: false }) readonly filterFirstColumn!: boolean;
 
+  readonly debounceHeader: DebouncedFunc<() => {}> = _.debounce(
+    this.debouncedHeader,
+    100,
+  );
+
+  readonly debounceFilter: DebouncedFunc<() => {}> = _.debounce(
+    this.debouncedFilter,
+    100,
+  );
+
   readonly USE_YN: SelectItem[] = [
     { value: 'true', text: '예' },
     { value: 'false', text: '아니요' },
   ];
 
-  filter: string[] | null = null;
-  filterMap: string[] | null = null;
+  filter: string[] = [];
+  filterMap: string[] = [];
 
   @Watch('header', { deep: true, immediate: true })
-  watchFilterData(val: DataTableHeader[]) {
+  watchHeader() {
+    this.debounceHeader && this.debounceHeader();
+  }
+
+  @Watch('input', { deep: true, immediate: true })
+  @Watch('filter', { deep: true })
+  watchFilter() {
+    this.debounceFilter && this.debounceFilter();
+  }
+
+  debouncedHeader() {
     const filter: string[] = [];
     const filterMap: string[] = [];
-    val.forEach((value: DataTableHeader) => {
+    this.header.forEach((value: DataTableHeader) => {
       filterMap.push(value.value);
       filter.push(value.filterDefaultValue || '');
       value.filterSelectItem &&
@@ -71,10 +92,8 @@ export default class extends Vue {
     this.filterMap = filterMap;
   }
 
-  @Watch('input', { deep: true, immediate: true })
-  @Watch('filter', { deep: true })
   @Emit('update:output')
-  watchFilter() {
+  debouncedFilter() {
     let output = this.input;
     this.filter &&
       this.filter.forEach((filter: string | undefined | null, index) => {
