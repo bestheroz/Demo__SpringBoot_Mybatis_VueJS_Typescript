@@ -20,7 +20,7 @@ public class AdminMenuService {
     this.tableMenuRepository.deleteByKey(Map.of("parentId", id));
     this.tableMenuRepository.deleteByKey(Map.of("id", id));
     this.tableMenuAuthorityRepository.getItems()
-      .parallelStream()
+      .stream()
       .filter(
         item -> StringUtils.contains(item.getMenuIdList(), "^|" + id + ",")
       )
