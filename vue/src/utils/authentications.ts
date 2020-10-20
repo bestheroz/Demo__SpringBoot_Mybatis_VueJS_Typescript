@@ -8,7 +8,7 @@ export async function logout() {
   } catch (e) {
     console.error(e);
   }
-  await router.replace('/login');
+  await router.push('/login');
 }
 
 export function refreshToken(accessToken: string) {
@@ -25,6 +25,6 @@ export function saveToken(token: {
 
 export async function needLogin() {
   if (router.currentRoute.path !== '/login') {
-    await router.replace('/login?login=need');
+    await router.push('/login?login=need');
   }
 }
