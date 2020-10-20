@@ -1,7 +1,7 @@
 <template>
   <tr class="datatable-header-filter">
     <td v-if="!filterFirstColumn" />
-    <td v-for="(data, index) in filterHeader" :key="data.value">
+    <td v-for="(data, index) in header" :key="data.value">
       <v-select
         v-model.trim="filter[index]"
         :items="data.filterSelectItem"
@@ -42,26 +42,48 @@
 <script lang="ts">
 import { Component, Emit, Prop, Vue, Watch } from 'vue-property-decorator';
 import { DataTableHeader, SelectItem } from '@/common/types';
+import _, { DebouncedFunc } from 'lodash';
 
 @Component({ name: 'DataTableServerFilter' })
 export default class extends Vue {
-  @Prop({ required: true }) readonly filterHeader!: DataTableHeader[];
-  @Prop({ required: true }) readonly originalItems!: any[];
+  @Prop({ required: true }) readonly header!: DataTableHeader[];
+  @Prop({ required: true }) readonly input!: any[];
   @Prop({ type: Boolean, default: false }) readonly filterFirstColumn!: boolean;
+
+  readonly debounceHeader: DebouncedFunc<() => {}> = _.debounce(
+    this.debouncedHeader,
+    100,
+  );
+
+  readonly debounceFilter: DebouncedFunc<() => {}> = _.debounce(
+    this.debouncedFilter,
+    100,
+  );
 
   readonly USE_YN: SelectItem[] = [
     { value: 'Y', text: '예' },
     { value: 'N', text: '아니요' },
   ];
 
-  filter: string[] | null = null;
-  filterMap: string[] | null = null;
+  filter: string[] = [];
+  filterMap: string[] = [];
 
-  @Watch('filterHeader', { deep: true, immediate: true })
-  watchFilterData(val: DataTableHeader[]) {
+  @Watch('header', { deep: true, immediate: true })
+  watchHeader() {
+    this.debounceHeader && this.debounceHeader();
+  }
+
+  @Watch('input', { deep: true, immediate: true })
+  @Watch('filter', { deep: true })
+  @Emit('update:query-string')
+  watchFilter() {
+    this.debounceFilter && this.debounceFilter();
+  }
+
+  debouncedHeader() {
     const filter: string[] = [];
     const filterMap: string[] = [];
-    val.forEach((value: DataTableHeader) => {
+    this.header.forEach((value: DataTableHeader) => {
       filterMap.push(value.value);
       filter.push(value.filterDefaultValue || '');
       value.filterSelectItem &&
@@ -73,10 +95,8 @@ export default class extends Vue {
     this.filterMap = filterMap;
   }
 
-  @Watch('originalItems', { deep: true, immediate: true })
-  @Watch('filter', { deep: true })
   @Emit('update:query-string')
-  watchFilter() {
+  debouncedFilter() {
     const result: any = Object.create(null);
     this.filter &&
       this.filter.forEach((filter: string | undefined | null, index) => {
