@@ -93,7 +93,7 @@
                   v-slot="{ errors }"
                 >
                   <v-text-field
-                    v-model.number="item.timeout"
+                    v-model="item.timeout"
                     label="*세션타임아웃시간(초)"
                     :error-messages="errors"
                     clearable

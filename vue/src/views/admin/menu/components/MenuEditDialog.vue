@@ -76,7 +76,7 @@
                   v-slot="{ errors }"
                 >
                   <v-text-field
-                    v-model.number="item.displayOrder"
+                    v-model="item.displayOrder"
                     label="*메뉴 순서"
                     :error-messages="errors"
                   />
