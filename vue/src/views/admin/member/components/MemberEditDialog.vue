@@ -13,7 +13,7 @@
         <v-card-title class="py-2 modal-header">
           <v-icon v-if="isNew">mdi-pencil-plus-outline</v-icon>
           <v-icon v-else>mdi-pencil-outline</v-icon>
-          사용자 {{ isNew ? '추가' : '수정' }}
+          사용자 {{ isNew ? "추가" : "수정" }}
           <v-spacer />
           <v-btn text small :ripple="false" style="cursor: default">
             <v-icon> mdi-cursor-move</v-icon>
@@ -167,43 +167,43 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, PropSync, Vue, Watch } from 'vue-property-decorator';
-import { SelectItem, TableMemberEntity } from '@/common/types';
-import { deleteApi, getCodesApi, patchApi, postApi } from '@/utils/apis';
-import DatetimePicker from '@/components/picker/DatetimePicker.vue';
-import { confirmDelete } from '@/utils/alerts';
-import { ValidationObserver } from 'vee-validate';
+import { Component, Prop, PropSync, Vue, Watch } from "vue-property-decorator";
+import { SelectItem, TableMemberEntity } from "@/common/types";
+import { deleteApi, getCodesApi, patchApi, postApi } from "@/utils/apis";
+import DatetimePicker from "@/components/picker/DatetimePicker.vue";
+import { confirmDelete } from "@/utils/alerts";
+import { ValidationObserver } from "vee-validate";
 
-const pbkdf2 = require('pbkdf2');
+const pbkdf2 = require("pbkdf2");
 
 @Component({
-  name: 'MemberEditDialog',
+  name: "MemberEditDialog",
   components: { DatetimePicker },
 })
 export default class extends Vue {
-  @PropSync('dialog', { required: true, type: Boolean }) syncedDialog!: boolean;
+  @PropSync("dialog", { required: true, type: Boolean }) syncedDialog!: boolean;
   @Prop({ required: true }) readonly item!: TableMemberEntity;
 
-  readonly ENDPOINT_URL: string = 'admin/members/';
-  loading: boolean = false;
+  readonly ENDPOINT_URL: string = "admin/members/";
+  loading = false;
   AUTHORITY: SelectItem[] | null = null;
   password2: string | null = null;
-  show1: boolean = false;
-  show2: boolean = false;
-  isNew: boolean = false;
+  show1 = false;
+  show2 = false;
+  isNew = false;
 
   beforeDestroy() {
     this.syncedDialog = false;
   }
 
   async mounted() {
-    this.AUTHORITY = await getCodesApi('AUTHORITY');
+    this.AUTHORITY = await getCodesApi("AUTHORITY");
   }
 
-  @Watch('syncedDialog', { immediate: true })
+  @Watch("syncedDialog", { immediate: true })
   watchDialog(val: boolean) {
     if (val) {
-      this.password2 = '';
+      this.password2 = "";
       this.show1 = false;
       this.show2 = false;
       this.isNew = !this.item.id;
@@ -211,9 +211,9 @@ export default class extends Vue {
         (this.$refs.observer as InstanceType<
           typeof ValidationObserver
         >).reset();
-      this.$modal.show('MemberEditDialog');
+      this.$modal.show("MemberEditDialog");
     } else {
-      this.$modal.hide('MemberEditDialog');
+      this.$modal.hide("MemberEditDialog");
     }
   }
 
@@ -232,7 +232,7 @@ export default class extends Vue {
     const params = { ...this.item };
     if (params.password) {
       params.password = pbkdf2
-        .pbkdf2Sync(params.password, 'salt', 1, 32, 'sha512')
+        .pbkdf2Sync(params.password, "salt", 1, 32, "sha512")
         .toString();
     }
     const response = await postApi<TableMemberEntity>(
@@ -240,10 +240,10 @@ export default class extends Vue {
       params,
     );
     this.loading = false;
-    if (response?.code?.startsWith(`S`)) {
-      await this.$store.dispatch('setMemberCodes');
+    if (response?.code?.startsWith("S")) {
+      await this.$store.dispatch("setMemberCodes");
       this.syncedDialog = false;
-      this.$emit('finished');
+      this.$emit("finished");
     }
   }
 
@@ -252,7 +252,7 @@ export default class extends Vue {
     const params = { ...this.item };
     if (params.password) {
       params.password = pbkdf2
-        .pbkdf2Sync(params.password, 'salt', 1, 32, 'sha512')
+        .pbkdf2Sync(params.password, "salt", 1, 32, "sha512")
         .toString();
     }
     const response = await patchApi<TableMemberEntity>(
@@ -260,14 +260,14 @@ export default class extends Vue {
       params,
     );
     this.loading = false;
-    if (response?.code?.startsWith(`S`)) {
-      const user = await this.$store.dispatch('getUser');
+    if (response?.code?.startsWith("S")) {
+      const user = await this.$store.dispatch("getUser");
       if (this.item.id === user.id) {
-        await this.$store.dispatch('setUser');
+        await this.$store.dispatch("setUser");
       }
-      await this.$store.dispatch('setMemberCodes');
+      await this.$store.dispatch("setMemberCodes");
       this.syncedDialog = false;
-      this.$emit('finished');
+      this.$emit("finished");
     }
   }
 
@@ -279,9 +279,9 @@ export default class extends Vue {
         `${this.ENDPOINT_URL}${this.item.id}/`,
       );
       this.loading = false;
-      if (response?.code?.startsWith(`S`)) {
-        await this.$store.dispatch('setMemberCodes');
-        this.$emit('finished');
+      if (response?.code?.startsWith("S")) {
+        await this.$store.dispatch("setMemberCodes");
+        this.$emit("finished");
       }
     }
   }

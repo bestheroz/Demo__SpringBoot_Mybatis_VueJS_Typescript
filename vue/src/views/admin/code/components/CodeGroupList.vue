@@ -42,52 +42,52 @@
 </template>
 
 <script lang="ts">
-import { Component, Emit, Prop, PropSync, Vue } from 'vue-property-decorator';
-import { DataTableHeader, TableCodeGroupEntity } from '@/common/types';
-import { getApi } from '@/utils/apis';
-import envs from '@/constants/envs';
-import DataTableFilter from '@/components/datatable/DataTableFilter.vue';
+import { Component, Emit, Prop, PropSync, Vue } from "vue-property-decorator";
+import { DataTableHeader, TableCodeGroupEntity } from "@/common/types";
+import { getApi } from "@/utils/apis";
+import envs from "@/constants/envs";
+import DataTableFilter from "@/components/datatable/DataTableFilter.vue";
 
 @Component({
-  name: 'CodeGroupList',
+  name: "CodeGroupList",
   components: {
     DataTableFilter,
   },
 })
 export default class extends Vue {
   @Prop({ required: true }) readonly height!: number | string;
-  @PropSync('selected') syncedSelected!: TableCodeGroupEntity[];
+  @PropSync("selected") syncedSelected!: TableCodeGroupEntity[];
   readonly envs: typeof envs = envs;
-  sortBy: string[] = ['codeGroup'];
+  sortBy: string[] = ["codeGroup"];
   sortDesc: boolean[] = [false];
   items: TableCodeGroupEntity[] = [];
   filteredItems: TableCodeGroupEntity[] = [];
-  loading: boolean = false;
+  loading = false;
 
   headers: DataTableHeader[] = [
     {
-      text: `그룹코드`,
-      align: `start`,
-      value: `codeGroup`,
+      text: "그룹코드",
+      align: "start",
+      value: "codeGroup",
     },
     {
-      text: `그룹코드명`,
-      align: `start`,
-      value: `name`,
+      text: "그룹코드명",
+      align: "start",
+      value: "name",
     },
     {
-      text: `작업 일시`,
-      align: `center`,
-      value: `updated`,
+      text: "작업 일시",
+      align: "center",
+      value: "updated",
       filterable: false,
-      width: '10rem',
+      width: "10rem",
     },
     {
-      text: `작업자`,
-      align: `start`,
-      value: `updatedBy`,
+      text: "작업자",
+      align: "start",
+      value: "updatedBy",
       filterable: false,
-      width: '7rem',
+      width: "7rem",
     },
   ];
 
@@ -95,12 +95,12 @@ export default class extends Vue {
     this.getList();
   }
 
-  @Emit('updated')
+  @Emit("updated")
   async getList() {
     this.syncedSelected = [];
     this.items = [];
     this.loading = true;
-    const response = await getApi<TableCodeGroupEntity[]>(`admin/codeGroups/`);
+    const response = await getApi<TableCodeGroupEntity[]>("admin/codeGroups/");
     this.loading = false;
     this.items = response?.data || [];
   }

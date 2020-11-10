@@ -70,34 +70,34 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, PropSync, Vue } from 'vue-property-decorator';
-import envs from '@/constants/envs';
-import dayjs from 'dayjs';
-import DatetimePicker from '@/components/picker/DatetimePicker.vue';
-import { ValidationObserver } from 'vee-validate';
+import { Component, Prop, PropSync, Vue } from "vue-property-decorator";
+import envs from "@/constants/envs";
+import dayjs from "dayjs";
+import DatetimePicker from "@/components/picker/DatetimePicker.vue";
+import { ValidationObserver } from "vee-validate";
 
 @Component({
-  name: 'DatetimeStartEndPicker',
+  name: "DatetimeStartEndPicker",
   components: { DatetimePicker },
 })
 export default class extends Vue {
-  @PropSync('start', { required: true }) syncedStart!:
+  @PropSync("start", { required: true }) syncedStart!:
     | Date
     | string
     | number
     | null;
 
-  @PropSync('end', { required: true }) readonly syncedEnd!:
+  @PropSync("end", { required: true }) readonly syncedEnd!:
     | Date
     | string
     | number
     | null;
 
-  @Prop({ type: String, default: '시작날짜' }) readonly startLabel!:
+  @Prop({ type: String, default: "시작날짜" }) readonly startLabel!:
     | string
     | null;
 
-  @Prop({ type: String, default: '종료날짜' }) readonly endLabel!:
+  @Prop({ type: String, default: "종료날짜" }) readonly endLabel!:
     | string
     | null;
 

@@ -59,23 +59,23 @@
 </template>
 
 <script lang="ts">
-import { Component, PropSync, Vue, Watch } from 'vue-property-decorator';
-import Countdown from 'vue-awesome-countdown/src/vue-awesome-countdown.vue';
-import { getVariableApi } from '@/utils/apis';
-import { logout } from '@/utils/authentications';
-import EditMeDialog from '@/components/layout/components/EditMeDialog.vue';
-import { TableMemberEntity } from '@/common/types';
+import { Component, PropSync, Vue, Watch } from "vue-property-decorator";
+import Countdown from "vue-awesome-countdown/src/vue-awesome-countdown.vue";
+import { getVariableApi } from "@/utils/apis";
+import { logout } from "@/utils/authentications";
+import EditMeDialog from "@/components/layout/components/EditMeDialog.vue";
+import { TableMemberEntity } from "@/common/types";
 
 @Component({
-  name: 'AppBar',
+  name: "AppBar",
   components: { EditMeDialog, Countdown },
 })
 export default class extends Vue {
-  @PropSync('drawer', { required: true, default: true }) syncedDrawer!: boolean;
+  @PropSync("drawer", { required: true, default: true }) syncedDrawer!: boolean;
   readonly logout: typeof logout = logout;
   title: string | null = null;
-  user: TableMemberEntity = { name: '' };
-  editMeDialog: boolean = false;
+  user: TableMemberEntity = { name: "" };
+  editMeDialog = false;
 
   get isPopup(): boolean {
     return !window.toolbar.visible;
@@ -86,24 +86,24 @@ export default class extends Vue {
   }
 
   async mounted() {
-    this.title = await getVariableApi('title');
+    this.title = await getVariableApi("title");
   }
 
-  @Watch('$store.state.user.logoutTimer', { immediate: true })
+  @Watch("$store.state.user.logoutTimer", { immediate: true })
   watchLogoutTime() {
     if (this.$refs.countdown) {
-      (this.$refs.countdown as any).startCountdown('restart');
+      (this.$refs.countdown as any).startCountdown("restart");
     }
   }
 
-  @Watch('$store.state.user.user', { immediate: true })
+  @Watch("$store.state.user.user", { immediate: true })
   async watchUser() {
-    this.user = await this.$store.dispatch('getUser');
-    this.$vuetify.theme.dark = (this.user.theme || 'light') === 'dark';
+    this.user = await this.$store.dispatch("getUser");
+    this.$vuetify.theme.dark = (this.user.theme || "light") === "dark";
   }
 
   goHome() {
-    this.$router.currentRoute.path !== '/' && this.$router.push('/');
+    this.$router.currentRoute.path !== "/" && this.$router.push("/");
   }
 }
 </script>

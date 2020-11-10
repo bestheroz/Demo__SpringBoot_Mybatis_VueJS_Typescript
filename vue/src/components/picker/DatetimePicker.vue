@@ -68,20 +68,20 @@
 </template>
 
 <script lang="ts">
-import { Component, Model, Prop, Vue, Watch } from 'vue-property-decorator';
-import envs from '@/constants/envs';
-import dayjs from 'dayjs';
-import { ValidationObserver } from 'vee-validate';
+import { Component, Model, Prop, Vue, Watch } from "vue-property-decorator";
+import envs from "@/constants/envs";
+import dayjs from "dayjs";
+import { ValidationObserver } from "vee-validate";
 
-@Component({ name: 'DatetimePicker' })
+@Component({ name: "DatetimePicker" })
 export default class extends Vue {
-  @Model('input', { required: true }) readonly date!:
+  @Model("input", { required: true }) readonly date!:
     | Date
     | string
     | number
     | null;
 
-  @Prop({ type: String, default: '날짜선택' }) readonly label!: string | null;
+  @Prop({ type: String, default: "날짜선택" }) readonly label!: string | null;
   @Prop({ type: String }) readonly message!: string | null;
   @Prop({ type: Boolean, default: false }) readonly required!: boolean;
   @Prop({ type: Boolean, default: false }) readonly disabled!: boolean;
@@ -97,7 +97,7 @@ export default class extends Vue {
 
   readonly envs: typeof envs = envs;
   value: string | null = null;
-  dialog: boolean = false;
+  dialog = false;
   timeValue: string | null = null;
 
   get format() {
@@ -138,7 +138,7 @@ export default class extends Vue {
     return `max-width: ${defaultWidth}rem;`;
   }
 
-  @Watch('date', { immediate: true })
+  @Watch("date", { immediate: true })
   watchDate(
     val: Date | string | number | null | undefined,
     oldVal: Date | string | number | null,
@@ -148,43 +148,43 @@ export default class extends Vue {
       val !== oldVal &&
       !isNaN(dayjs(val).toDate().getTime()) &&
       dayjs(val).toDate().getTime() !==
-        dayjs(oldVal || '')
+        dayjs(oldVal || "")
           .toDate()
           .getTime()
     ) {
       this.value = dayjs(val).format(this.format);
-      this.timeValue = this.value.split(' ')[1];
+      this.timeValue = this.value.split(" ")[1];
     }
   }
 
-  @Watch('timeValue')
+  @Watch("timeValue")
   watchTimeValue(val: string) {
     if (this.value) {
-      this.value = `${this.value.split(' ')[0]} ${val}`;
+      this.value = `${this.value.split(" ")[0]} ${val}`;
     }
   }
 
-  @Watch('value', { immediate: true })
+  @Watch("value", { immediate: true })
   watchValue(val: string, oldVal: string) {
     if (
       val !== oldVal &&
       dayjs(val).toDate().getTime() !==
-        dayjs(oldVal || '')
+        dayjs(oldVal || "")
           .toDate()
           .getTime()
     ) {
       if (this.endType) {
-        const split = val.split(' ');
+        const split = val.split(" ");
         this.$emit(
-          'input',
+          "input",
           dayjs(
-            `${split[0]} ${split[1] || '23:59'}:${
-              this.useSeconds ? '' : '59'
+            `${split[0]} ${split[1] || "23:59"}:${
+              this.useSeconds ? "" : "59"
             }.999999`,
           ).toDate(),
         );
       } else {
-        this.$emit('input', dayjs(val).toDate());
+        this.$emit("input", dayjs(val).toDate());
       }
     }
   }

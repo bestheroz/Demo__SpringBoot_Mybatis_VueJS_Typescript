@@ -70,16 +70,16 @@
 </template>
 
 <script lang="ts">
-import { Component, PropSync, Vue, Watch } from 'vue-property-decorator';
-import { DrawerItem } from '@/common/types';
-import { logout } from '@/utils/authentications';
-import { postApi } from '@/utils/apis';
+import { Component, PropSync, Vue, Watch } from "vue-property-decorator";
+import { DrawerItem } from "@/common/types";
+import { logout } from "@/utils/authentications";
+import { postApi } from "@/utils/apis";
 
 @Component({
-  name: 'Drawer',
+  name: "Drawer",
 })
 export default class extends Vue {
-  @PropSync('drawer', { required: true, default: true })
+  @PropSync("drawer", { required: true, default: true })
   readonly syncedDrawer!: boolean;
 
   readonly logout: typeof logout = logout;
@@ -90,15 +90,15 @@ export default class extends Vue {
     return !window.toolbar.visible;
   }
 
-  @Watch('$store.state.drawer.drawers', { immediate: true })
+  @Watch("$store.state.drawer.drawers", { immediate: true })
   async watchDrawers() {
-    this.items = await this.$store.dispatch('getDrawers');
+    this.items = await this.$store.dispatch("getDrawers");
   }
 
   popupWindow(url: string) {
     window.open(
       url,
-      '_blank',
+      "_blank",
       // 'location=false,menubar=false,scrollbars=true,status=false,toolbar=false',
     );
   }
@@ -106,20 +106,20 @@ export default class extends Vue {
   async changeTheme() {
     this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
     window.localStorage.setItem(
-      'theme',
-      this.$vuetify.theme.dark ? 'dark' : 'light',
+      "theme",
+      this.$vuetify.theme.dark ? "dark" : "light",
     );
     try {
       await postApi<{
         theme: string;
       }>(
-        `members/mine/changeTheme/`,
+        "members/mine/changeTheme/",
         {
-          theme: this.$vuetify.theme.dark ? 'dark' : 'light',
+          theme: this.$vuetify.theme.dark ? "dark" : "light",
         },
         false,
       );
-      await this.$store.dispatch('setUser');
+      await this.$store.dispatch("setUser");
     } catch (e) {
       console.warn(e);
     }
@@ -129,7 +129,7 @@ export default class extends Vue {
     if (!item.to || item.to === this.$route.fullPath) {
       return;
     }
-    if (item.type === 'W') {
+    if (item.type === "W") {
       this.popupWindow(item.to);
     } else {
       item.to && this.$router.push(item.to);

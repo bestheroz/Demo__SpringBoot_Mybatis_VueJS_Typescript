@@ -19,29 +19,29 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator';
-import { DrawerItem } from '@/common/types';
-import { errorPage } from '@/utils/errors';
+import { Component, Vue, Watch } from "vue-property-decorator";
+import { DrawerItem } from "@/common/types";
+import { errorPage } from "@/utils/errors";
 
-@Component({ name: 'Viewer' })
+@Component({ name: "Viewer" })
 export default class extends Vue {
   drawers: DrawerItem[] = [];
-  icon: string = 'mdi-file-document-outline';
+  icon = "mdi-file-document-outline";
 
   get title(): string {
-    if (this.$route.fullPath === '/index') {
-      return '';
+    if (this.$route.fullPath === "/index") {
+      return "";
     }
     if (this.drawers?.length > 0) {
-      return this.findThisPage()!.title.split('(팝업)').join('');
+      return this.findThisPage()!.title.split("(팝업)").join("");
     }
-    return '';
+    return "";
   }
 
   findThisPage(): DrawerItem | undefined {
     let result: DrawerItem | undefined;
     if (this.$route.name) {
-      return { id: 0, title: '' };
+      return { id: 0, title: "" };
     }
     this.drawers?.forEach((drawer) => {
       if (!result) {
@@ -50,19 +50,19 @@ export default class extends Vue {
             return child.to === this.$route.fullPath;
           }
         });
-        this.icon = drawer.icon || 'mdi-file-document-outline';
+        this.icon = drawer.icon || "mdi-file-document-outline";
       }
     });
     if (!result) {
       errorPage(403);
-      return { id: 0, title: '' };
+      return { id: 0, title: "" };
     }
     return result!;
   }
 
-  @Watch('$store.state.drawer.drawers', { immediate: true })
+  @Watch("$store.state.drawer.drawers", { immediate: true })
   async watchDrawers() {
-    this.drawers = await this.$store.dispatch('getDrawers');
+    this.drawers = await this.$store.dispatch("getDrawers");
   }
 }
 </script>

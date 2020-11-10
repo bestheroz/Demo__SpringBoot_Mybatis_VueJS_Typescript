@@ -17,15 +17,15 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
-import { TableCodeGroupEntity } from '@/common/types';
-import CodeList from '@/views/admin/code/components/CodeList.vue';
-import CodeGroupList from '@/views/admin/code/components/CodeGroupList.vue';
-import CodeGroupWrapper from '@/views/admin/code/components/CodeGroupWrapper.vue';
-import CodeWrapper from '@/views/admin/code/components/CodeWrapper.vue';
+import { Component, Vue } from "vue-property-decorator";
+import { TableCodeGroupEntity } from "@/common/types";
+import CodeList from "@/views/admin/code/components/CodeList.vue";
+import CodeGroupList from "@/views/admin/code/components/CodeGroupList.vue";
+import CodeGroupWrapper from "@/views/admin/code/components/CodeGroupWrapper.vue";
+import CodeWrapper from "@/views/admin/code/components/CodeWrapper.vue";
 
 @Component({
-  name: 'Code',
+  name: "Code",
   components: {
     CodeWrapper,
     CodeGroupWrapper,

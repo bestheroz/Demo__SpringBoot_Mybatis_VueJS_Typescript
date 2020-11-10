@@ -1,4 +1,4 @@
-import { SelectItem } from '@/common/types';
+import { SelectItem } from "@/common/types";
 
 export function getCodes(
   codes: SelectItem[],
@@ -15,7 +15,7 @@ export function getText(
   defaultText?: string,
 ): string {
   const filterElement = (codes || []).find(
-    (item) => item.value === (value || '').toString(),
+    (item) => item.value === (value || "").toString(),
   );
-  return filterElement?.text || defaultText || '-';
+  return filterElement?.text || defaultText || "-";
 }

@@ -117,48 +117,48 @@
 </template>
 
 <script lang="ts">
-import { Component, Emit, Prop, Vue } from 'vue-property-decorator';
-import colors from 'vuetify/lib/util/colors';
+import { Component, Emit, Prop, Vue } from "vue-property-decorator";
+import colors from "vuetify/lib/util/colors";
 
-@Component({ name: 'ButtonSet' })
+@Component({ name: "ButtonSet" })
 export default class extends Vue {
   @Prop({ type: Boolean, default: false }) readonly disabled!: boolean;
   @Prop({ type: Boolean, default: false }) readonly addButton!: boolean;
   @Prop({ type: Boolean, default: false }) readonly addDisabled!: boolean;
-  @Prop({ type: String, default: '추가' }) readonly addText!: string;
+  @Prop({ type: String, default: "추가" }) readonly addText!: string;
   @Prop({ type: Boolean, default: false }) readonly deleteButton!: boolean;
   @Prop({ type: Boolean, default: false }) readonly deleteDisabled!: boolean;
-  @Prop({ type: String, default: '삭제' }) readonly deleteText!: string;
+  @Prop({ type: String, default: "삭제" }) readonly deleteText!: string;
   @Prop({ type: Boolean, default: false }) readonly excelButton!: boolean;
   @Prop({ type: Boolean, default: false }) readonly excelDisabled!: boolean;
-  @Prop({ type: String, default: 'Excel' }) readonly excelText!: string;
+  @Prop({ type: String, default: "Excel" }) readonly excelText!: string;
   @Prop({ type: Boolean, default: false }) readonly inquiryButton!: boolean;
   @Prop({ type: Boolean, default: false }) readonly inquiryDisabled!: boolean;
-  @Prop({ type: String, default: '조회' }) readonly inquiryText!: string;
+  @Prop({ type: String, default: "조회" }) readonly inquiryText!: string;
   @Prop({ type: Boolean, default: false }) readonly reloadButton!: boolean;
   @Prop({ type: Boolean, default: false }) readonly reloadDisabled!: boolean;
-  @Prop({ type: String, default: '새로고침' }) readonly reloadText!: string;
+  @Prop({ type: String, default: "새로고침" }) readonly reloadText!: string;
   @Prop({ type: Boolean, default: false }) readonly saveButton!: boolean;
   @Prop({ type: Boolean, default: false }) readonly saveDisabled!: boolean;
-  @Prop({ type: String, default: '저장' }) readonly saveText!: string;
+  @Prop({ type: String, default: "저장" }) readonly saveText!: string;
 
-  fab: boolean = false;
+  fab = false;
 
   get excelColor() {
     return this.$vuetify.theme.dark ? colors.teal.darken4 : colors.teal.darken2;
   }
 
-  @Emit('click:add') clickAdd() {}
+  @Emit("click:add") clickAdd() {}
 
-  @Emit('click:delete') clickDelete() {}
+  @Emit("click:delete") clickDelete() {}
 
-  @Emit('click:excel') clickExcel() {}
+  @Emit("click:excel") clickExcel() {}
 
-  @Emit('click:inquiry') clickInquiry() {}
+  @Emit("click:inquiry") clickInquiry() {}
 
-  @Emit('click:reload') clickReload() {}
+  @Emit("click:reload") clickReload() {}
 
-  @Emit('click:save') clickSave() {}
+  @Emit("click:save") clickSave() {}
 }
 </script>
 <style lang="scss" scoped>

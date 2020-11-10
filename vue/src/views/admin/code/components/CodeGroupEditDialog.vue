@@ -13,7 +13,7 @@
         <v-card-title class="py-2 modal-header">
           <v-icon v-if="isNew">mdi-pencil-plus-outline</v-icon>
           <v-icon v-else>mdi-pencil-outline</v-icon>
-          코드그룹 {{ isNew ? '추가' : '수정' }}
+          코드그룹 {{ isNew ? "추가" : "수정" }}
           <v-spacer />
           <v-btn text small :ripple="false" style="cursor: default">
             <v-icon> mdi-cursor-move</v-icon>
@@ -75,22 +75,22 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, PropSync, Vue, Watch } from 'vue-property-decorator';
-import { TableCodeGroupEntity } from '@/common/types';
-import { deleteApi, patchApi, postApi } from '@/utils/apis';
-import { confirmDelete } from '@/utils/alerts';
-import { ValidationObserver } from 'vee-validate';
+import { Component, Prop, PropSync, Vue, Watch } from "vue-property-decorator";
+import { TableCodeGroupEntity } from "@/common/types";
+import { deleteApi, patchApi, postApi } from "@/utils/apis";
+import { confirmDelete } from "@/utils/alerts";
+import { ValidationObserver } from "vee-validate";
 
 @Component({
-  name: 'CodeGroupEditDialog',
+  name: "CodeGroupEditDialog",
 })
 export default class extends Vue {
-  @PropSync('dialog', { required: true, type: Boolean }) syncedDialog!: boolean;
+  @PropSync("dialog", { required: true, type: Boolean }) syncedDialog!: boolean;
   @Prop({ required: true }) readonly item!: TableCodeGroupEntity;
 
-  readonly ENDPOINT_URL = 'admin/codeGroups/';
-  loading: boolean = false;
-  isNew: boolean = false;
+  readonly ENDPOINT_URL = "admin/codeGroups/";
+  loading = false;
+  isNew = false;
 
   beforeDestroy() {
     this.syncedDialog = false;
@@ -98,7 +98,7 @@ export default class extends Vue {
 
   mounted() {}
 
-  @Watch('syncedDialog', { immediate: true })
+  @Watch("syncedDialog", { immediate: true })
   watchDialog(val: boolean) {
     if (val) {
       this.isNew = !this.item.codeGroup;
@@ -106,9 +106,9 @@ export default class extends Vue {
         (this.$refs.observer as InstanceType<
           typeof ValidationObserver
         >).reset();
-      this.$modal.show('CodeGroupEditDialog');
+      this.$modal.show("CodeGroupEditDialog");
     } else {
-      this.$modal.hide('CodeGroupEditDialog');
+      this.$modal.hide("CodeGroupEditDialog");
     }
   }
 
@@ -129,9 +129,9 @@ export default class extends Vue {
       this.item,
     );
     this.loading = false;
-    if (response?.code?.startsWith(`S`)) {
+    if (response?.code?.startsWith("S")) {
       this.syncedDialog = false;
-      this.$emit('finished');
+      this.$emit("finished");
     }
   }
 
@@ -142,9 +142,9 @@ export default class extends Vue {
       this.item,
     );
     this.loading = false;
-    if (response?.code?.startsWith(`S`)) {
+    if (response?.code?.startsWith("S")) {
       this.syncedDialog = false;
-      this.$emit('finished');
+      this.$emit("finished");
     }
   }
 
@@ -156,8 +156,8 @@ export default class extends Vue {
         `${this.ENDPOINT_URL}${this.item.codeGroup}/`,
       );
       this.loading = false;
-      if (response?.code?.startsWith(`S`)) {
-        this.$emit('finished');
+      if (response?.code?.startsWith("S")) {
+        this.$emit("finished");
       }
     }
   }

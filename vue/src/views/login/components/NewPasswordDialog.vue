@@ -63,25 +63,25 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, PropSync, Vue } from 'vue-property-decorator';
-import { alertAxiosError, ApiDataResult, axiosInstance } from '@/utils/apis';
-import { alertError } from '@/utils/alerts';
-import { ValidationObserver } from 'vee-validate';
+import { Component, Prop, PropSync, Vue } from "vue-property-decorator";
+import { alertAxiosError, ApiDataResult, axiosInstance } from "@/utils/apis";
+import { alertError } from "@/utils/alerts";
+import { ValidationObserver } from "vee-validate";
 
-const pbkdf2 = require('pbkdf2');
+const pbkdf2 = require("pbkdf2");
 
 @Component({
-  name: 'NewPasswordDialog',
+  name: "NewPasswordDialog",
 })
 export default class extends Vue {
-  @PropSync('dialog', { required: true, type: Boolean }) syncedDialog!: boolean;
+  @PropSync("dialog", { required: true, type: Boolean }) syncedDialog!: boolean;
   @Prop({ required: true }) readonly id!: string;
 
-  loading: boolean = false;
+  loading = false;
   password: string | null = null;
   password2: string | null = null;
-  show1: boolean = false;
-  show2: boolean = false;
+  show1 = false;
+  show2 = false;
 
   beforeDestroy() {
     this.syncedDialog = false;
@@ -97,19 +97,19 @@ export default class extends Vue {
     this.loading = true;
     try {
       const pbkdf2Password: string = pbkdf2
-        .pbkdf2Sync(this.password, 'salt', 1, 32, 'sha512')
+        .pbkdf2Sync(this.password, "salt", 1, 32, "sha512")
         .toString();
       const response = await axiosInstance.post<
         ApiDataResult<{
           accessToken: string;
           refreshToken: string;
         }>
-      >(`api/auth/initPassword`, {
+      >("api/auth/initPassword", {
         id: this.id,
         password: pbkdf2Password,
       });
-      if (response?.data?.code?.startsWith(`S`)) {
-        this.$toasted.info('패스워드 설정 완료, 재 로그인 해주세요.');
+      if (response?.data?.code?.startsWith("S")) {
+        this.$toasted.info("패스워드 설정 완료, 재 로그인 해주세요.");
         this.syncedDialog = false;
       } else {
         alertError(response?.data?.message);

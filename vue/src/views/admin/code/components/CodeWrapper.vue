@@ -35,15 +35,15 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, PropSync, Vue } from 'vue-property-decorator';
-import { TableCodeEntity, TableCodeGroupEntity } from '@/common/types';
-import ButtonSet from '@/components/speeddial/ButtonSet.vue';
-import CodeEditDialog from '@/views/admin/code/components/CodeEditDialog.vue';
-import DataTableFilter from '@/components/datatable/DataTableFilter.vue';
-import CodeList from '@/views/admin/code/components/CodeList.vue';
+import { Component, Prop, PropSync, Vue } from "vue-property-decorator";
+import { TableCodeEntity, TableCodeGroupEntity } from "@/common/types";
+import ButtonSet from "@/components/speeddial/ButtonSet.vue";
+import CodeEditDialog from "@/views/admin/code/components/CodeEditDialog.vue";
+import DataTableFilter from "@/components/datatable/DataTableFilter.vue";
+import CodeList from "@/views/admin/code/components/CodeList.vue";
 
 @Component({
-  name: 'CodeWrapper',
+  name: "CodeWrapper",
   components: {
     CodeList,
     DataTableFilter,
@@ -54,8 +54,8 @@ import CodeList from '@/views/admin/code/components/CodeList.vue';
 export default class extends Vue {
   @Prop({ required: true }) readonly height!: number | string;
   @Prop({ required: true }) readonly parentItem!: TableCodeGroupEntity;
-  @PropSync('selected') syncedSelected!: TableCodeGroupEntity[];
-  dialog: boolean = false;
+  @PropSync("selected") syncedSelected!: TableCodeGroupEntity[];
+  dialog = false;
   item: TableCodeEntity = Object.create(null);
 
   reloadList() {

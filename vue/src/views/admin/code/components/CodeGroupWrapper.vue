@@ -33,14 +33,14 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, PropSync, Vue } from 'vue-property-decorator';
-import { TableCodeGroupEntity } from '@/common/types';
-import ButtonSet from '@/components/speeddial/ButtonSet.vue';
-import CodeGroupEditDialog from '@/views/admin/code/components/CodeGroupEditDialog.vue';
-import CodeGroupList from '@/views/admin/code/components/CodeGroupList.vue';
+import { Component, Prop, PropSync, Vue } from "vue-property-decorator";
+import { TableCodeGroupEntity } from "@/common/types";
+import ButtonSet from "@/components/speeddial/ButtonSet.vue";
+import CodeGroupEditDialog from "@/views/admin/code/components/CodeGroupEditDialog.vue";
+import CodeGroupList from "@/views/admin/code/components/CodeGroupList.vue";
 
 @Component({
-  name: 'CodeGroupWrapper',
+  name: "CodeGroupWrapper",
   components: {
     CodeGroupList,
     ButtonSet,
@@ -49,8 +49,8 @@ import CodeGroupList from '@/views/admin/code/components/CodeGroupList.vue';
 })
 export default class extends Vue {
   @Prop({ required: true }) readonly height!: number | string;
-  @PropSync('selected') syncedSelected!: TableCodeGroupEntity[];
-  dialog: boolean = false;
+  @PropSync("selected") syncedSelected!: TableCodeGroupEntity[];
+  dialog = false;
   item: TableCodeGroupEntity = Object.create(null);
 
   reloadList() {

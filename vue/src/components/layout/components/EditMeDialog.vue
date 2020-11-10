@@ -101,33 +101,33 @@
 </template>
 
 <script lang="ts">
-import { Component, PropSync, Vue, Watch } from 'vue-property-decorator';
-import { TableMemberEntity } from '@/common/types';
-import { getApi, patchApi } from '@/utils/apis';
-import DatetimePicker from '@/components/picker/DatetimePicker.vue';
-import ChangePasswordDialog from '@/components/layout/components/ChangePasswordDialog.vue';
-import { ValidationObserver } from 'vee-validate';
+import { Component, PropSync, Vue, Watch } from "vue-property-decorator";
+import { TableMemberEntity } from "@/common/types";
+import { getApi, patchApi } from "@/utils/apis";
+import DatetimePicker from "@/components/picker/DatetimePicker.vue";
+import ChangePasswordDialog from "@/components/layout/components/ChangePasswordDialog.vue";
+import { ValidationObserver } from "vee-validate";
 
-const pbkdf2 = require('pbkdf2');
+const pbkdf2 = require("pbkdf2");
 
 @Component({
-  name: 'EditMeDialog',
+  name: "EditMeDialog",
   components: { ChangePasswordDialog, DatetimePicker },
 })
 export default class extends Vue {
-  @PropSync('dialog', { required: true, type: Boolean }) syncedDialog!: boolean;
+  @PropSync("dialog", { required: true, type: Boolean }) syncedDialog!: boolean;
 
-  readonly ENDPOINT_URL: string = `members/`;
+  readonly ENDPOINT_URL: string = "members/";
   item: TableMemberEntity = Object.create(null);
-  loading: boolean = false;
-  show1: boolean = false;
-  newPasswordDialog: boolean = false;
+  loading = false;
+  show1 = false;
+  newPasswordDialog = false;
 
   beforeDestroy() {
     this.syncedDialog = false;
   }
 
-  @Watch('syncedDialog')
+  @Watch("syncedDialog")
   async watchDialog(val: boolean) {
     if (val) {
       this.show1 = false;
@@ -139,9 +139,9 @@ export default class extends Vue {
         (this.$refs.observer as InstanceType<
           typeof ValidationObserver
         >).reset();
-      this.$modal.show('EditMeDialog');
+      this.$modal.show("EditMeDialog");
     } else {
-      this.$modal.hide('EditMeDialog');
+      this.$modal.hide("EditMeDialog");
     }
   }
 
@@ -156,18 +156,18 @@ export default class extends Vue {
     this.loading = true;
     const payload = { ...this.item };
     payload.password = pbkdf2
-      .pbkdf2Sync(this.item.password, 'salt', 1, 32, 'sha512')
+      .pbkdf2Sync(this.item.password, "salt", 1, 32, "sha512")
       .toString();
     const response = await patchApi<TableMemberEntity>(
       `${this.ENDPOINT_URL}mine`,
       payload,
     );
     this.loading = false;
-    if (response?.code?.startsWith(`S`)) {
-      await this.$store.dispatch('setUser');
-      await this.$store.dispatch('setMemberCodes');
+    if (response?.code?.startsWith("S")) {
+      await this.$store.dispatch("setUser");
+      await this.$store.dispatch("setMemberCodes");
       this.syncedDialog = false;
-      this.$emit('finished');
+      this.$emit("finished");
     }
   }
 }

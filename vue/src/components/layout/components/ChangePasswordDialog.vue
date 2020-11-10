@@ -98,33 +98,33 @@
 </template>
 
 <script lang="ts">
-import { Component, PropSync, Vue, Watch } from 'vue-property-decorator';
-import { postApi } from '@/utils/apis';
-import { ValidationObserver } from 'vee-validate';
+import { Component, PropSync, Vue, Watch } from "vue-property-decorator";
+import { postApi } from "@/utils/apis";
+import { ValidationObserver } from "vee-validate";
 
-const pbkdf2 = require('pbkdf2');
+const pbkdf2 = require("pbkdf2");
 
 @Component({
-  name: 'ChangePasswordDialog',
+  name: "ChangePasswordDialog",
   components: {},
 })
 export default class extends Vue {
-  @PropSync('dialog', { required: true, type: Boolean }) syncedDialog!: boolean;
+  @PropSync("dialog", { required: true, type: Boolean }) syncedDialog!: boolean;
 
-  readonly ENDPOINT_URL: string = `members/`;
-  loading: boolean = false;
+  readonly ENDPOINT_URL: string = "members/";
+  loading = false;
   oldPassword: string | null = null;
   password: string | null = null;
   password2: string | null = null;
-  show1: boolean = false;
-  show2: boolean = false;
-  show3: boolean = false;
+  show1 = false;
+  show2 = false;
+  show3 = false;
 
   beforeDestroy() {
     this.syncedDialog = false;
   }
 
-  @Watch('syncedDialog')
+  @Watch("syncedDialog")
   watchDialog(val: boolean) {
     if (val) {
       this.oldPassword = null;
@@ -137,9 +137,9 @@ export default class extends Vue {
         (this.$refs.observer as InstanceType<
           typeof ValidationObserver
         >).reset();
-      this.$modal.show('ChangePasswordDialog');
+      this.$modal.show("ChangePasswordDialog");
     } else {
-      this.$modal.hide('ChangePasswordDialog');
+      this.$modal.hide("ChangePasswordDialog");
     }
   }
 
@@ -157,16 +157,16 @@ export default class extends Vue {
       newPassword: string;
     }>(`${this.ENDPOINT_URL}mine/changePassword/`, {
       oldPassword: pbkdf2
-        .pbkdf2Sync(this.oldPassword, 'salt', 1, 32, 'sha512')
+        .pbkdf2Sync(this.oldPassword, "salt", 1, 32, "sha512")
         .toString(),
       newPassword: pbkdf2
-        .pbkdf2Sync(this.password, 'salt', 1, 32, 'sha512')
+        .pbkdf2Sync(this.password, "salt", 1, 32, "sha512")
         .toString(),
     });
     this.loading = false;
-    if (response?.code?.startsWith(`S`)) {
+    if (response?.code?.startsWith("S")) {
       this.syncedDialog = false;
-      this.$emit('finished');
+      this.$emit("finished");
     }
   }
 }

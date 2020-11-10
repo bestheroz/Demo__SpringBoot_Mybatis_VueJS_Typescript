@@ -6,12 +6,12 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
-import AppBarNoDrawer from '@/components/layout/AppBarNoDrawer.vue';
-import ViewNoDrawer from '@/components/layout/ViewNoDrawer.vue';
+import { Component, Vue } from "vue-property-decorator";
+import AppBarNoDrawer from "@/components/layout/AppBarNoDrawer.vue";
+import ViewNoDrawer from "@/components/layout/ViewNoDrawer.vue";
 
 @Component({
-  name: 'IndexNoDrawer',
+  name: "IndexNoDrawer",
   components: {
     ViewNoDrawer,
     AppBarNoDrawer,

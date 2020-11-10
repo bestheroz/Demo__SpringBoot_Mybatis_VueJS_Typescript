@@ -1,37 +1,37 @@
-import store from '@/store';
-import { SelectItem } from '@/common/types';
-import dayjs from 'dayjs';
-import _ from 'lodash';
+import store from "@/store";
+import { SelectItem } from "@/common/types";
+import dayjs from "dayjs";
+import _ from "lodash";
 
 export function getMemberNm(value: string | undefined | null): string {
   const find: SelectItem = store.state?.cache?.memberCodes?.find(
     (value1: SelectItem) => value1!.value === value,
   );
-  return find?.text || value || '';
+  return find?.text || value || "";
 }
 
 export function formatDatetime(
   value: string | number | Date | undefined | null,
 ) {
-  if (value === undefined || value === null || value === '') {
-    return '';
+  if (value === undefined || value === null || value === "") {
+    return "";
   }
-  return dayjs(value).format('YYYY-MM-DD HH:mm:ss');
+  return dayjs(value).format("YYYY-MM-DD HH:mm:ss");
 }
 
 export function formatDate(value: string | number | Date | undefined | null) {
-  if (value === undefined || value === null || value === '') {
-    return '';
+  if (value === undefined || value === null || value === "") {
+    return "";
   }
-  return dayjs(value).format('YYYY-MM-DD');
+  return dayjs(value).format("YYYY-MM-DD");
 }
 
 export function getEllipseText(
   value: string | null | undefined,
   length: number,
 ) {
-  if (value === undefined || value === null || value === '') {
-    return '';
+  if (value === undefined || value === null || value === "") {
+    return "";
   }
   return _.truncate(value, {
     length: length,
@@ -39,19 +39,19 @@ export function getEllipseText(
 }
 
 export function getSwitchLabel(yn: boolean, prefix?: string) {
-  return (prefix?.trim() || '') + (yn ? ' 사용' : ' 사용안함');
+  return (prefix?.trim() || "") + (yn ? " 사용" : " 사용안함");
 }
 
 export function textEllipsis(): void {
   document
-    .querySelectorAll<HTMLElement>('.text-ellipsis-target')
-    .forEach((item) => item.classList.remove('text-ellipsis'));
+    .querySelectorAll<HTMLElement>(".text-ellipsis-target")
+    .forEach((item) => item.classList.remove("text-ellipsis"));
   setTimeout(() => {
     document
-      .querySelectorAll<HTMLElement>('.text-ellipsis-target')
+      .querySelectorAll<HTMLElement>(".text-ellipsis-target")
       .forEach((item) => {
-        item.style.maxWidth = item.offsetWidth + 'px';
-        item.classList.add('text-ellipsis');
+        item.style.maxWidth = item.offsetWidth + "px";
+        item.classList.add("text-ellipsis");
       });
   }, 200);
 }

@@ -24,14 +24,14 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
-import MenuList from '@/views/admin/menu/components/MenuList.vue';
-import ButtonSet from '@/components/speeddial/ButtonSet.vue';
-import MenuEditDialog from '@/views/admin/menu/components/MenuEditDialog.vue';
-import { TableMenuEntity } from '@/common/types';
+import { Component, Vue } from "vue-property-decorator";
+import MenuList from "@/views/admin/menu/components/MenuList.vue";
+import ButtonSet from "@/components/speeddial/ButtonSet.vue";
+import MenuEditDialog from "@/views/admin/menu/components/MenuEditDialog.vue";
+import { TableMenuEntity } from "@/common/types";
 
 @Component({
-  name: 'Menu',
+  name: "Menu",
   components: {
     MenuEditDialog,
     ButtonSet,
@@ -40,7 +40,7 @@ import { TableMenuEntity } from '@/common/types';
 })
 export default class extends Vue {
   item: TableMenuEntity = Object.create(null);
-  dialog: boolean = false;
+  dialog = false;
 
   reloadList() {
     this.$refs.refList && (this.$refs.refList as any).getList();

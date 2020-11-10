@@ -6,7 +6,7 @@ export interface SelectItem {
 export interface DataTableHeader {
   text: string;
   value: string;
-  align?: 'start' | 'center' | 'end';
+  align?: "start" | "center" | "end";
   sortable?: boolean | null;
   filterable?: boolean | null;
   divider?: boolean | null;
@@ -15,7 +15,7 @@ export interface DataTableHeader {
   filter?: (value: any, search: string, item: any) => boolean;
   sort?: (a: any, b: any) => number;
   // 아래는 filter 를 위한 property 추가
-  filterType?: 'input' | 'select' | 'switch';
+  filterType?: "input" | "select" | "switch";
   filterSelectItem?: SelectItem[] | null;
   filterDefaultValue?: string | null;
 }

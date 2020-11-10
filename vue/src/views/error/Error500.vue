@@ -18,10 +18,10 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Vue } from "vue-property-decorator";
 
 @Component({
-  name: 'Error500',
+  name: "Error500",
 })
 export default class extends Vue {}
 </script>
