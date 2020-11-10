@@ -135,7 +135,7 @@ export default class extends Vue {
     this.syncedDialog = false;
   }
 
-  async mounted() {
+  async mounted(): void {
     this.MENU_TYPE = await getCodesApi("MENU_TYPE");
   }
 

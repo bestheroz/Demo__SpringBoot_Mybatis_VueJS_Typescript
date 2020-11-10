@@ -23,7 +23,7 @@ import Viewer from "@/components/layout/Viewer.vue";
 export default class extends Vue {
   drawer = true;
 
-  async mounted() {
+  async mounted(): void {
     await this.$store.dispatch("getMemberCodes");
   }
 }

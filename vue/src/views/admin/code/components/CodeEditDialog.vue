@@ -151,7 +151,7 @@ export default class extends Vue {
     this.syncedDialog = false;
   }
 
-  async mounted() {
+  async mounted(): void {
     this.AUTHORITY = await getCodesApi("AUTHORITY");
   }
 

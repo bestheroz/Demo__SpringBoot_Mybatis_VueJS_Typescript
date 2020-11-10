@@ -92,8 +92,7 @@ import { alertError } from "@/utils/alerts";
 import NewPasswordDialog from "@/views/login/components/NewPasswordDialog.vue";
 import { saveToken } from "@/utils/authentications";
 import { ValidationObserver } from "vee-validate";
-
-const pbkdf2 = require("pbkdf2");
+import pbkdf2 from "pbkdf2";
 
 @Component({ name: "Login", components: { NewPasswordDialog } })
 export default class extends Vue {
@@ -104,7 +103,7 @@ export default class extends Vue {
   loading = false;
   dialog = false;
 
-  async mounted() {
+  async mounted(): void {
     await this.$store.dispatch("clearUser");
     await this.$store.dispatch("clearDrawer");
     await this.$store.dispatch("clearCache");
@@ -115,7 +114,7 @@ export default class extends Vue {
     this.title = await getVariableApi("title");
   }
 
-  async login() {
+  async login(): void {
     const inValid = await (this.$refs.observer as InstanceType<
       typeof ValidationObserver
     >).validate();
@@ -125,7 +124,7 @@ export default class extends Vue {
     this.loading = true;
     try {
       const pbkdf2Password: string = pbkdf2
-        .pbkdf2Sync(this.password, "salt", 1, 32, "sha512")
+        .pbkdf2Sync(this.password || "", "salt", 1, 32, "sha512")
         .toString();
       const response = await axiosInstance.post<
         ApiDataResult<{
@@ -141,8 +140,8 @@ export default class extends Vue {
         this.password = null;
       } else if (response?.data?.code?.startsWith("S")) {
         saveToken({
-          accessToken: response?.data?.data!.accessToken,
-          refreshToken: response?.data?.data!.refreshToken,
+          accessToken: response?.data?.data?.accessToken,
+          refreshToken: response?.data?.data?.refreshToken,
         });
         this.$toasted.clear();
         await this.$router.push("/");

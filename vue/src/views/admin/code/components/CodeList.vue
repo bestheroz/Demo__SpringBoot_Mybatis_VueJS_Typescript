@@ -135,7 +135,7 @@ export default class extends Vue {
     },
   ];
 
-  async mounted() {
+  async mounted(): void {
     this.headers[
       this.headers.indexOf(
         this.headers.find((item) => item.value === "authority")!,

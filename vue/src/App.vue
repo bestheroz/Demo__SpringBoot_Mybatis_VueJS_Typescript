@@ -11,7 +11,7 @@ import { getVariableApi } from "@/utils/apis";
 export default class extends Vue {
   title: string | null = null;
 
-  async mounted() {
+  async mounted(): void {
     // @ts-ignore
     document.title = await getVariableApi("title");
     this.$vuetify.theme.dark =
