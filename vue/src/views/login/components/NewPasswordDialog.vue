@@ -83,11 +83,11 @@ export default class extends Vue {
   show1 = false;
   show2 = false;
 
-  beforeDestroy() {
+  beforeDestroy(): void {
     this.syncedDialog = false;
   }
 
-  async save() {
+  async save(): Promise<void> {
     const inValid = await (this.$refs.observer as InstanceType<
       typeof ValidationObserver
     >).validate();

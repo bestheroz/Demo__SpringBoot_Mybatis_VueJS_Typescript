@@ -31,7 +31,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Ref, Vue } from "vue-property-decorator";
 import MemberList from "@/views/admin/member/components/MemberList.vue";
 import MemberEditDialog from "@/views/admin/member/components/MemberEditDialog.vue";
 import { TableMemberEntity } from "@/common/types";
@@ -47,11 +47,14 @@ export default class extends Vue {
   item: TableMemberEntity = { expired: null };
   selected: TableMemberEntity[] = [];
 
-  reloadList() {
-    this.$refs.refList && (this.$refs.refList as any).getList();
+  @Ref("refEditDialog") readonly refEditDialog!: MemberEditDialog;
+  @Ref("refList") readonly refList!: MemberList;
+
+  reloadList(): void {
+    this.refList.getList();
   }
 
-  addItem() {
+  addItem(): void {
     this.item = {
       expired: dayjs().add(1, "year").toDate(),
       timeout: 7200,
@@ -59,14 +62,14 @@ export default class extends Vue {
     this.dialog = true;
   }
 
-  editItem(value: TableMemberEntity) {
+  editItem(value: TableMemberEntity): void {
     this.item = value;
     this.dialog = true;
   }
 
-  deleteItem() {
+  deleteItem(): void {
     this.item = this.selected[0];
-    (this.$refs.refEditDialog as any).delete();
+    this.refEditDialog.delete();
   }
 }
 </script>

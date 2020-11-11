@@ -131,11 +131,11 @@ export default class extends Vue {
   MENU_TYPE: SelectItem[] | null = null;
   isNew = false;
 
-  beforeDestroy() {
+  beforeDestroy(): void {
     this.syncedDialog = false;
   }
 
-  async mounted(): void {
+  async mounted(): Promise<void> {
     this.MENU_TYPE = await getCodesApi("MENU_TYPE");
   }
 

@@ -92,7 +92,7 @@ export default class extends Vue {
   loading = false;
   isNew = false;
 
-  beforeDestroy() {
+  beforeDestroy(): void {
     this.syncedDialog = false;
   }
 

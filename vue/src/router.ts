@@ -1,11 +1,15 @@
 import Vue from "vue";
-import Router from "vue-router";
+import Router, { Route } from "vue-router";
 import { needLogin } from "@/utils/authentications";
+import { NavigationGuardNext } from "vue-router/types/router";
 
 Vue.use(Router);
 
-// @ts-ignore
-const requireAuth = () => async (to: Route, from: Route, next: Route) => {
+const requireAuth = () => async (
+  _to: Route,
+  _from: Route,
+  next: NavigationGuardNext,
+) => {
   if (
     window.localStorage.getItem("accessToken") &&
     window.localStorage.getItem("refreshToken")

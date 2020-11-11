@@ -103,7 +103,7 @@ export default class extends Vue {
   loading = false;
   dialog = false;
 
-  async mounted(): void {
+  async mounted(): Promise<void> {
     await this.$store.dispatch("clearUser");
     await this.$store.dispatch("clearDrawer");
     await this.$store.dispatch("clearCache");
@@ -114,7 +114,7 @@ export default class extends Vue {
     this.title = await getVariableApi("title");
   }
 
-  async login(): void {
+  async login(): Promise<void> {
     const inValid = await (this.$refs.observer as InstanceType<
       typeof ValidationObserver
     >).validate();
@@ -140,8 +140,8 @@ export default class extends Vue {
         this.password = null;
       } else if (response?.data?.code?.startsWith("S")) {
         saveToken({
-          accessToken: response?.data?.data?.accessToken,
-          refreshToken: response?.data?.data?.refreshToken,
+          accessToken: response?.data?.data?.accessToken || "",
+          refreshToken: response?.data?.data?.refreshToken || "",
         });
         this.$toasted.clear();
         await this.$router.push("/");

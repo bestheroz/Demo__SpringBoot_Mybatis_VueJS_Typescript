@@ -120,7 +120,7 @@ export default class extends Vue {
   show2 = false;
   show3 = false;
 
-  beforeDestroy() {
+  beforeDestroy(): void {
     this.syncedDialog = false;
   }
 

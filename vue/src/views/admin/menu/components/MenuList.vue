@@ -129,7 +129,7 @@ export default class extends Vue {
     },
   ];
 
-  async mounted(): void {
+  async mounted(): Promise<void> {
     this.MENU_TYPE = await getCodesApi("MENU_TYPE");
     this.headers[
       this.headers.indexOf(this.headers.find((item) => item.value === "type")!)

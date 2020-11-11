@@ -123,7 +123,7 @@ export default class extends Vue {
   show1 = false;
   newPasswordDialog = false;
 
-  beforeDestroy() {
+  beforeDestroy(): void {
     this.syncedDialog = false;
   }
 

@@ -85,7 +85,7 @@ export default class extends Vue {
     return this.$store.state.user.logoutTimer;
   }
 
-  async mounted(): void {
+  async mounted(): Promise<void> {
     this.title = await getVariableApi("title");
   }
 

@@ -1,6 +1,5 @@
 export default Object.freeze({
   // 로컬 개발 값은 .env.local (파일)에 맞추도록 하자.
-  APP_VERSIONS: require("../../package.json").version,
   ENV: process.env.NODE_ENV || "local",
   API_HOST: process.env.VUE_APP_BASE_URL || "http://localhost:8080/",
   // Locale

@@ -25,7 +25,7 @@ axiosInstance.interceptors.request.use(
 );
 axiosInstance.interceptors.response.use(
   function (response) {
-    store.dispatch("resetTimer").then(() => {});
+    store.dispatch("resetTimer").then();
     return response;
   },
   async function (error: AxiosError) {
@@ -130,7 +130,7 @@ export async function getCodesApi<SelectItem>(
   codeGroup: string,
 ): Promise<SelectItem[]> {
   if (window.localStorage.getItem(`code__${codeGroup}`)) {
-    return JSON.parse(window.localStorage.getItem(`code__${codeGroup}`)!);
+    return JSON.parse(window.localStorage.getItem(`code__${codeGroup}`) || "");
   } else {
     try {
       const response = await axiosInstance.get<ApiDataResult<SelectItem[]>>(
@@ -155,13 +155,15 @@ export async function getVariableApi<T = string>(
   variable: string,
 ): Promise<T | null> {
   if (window.localStorage.getItem(`variable__${variable}`)) {
-    return JSON.parse(window.localStorage.getItem(`variable__${variable}`)!);
+    return JSON.parse(
+      window.localStorage.getItem(`variable__${variable}`) || "",
+    );
   } else {
     try {
       const response = await axiosInstance.get<ApiDataResult<T>>(
         `api/variables/${variable}`,
       );
-      const result = response?.data?.data!;
+      const result = response?.data?.data || null;
       if (result) {
         window.localStorage.setItem(
           `variable__${variable}`,

@@ -144,18 +144,18 @@ export default class extends Vue {
     },
   ];
 
-  async mounted(): void {
-    this.headers[
-      this.headers.indexOf(
-        this.headers.find((item) => item.value === "authority")!,
-      )
-    ].filterSelectItem = this.AUTHORITY = await getCodesApi("AUTHORITY");
+  async mounted(): Promise<void> {
+    const find = this.headers.find((item) => item.value === "authority");
+    if (find) {
+      this.headers[
+        this.headers.indexOf(find)
+      ].filterSelectItem = this.AUTHORITY = await getCodesApi("AUTHORITY");
+    }
     await this.getList();
   }
 
-  async getList() {
+  async getList(): Promise<void> {
     this.syncedSelected = [];
-    this.items = [];
     this.loading = true;
     const response = await getApi<TableMemberEntity[]>(this.ENDPOINT_URL);
     this.loading = false;
@@ -163,7 +163,7 @@ export default class extends Vue {
   }
 
   @Emit("row-id-clicked")
-  rowIdClicked(value: TableMemberEntity) {
+  rowIdClicked(value: TableMemberEntity): TableMemberEntity {
     return value;
   }
 }

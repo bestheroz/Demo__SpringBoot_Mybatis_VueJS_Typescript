@@ -192,11 +192,11 @@ export default class extends Vue {
   show2 = false;
   isNew = false;
 
-  beforeDestroy() {
+  beforeDestroy(): void {
     this.syncedDialog = false;
   }
 
-  async mounted(): void {
+  async mounted(): Promise<void> {
     this.AUTHORITY = await getCodesApi("AUTHORITY");
   }
 

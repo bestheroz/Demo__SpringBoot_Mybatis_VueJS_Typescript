@@ -4,9 +4,7 @@ module.exports = {
     ecmaVersion: 2021,
   },
   env: {
-    browser: true,
     node: true,
-    es2021: true,
   },
   extends: [
     "plugin:vue/essential",
@@ -15,6 +13,7 @@ module.exports = {
     "@vue/prettier",
     "@vue/prettier/@typescript-eslint",
   ],
+  plugins: ["@typescript-eslint"],
   rules: {
     "no-console":
       process.env.NODE_ENV === "production"
