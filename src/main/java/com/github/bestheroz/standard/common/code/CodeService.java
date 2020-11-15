@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -25,11 +24,10 @@ public class CodeService {
       .collect(Collectors.toList());
   }
 
-  @Cacheable(value = "codeCache", key = "#codeGroup")
   public List<TableCodeEntity> getCodeVOList(final String codeGroup) {
     return this.tableCodeRepository.getItemsByKeyWithOrder(
-        Map.of("codeGroup", codeGroup),
-        Set.of("displayOrder")
-      );
+      Map.of("codeGroup", codeGroup),
+      Set.of("displayOrder")
+    );
   }
 }

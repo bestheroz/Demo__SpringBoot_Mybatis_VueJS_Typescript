@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,7 +30,6 @@ public class AdminMenuAuthorityController {
   }
 
   @PutMapping(value = "{authority}")
-  @CacheEvict(value = "drawerCache", key = "#authority")
   public ResponseEntity<ApiResult> put(
     @PathVariable("authority") final Integer authority,
     @RequestBody final Map<String, String> payload

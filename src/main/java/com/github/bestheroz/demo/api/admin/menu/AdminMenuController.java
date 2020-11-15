@@ -7,7 +7,6 @@ import com.github.bestheroz.standard.common.response.ApiResult;
 import com.github.bestheroz.standard.common.response.Result;
 import java.util.Map;
 import javax.annotation.Resource;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,10 +15,8 @@ import org.springframework.web.bind.annotation.*;
 public class AdminMenuController {
   @Resource
   private MenuService menuService;
-
   @Resource
   private AdminMenuService adminMenuService;
-
   @Resource
   private TableMenuRepository tableMenuRepository;
 
@@ -36,7 +33,6 @@ public class AdminMenuController {
   }
 
   @PostMapping
-  @CacheEvict(value = "drawerCache", allEntries = true)
   public ResponseEntity<ApiResult> post(
     @RequestBody final TableMenuEntity tableMenuEntity
   ) {
@@ -45,7 +41,6 @@ public class AdminMenuController {
   }
 
   @PatchMapping(value = "{id}")
-  @CacheEvict(value = "drawerCache", allEntries = true)
   public ResponseEntity<ApiResult> patch(
     @PathVariable(value = "id") final Integer id,
     @RequestBody final TableMenuEntity tableMenuEntity
@@ -55,7 +50,6 @@ public class AdminMenuController {
   }
 
   @DeleteMapping(value = "{id}")
-  @CacheEvict(value = "drawerCache", allEntries = true)
   public ResponseEntity<ApiResult> delete(
     @PathVariable(value = "id") final Integer id
   ) {
