@@ -143,7 +143,7 @@ export default class extends Vue {
   @Prop({ required: true }) readonly item!: TableCodeEntity;
 
   readonly ENDPOINT_URL = 'admin/codes/';
-  AUTHORITY: SelectItem[] | null = null;
+  AUTHORITY: SelectItem[] = [];
   isNew: boolean = false;
   loading: boolean = false;
 

@@ -6,12 +6,6 @@ import colors from 'vuetify/lib/util/colors';
 
 Vue.use(Vuetify);
 
-const LRU = require('lru-cache');
-const themeCache = new LRU({
-  max: 10,
-  maxAge: 12000 * 60 * 60, // 12 hours
-});
-
 export default new Vuetify({
   icons: {
     iconfont: `mdi`,
@@ -71,7 +65,6 @@ export default new Vuetify({
       },
     },
     options: {
-      themeCache,
       customProperties: true,
       minifyTheme: function (css) {
         return process.env.NODE_ENV === 'production'

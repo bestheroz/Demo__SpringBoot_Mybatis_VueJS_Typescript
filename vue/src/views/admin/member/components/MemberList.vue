@@ -47,9 +47,6 @@
         <template v-slot:[`item.authority`]="{ item }" v-if="AUTHORITY">
           {{ item.authority | getCodeText(AUTHORITY) }}
         </template>
-        <template v-slot:[`item.timeout`]="{ item }">
-          {{ item.timeout.toLocaleString() }}
-        </template>
         <template v-slot:[`item.expired`]="{ item }">
           {{ item.expired | formatDatetime }}
         </template>
@@ -88,7 +85,7 @@ export default class extends Vue {
   filteredItems: TableMemberEntity[] = [];
   loading: boolean = false;
 
-  AUTHORITY: SelectItem[] | null = null;
+  AUTHORITY: SelectItem[] = [];
 
   headers: DataTableHeader[] = [
     {
@@ -121,12 +118,6 @@ export default class extends Vue {
       value: `available`,
       filterType: 'switch',
       width: '6rem',
-    },
-    {
-      text: `자동로그아웃시간(초)`,
-      align: `end`,
-      value: `timeout`,
-      width: '11rem',
     },
     {
       text: `작업 일시`,

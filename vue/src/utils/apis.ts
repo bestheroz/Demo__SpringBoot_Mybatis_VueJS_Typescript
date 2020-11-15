@@ -1,5 +1,4 @@
 import axios, { AxiosError } from 'axios';
-import store from '@/store';
 import { alertError, alertSuccess, alertWarning } from '@/utils/alerts';
 import envs from '@/constants/envs';
 import { needLogin, refreshToken } from '@/utils/authentications';
@@ -25,7 +24,6 @@ axiosInstance.interceptors.request.use(
 );
 axiosInstance.interceptors.response.use(
   function (response) {
-    store.dispatch('resetTimer').then(() => {});
     return response;
   },
   async function (error: AxiosError) {
@@ -277,7 +275,6 @@ async function apiRefreshToken(error: AxiosError) {
         })
         .get('api/auth/refreshToken');
       await refreshToken(response?.data?.data);
-      await store.dispatch('resetTimer');
     } catch (e) {
       if (e.response?.status === 401) {
         await needLogin();

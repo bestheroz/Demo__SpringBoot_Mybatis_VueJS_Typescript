@@ -88,20 +88,6 @@
               </v-col>
               <v-col cols="12" md="4">
                 <ValidationProvider
-                  name="세션타임아웃시간"
-                  rules="required|numeric"
-                  v-slot="{ errors }"
-                >
-                  <v-text-field
-                    v-model="item.timeout"
-                    label="*세션타임아웃시간(초)"
-                    :error-messages="errors"
-                    clearable
-                  />
-                </ValidationProvider>
-              </v-col>
-              <v-col cols="12" md="4">
-                <ValidationProvider
                   name="비밀번호"
                   vid="password"
                   rules="max:20"
@@ -186,7 +172,7 @@ export default class extends Vue {
 
   readonly ENDPOINT_URL: string = 'admin/members/';
   loading: boolean = false;
-  AUTHORITY: SelectItem[] | null = null;
+  AUTHORITY: SelectItem[] = [];
   password2: string | null = null;
   show1: boolean = false;
   show2: boolean = false;

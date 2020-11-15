@@ -82,7 +82,7 @@ export default class extends Vue {
   items: AdminMenuAuthorityVO[] = [];
   loading: boolean = false;
 
-  MENU_TYPE: SelectItem[] | null = null;
+  MENU_TYPE: SelectItem[] = [];
 
   headers: DataTableHeader[] = [
     {

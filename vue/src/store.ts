@@ -9,14 +9,12 @@ Vue.use(Vuex);
 const user = {
   state: {
     user: null,
-    logoutTimer: new Date().getTime() + 7200 * 1000,
   },
   getters: {
     user: (state: any) => {
       return {
         id: state.user?.id,
         name: state.user?.name,
-        timeout: state.user?.timeout,
         authority: state.user?.authority,
         theme: state.user?.theme,
       };
@@ -26,16 +24,11 @@ const user = {
     setUser(state: any, user: TableMemberEntity) {
       state.user = user;
     },
-    resetTimer(state: any) {
-      state.logoutTimer =
-        new Date().getTime() + (state.user?.timeout || 7200) * 1000;
-    },
   },
   actions: {
     async setUser({ commit }: ActionContext<any, any>) {
       const response = await getApi<TableMemberEntity>(`auth/me`);
       commit('setUser', response?.data);
-      commit('resetTimer');
     },
     async getUser({
       state,
@@ -47,12 +40,8 @@ const user = {
       }
       return getters.user;
     },
-    async resetTimer({ commit }: ActionContext<any, any>) {
-      commit('resetTimer');
-    },
     clearUser({ commit }: ActionContext<any, any>) {
       commit('setUser', null);
-      commit('resetTimer');
     },
   },
 };

@@ -36,7 +36,7 @@ import MenuAuthorityList from '@/views/admin/menuauthority/components/MenuAuthor
 export default class extends Vue {
   authority: string | null = null;
   loading: boolean = false;
-  AUTHORITY: SelectItem[] | null = null;
+  AUTHORITY: SelectItem[] = [];
 
   mounted() {
     this.getCodeList();

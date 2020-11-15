@@ -54,7 +54,6 @@ export default class extends Vue {
   addItem() {
     this.item = {
       expired: dayjs().add(1, 'year').toDate(),
-      timeout: 7200,
     };
     this.dialog = true;
   }

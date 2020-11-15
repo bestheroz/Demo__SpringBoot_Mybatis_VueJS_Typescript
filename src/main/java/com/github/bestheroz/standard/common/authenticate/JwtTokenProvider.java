@@ -79,7 +79,6 @@ public class JwtTokenProvider {
       getUserPk(token),
       userVO.getName(),
       userVO.getAuthority(),
-      userVO.getTimeout(),
       userVO.getTheme()
     );
     return new UsernamePasswordAuthenticationToken(

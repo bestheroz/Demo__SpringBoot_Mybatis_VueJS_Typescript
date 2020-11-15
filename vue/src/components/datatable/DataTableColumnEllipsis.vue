@@ -35,6 +35,7 @@ export default class extends Vue {
   @Prop({ required: false, default: '25rem' }) readonly tooltipWidth!:
     | string
     | number;
+
   show: boolean = false;
 
   get maxWidth() {

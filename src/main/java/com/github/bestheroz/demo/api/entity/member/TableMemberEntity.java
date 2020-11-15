@@ -20,6 +20,5 @@ public class TableMemberEntity
   private Instant expired;
   private boolean available;
   private String theme;
-  private Integer timeout;
   private String token;
 }

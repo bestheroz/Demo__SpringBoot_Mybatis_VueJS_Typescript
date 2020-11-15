@@ -40,7 +40,6 @@ public class AuthService implements UserDetailsService {
             tableMemberEntity.getId(),
             tableMemberEntity.getName(),
             tableMemberEntity.getAuthority(),
-            tableMemberEntity.getTimeout(),
             tableMemberEntity.getTheme()
           )
       )
@@ -69,8 +68,8 @@ public class AuthService implements UserDetailsService {
             )
           ) {
             this.tableMemberRepository.plusLoginFailCnt(
-                tableMemberEntity.getId()
-              );
+              tableMemberEntity.getId()
+            );
             log.warn(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER.toString());
             throw new BusinessException(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER);
           }
@@ -84,8 +83,8 @@ public class AuthService implements UserDetailsService {
           // 5. 계정 차단된 상태인가
           if (
             !tableMemberEntity.isAvailable() ||
-            tableMemberEntity.getExpired().toEpochMilli() <
-            Instant.now().toEpochMilli()
+              tableMemberEntity.getExpired().toEpochMilli() <
+                Instant.now().toEpochMilli()
           ) {
             log.warn(ExceptionCode.FAIL_LOGIN_CLOSED.toString());
             throw new BusinessException(ExceptionCode.FAIL_LOGIN_CLOSED);
@@ -104,9 +103,9 @@ public class AuthService implements UserDetailsService {
             .getContext()
             .setAuthentication(JwtTokenProvider.getAuthentication(accessToken));
           this.tableMemberRepository.updateMapByKey(
-              Map.of("token", refreshToken),
-              Map.of("id", id)
-            );
+            Map.of("token", refreshToken),
+            Map.of("id", id)
+          );
           return Map.of(
             "accessToken",
             accessToken,
@@ -126,20 +125,20 @@ public class AuthService implements UserDetailsService {
 
   void logout() {
     this.tableMemberRepository.updateMapByKey(
-        Map.of("token", ""),
-        Map.of("id", AuthenticationUtils.getUserPk())
-      );
+      Map.of("token", ""),
+      Map.of("id", AuthenticationUtils.getUserPk())
+    );
   }
 
   String getNewAccessToken(final String refreshToken) {
     return this.tableMemberRepository.getItemByKey(
-        Map.of(
-          "token",
-          refreshToken,
-          "id",
-          JwtTokenProvider.getUserPk(refreshToken)
-        )
+      Map.of(
+        "token",
+        refreshToken,
+        "id",
+        JwtTokenProvider.getUserPk(refreshToken)
       )
+    )
       .map(
         tableMemberEntity -> {
           final UserVO userVO = MapperUtils.toObject(
@@ -175,9 +174,9 @@ public class AuthService implements UserDetailsService {
           }
 
           this.tableMemberRepository.updateMapByKey(
-              Map.of("password", password),
-              Map.of("id", id)
-            );
+            Map.of("password", password),
+            Map.of("id", id)
+          );
         },
         () -> {
           // 1. 유저가 없으면

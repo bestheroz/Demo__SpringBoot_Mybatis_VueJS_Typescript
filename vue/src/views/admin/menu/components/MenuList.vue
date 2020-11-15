@@ -84,7 +84,7 @@ export default class extends Vue {
   readonly ENDPOINT_URL: string = 'admin/menus/';
   items: TableMenuEntity[] = [];
   loading: boolean = false;
-  MENU_TYPE: SelectItem[] | null = null;
+  MENU_TYPE: SelectItem[] = [];
 
   headers: DataTableHeader[] = [
     {
