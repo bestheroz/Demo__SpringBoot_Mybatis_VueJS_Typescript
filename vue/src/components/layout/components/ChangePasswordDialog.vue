@@ -143,7 +143,7 @@ export default class extends Vue {
     }
   }
 
-  async save() {
+  async save(): Promise<void> {
     const isValid = await (this.$refs.observer as InstanceType<
       typeof ValidationObserver
     >).validate();

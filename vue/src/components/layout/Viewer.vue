@@ -61,7 +61,7 @@ export default class extends Vue {
   }
 
   @Watch("$store.state.drawer.drawers", { immediate: true })
-  async watchDrawers() {
+  async watchDrawers(): Promise<void> {
     this.drawers = await this.$store.dispatch("getDrawers");
   }
 }

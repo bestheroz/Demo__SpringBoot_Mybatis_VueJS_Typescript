@@ -62,28 +62,28 @@
 </template>
 
 <script lang="ts">
-import { Component, Emit, Prop, PropSync, Vue } from 'vue-property-decorator';
-import { DataTableHeader, SelectItem, TableMemberEntity } from '@/common/types';
-import { getApi, getCodesApi } from '@/utils/apis';
-import envs from '@/constants/envs';
-import DataTableFilter from '@/components/datatable/DataTableFilter.vue';
+import { Component, Emit, Prop, PropSync, Vue } from "vue-property-decorator";
+import { DataTableHeader, SelectItem, TableMemberEntity } from "@/common/types";
+import { getApi, getCodesApi } from "@/utils/apis";
+import envs from "@/constants/envs";
+import DataTableFilter from "@/components/datatable/DataTableFilter.vue";
 
 @Component({
-  name: 'MemberList',
+  name: "MemberList",
   components: {
     DataTableFilter,
   },
 })
 export default class extends Vue {
   @Prop({ required: true }) readonly height!: number | string;
-  @PropSync('selected') syncedSelected!: TableMemberEntity[];
+  @PropSync("selected") syncedSelected!: TableMemberEntity[];
   readonly envs: typeof envs = envs;
-  readonly ENDPOINT_URL: string = 'admin/members/';
-  sortBy: string[] = ['authority'];
+  readonly ENDPOINT_URL: string = "admin/members/";
+  sortBy: string[] = ["authority"];
   sortDesc: boolean[] = [true];
   items: TableMemberEntity[] = [];
   filteredItems: TableMemberEntity[] = [];
-  loading: boolean = false;
+  loading = false;
 
   AUTHORITY: SelectItem[] = [];
 
@@ -102,49 +102,49 @@ export default class extends Vue {
       text: `권한`,
       align: `center`,
       value: `authority`,
-      filterType: 'select',
+      filterType: "select",
       filterSelectItem: [],
-      width: '8rem',
+      width: "8rem",
     },
     {
       text: `만료일`,
       align: `center`,
       value: `expired`,
-      width: '10rem',
+      width: "10rem",
     },
     {
       text: `사용 가능`,
       align: `center`,
       value: `available`,
-      filterType: 'switch',
-      width: '6rem',
+      filterType: "switch",
+      width: "6rem",
     },
     {
       text: `작업 일시`,
       align: `center`,
       value: `updated`,
       filterable: false,
-      width: '10rem',
+      width: "10rem",
     },
     {
       text: `작업자`,
       align: `start`,
       value: `updatedBy`,
       filterable: false,
-      width: '7rem',
+      width: "7rem",
     },
   ];
 
-  async mounted() {
+  async mounted(): Promise<void> {
     this.headers[
       this.headers.indexOf(
-        this.headers.find((item) => item.value === 'authority')!,
+        this.headers.find((item) => item.value === "authority")!,
       )
-    ].filterSelectItem = this.AUTHORITY = await getCodesApi('AUTHORITY');
+    ].filterSelectItem = this.AUTHORITY = await getCodesApi("AUTHORITY");
     await this.getList();
   }
 
-  async getList() {
+  async getList(): Promise<void> {
     this.syncedSelected = [];
     this.items = [];
     this.loading = true;
@@ -153,7 +153,7 @@ export default class extends Vue {
     this.items = response?.data || [];
   }
 
-  @Emit('row-id-clicked')
+  @Emit("row-id-clicked")
   rowIdClicked(value: TableMemberEntity) {
     return value;
   }

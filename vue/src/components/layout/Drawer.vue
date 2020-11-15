@@ -91,7 +91,7 @@ export default class extends Vue {
   }
 
   @Watch("$store.state.drawer.drawers", { immediate: true })
-  async watchDrawers() {
+  async watchDrawers(): Promise<void> {
     this.items = await this.$store.dispatch("getDrawers");
   }
 
@@ -103,7 +103,7 @@ export default class extends Vue {
     );
   }
 
-  async changeTheme() {
+  async changeTheme(): Promise<void> {
     this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
     window.localStorage.setItem(
       "theme",

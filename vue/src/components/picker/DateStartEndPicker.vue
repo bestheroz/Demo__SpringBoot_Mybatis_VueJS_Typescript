@@ -130,7 +130,7 @@ export default class extends Vue {
     return dayjs(this.syncedEnd).format(envs.DATE_FORMAT_STRING);
   }
 
-  async validate() {
+  async validate(): Promise<boolean> {
     return (
       (await (this.$refs.refStart as InstanceType<
         typeof ValidationObserver

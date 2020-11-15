@@ -26,20 +26,20 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Component, Prop, Vue } from "vue-property-decorator";
 
-@Component({ name: 'DataTableColumnEllipsis' })
+@Component({ name: "DataTableColumnEllipsis" })
 export default class extends Vue {
   @Prop({ required: true }) readonly value!: string;
-  @Prop({ required: false, default: '25rem' }) readonly width!: string | number;
-  @Prop({ required: false, default: '25rem' }) readonly tooltipWidth!:
+  @Prop({ required: false, default: "25rem" }) readonly width!: string | number;
+  @Prop({ required: false, default: "25rem" }) readonly tooltipWidth!:
     | string
     | number;
 
-  show: boolean = false;
+  show = false;
 
   get maxWidth() {
-    return typeof this.width === 'string' ? this.width : `${this.width}px`;
+    return typeof this.width === "string" ? this.width : `${this.width}px`;
   }
 }
 </script>

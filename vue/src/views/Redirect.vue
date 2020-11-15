@@ -9,7 +9,7 @@ import { Component, Vue } from "vue-property-decorator";
   name: "Redirect",
 })
 export default class extends Vue {
-  async mounted(): void {
+  async mounted(): Promise<void> {
     if (
       !window.localStorage.getItem("accessToken") ||
       !window.localStorage.getItem("refreshToken")

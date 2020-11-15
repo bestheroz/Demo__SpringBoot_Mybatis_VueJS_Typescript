@@ -147,7 +147,7 @@ export default class extends Vue {
     ];
   }
 
-  async validate() {
+  async validate(): Promise<boolean> {
     return (
       (await (this.$refs.refStart as InstanceType<
         typeof ValidationObserver

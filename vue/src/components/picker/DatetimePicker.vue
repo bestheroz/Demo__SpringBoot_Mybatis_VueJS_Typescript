@@ -193,7 +193,7 @@ export default class extends Vue {
     this.value = dayjs().format(this.format);
   }
 
-  async validate() {
+  async validate(): Promise<boolean> {
     return await (this.$refs.observer as InstanceType<
       typeof ValidationObserver
     >).validate();
