@@ -13,7 +13,7 @@
         <v-card-title class="py-2 modal-header">
           <v-icon v-if="isNew">mdi-pencil-plus-outline</v-icon>
           <v-icon v-else>mdi-pencil-outline</v-icon>
-          메뉴 {{ isNew ? "추가" : "수정" }}
+          메뉴 {{ isNew ? '추가' : '수정' }}
           <v-spacer />
           <v-btn text small :ripple="false" style="cursor: default">
             <v-icon> mdi-cursor-move</v-icon>
@@ -109,37 +109,37 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, PropSync, Vue, Watch } from "vue-property-decorator";
-import { SelectItem, TableMenuEntity } from "@/common/types";
-import { deleteApi, getCodesApi, patchApi, postApi } from "@/utils/apis";
-import { confirmDelete } from "@/utils/alerts";
-import { ValidationObserver } from "vee-validate";
+import { Component, Prop, PropSync, Vue, Watch } from 'vue-property-decorator';
+import { SelectItem, TableMenuEntity } from '@/common/types';
+import { deleteApi, getCodesApi, patchApi, postApi } from '@/utils/apis';
+import { confirmDelete } from '@/utils/alerts';
+import { ValidationObserver } from 'vee-validate';
 
 interface MenuVO extends TableMenuEntity {
   level: number;
 }
 
 @Component({
-  name: "MenuEditDialog",
+  name: 'MenuEditDialog',
 })
 export default class extends Vue {
-  @PropSync("dialog", { required: true, type: Boolean }) syncedDialog!: boolean;
+  @PropSync('dialog', { required: true, type: Boolean }) syncedDialog!: boolean;
   @Prop({ required: true }) readonly item!: MenuVO;
 
-  readonly ENDPOINT_URL = "admin/menus/";
-  loading = false;
-  MENU_TYPE: SelectItem[] | null = null;
-  isNew = false;
+  readonly ENDPOINT_URL = 'admin/menus/';
+  loading: boolean = false;
+  MENU_TYPE: SelectItem[] = [];
+  isNew: boolean = false;
 
   beforeDestroy() {
     this.syncedDialog = false;
   }
 
-  async mounted(): void {
-    this.MENU_TYPE = await getCodesApi("MENU_TYPE");
+  async mounted() {
+    this.MENU_TYPE = await getCodesApi(`MENU_TYPE`);
   }
 
-  @Watch("syncedDialog")
+  @Watch('syncedDialog')
   watchDialog(val: boolean) {
     if (val) {
       this.isNew = !this.item.id;
@@ -147,9 +147,9 @@ export default class extends Vue {
         (this.$refs.observer as InstanceType<
           typeof ValidationObserver
         >).reset();
-      this.$modal.show("MenuEditDialog");
+      this.$modal.show('MenuEditDialog');
     } else {
-      this.$modal.hide("MenuEditDialog");
+      this.$modal.hide('MenuEditDialog');
     }
   }
 
@@ -170,10 +170,10 @@ export default class extends Vue {
       this.item,
     );
     this.loading = false;
-    if (response?.code?.startsWith("S")) {
-      await this.$store.dispatch("setDrawers");
+    if (response?.code?.startsWith(`S`)) {
+      await this.$store.dispatch('setDrawers');
       this.syncedDialog = false;
-      this.$emit("finished");
+      this.$emit('finished');
     }
   }
 
@@ -184,10 +184,10 @@ export default class extends Vue {
       this.item,
     );
     this.loading = false;
-    if (response?.code?.startsWith("S")) {
-      await this.$store.dispatch("setDrawers");
+    if (response?.code?.startsWith(`S`)) {
+      await this.$store.dispatch('setDrawers');
       this.syncedDialog = false;
-      this.$emit("finished");
+      this.$emit('finished');
     }
   }
 
@@ -199,16 +199,16 @@ export default class extends Vue {
         `${this.ENDPOINT_URL}${this.item.id}/`,
       );
       this.loading = false;
-      if (response?.code?.startsWith("S")) {
-        await this.$store.dispatch("setDrawers");
-        this.$emit("finished");
+      if (response?.code?.startsWith(`S`)) {
+        await this.$store.dispatch('setDrawers');
+        this.$emit('finished');
       }
     }
   }
 
   filterMenuType(item: MenuVO) {
     if (item.parentId !== 1) {
-      return this.MENU_TYPE!.filter((item) => item.value !== "G");
+      return this.MENU_TYPE!.filter((item) => item.value !== 'G');
     }
     return this.MENU_TYPE;
   }

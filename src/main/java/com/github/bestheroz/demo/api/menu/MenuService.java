@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -34,7 +33,6 @@ public class MenuService {
     return menuVO;
   }
 
-  @Cacheable(value = "drawerCache", key = "#authority")
   public List<DrawerVO> getDrawerList(final Integer authority) {
     if (authority.equals(999)) {
       return this.tableMenuRepository.getItemsByLevel2()
@@ -58,9 +56,9 @@ public class MenuService {
           item ->
             item.setChildren(
               this.tableMenuRepository.getItemsByLevel3AndAuthorityAndParentId(
-                  authority,
-                  item.getId()
-                )
+                authority,
+                item.getId()
+              )
                 .stream()
                 .map(this::convertTableMenuEntityToDrawerVO)
                 .collect(Collectors.toList())

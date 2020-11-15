@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,7 +44,6 @@ public class AdminMemberController {
   }
 
   @PostMapping
-  @CacheEvict(value = "memberCache", allEntries = true)
   public ResponseEntity<ApiResult> post(
     @RequestBody final TableMemberEntity tableMemberEntity
   ) {
@@ -54,31 +52,27 @@ public class AdminMemberController {
   }
 
   @PatchMapping(value = "{id}")
-  @CacheEvict(value = "memberCache", allEntries = true)
   public ResponseEntity<ApiResult> patch(
     @PathVariable(value = "id") final String id,
     @RequestBody final TableMemberEntity tableMemberEntity
   ) {
     this.tableMemberRepository.updateMapByKey(
-        Map.of(
-          "name",
-          tableMemberEntity.getName(),
-          "authority",
-          tableMemberEntity.getAuthority(),
-          "expired",
-          tableMemberEntity.getExpired(),
-          "available",
-          tableMemberEntity.isAvailable(),
-          "timeout",
-          tableMemberEntity.getTimeout()
-        ),
-        Map.of("id", id)
-      );
+      Map.of(
+        "name",
+        tableMemberEntity.getName(),
+        "authority",
+        tableMemberEntity.getAuthority(),
+        "expired",
+        tableMemberEntity.getExpired(),
+        "available",
+        tableMemberEntity.isAvailable()
+      ),
+      Map.of("id", id)
+    );
     return Result.ok();
   }
 
   @DeleteMapping(value = "{id}")
-  @CacheEvict(value = "memberCache", allEntries = true)
   public ResponseEntity<ApiResult> delete(
     @PathVariable(value = "id") final String id
   ) {

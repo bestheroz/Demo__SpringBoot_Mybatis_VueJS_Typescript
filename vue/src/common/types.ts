@@ -48,7 +48,6 @@ export interface TableMemberEntity {
   available?: boolean | null;
   theme?: string | null;
   authority?: number | null;
-  timeout?: number | null;
   token?: string | null;
   created?: Date | string | null;
   createdBy?: string | null;

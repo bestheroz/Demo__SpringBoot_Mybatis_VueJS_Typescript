@@ -31,19 +31,19 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import MemberList from "@/views/admin/member/components/MemberList.vue";
-import MemberEditDialog from "@/views/admin/member/components/MemberEditDialog.vue";
-import { TableMemberEntity } from "@/common/types";
-import ButtonSet from "@/components/speeddial/ButtonSet.vue";
-import dayjs from "dayjs";
+import { Component, Vue } from 'vue-property-decorator';
+import MemberList from '@/views/admin/member/components/MemberList.vue';
+import MemberEditDialog from '@/views/admin/member/components/MemberEditDialog.vue';
+import { TableMemberEntity } from '@/common/types';
+import ButtonSet from '@/components/speeddial/ButtonSet.vue';
+import dayjs from 'dayjs';
 
 @Component({
-  name: "Member",
+  name: 'Member',
   components: { ButtonSet, MemberEditDialog, MemberList },
 })
 export default class extends Vue {
-  dialog = false;
+  dialog: boolean = false;
   item: TableMemberEntity = { expired: null };
   selected: TableMemberEntity[] = [];
 
@@ -53,8 +53,7 @@ export default class extends Vue {
 
   addItem() {
     this.item = {
-      expired: dayjs().add(1, "year").toDate(),
-      timeout: 7200,
+      expired: dayjs().add(1, 'year').toDate(),
     };
     this.dialog = true;
   }

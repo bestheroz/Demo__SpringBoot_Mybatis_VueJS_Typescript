@@ -1,22 +1,20 @@
-import Vue from "vue";
-import Vuex, { ActionContext } from "vuex";
-import createPersistedState from "vuex-persistedstate";
-import { DrawerItem, SelectItem, TableMemberEntity } from "@/common/types";
-import { getApi } from "@/utils/apis";
+import Vue from 'vue';
+import Vuex, { ActionContext } from 'vuex';
+import createPersistedState from 'vuex-persistedstate';
+import { DrawerItem, SelectItem, TableMemberEntity } from '@/common/types';
+import { getApi } from '@/utils/apis';
 
 Vue.use(Vuex);
 
 const user = {
   state: {
     user: null,
-    logoutTimer: new Date().getTime() + 7200 * 1000,
   },
   getters: {
     user: (state: any) => {
       return {
         id: state.user?.id,
         name: state.user?.name,
-        timeout: state.user?.timeout,
         authority: state.user?.authority,
         theme: state.user?.theme,
       };
@@ -26,16 +24,11 @@ const user = {
     setUser(state: any, user: TableMemberEntity) {
       state.user = user;
     },
-    resetTimer(state: any) {
-      state.logoutTimer =
-        new Date().getTime() + (state.user?.timeout || 7200) * 1000;
-    },
   },
   actions: {
     async setUser({ commit }: ActionContext<any, any>) {
-      const response = await getApi<TableMemberEntity>("auth/me");
-      commit("setUser", response?.data);
-      commit("resetTimer");
+      const response = await getApi<TableMemberEntity>(`auth/me`);
+      commit('setUser', response?.data);
     },
     async getUser({
       state,
@@ -43,16 +36,12 @@ const user = {
       getters,
     }: ActionContext<any, any>): Promise<TableMemberEntity> {
       if (!state.user) {
-        await dispatch("setUser");
+        await dispatch('setUser');
       }
       return getters.user;
     },
-    async resetTimer({ commit }: ActionContext<any, any>) {
-      commit("resetTimer");
-    },
     clearUser({ commit }: ActionContext<any, any>) {
-      commit("setUser", null);
-      commit("resetTimer");
+      commit('setUser', null);
     },
   },
 };
@@ -68,20 +57,20 @@ const drawer = {
   },
   actions: {
     async setDrawers({ commit }: ActionContext<any, any>) {
-      const response = await getApi<DrawerItem[]>("menus/drawer");
-      commit("setDrawers", response?.data);
+      const response = await getApi<DrawerItem[]>('menus/drawer');
+      commit('setDrawers', response?.data);
     },
     async getDrawers({
       state,
       dispatch,
     }: ActionContext<any, any>): Promise<DrawerItem[]> {
       if (!state.drawers) {
-        await dispatch("setDrawers");
+        await dispatch('setDrawers');
       }
       return state.drawers;
     },
     clearDrawer({ commit }: ActionContext<any, any>) {
-      commit("setDrawers", null);
+      commit('setDrawers', null);
     },
   },
 };
@@ -97,17 +86,17 @@ const cache = {
   },
   actions: {
     async setMemberCodes({ commit }: ActionContext<any, any>) {
-      const response = await getApi<SelectItem[]>("members/codes");
-      commit("setMemberCodes", response?.data);
+      const response = await getApi<SelectItem[]>('members/codes');
+      commit('setMemberCodes', response?.data);
     },
     async getMemberCodes({ state, dispatch }: ActionContext<any, any>) {
       if (!state.memberCodes) {
-        await dispatch("setMemberCodes");
+        await dispatch('setMemberCodes');
       }
       return state.memberCodes;
     },
     clearCache({ commit }: ActionContext<any, any>) {
-      commit("setMemberCodes", null);
+      commit('setMemberCodes', null);
     },
   },
 };
@@ -126,7 +115,7 @@ const temp = {
       { commit }: ActionContext<any, any>,
       isFinishTextEllipsis: boolean,
     ) {
-      commit("setFinishTextEllipsis", isFinishTextEllipsis);
+      commit('setFinishTextEllipsis', isFinishTextEllipsis);
     },
   },
 };

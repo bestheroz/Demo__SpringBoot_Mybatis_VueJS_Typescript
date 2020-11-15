@@ -47,9 +47,6 @@
         <template v-slot:[`item.authority`]="{ item }" v-if="AUTHORITY">
           {{ item.authority | getCodeText(AUTHORITY) }}
         </template>
-        <template v-slot:[`item.timeout`]="{ item }">
-          {{ item.timeout.toLocaleString() }}
-        </template>
         <template v-slot:[`item.expired`]="{ item }">
           {{ item.expired | formatDatetime }}
         </template>
@@ -65,91 +62,85 @@
 </template>
 
 <script lang="ts">
-import { Component, Emit, Prop, PropSync, Vue } from "vue-property-decorator";
-import { DataTableHeader, SelectItem, TableMemberEntity } from "@/common/types";
-import { getApi, getCodesApi } from "@/utils/apis";
-import envs from "@/constants/envs";
-import DataTableFilter from "@/components/datatable/DataTableFilter.vue";
+import { Component, Emit, Prop, PropSync, Vue } from 'vue-property-decorator';
+import { DataTableHeader, SelectItem, TableMemberEntity } from '@/common/types';
+import { getApi, getCodesApi } from '@/utils/apis';
+import envs from '@/constants/envs';
+import DataTableFilter from '@/components/datatable/DataTableFilter.vue';
 
 @Component({
-  name: "MemberList",
+  name: 'MemberList',
   components: {
     DataTableFilter,
   },
 })
 export default class extends Vue {
   @Prop({ required: true }) readonly height!: number | string;
-  @PropSync("selected") syncedSelected!: TableMemberEntity[];
+  @PropSync('selected') syncedSelected!: TableMemberEntity[];
   readonly envs: typeof envs = envs;
-  readonly ENDPOINT_URL: string = "admin/members/";
-  sortBy: string[] = ["authority"];
+  readonly ENDPOINT_URL: string = 'admin/members/';
+  sortBy: string[] = ['authority'];
   sortDesc: boolean[] = [true];
   items: TableMemberEntity[] = [];
   filteredItems: TableMemberEntity[] = [];
-  loading = false;
+  loading: boolean = false;
 
-  AUTHORITY: SelectItem[] | null = null;
+  AUTHORITY: SelectItem[] = [];
 
   headers: DataTableHeader[] = [
     {
-      text: "사용자아이디",
-      align: "start",
-      value: "id",
+      text: `사용자아이디`,
+      align: `start`,
+      value: `id`,
     },
     {
-      text: "사용자명",
-      align: "start",
-      value: "name",
+      text: `사용자명`,
+      align: `start`,
+      value: `name`,
     },
     {
-      text: "권한",
-      align: "center",
-      value: "authority",
-      filterType: "select",
+      text: `권한`,
+      align: `center`,
+      value: `authority`,
+      filterType: 'select',
       filterSelectItem: [],
-      width: "8rem",
+      width: '8rem',
     },
     {
-      text: "만료일",
-      align: "center",
-      value: "expired",
-      width: "10rem",
+      text: `만료일`,
+      align: `center`,
+      value: `expired`,
+      width: '10rem',
     },
     {
-      text: "사용 가능",
-      align: "center",
-      value: "available",
-      filterType: "switch",
-      width: "6rem",
+      text: `사용 가능`,
+      align: `center`,
+      value: `available`,
+      filterType: 'switch',
+      width: '6rem',
     },
     {
-      text: "자동로그아웃시간(초)",
-      align: "end",
-      value: "timeout",
-      width: "11rem",
-    },
-    {
-      text: "작업 일시",
-      align: "center",
-      value: "updated",
+      text: `작업 일시`,
+      align: `center`,
+      value: `updated`,
       filterable: false,
-      width: "10rem",
+      width: '10rem',
     },
     {
-      text: "작업자",
-      align: "start",
-      value: "updatedBy",
+      text: `작업자`,
+      align: `start`,
+      value: `updatedBy`,
       filterable: false,
-      width: "7rem",
+      width: '7rem',
     },
   ];
 
-  async mounted(): void {
+  async mounted() {
     this.headers[
       this.headers.indexOf(
-        this.headers.find((item) => item.value === "authority")!,
+        this.headers.find((item) => item.value === 'authority')!,
       )
-    ].filterSelectItem = this.AUTHORITY = await getCodesApi("AUTHORITY");
+    ].filterSelectItem = this.AUTHORITY = await getCodesApi('AUTHORITY');
     await this.getList();
   }
 
@@ -162,7 +153,7 @@ export default class extends Vue {
     this.items = response?.data || [];
   }
 
-  @Emit("row-id-clicked")
+  @Emit('row-id-clicked')
   rowIdClicked(value: TableMemberEntity) {
     return value;
   }
