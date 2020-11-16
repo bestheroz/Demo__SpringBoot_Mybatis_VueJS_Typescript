@@ -128,15 +128,15 @@ export default class extends Vue {
 
   readonly ENDPOINT_URL = "admin/menus/";
   loading = false;
-  MENU_TYPE: SelectItem[] | null = null;
+  MENU_TYPE: SelectItem[] = [];
   isNew = false;
 
-  beforeDestroy(): void {
+  beforeDestroy() {
     this.syncedDialog = false;
   }
 
   async mounted(): Promise<void> {
-    this.MENU_TYPE = await getCodesApi("MENU_TYPE");
+    this.MENU_TYPE = await getCodesApi(`MENU_TYPE`);
   }
 
   @Watch("syncedDialog")
@@ -170,7 +170,7 @@ export default class extends Vue {
       this.item,
     );
     this.loading = false;
-    if (response?.code?.startsWith("S")) {
+    if (response?.code?.startsWith(`S`)) {
       await this.$store.dispatch("setDrawers");
       this.syncedDialog = false;
       this.$emit("finished");
@@ -184,7 +184,7 @@ export default class extends Vue {
       this.item,
     );
     this.loading = false;
-    if (response?.code?.startsWith("S")) {
+    if (response?.code?.startsWith(`S`)) {
       await this.$store.dispatch("setDrawers");
       this.syncedDialog = false;
       this.$emit("finished");
@@ -199,7 +199,7 @@ export default class extends Vue {
         `${this.ENDPOINT_URL}${this.item.id}/`,
       );
       this.loading = false;
-      if (response?.code?.startsWith("S")) {
+      if (response?.code?.startsWith(`S`)) {
         await this.$store.dispatch("setDrawers");
         this.$emit("finished");
       }

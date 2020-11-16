@@ -1,5 +1,4 @@
 import axios, { AxiosError } from "axios";
-import store from "@/store";
 import { alertError, alertSuccess, alertWarning } from "@/utils/alerts";
 import envs from "@/constants/envs";
 import { needLogin, refreshToken } from "@/utils/authentications";
@@ -25,7 +24,6 @@ axiosInstance.interceptors.request.use(
 );
 axiosInstance.interceptors.response.use(
   function (response) {
-    store.dispatch("resetTimer").then();
     return response;
   },
   async function (error: AxiosError) {
@@ -130,7 +128,7 @@ export async function getCodesApi<SelectItem>(
   codeGroup: string,
 ): Promise<SelectItem[]> {
   if (window.localStorage.getItem(`code__${codeGroup}`)) {
-    return JSON.parse(window.localStorage.getItem(`code__${codeGroup}`) || "");
+    return JSON.parse(window.localStorage.getItem(`code__${codeGroup}`)!);
   } else {
     try {
       const response = await axiosInstance.get<ApiDataResult<SelectItem[]>>(
@@ -155,15 +153,13 @@ export async function getVariableApi<T = string>(
   variable: string,
 ): Promise<T | null> {
   if (window.localStorage.getItem(`variable__${variable}`)) {
-    return JSON.parse(
-      window.localStorage.getItem(`variable__${variable}`) || "",
-    );
+    return JSON.parse(window.localStorage.getItem(`variable__${variable}`)!);
   } else {
     try {
       const response = await axiosInstance.get<ApiDataResult<T>>(
         `api/variables/${variable}`,
       );
-      const result = response?.data?.data || null;
+      const result = response?.data?.data!;
       if (result) {
         window.localStorage.setItem(
           `variable__${variable}`,
@@ -179,7 +175,7 @@ export async function getVariableApi<T = string>(
 }
 
 function alertResponseMessage(data: ApiDataResult<any>): void {
-  if (data.code.startsWith("S")) {
+  if (data.code.startsWith(`S`)) {
     alertSuccess(data.message);
   } else {
     alertError(data.message);
@@ -279,7 +275,6 @@ async function apiRefreshToken(error: AxiosError) {
         })
         .get("api/auth/refreshToken");
       await refreshToken(response?.data?.data);
-      await store.dispatch("resetTimer");
     } catch (e) {
       if (e.response?.status === 401) {
         await needLogin();

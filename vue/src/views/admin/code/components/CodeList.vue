@@ -80,7 +80,7 @@ export default class extends Vue {
   @PropSync("selected") syncedSelected!: TableCodeGroupEntity[];
 
   readonly envs: typeof envs = envs;
-  AUTHORITY: SelectItem[] | null = null;
+  AUTHORITY: SelectItem[] = [];
 
   loading = false;
   sortBy: string[] = ["displayOrder"];

@@ -8,7 +8,6 @@ import "./plugins/vee-validate";
 import "./plugins/vue-filter";
 import "./plugins/vue-js-modal";
 import "./plugins/sentry";
-import dotenv from "dotenv";
 
 Vue.config.productionTip = false;
 
@@ -17,6 +16,6 @@ new Vue({
   store,
   vuetify,
   render: (h) => h(App),
-}).$mount("#app");
+}).$mount(`#app`);
 
-dotenv.config();
+require(`dotenv`).config();

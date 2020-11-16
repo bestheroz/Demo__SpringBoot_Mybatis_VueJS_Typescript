@@ -128,7 +128,7 @@ export default class extends Vue {
   }
 
   @Watch("syncedDialog")
-  async watchDialog(val: boolean) {
+  async watchDialog(val: boolean): Promise<void> {
     if (val) {
       this.show1 = false;
       const response = await getApi<TableMemberEntity>(
@@ -145,7 +145,7 @@ export default class extends Vue {
     }
   }
 
-  async save() {
+  async save(): Promise<void> {
     const isValid = await (this.$refs.observer as InstanceType<
       typeof ValidationObserver
     >).validate();

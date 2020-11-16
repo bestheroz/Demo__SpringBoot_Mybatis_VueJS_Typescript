@@ -7,7 +7,6 @@ import com.github.bestheroz.standard.common.response.Result;
 import java.util.Map;
 import javax.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,8 +33,8 @@ public class AdminCodeController {
   ) {
     return Result.ok(
       this.tableCodeRepository.getItemByKey(
-          Map.of("codeGroup", codeGroup, "code", code)
-        )
+        Map.of("codeGroup", codeGroup, "code", code)
+      )
     );
   }
 
@@ -50,28 +49,26 @@ public class AdminCodeController {
   }
 
   @PatchMapping(value = "{codeGroup}/{code}")
-  @CacheEvict(value = "codeCache", key = "#codeGroup")
   public ResponseEntity<ApiResult> patch(
     @PathVariable(value = "codeGroup") final String codeGroup,
     @PathVariable(value = "code") final String code,
     @RequestBody final TableCodeEntity tableCodeEntity
   ) {
     this.tableCodeRepository.updateByKey(
-        tableCodeEntity,
-        Map.of("codeGroup", codeGroup, "code", code)
-      );
+      tableCodeEntity,
+      Map.of("codeGroup", codeGroup, "code", code)
+    );
     return Result.ok();
   }
 
   @DeleteMapping(value = "{codeGroup}/{code}")
-  @CacheEvict(value = "codeCache", key = "#codeGroup")
   public ResponseEntity<ApiResult> delete(
     @PathVariable(value = "codeGroup") final String codeGroup,
     @PathVariable(value = "code") final String code
   ) {
     this.tableCodeRepository.deleteByKey(
-        Map.of("codeGroup", codeGroup, "code", code)
-      );
+      Map.of("codeGroup", codeGroup, "code", code)
+    );
     return Result.ok();
   }
 }

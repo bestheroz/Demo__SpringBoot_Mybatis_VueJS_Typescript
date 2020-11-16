@@ -88,11 +88,11 @@ export default class extends Vue {
   value: string | null = null;
   dialog = false;
 
-  get format() {
+  get format(): string {
     return envs.DATE_FORMAT_STRING;
   }
 
-  get style() {
+  get style(): string | undefined {
     if (this.fullWidth) {
       return undefined;
     }
@@ -106,7 +106,7 @@ export default class extends Vue {
   watchDate(
     val: Date | string | number | null,
     oldVal: Date | string | number | null,
-  ) {
+  ): void {
     if (!val || val === oldVal || isNaN(dayjs(val).toDate().getTime())) {
       return;
     }
@@ -116,7 +116,7 @@ export default class extends Vue {
   }
 
   @Watch("value", { immediate: true })
-  watchValue(val: string, oldVal: string) {
+  watchValue(val: string, oldVal: string): void {
     if (
       val !== oldVal &&
       dayjs(val).toDate().getTime() !== dayjs(oldVal).toDate().getTime()
@@ -130,13 +130,13 @@ export default class extends Vue {
     }
   }
 
-  setToday() {
+  setToday(): void {
     this.value = this.endOfDay
       ? dayjs().endOf("day").format(this.format)
       : dayjs().startOf("day").format(this.format);
   }
 
-  async validate() {
+  async validate(): Promise<boolean> {
     return await (this.$refs.observer as InstanceType<
       typeof ValidationObserver
     >).validate();

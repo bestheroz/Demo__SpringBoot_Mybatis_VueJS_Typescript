@@ -140,8 +140,8 @@ export default class extends Vue {
         this.password = null;
       } else if (response?.data?.code?.startsWith("S")) {
         saveToken({
-          accessToken: response?.data?.data?.accessToken || "",
-          refreshToken: response?.data?.data?.refreshToken || "",
+          accessToken: response!.data!.data!.accessToken,
+          refreshToken: response!.data!.data!.refreshToken,
         });
         this.$toasted.clear();
         await this.$router.push("/");

@@ -143,7 +143,7 @@ export default class extends Vue {
   @Prop({ required: true }) readonly item!: TableCodeEntity;
 
   readonly ENDPOINT_URL = "admin/codes/";
-  AUTHORITY: SelectItem[] | null = null;
+  AUTHORITY: SelectItem[] = [];
   isNew = false;
   loading = false;
 
@@ -186,7 +186,7 @@ export default class extends Vue {
       this.item,
     );
     this.loading = false;
-    if (response?.code?.startsWith("S")) {
+    if (response?.code?.startsWith(`S`)) {
       this.syncedDialog = false;
       this.$emit("finished");
     }
@@ -199,7 +199,7 @@ export default class extends Vue {
       this.item,
     );
     this.loading = false;
-    if (response?.code?.startsWith("S")) {
+    if (response?.code?.startsWith(`S`)) {
       this.syncedDialog = false;
       window.localStorage.removeItem(`code__${this.item.codeGroup}`);
       this.$emit("finished");
@@ -214,7 +214,7 @@ export default class extends Vue {
         `${this.ENDPOINT_URL}${this.item.codeGroup}/${this.item.code}/`,
       );
       this.loading = false;
-      if (response?.code?.startsWith("S")) {
+      if (response?.code?.startsWith(`S`)) {
         window.localStorage.removeItem(`code__${this.item.codeGroup}`);
         this.$emit("finished");
       }

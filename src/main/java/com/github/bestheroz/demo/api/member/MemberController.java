@@ -11,7 +11,6 @@ import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 import javax.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -52,7 +51,6 @@ public class MemberController {
   }
 
   @PatchMapping("mine")
-  @CacheEvict(value = "memberCache", allEntries = true)
   public ResponseEntity<ApiResult> editMe(
     @RequestBody final TableMemberEntity payload
   ) {

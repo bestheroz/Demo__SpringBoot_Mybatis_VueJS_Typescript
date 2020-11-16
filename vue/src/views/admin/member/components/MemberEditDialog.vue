@@ -88,20 +88,6 @@
               </v-col>
               <v-col cols="12" md="4">
                 <ValidationProvider
-                  name="세션타임아웃시간"
-                  rules="required|numeric"
-                  v-slot="{ errors }"
-                >
-                  <v-text-field
-                    v-model="item.timeout"
-                    label="*세션타임아웃시간(초)"
-                    :error-messages="errors"
-                    clearable
-                  />
-                </ValidationProvider>
-              </v-col>
-              <v-col cols="12" md="4">
-                <ValidationProvider
                   name="비밀번호"
                   vid="password"
                   rules="max:20"
@@ -186,7 +172,7 @@ export default class extends Vue {
 
   readonly ENDPOINT_URL: string = "admin/members/";
   loading = false;
-  AUTHORITY: SelectItem[] | null = null;
+  AUTHORITY: SelectItem[] = [];
   password2: string | null = null;
   show1 = false;
   show2 = false;
@@ -240,7 +226,7 @@ export default class extends Vue {
       params,
     );
     this.loading = false;
-    if (response?.code?.startsWith("S")) {
+    if (response?.code?.startsWith(`S`)) {
       await this.$store.dispatch("setMemberCodes");
       this.syncedDialog = false;
       this.$emit("finished");
@@ -260,7 +246,7 @@ export default class extends Vue {
       params,
     );
     this.loading = false;
-    if (response?.code?.startsWith("S")) {
+    if (response?.code?.startsWith(`S`)) {
       const user = await this.$store.dispatch("getUser");
       if (this.item.id === user.id) {
         await this.$store.dispatch("setUser");
@@ -279,7 +265,7 @@ export default class extends Vue {
         `${this.ENDPOINT_URL}${this.item.id}/`,
       );
       this.loading = false;
-      if (response?.code?.startsWith("S")) {
+      if (response?.code?.startsWith(`S`)) {
         await this.$store.dispatch("setMemberCodes");
         this.$emit("finished");
       }

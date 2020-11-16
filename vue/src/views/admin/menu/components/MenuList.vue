@@ -84,60 +84,60 @@ export default class extends Vue {
   readonly ENDPOINT_URL: string = "admin/menus/";
   items: TableMenuEntity[] = [];
   loading = false;
-  MENU_TYPE: SelectItem[] | null = null;
+  MENU_TYPE: SelectItem[] = [];
 
   headers: DataTableHeader[] = [
     {
-      text: "타입",
-      align: "center",
-      value: "type",
+      text: `타입`,
+      align: `center`,
+      value: `type`,
       filterType: "select",
       filterSelectItem: [],
       width: "5rem",
     },
     {
-      text: "메뉴명",
-      align: "start",
-      value: "name",
+      text: `메뉴명`,
+      align: `start`,
+      value: `name`,
     },
     {
-      text: "메뉴 순서",
-      align: "end",
-      value: "displayOrder",
+      text: `메뉴 순서`,
+      align: `end`,
+      value: `displayOrder`,
       width: "5rem",
     },
     {
-      text: "Action",
-      align: "center",
-      value: "action",
+      text: `Action`,
+      align: `center`,
+      value: `action`,
       filterable: false,
       width: "18rem",
     },
     {
-      text: "작업 일시",
-      align: "center",
-      value: "updated",
+      text: `작업 일시`,
+      align: `center`,
+      value: `updated`,
       filterable: false,
       width: "10rem",
     },
     {
-      text: "작업자",
-      align: "start",
-      value: "updatedBy",
+      text: `작업자`,
+      align: `start`,
+      value: `updatedBy`,
       filterable: false,
       width: "7rem",
     },
   ];
 
   async mounted(): Promise<void> {
-    this.MENU_TYPE = await getCodesApi("MENU_TYPE");
+    this.MENU_TYPE = await getCodesApi(`MENU_TYPE`);
     this.headers[
       this.headers.indexOf(this.headers.find((item) => item.value === "type")!)
     ].filterSelectItem = this.MENU_TYPE;
     await this.getList();
   }
 
-  async getList() {
+  async getList(): Promise<void> {
     this.items = [];
     this.loading = true;
     const response = await getApi<MenuVO[]>(this.ENDPOINT_URL);
