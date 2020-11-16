@@ -107,8 +107,7 @@ import { getApi, patchApi } from "@/utils/apis";
 import DatetimePicker from "@/components/picker/DatetimePicker.vue";
 import ChangePasswordDialog from "@/components/layout/components/ChangePasswordDialog.vue";
 import { ValidationObserver } from "vee-validate";
-
-const pbkdf2 = require("pbkdf2");
+import pbkdf2 from "pbkdf2";
 
 @Component({
   name: "EditMeDialog",

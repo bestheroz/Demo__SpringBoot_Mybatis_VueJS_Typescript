@@ -159,8 +159,7 @@ import { deleteApi, getCodesApi, patchApi, postApi } from "@/utils/apis";
 import DatetimePicker from "@/components/picker/DatetimePicker.vue";
 import { confirmDelete } from "@/utils/alerts";
 import { ValidationObserver } from "vee-validate";
-
-const pbkdf2 = require("pbkdf2");
+import pbkdf2 from "pbkdf2";
 
 @Component({
   name: "MemberEditDialog",

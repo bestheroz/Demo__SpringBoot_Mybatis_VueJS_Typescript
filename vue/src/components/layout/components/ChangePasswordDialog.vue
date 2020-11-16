@@ -101,8 +101,7 @@
 import { Component, PropSync, Vue, Watch } from "vue-property-decorator";
 import { postApi } from "@/utils/apis";
 import { ValidationObserver } from "vee-validate";
-
-const pbkdf2 = require("pbkdf2");
+import pbkdf2 from "pbkdf2";
 
 @Component({
   name: "ChangePasswordDialog",

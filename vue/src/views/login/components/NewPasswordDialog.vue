@@ -67,8 +67,7 @@ import { Component, Prop, PropSync, Vue } from "vue-property-decorator";
 import { alertAxiosError, ApiDataResult, axiosInstance } from "@/utils/apis";
 import { alertError } from "@/utils/alerts";
 import { ValidationObserver } from "vee-validate";
-
-const pbkdf2 = require("pbkdf2");
+import pbkdf2 from "pbkdf2";
 
 @Component({
   name: "NewPasswordDialog",
