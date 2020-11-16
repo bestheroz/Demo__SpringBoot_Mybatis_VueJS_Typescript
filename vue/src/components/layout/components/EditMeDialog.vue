@@ -133,7 +133,7 @@ export default class extends Vue {
       const response = await getApi<TableMemberEntity>(
         `${this.ENDPOINT_URL}mine`,
       );
-      this.item = response?.data!;
+      this.item = response?.data || Object.create(null);
       this.$refs.observer &&
         (this.$refs.observer as InstanceType<
           typeof ValidationObserver
@@ -155,7 +155,7 @@ export default class extends Vue {
     this.loading = true;
     const payload = { ...this.item };
     payload.password = pbkdf2
-      .pbkdf2Sync(this.item.password, "salt", 1, 32, "sha512")
+      .pbkdf2Sync(this.item.password!, "salt", 1, 32, "sha512")
       .toString();
     const response = await patchApi<TableMemberEntity>(
       `${this.ENDPOINT_URL}mine`,

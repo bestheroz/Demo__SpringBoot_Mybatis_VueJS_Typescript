@@ -156,10 +156,10 @@ export default class extends Vue {
       newPassword: string;
     }>(`${this.ENDPOINT_URL}mine/changePassword/`, {
       oldPassword: pbkdf2
-        .pbkdf2Sync(this.oldPassword, "salt", 1, 32, "sha512")
+        .pbkdf2Sync(this.oldPassword!, "salt", 1, 32, "sha512")
         .toString(),
       newPassword: pbkdf2
-        .pbkdf2Sync(this.password, "salt", 1, 32, "sha512")
+        .pbkdf2Sync(this.password!, "salt", 1, 32, "sha512")
         .toString(),
     });
     this.loading = false;
