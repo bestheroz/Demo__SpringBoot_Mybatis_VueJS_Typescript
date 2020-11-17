@@ -26,11 +26,11 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - name: Cache node modules
+        id: node-cache
         uses: actions/cache@v2
         env:
           cache-name: cache-node-modules
         with:
-          id: node-cache
           path: |
             ~/.npm
             **/node_modules
