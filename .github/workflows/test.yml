@@ -48,6 +48,7 @@ jobs:
           npm ci
 
   build:
+    needs: test
     name: 2. npm lint & build
     runs-on: ubuntu-latest
 
