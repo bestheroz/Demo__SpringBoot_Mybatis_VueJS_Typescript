@@ -4,12 +4,14 @@ name: Test
 
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the master branch
-on: [push]
+on:
+  push:
+    branches: '**'
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   test:
-    name: Test
+    name: 1. npm install
     runs-on: ubuntu-latest
 
     strategy:
@@ -46,6 +48,15 @@ jobs:
           cd vue
           npm ci
 
+  build:
+    name: 2. npm lint & build
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [14]
+
+    steps:
       - name: build, and test
         run: |
           cd vue
