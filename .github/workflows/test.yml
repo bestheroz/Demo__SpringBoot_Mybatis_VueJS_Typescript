@@ -51,6 +51,5 @@ jobs:
           cd vue
           npm run lint
           npm run build
-          npm test
         env:
           CI: true
