@@ -12,11 +12,16 @@ on:
 jobs:
   install:
     name: 1. npm install
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
 
     strategy:
       matrix:
+        os: [ubuntu-latest]
         node-version: [14]
+        include:
+          - node: 15
+            os: ubuntu-latest
+            experimental: true
 
     steps:
       - uses: actions/checkout@v2
@@ -48,15 +53,42 @@ jobs:
           npm ci
 
   build:
-    needs: install
     name: 2. npm lint & build
+    needs: install
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
+        os: [ubuntu-latest]
         node-version: [14]
+        include:
+          - node: 15
+            os: ubuntu-latest
+            experimental: true
 
     steps:
+      - uses: actions/checkout@v2
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Cache node modules
+        id: node-cache
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: |
+            ~/.npm
+            **/node_modules
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
       - name: build, and test
         run: |
           cd vue
