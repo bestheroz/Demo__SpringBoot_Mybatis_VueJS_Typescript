@@ -168,9 +168,9 @@ jobs:
           mvn package -Dmaven.test.skip=true -Dspring.profiles.active=dev
 
       - name: start server
-          run: |
-            cd target
-            java -Dfile.encoding=UTF-8 -Xms2g -Xmx2g -XX:+UseG1GC -jar demo.jar &
+        run: |
+          cd target
+          java -Dfile.encoding=UTF-8 -Xms2g -Xmx2g -XX:+UseG1GC -jar demo.jar &
 
       - name: Cypress run
         uses: cypress-io/github-action@v2
