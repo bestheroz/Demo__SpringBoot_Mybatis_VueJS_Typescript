@@ -77,7 +77,7 @@ import DataTableFilter from '@/components/datatable/DataTableFilter.vue';
 export default class extends Vue {
   @Prop({ required: true }) readonly parentItem!: TableCodeGroupEntity;
   @Prop({ required: true }) readonly height!: number | string;
-  @PropSync('selected') syncedSelected!: TableCodeGroupEntity[];
+  @PropSync('selected') syncedSelected!: TableCodeEntity[];
 
   readonly envs: typeof envs = envs;
   AUTHORITY: SelectItem[] = [];

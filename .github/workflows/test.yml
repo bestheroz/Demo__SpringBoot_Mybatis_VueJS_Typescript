@@ -30,22 +30,18 @@ jobs:
       - name: Cache npm install
         id: cache-node
         uses: actions/cache@v2
-        env:
-          cache-name: cache-node
         with:
           path: |
             ~/.npm
             **/node_modules
-          key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-${{ matrix.node-version }}-${{ hashFiles('**/package-lock.json') }}
 
       - name: Cache Cypress
         id: cache-cypress
         uses: actions/cache@v2
-        env:
-          cache-name: cache-cypress
         with:
           path: ~/.cache/Cypress
-          key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-${{ matrix.node-version }}-${{ hashFiles('**/package-lock.json') }}
 
       - name: npm install
         if: steps.cache-node.outputs.cache-hit != 'true'
@@ -75,11 +71,9 @@ jobs:
 
       - name: Cache Maven packages
         uses: actions/cache@v2
-        env:
-          cache-name: cache-m2
         with:
           path: ~/.m2
-          key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('**/pom.xml') }}
+          key: ${{ runner.os }}-${{ matrix.java-version }}-${{ hashFiles('**/pom.xml') }}
 
       - name: Set up JDK
         uses: actions/setup-java@v1
@@ -113,30 +107,24 @@ jobs:
 
       - name: Cache npm install
         uses: actions/cache@v2
-        env:
-          cache-name: cache-node
         with:
           path: |
             ~/.npm
             **/node_modules
-          key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-${{ matrix.node-version }}-${{ hashFiles('**/package-lock.json') }}
 
       - name: Cache Cypress
         id: cache-cypress
         uses: actions/cache@v2
-        env:
-          cache-name: cache-cypress
         with:
           path: ~/.cache/Cypress
-          key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-#
+          key: ${{ runner.os }}-${{ matrix.node-version }}-${{ hashFiles('**/package-lock.json') }}
+
       - name: Cache Maven packages
         uses: actions/cache@v2
-        env:
-          cache-name: cache-m2
         with:
           path: ~/.m2
-          key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('**/pom.xml') }}
+          key: ${{ runner.os }}-${{ matrix.java-version }}-${{ hashFiles('**/pom.xml') }}
 
       - name: npm run build
         run: |

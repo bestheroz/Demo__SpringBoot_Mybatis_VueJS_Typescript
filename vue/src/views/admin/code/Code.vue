@@ -37,6 +37,7 @@ export default class extends Vue {
   selected: TableCodeGroupEntity[] = [];
 
   get item() {
+    console.log(this.selected);
     return (
       (this.selected && this.selected.length > 0 && this.selected[0]) || []
     );
