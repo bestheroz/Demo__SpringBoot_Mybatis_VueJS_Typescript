@@ -98,9 +98,11 @@ jobs:
         with:
           java-version: ${{ matrix.java-version }}
 
-      - name: mvn package
+      - name: mvn install
         run: |
+          mvn clean
           mvn dependency:go-offline
+          mvn install
 
   test:
     name: 3. build & run & test
@@ -169,7 +171,6 @@ jobs:
 
       - name: mvn package
         run: |
-          mvn clean
           mvn package -Dmaven.test.skip=true -Dspring.profiles.active=dev
 
       - name: start server
