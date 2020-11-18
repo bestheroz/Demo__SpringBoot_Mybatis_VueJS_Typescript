@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "target": "esnext",
-    "module": "esnext",
+    "target": "ES2019",
+    "module": "ESNext",
     "strict": true,
     "alwaysStrict": true,
     "strictNullChecks": true,
@@ -20,7 +20,14 @@
     "paths": {
       "@/*": ["src/*"]
     },
-    "lib": ["esnext", "dom", "dom.iterable"],
+    "lib": [
+      "ESNext",
+      "DOM",
+      "DOM.Iterable",
+      "ESNext.Array",
+      "ESNext.AsyncIterable",
+      "ESNext.Symbol"
+    ],
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "pretty": true
