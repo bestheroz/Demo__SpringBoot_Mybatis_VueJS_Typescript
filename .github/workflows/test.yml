@@ -94,7 +94,7 @@ jobs:
       - name: serve
         run: |
           cd vue
-          npm run serve
+          npm run serve &
 
       - name: test
         run: |
