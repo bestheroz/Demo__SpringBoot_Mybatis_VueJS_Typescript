@@ -96,11 +96,6 @@ jobs:
           cd vue
           npm run serve &
 
-      - name: test
-        run: |
-          cd vue
-          npm run test
-
   test:
     name: 3. test
     needs: build
