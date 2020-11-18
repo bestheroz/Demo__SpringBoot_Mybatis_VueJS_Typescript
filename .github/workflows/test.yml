@@ -32,7 +32,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - name: Cache npm install
-        id: npm-install
+        id: node-modules
         uses: actions/cache@v2
         env:
           cache-name: cache-node-modules
@@ -40,12 +40,12 @@ jobs:
           path: |
             ~/.npm
             **/node_modules
-          key: ${{ runner.os }}-npm-install-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-node-modules-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-npm-install-${{ env.cache-name }}-
+            ${{ runner.os }}-node-modules-${{ env.cache-name }}-
 
       - name: npm install
-        if: steps.npm-install.outputs.cache-hit != 'true'
+        if: steps.node-modules.outputs.cache-hit != 'true'
         run: |
           cd vue
           npm ci
@@ -73,7 +73,6 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - name: Cache npm install
-        id: npm-install
         uses: actions/cache@v2
         env:
           cache-name: cache-node-modules
@@ -81,9 +80,9 @@ jobs:
           path: |
             ~/.npm
             **/node_modules
-          key: ${{ runner.os }}-npm-install-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-node-modules-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-npm-install-${{ env.cache-name }}-
+            ${{ runner.os }}-node-modules-${{ env.cache-name }}-
 
       - name: lint & build
         run: |
@@ -110,17 +109,16 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - name: Cache npm install
-          id: npm-install
-          uses: actions/cache@v2
-          env:
-            cache-name: cache-node-modules
-          with:
-            path: |
-              ~/.npm
-              **/node_modules
-            key: ${{ runner.os }}-npm-install-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-            restore-keys: |
-              ${{ runner.os }}-npm-install-${{ env.cache-name }}-
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: |
+            ~/.npm
+            **/node_modules
+          key: ${{ runner.os }}-node-modules-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-modules-${{ env.cache-name }}-
 
       - name: test
         run: |
