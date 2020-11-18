@@ -94,7 +94,7 @@ describe("관리자>코드관리", () => {
     cy.clickAlert("성공");
   });
   it("수정된 코드확인", () => {
-    cy.wait(50).get("tr>td").contains("(cypress)하위코드1111");
+    cy.wait(100).get("tr>td").contains("(cypress)하위코드1111");
   });
   it("코드수정 - MENU_TYPE > P", () => {
     cy.server();
@@ -107,7 +107,7 @@ describe("관리자>코드관리", () => {
       .children("div.v-simple-checkbox")
       .click();
     cy.wait("@getList")
-      .wait(50)
+      .wait(100)
       .get("tr>td")
       .contains("페이지")
       .prev()
@@ -127,7 +127,7 @@ describe("관리자>코드관리", () => {
     cy.route("GET", "**/api/admin/menus/").as("getList");
     cy.wait(1000).menu("관리자", "메뉴관리");
     cy.wait("@getList");
-    cy.wait(50).get("tr>td").contains("페이쥐_테스트");
+    cy.wait(100).get("tr>td").contains("페이쥐_테스트");
   });
   it("코드수정 - MENU_TYPE > P - 복구", () => {
     cy.server();
@@ -141,7 +141,7 @@ describe("관리자>코드관리", () => {
       .children("div.v-simple-checkbox")
       .click();
     cy.wait("@getList")
-      .wait(50)
+      .wait(100)
       .get("tr>td")
       .contains("페이쥐_테스트")
       .prev()
@@ -155,7 +155,7 @@ describe("관리자>코드관리", () => {
     cy.clickAlert("성공");
   });
   it("원복 코드확인", () => {
-    cy.wait(50).get("tr>td").contains("페이지");
+    cy.wait(100).get("tr>td").contains("페이지");
   });
   it("코드삭제 - 하위코드2", () => {
     cy.server();
@@ -170,7 +170,7 @@ describe("관리자>코드관리", () => {
       .children("div.v-simple-checkbox")
       .click();
     cy.wait("@getList")
-      .wait(50)
+      .wait(100)
       .get("tr>td>a")
       .contains("TEST_CODE_2")
       .parent()
