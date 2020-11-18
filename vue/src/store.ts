@@ -21,12 +21,14 @@ const user = {
     },
   },
   mutations: {
-    setUser(state: any, user: TableMemberEntity) {
+    setUser(state: any, user: TableMemberEntity): void {
       state.user = user;
     },
   },
   actions: {
-    async setUser({ commit }: ActionContext<any, any>) {
+    setUser: async function ({
+      commit,
+    }: ActionContext<any, any>): Promise<void> {
       const response = await getApi<TableMemberEntity>("auth/me");
       commit("setUser", response?.data);
     },
@@ -40,7 +42,7 @@ const user = {
       }
       return getters.user;
     },
-    clearUser({ commit }: ActionContext<any, any>) {
+    clearUser({ commit }: ActionContext<any, any>): void {
       commit("setUser", null);
     },
   },
@@ -51,12 +53,12 @@ const drawer = {
     drawers: null,
   },
   mutations: {
-    setDrawers(state: any, drawers: DrawerItem[]) {
+    setDrawers(state: any, drawers: DrawerItem[]): void {
       state.drawers = drawers;
     },
   },
   actions: {
-    async setDrawers({ commit }: ActionContext<any, any>) {
+    async setDrawers({ commit }: ActionContext<any, any>): Promise<void> {
       const response = await getApi<DrawerItem[]>("menus/drawer");
       commit("setDrawers", response?.data);
     },
@@ -69,7 +71,7 @@ const drawer = {
       }
       return state.drawers;
     },
-    clearDrawer({ commit }: ActionContext<any, any>) {
+    clearDrawer({ commit }: ActionContext<any, any>): void {
       commit("setDrawers", null);
     },
   },
@@ -80,12 +82,12 @@ const cache = {
     memberCodes: null,
   },
   mutations: {
-    setMemberCodes(state: any, memberCodes: SelectItem[]) {
+    setMemberCodes(state: any, memberCodes: SelectItem[]): void {
       state.memberCodes = memberCodes;
     },
   },
   actions: {
-    async setMemberCodes({ commit }: ActionContext<any, any>) {
+    async setMemberCodes({ commit }: ActionContext<any, any>): Promise<void> {
       const response = await getApi<SelectItem[]>("members/codes");
       commit("setMemberCodes", response?.data);
     },
@@ -95,7 +97,7 @@ const cache = {
       }
       return state.memberCodes;
     },
-    clearCache({ commit }: ActionContext<any, any>) {
+    clearCache({ commit }: ActionContext<any, any>): void {
       commit("setMemberCodes", null);
     },
   },
@@ -106,7 +108,7 @@ const temp = {
     finishTextEllipsis: false,
   },
   mutations: {
-    setFinishTextEllipsis(state: any, isFinishTextEllipsis: boolean) {
+    setFinishTextEllipsis(state: any, isFinishTextEllipsis: boolean): void {
       state.finishTextEllipsis = isFinishTextEllipsis;
     },
   },

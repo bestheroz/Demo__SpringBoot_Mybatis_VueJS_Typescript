@@ -5,9 +5,7 @@
         <v-card-title class="py-2 modal-header">
           내 정보 수정
           <v-spacer />
-          <v-btn text small :ripple="false" style="cursor: default">
-            <v-icon> mdi-cursor-move</v-icon>
-          </v-btn>
+
           <v-btn text small @click="syncedDialog = false">
             <v-icon> mdi-window-close</v-icon>
           </v-btn>
