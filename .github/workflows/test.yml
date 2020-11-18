@@ -32,20 +32,21 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - name: Cache npm install
-        id: node-modules
+        id: cache-node-modules
         uses: actions/cache@v2
         env:
           cache-name: cache-node-modules
         with:
           path: |
             ~/.npm
+            ~/.cache/Cypress
             **/node_modules
           key: ${{ runner.os }}-node-modules-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-modules-${{ env.cache-name }}-
 
       - name: npm install
-        if: steps.node-modules.outputs.cache-hit != 'true'
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: |
           cd vue
           npm ci
@@ -77,12 +78,9 @@ jobs:
         env:
           cache-name: cache-node-modules
         with:
-          path: |
-            ~/.npm
-            **/node_modules
-          key: ${{ runner.os }}-node-modules-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-node-modules-${{ env.cache-name }}-
+            ${{ runner.os }}-${{ env.cache-name }}-
 
       - name: lint & build
         run: |
@@ -96,7 +94,7 @@ jobs:
           npm run serve &
 
   test:
-    name: 3. test
+    name: 3. test - cypress
     needs: build
     runs-on: ubuntu-latest
 
@@ -113,14 +111,13 @@ jobs:
         env:
           cache-name: cache-node-modules
         with:
-          path: |
-            ~/.npm
-            **/node_modules
-          key: ${{ runner.os }}-node-modules-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-node-modules-${{ env.cache-name }}-
+            ${{ runner.os }}-${{ env.cache-name }}-
 
-      - name: test
+      - name: run cypress
         run: |
           cd vue
           npm run test
+        with:
+          wait-on: http://localhost:8081
