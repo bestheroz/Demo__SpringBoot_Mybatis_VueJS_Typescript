@@ -37,8 +37,6 @@ jobs:
             ~/.npm
             **/node_modules
           key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ env.cache-name }}-
 
       - name: Cache Cypress
         id: cache-cypress
@@ -48,8 +46,6 @@ jobs:
         with:
           path: ~/.cache/Cypress
           key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ env.cache-name }}-
 
       - name: npm install
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
@@ -82,8 +78,6 @@ jobs:
         with:
           path: ~/.m2
           key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-m2-
 
       - name: Set up JDK
         uses: actions/setup-java@v1
@@ -124,8 +118,6 @@ jobs:
             ~/.npm
             **/node_modules
           key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ env.cache-name }}-
 
       - name: Cache Cypress
         id: cache-cypress
@@ -135,8 +127,6 @@ jobs:
         with:
           path: ~/.cache/Cypress
           key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ env.cache-name }}-
 
       - name: Cache Maven packages
         uses: actions/cache@v2
@@ -145,18 +135,16 @@ jobs:
         with:
           path: ~/.m2
           key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-m2-
 
-      - name: npm run build
-        run: |
-          cd vue
-          npm run build
-
-      - name: move front-end dist to target
-        run: |
-          mkdir -p target/classes/static
-          mv -f vue/dist/* target/classes/static/
+#      - name: npm run build
+#        run: |
+#          cd vue
+#          npm run build
+#
+#      - name: move front-end dist to target
+#        run: |
+#          mkdir -p target/classes/static
+#          mv -f vue/dist/* target/classes/static/
 
       - name: Set up JDK
         uses: actions/setup-java@v1
@@ -169,6 +157,8 @@ jobs:
 
       - name: start server
         run: |
+          pwd
+          ls -al
           cd target
           java -Dfile.encoding=UTF-8 -Xms2g -Xmx2g -XX:+UseG1GC -jar demo.jar &
 
