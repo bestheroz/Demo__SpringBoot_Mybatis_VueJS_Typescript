@@ -41,7 +41,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/.cache/Cypress
-          key: ${{ runner.os }}-node-${{ matrix.node-version }}-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-cypress-${{ hashFiles('**/package-lock.json') }}
 
       - name: npm install
         if: steps.cache-node.outputs.cache-hit != 'true'
@@ -118,7 +118,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/.cache/Cypress
-          key: ${{ runner.os }}-node-${{ matrix.node-version }}-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-cypress-${{ hashFiles('**/package-lock.json') }}
 
       - name: Cache Maven packages
         uses: actions/cache@v2
