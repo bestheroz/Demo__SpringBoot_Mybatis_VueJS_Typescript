@@ -30,8 +30,8 @@
     <sentry-version>3.1.1</sentry-version>
     <h2-version>1.4.200</h2-version>
     <!-- circleCI 이용시 제거 가능 START -->
-    <exec-maven-plugin-version>3.0.0</exec-maven-plugin-version>
-    <maven-resources-plugin-version>3.2.0</maven-resources-plugin-version>
+    <!--    <exec-maven-plugin-version>3.0.0</exec-maven-plugin-version>-->
+    <!--    <maven-resources-plugin-version>3.2.0</maven-resources-plugin-version>-->
     <!-- circleCI 이용시 제거 가능 END -->
     <maven-clean-plugin-version>3.1.0</maven-clean-plugin-version>
     <maven-compiler-plugin-version>3.8.1</maven-compiler-plugin-version>
@@ -175,66 +175,66 @@
         <artifactId>spring-boot-maven-plugin</artifactId>
       </plugin>
       <!-- circleCI 이용시 제거 가능 START -->
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <version>${exec-maven-plugin-version}</version>
-        <executions>
-          <execution>
-            <id>front-end lint test</id>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-            <phase>prepare-package</phase>
-            <configuration>
-              <executable>npm</executable>
-              <arguments>
-                <argument>run</argument>
-                <argument>lint</argument>
-              </arguments>
-            </configuration>
-          </execution>
-          <execution>
-            <id>front-end build package</id>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-            <phase>prepare-package</phase>
-            <configuration>
-              <executable>npm</executable>
-              <arguments>
-                <argument>run</argument>
-                <argument>build</argument>
-              </arguments>
-            </configuration>
-          </execution>
-        </executions>
-        <configuration>
-          <workingDirectory>${basedir}/vue</workingDirectory>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-resources-plugin</artifactId>
-        <version>${maven-resources-plugin-version}</version>
-        <executions>
-          <execution>
-            <id>copy front-end to target</id>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <phase>prepare-package</phase>
-            <configuration>
-              <outputDirectory>${basedir}/target/classes/static</outputDirectory>
-              <resources>
-                <resource>
-                  <directory>${basedir}/vue/dist</directory>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
+      <!--      <plugin>-->
+      <!--        <groupId>org.codehaus.mojo</groupId>-->
+      <!--        <artifactId>exec-maven-plugin</artifactId>-->
+      <!--        <version>${exec-maven-plugin-version}</version>-->
+      <!--        <executions>-->
+      <!--          <execution>-->
+      <!--            <id>front-end lint test</id>-->
+      <!--            <goals>-->
+      <!--              <goal>exec</goal>-->
+      <!--            </goals>-->
+      <!--            <phase>prepare-package</phase>-->
+      <!--            <configuration>-->
+      <!--              <executable>npm</executable>-->
+      <!--              <arguments>-->
+      <!--                <argument>run</argument>-->
+      <!--                <argument>lint</argument>-->
+      <!--              </arguments>-->
+      <!--            </configuration>-->
+      <!--          </execution>-->
+      <!--          <execution>-->
+      <!--            <id>front-end build package</id>-->
+      <!--            <goals>-->
+      <!--              <goal>exec</goal>-->
+      <!--            </goals>-->
+      <!--            <phase>prepare-package</phase>-->
+      <!--            <configuration>-->
+      <!--              <executable>npm</executable>-->
+      <!--              <arguments>-->
+      <!--                <argument>run</argument>-->
+      <!--                <argument>build</argument>-->
+      <!--              </arguments>-->
+      <!--            </configuration>-->
+      <!--          </execution>-->
+      <!--        </executions>-->
+      <!--        <configuration>-->
+      <!--          <workingDirectory>${basedir}/vue</workingDirectory>-->
+      <!--        </configuration>-->
+      <!--      </plugin>-->
+      <!--      <plugin>-->
+      <!--        <groupId>org.apache.maven.plugins</groupId>-->
+      <!--        <artifactId>maven-resources-plugin</artifactId>-->
+      <!--        <version>${maven-resources-plugin-version}</version>-->
+      <!--        <executions>-->
+      <!--          <execution>-->
+      <!--            <id>copy front-end to target</id>-->
+      <!--            <goals>-->
+      <!--              <goal>copy-resources</goal>-->
+      <!--            </goals>-->
+      <!--            <phase>prepare-package</phase>-->
+      <!--            <configuration>-->
+      <!--              <outputDirectory>${basedir}/target/classes/static</outputDirectory>-->
+      <!--              <resources>-->
+      <!--                <resource>-->
+      <!--                  <directory>${basedir}/vue/dist</directory>-->
+      <!--                </resource>-->
+      <!--              </resources>-->
+      <!--            </configuration>-->
+      <!--          </execution>-->
+      <!--        </executions>-->
+      <!--      </plugin>-->
       <!-- circleCI 이용시 제거 가능 END -->
       <plugin>
         <artifactId>maven-clean-plugin</artifactId>
