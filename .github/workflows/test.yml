@@ -27,7 +27,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Cache npm install
+      - name: Cache node
         id: cache-node
         uses: actions/cache@v2
         with:
@@ -105,7 +105,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Cache npm install
+      - name: Cache node
         uses: actions/cache@v2
         with:
           path: |
@@ -135,7 +135,7 @@ jobs:
         with:
           java-version: ${{ matrix.java-version }}
 
-      - name: Cache Maven packages
+      - name: Cache Maven
         uses: actions/cache@v2
         with:
           path: ~/.m2
