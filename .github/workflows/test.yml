@@ -34,14 +34,14 @@ jobs:
           path: |
             ~/.npm
             **/node_modules
-          key: ${{ runner.os }}-${{ matrix.node-version }}-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-node-${{ matrix.node-version }}-${{ hashFiles('**/package-lock.json') }}
 
       - name: Cache Cypress
         id: cache-cypress
         uses: actions/cache@v2
         with:
           path: ~/.cache/Cypress
-          key: ${{ runner.os }}-${{ matrix.node-version }}-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-node-${{ matrix.node-version }}-${{ hashFiles('**/package-lock.json') }}
 
       - name: npm install
         if: steps.cache-node.outputs.cache-hit != 'true'
@@ -73,9 +73,9 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/.m2
-          key: ${{ runner.os }}-${{ matrix.java-version }}-${{ hashFiles('**/pom.xml') }}
+          key: ${{ runner.os }}-java-${{ matrix.java-version }}-${{ hashFiles('**/pom.xml') }}
 
-      - name: Set up JDK
+      - name: Set up JDK ${{ matrix.java-version }}
         uses: actions/setup-java@v1
         with:
           java-version: ${{ matrix.java-version }}
@@ -111,20 +111,20 @@ jobs:
           path: |
             ~/.npm
             **/node_modules
-          key: ${{ runner.os }}-${{ matrix.node-version }}-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-node-${{ matrix.node-version }}-${{ hashFiles('**/package-lock.json') }}
 
       - name: Cache Cypress
         id: cache-cypress
         uses: actions/cache@v2
         with:
           path: ~/.cache/Cypress
-          key: ${{ runner.os }}-${{ matrix.node-version }}-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-node-${{ matrix.node-version }}-${{ hashFiles('**/package-lock.json') }}
 
       - name: Cache Maven packages
         uses: actions/cache@v2
         with:
           path: ~/.m2
-          key: ${{ runner.os }}-${{ matrix.java-version }}-${{ hashFiles('**/pom.xml') }}
+          key: ${{ runner.os }}-java-${{ matrix.java-version }}-${{ hashFiles('**/pom.xml') }}
 
       - name: npm run build
         run: |
@@ -136,7 +136,7 @@ jobs:
           mkdir -p target/classes/static
           mv -f vue/dist/* target/classes/static/
 
-      - name: Set up JDK
+      - name: Set up JDK ${{ matrix.java-version }}
         uses: actions/setup-java@v1
         with:
           java-version: ${{ matrix.java-version }}
