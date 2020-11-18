@@ -18,9 +18,9 @@ describe('로그인/로그아웃', () => {
 
   it('로그인 완료 확인 및 로그아웃', () => {
     cy.login(Cypress.env('username'), Cypress.env('password'));
-    cy.get('div.v-toolbar__content i.mdi-timer-sand')
+    cy.get('div.v-toolbar__content i.mdi-account')
       .parent()
-      .contains('01시간');
+      .contains(' 개발자1');
     cy.logout();
   });
 });

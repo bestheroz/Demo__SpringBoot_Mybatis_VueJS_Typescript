@@ -11,7 +11,7 @@
           add-button
           delete-button
           reload-button
-          :delete-disabled="!syncedSelected || syncedSelected.length === 0"
+          :delete-disabled="!selected || selected.length === 0"
           @click:add="addItem"
           @click:delete="deleteItem"
           @click:reload="reloadList"
@@ -19,7 +19,7 @@
         <code-list
           ref="refList"
           :parent-item="parentItem"
-          :selected.sync="syncedSelected"
+          :selected.sync="selected"
           @row-id-clicked="editItem"
           :height="height"
         />
@@ -35,15 +35,15 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, PropSync, Vue } from "vue-property-decorator";
-import { TableCodeEntity, TableCodeGroupEntity } from "@/common/types";
-import ButtonSet from "@/components/speeddial/ButtonSet.vue";
-import CodeEditDialog from "@/views/admin/code/components/CodeEditDialog.vue";
-import DataTableFilter from "@/components/datatable/DataTableFilter.vue";
-import CodeList from "@/views/admin/code/components/CodeList.vue";
+import { Component, Prop, Vue } from 'vue-property-decorator';
+import { TableCodeEntity, TableCodeGroupEntity } from '@/common/types';
+import ButtonSet from '@/components/speeddial/ButtonSet.vue';
+import CodeEditDialog from '@/views/admin/code/components/CodeEditDialog.vue';
+import DataTableFilter from '@/components/datatable/DataTableFilter.vue';
+import CodeList from '@/views/admin/code/components/CodeList.vue';
 
 @Component({
-  name: "CodeWrapper",
+  name: 'CodeWrapper',
   components: {
     CodeList,
     DataTableFilter,
@@ -54,8 +54,9 @@ import CodeList from "@/views/admin/code/components/CodeList.vue";
 export default class extends Vue {
   @Prop({ required: true }) readonly height!: number | string;
   @Prop({ required: true }) readonly parentItem!: TableCodeGroupEntity;
-  @PropSync("selected") syncedSelected!: TableCodeGroupEntity[];
-  dialog = false;
+
+  selected: TableCodeEntity[] = [];
+  dialog: boolean = false;
   item: TableCodeEntity = Object.create(null);
 
   reloadList() {
@@ -73,7 +74,7 @@ export default class extends Vue {
   }
 
   deleteItem() {
-    this.item = this.syncedSelected[0];
+    this.item = this.selected[0];
     (this.$refs.refEditDialog as any).delete();
   }
 }

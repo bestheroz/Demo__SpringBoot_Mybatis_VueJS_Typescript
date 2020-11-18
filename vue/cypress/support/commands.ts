@@ -48,13 +48,7 @@ Cypress.Commands.add('login', (username: string, password: string) => {
 });
 Cypress.Commands.add('visitHome', () => {
   cy.server();
-  cy.route('GET', '**/api/auth/me').as('me');
-  cy.route('GET', '**/api/menus/drawer').as('drawer');
-  cy.route('GET', '**/api/members/codes').as('memberList');
-  cy.visit('/');
-  cy.wait('@me');
-  cy.wait('@drawer');
-  cy.wait('@memberList');
+  cy.visit('/').wait(500);
   return cy;
 });
 Cypress.Commands.add('logout', () => {

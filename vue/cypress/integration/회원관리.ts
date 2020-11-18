@@ -23,7 +23,6 @@ describe('관리자>회원관리', () => {
       cy.setInputValue('사용자아이디', 'tester')
         .setInputValue('사용자명', '테스터')
         .setSelectValue('권한', '손님')
-        .setInputValue('세션타임아웃시간', '3000')
         .setInputValue('비밀번호', 'tester1234')
         .setInputValue('비밀번호 확인', 'tester1234');
       cy.get('button').contains('저장').click();
@@ -65,15 +64,6 @@ describe('관리자>회원관리', () => {
       cy.get('button').contains('저장').click();
     });
     cy.wait('@save').clickAlert('성공');
-  });
-  it('로그인 및 세센타임아웃시간 체크 - tester', () => {
-    cy.server();
-    cy.login('tester', 'tester1234');
-    cy.get('div.v-toolbar__content i.mdi-timer-sand')
-      .parent()
-      .contains('00시간');
-    cy.get('div.v-toolbar__content i.mdi-account').parent().contains('테스터');
-    cy.logout();
   });
   it('화면이동', () => {
     cy.server();
@@ -125,9 +115,6 @@ describe('관리자>회원관리', () => {
       .type('tester1234');
     cy.contains(' Go').click();
     cy.wait('@login');
-    cy.get('div.v-toolbar__content i.mdi-timer-sand')
-      .parent()
-      .contains('00시간');
     cy.get('div.v-toolbar__content i.mdi-account').parent().contains('테스터');
     cy.logout();
   });
