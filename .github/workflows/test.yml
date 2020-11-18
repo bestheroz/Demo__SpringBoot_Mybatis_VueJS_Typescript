@@ -50,8 +50,7 @@ jobs:
         env:
           cache-name: cache-cypress
         with:
-          path: |
-            ~/.cache/Cypress
+          path: ~/.cache/Cypress
           key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-${{ env.cache-name }}-
@@ -89,6 +88,9 @@ jobs:
         env:
           cache-name: cache-node-modules
         with:
+          path: |
+            ~/.npm
+            **/node_modules
           key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-${{ env.cache-name }}-
@@ -99,8 +101,7 @@ jobs:
         env:
           cache-name: cache-cypress
         with:
-          path: |
-            ~/.cache/Cypress
+          path: ~/.cache/Cypress
           key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-${{ env.cache-name }}-
