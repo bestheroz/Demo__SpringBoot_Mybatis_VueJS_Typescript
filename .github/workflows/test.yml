@@ -113,13 +113,6 @@ jobs:
             **/node_modules
           key: ${{ runner.os }}-node-${{ matrix.node-version }}-${{ hashFiles('**/package-lock.json') }}
 
-      - name: Cache Cypress
-        id: cache-cypress
-        uses: actions/cache@v2
-        with:
-          path: ~/.cache/Cypress
-          key: ${{ runner.os }}-cypress-${{ hashFiles('**/package-lock.json') }}
-
       - name: npm run build
         run: |
           cd vue
@@ -149,6 +142,13 @@ jobs:
         run: |
           cd target
           java -Dfile.encoding=UTF-8 -Xms2g -Xmx2g -XX:+UseG1GC -jar demo-1.jar &
+
+      - name: Cache Cypress
+          id: cache-cypress
+          uses: actions/cache@v2
+          with:
+            path: ~/.cache/Cypress
+            key: ${{ runner.os }}-cypress-${{ hashFiles('**/package-lock.json') }}
 
       - name: Cypress run
         uses: cypress-io/github-action@v2
