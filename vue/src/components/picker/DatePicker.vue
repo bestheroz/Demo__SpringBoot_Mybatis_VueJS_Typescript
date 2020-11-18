@@ -9,7 +9,7 @@
         @keydown.esc="dialog = false"
         @keydown.enter="$refs.refDialog.save(value)"
       >
-        <template v-slot:activator="{ on }">
+        <template #activator="{ on }">
           <ValidationProvider
             :name="label"
             :rules="required ? 'required' : ''"

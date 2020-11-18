@@ -7,21 +7,21 @@ export function getMemberNm(value: string | undefined | null): string {
   const find: SelectItem = store.state?.cache?.memberCodes?.find(
     (value1: SelectItem) => value1!.value === value,
   );
-  return find?.text || value || "";
+  return find?.text || value || "-";
 }
 
 export function formatDatetime(
   value: string | number | Date | undefined | null,
 ) {
   if (value === undefined || value === null || value === "") {
-    return "";
+    return "-";
   }
   return dayjs(value).format("YYYY-MM-DD HH:mm:ss");
 }
 
 export function formatDate(value: string | number | Date | undefined | null) {
   if (value === undefined || value === null || value === "") {
-    return "";
+    return "-";
   }
   return dayjs(value).format("YYYY-MM-DD");
 }
@@ -31,7 +31,7 @@ export function getEllipseText(
   length: number,
 ) {
   if (value === undefined || value === null || value === "") {
-    return "";
+    return "-";
   }
   return _.truncate(value, {
     length: length,

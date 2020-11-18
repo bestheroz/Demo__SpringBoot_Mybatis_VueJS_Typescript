@@ -20,7 +20,7 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from "vue-property-decorator";
-import { DrawerItem } from "@/common/types";
+import type { DrawerItem } from "@/common/types";
 import { errorPage } from "@/utils/errors";
 
 @Component({ name: "Viewer" })
@@ -33,12 +33,12 @@ export default class extends Vue {
       return "";
     }
     if (this.drawers?.length > 0) {
-      return this.findThisPage()!.title.split("(팝업)").join("");
+      return this.findThisPage().title.split("(팝업)").join("");
     }
     return "";
   }
 
-  findThisPage(): DrawerItem | undefined {
+  findThisPage(): DrawerItem {
     let result: DrawerItem | undefined;
     if (this.$route.name) {
       return { id: 0, title: "" };
@@ -57,7 +57,7 @@ export default class extends Vue {
       errorPage(403);
       return { id: 0, title: "" };
     }
-    return result!;
+    return result || { id: 0, title: "" };
   }
 
   @Watch("$store.state.drawer.drawers", { immediate: true })

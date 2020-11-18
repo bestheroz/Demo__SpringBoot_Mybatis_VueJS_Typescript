@@ -1,14 +1,6 @@
 <template>
   <div>
-    <modal
-      name="CodeEditDialog"
-      draggable
-      width="50%"
-      height="auto"
-      :shiftX="0.4"
-      :shiftY="0.1"
-      :clickToClose="false"
-    >
+    <v-dialog v-model="syncedDialog" persistent max-width="100%" width="60vw">
       <v-card>
         <v-card-title class="py-2 modal-header">
           <v-icon v-if="isNew">mdi-pencil-plus-outline</v-icon>
@@ -124,13 +116,13 @@
           </v-btn>
         </v-card-actions>
       </v-card>
-    </modal>
+    </v-dialog>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Prop, PropSync, Vue, Watch } from "vue-property-decorator";
-import { SelectItem, TableCodeEntity } from "@/common/types";
+import type { SelectItem, TableCodeEntity } from "@/common/types";
 import { deleteApi, getCodesApi, patchApi, postApi } from "@/utils/apis";
 import { confirmDelete } from "@/utils/alerts";
 import { ValidationObserver } from "vee-validate";
@@ -151,25 +143,22 @@ export default class extends Vue {
     this.syncedDialog = false;
   }
 
-  async mounted(): Promise<void> {
+  async beforeMount(): Promise<void> {
     this.AUTHORITY = await getCodesApi("AUTHORITY");
   }
 
   @Watch("syncedDialog", { immediate: true })
-  watchDialog(val: boolean) {
+  watchDialog(val: boolean): void {
     if (val) {
       this.isNew = !this.item.code;
       this.$refs.observer &&
         (this.$refs.observer as InstanceType<
           typeof ValidationObserver
         >).reset();
-      this.$modal.show("CodeEditDialog");
-    } else {
-      this.$modal.hide("CodeEditDialog");
     }
   }
 
-  async save() {
+  async save(): Promise<void> {
     const isValid = await (this.$refs.observer as InstanceType<
       typeof ValidationObserver
     >).validate();
@@ -179,34 +168,34 @@ export default class extends Vue {
     this.isNew ? await this.create() : await this.patch();
   }
 
-  async create() {
+  async create(): Promise<void> {
     this.loading = true;
     const response = await postApi<TableCodeEntity>(
       `${this.ENDPOINT_URL}${this.item.codeGroup}`,
       this.item,
     );
     this.loading = false;
-    if (response?.code?.startsWith(`S`)) {
+    if (response?.code?.startsWith("S")) {
       this.syncedDialog = false;
       this.$emit("finished");
     }
   }
 
-  async patch() {
+  async patch(): Promise<void> {
     this.loading = true;
     const response = await patchApi<TableCodeEntity>(
       `${this.ENDPOINT_URL}${this.item.codeGroup}/${this.item.code}/`,
       this.item,
     );
     this.loading = false;
-    if (response?.code?.startsWith(`S`)) {
+    if (response?.code?.startsWith("S")) {
       this.syncedDialog = false;
       window.localStorage.removeItem(`code__${this.item.codeGroup}`);
       this.$emit("finished");
     }
   }
 
-  async delete() {
+  async delete(): Promise<void> {
     const result = await confirmDelete();
     if (result.value) {
       this.loading = true;
@@ -214,7 +203,7 @@ export default class extends Vue {
         `${this.ENDPOINT_URL}${this.item.codeGroup}/${this.item.code}/`,
       );
       this.loading = false;
-      if (response?.code?.startsWith(`S`)) {
+      if (response?.code?.startsWith("S")) {
         window.localStorage.removeItem(`code__${this.item.codeGroup}`);
         this.$emit("finished");
       }

@@ -9,7 +9,7 @@
       </v-toolbar-title>
       <v-spacer />
       <v-menu open-on-hover bottom offset-y>
-        <template v-slot:activator="{ on }">
+        <template #activator="{ on }">
           <v-btn color="primary" x-large text v-on="on">
             <v-icon> mdi-account</v-icon>
             {{ user.name }}
@@ -45,7 +45,7 @@ import { Component, PropSync, Vue, Watch } from "vue-property-decorator";
 import { getVariableApi } from "@/utils/apis";
 import { logout } from "@/utils/authentications";
 import EditMeDialog from "@/components/layout/components/EditMeDialog.vue";
-import { TableMemberEntity } from "@/common/types";
+import type { TableMemberEntity } from "@/common/types";
 
 @Component({
   name: "AppBar",
@@ -62,7 +62,7 @@ export default class extends Vue {
     return !window.toolbar.visible;
   }
 
-  async mounted(): Promise<void> {
+  async beforeMount(): Promise<void> {
     this.title = await getVariableApi("title");
   }
 

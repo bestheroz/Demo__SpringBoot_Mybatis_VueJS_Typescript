@@ -17,14 +17,14 @@
         :height="height"
         :footer-props="envs.FOOTER_PROPS_MAX_1000"
       >
-        <template v-slot:header>
+        <template #header>
           <data-table-filter
             :header="headers"
             :output.sync="filteredItems"
             :input="items"
           />
         </template>
-        <template v-slot:[`item.id`]="{ item }">
+        <template #[`item.id`]="{ item }">
           <a
             :style="{ 'font-weight': 'bold' }"
             @click="$emit('row-id-clicked', { ...item, password: undefined })"
@@ -32,7 +32,7 @@
             {{ item.id }}
           </a>
         </template>
-        <template v-slot:[`item.available`]="{ item }">
+        <template #[`item.available`]="{ item }">
           <span style="display: inline-flex">
             <v-checkbox
               readonly
@@ -44,16 +44,16 @@
             />
           </span>
         </template>
-        <template v-slot:[`item.authority`]="{ item }" v-if="AUTHORITY">
+        <template #[`item.authority`]="{ item }" v-if="AUTHORITY">
           {{ item.authority | getCodeText(AUTHORITY) }}
         </template>
-        <template v-slot:[`item.expired`]="{ item }">
+        <template #[`item.expired`]="{ item }">
           {{ item.expired | formatDatetime }}
         </template>
-        <template v-slot:[`item.updated`]="{ item }">
+        <template #[`item.updated`]="{ item }">
           {{ item.updated | formatDatetime }}
         </template>
-        <template v-slot:[`item.updatedBy`]="{ item }">
+        <template #[`item.updatedBy`]="{ item }">
           {{ item.updatedBy | formatMemberNm }}
         </template>
       </v-data-table>
@@ -63,7 +63,11 @@
 
 <script lang="ts">
 import { Component, Emit, Prop, PropSync, Vue } from "vue-property-decorator";
-import { DataTableHeader, SelectItem, TableMemberEntity } from "@/common/types";
+import type {
+  DataTableHeader,
+  SelectItem,
+  TableMemberEntity,
+} from "@/common/types";
 import { getApi, getCodesApi } from "@/utils/apis";
 import envs from "@/constants/envs";
 import DataTableFilter from "@/components/datatable/DataTableFilter.vue";
@@ -89,58 +93,63 @@ export default class extends Vue {
 
   headers: DataTableHeader[] = [
     {
-      text: `사용자아이디`,
-      align: `start`,
-      value: `id`,
+      text: "사용자아이디",
+      align: "start",
+      value: "id",
     },
     {
-      text: `사용자명`,
-      align: `start`,
-      value: `name`,
+      text: "사용자명",
+      align: "start",
+      value: "name",
     },
     {
-      text: `권한`,
-      align: `center`,
-      value: `authority`,
+      text: "권한",
+      align: "center",
+      value: "authority",
       filterType: "select",
       filterSelectItem: [],
       width: "8rem",
     },
     {
-      text: `만료일`,
-      align: `center`,
-      value: `expired`,
+      text: "만료일",
+      align: "center",
+      value: "expired",
       width: "10rem",
     },
     {
-      text: `사용 가능`,
-      align: `center`,
-      value: `available`,
+      text: "사용 가능",
+      align: "center",
+      value: "available",
       filterType: "switch",
       width: "6rem",
     },
     {
-      text: `작업 일시`,
-      align: `center`,
-      value: `updated`,
+      text: "작업 일시",
+      align: "center",
+      value: "updated",
       filterable: false,
       width: "10rem",
     },
     {
-      text: `작업자`,
-      align: `start`,
-      value: `updatedBy`,
+      text: "작업자",
+      align: "start",
+      value: "updatedBy",
       filterable: false,
       width: "7rem",
     },
   ];
 
+  async beforeMount(): Promise<void> {
+    this.AUTHORITY = await getCodesApi("AUTHORITY");
+  }
+
   async mounted(): Promise<void> {
-    this.headers[
-      this.headers.indexOf(
-        this.headers.find((item) => item.value === "authority")!,
-      )
-    ].filterSelectItem = this.AUTHORITY = await getCodesApi("AUTHORITY");
+    const find = this.headers.find((item) => item.value === "authority");
+    if (find) {
+      this.headers[
+        this.headers.indexOf(find)
+      ].filterSelectItem = this.AUTHORITY;
+    }
     await this.getList();
   }
 
@@ -154,7 +163,7 @@ export default class extends Vue {
   }
 
   @Emit("row-id-clicked")
-  rowIdClicked(value: TableMemberEntity) {
+  rowIdClicked(value: TableMemberEntity): TableMemberEntity {
     return value;
   }
 }

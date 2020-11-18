@@ -1,14 +1,6 @@
 <template>
   <div>
-    <modal
-      name="EditMeDialog"
-      draggable
-      width="25%"
-      height="auto"
-      :shiftX="0.97"
-      :shiftY="0.15"
-      :clickToClose="false"
-    >
+    <v-dialog v-model="syncedDialog" persistent max-width="100%" width="25vw">
       <v-card>
         <v-card-title class="py-2 modal-header">
           내 정보 수정
@@ -95,14 +87,14 @@
           </v-btn>
         </v-card-actions>
       </v-card>
-    </modal>
+    </v-dialog>
     <change-password-dialog :dialog.sync="newPasswordDialog" />
   </div>
 </template>
 
 <script lang="ts">
 import { Component, PropSync, Vue, Watch } from "vue-property-decorator";
-import { TableMemberEntity } from "@/common/types";
+import type { TableMemberEntity } from "@/common/types";
 import { getApi, patchApi } from "@/utils/apis";
 import DatetimePicker from "@/components/picker/DatetimePicker.vue";
 import ChangePasswordDialog from "@/components/layout/components/ChangePasswordDialog.vue";
@@ -138,9 +130,6 @@ export default class extends Vue {
         (this.$refs.observer as InstanceType<
           typeof ValidationObserver
         >).reset();
-      this.$modal.show("EditMeDialog");
-    } else {
-      this.$modal.hide("EditMeDialog");
     }
   }
 
@@ -155,7 +144,7 @@ export default class extends Vue {
     this.loading = true;
     const payload = { ...this.item };
     payload.password = pbkdf2
-      .pbkdf2Sync(this.item.password!, "salt", 1, 32, "sha512")
+      .pbkdf2Sync(this.item.password || "", "salt", 1, 32, "sha512")
       .toString();
     const response = await patchApi<TableMemberEntity>(
       `${this.ENDPOINT_URL}mine`,

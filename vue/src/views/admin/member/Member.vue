@@ -34,7 +34,7 @@
 import { Component, Ref, Vue } from "vue-property-decorator";
 import MemberList from "@/views/admin/member/components/MemberList.vue";
 import MemberEditDialog from "@/views/admin/member/components/MemberEditDialog.vue";
-import { TableMemberEntity } from "@/common/types";
+import type { TableMemberEntity } from "@/common/types";
 import ButtonSet from "@/components/speeddial/ButtonSet.vue";
 import dayjs from "dayjs";
 

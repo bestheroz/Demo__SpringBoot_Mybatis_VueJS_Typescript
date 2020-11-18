@@ -10,14 +10,14 @@
       open-on-hover
       transition="scale-transition"
     >
-      <template v-slot:activator>
+      <template #activator>
         <v-btn v-model="fab" color="button-default" dark fab small>
           <v-icon color="black" v-if="fab">mdi-close</v-icon>
           <v-icon v-else>mdi-function</v-icon>
         </v-btn>
       </template>
       <v-tooltip top v-if="reloadButton">
-        <template v-slot:activator="{ on }">
+        <template #activator="{ on }">
           <v-btn
             fab
             dark
@@ -33,7 +33,7 @@
         <span> {{ reloadText }} </span>
       </v-tooltip>
       <v-tooltip top v-if="saveButton">
-        <template v-slot:activator="{ on }">
+        <template #activator="{ on }">
           <v-btn
             fab
             dark
@@ -49,7 +49,7 @@
         <span> {{ saveText }} </span>
       </v-tooltip>
       <v-tooltip top v-if="excelButton">
-        <template v-slot:activator="{ on }">
+        <template #activator="{ on }">
           <v-btn
             fab
             dark
@@ -65,7 +65,7 @@
         <span> {{ excelText }} </span>
       </v-tooltip>
       <v-tooltip top v-if="deleteButton">
-        <template v-slot:activator="{ on }">
+        <template #activator="{ on }">
           <v-btn
             fab
             dark
@@ -81,7 +81,7 @@
         <span> {{ deleteText }} </span>
       </v-tooltip>
       <v-tooltip top v-if="addButton">
-        <template v-slot:activator="{ on }">
+        <template #activator="{ on }">
           <v-btn
             fab
             dark
@@ -97,7 +97,7 @@
         <span> {{ addText }} </span>
       </v-tooltip>
       <v-tooltip top v-if="inquiryButton">
-        <template v-slot:activator="{ on }">
+        <template #activator="{ on }">
           <v-btn
             fab
             dark

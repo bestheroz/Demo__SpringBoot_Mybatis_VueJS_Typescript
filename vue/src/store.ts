@@ -27,7 +27,7 @@ const user = {
   },
   actions: {
     async setUser({ commit }: ActionContext<any, any>) {
-      const response = await getApi<TableMemberEntity>(`auth/me`);
+      const response = await getApi<TableMemberEntity>("auth/me");
       commit("setUser", response?.data);
     },
     async getUser({

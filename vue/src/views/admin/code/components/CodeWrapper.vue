@@ -35,15 +35,15 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
-import { TableCodeEntity, TableCodeGroupEntity } from '@/common/types';
-import ButtonSet from '@/components/speeddial/ButtonSet.vue';
-import CodeEditDialog from '@/views/admin/code/components/CodeEditDialog.vue';
-import DataTableFilter from '@/components/datatable/DataTableFilter.vue';
-import CodeList from '@/views/admin/code/components/CodeList.vue';
+import { Component, Prop, Vue } from "vue-property-decorator";
+import type { TableCodeEntity, TableCodeGroupEntity } from "@/common/types";
+import ButtonSet from "@/components/speeddial/ButtonSet.vue";
+import CodeEditDialog from "@/views/admin/code/components/CodeEditDialog.vue";
+import DataTableFilter from "@/components/datatable/DataTableFilter.vue";
+import CodeList from "@/views/admin/code/components/CodeList.vue";
 
 @Component({
-  name: 'CodeWrapper',
+  name: "CodeWrapper",
   components: {
     CodeList,
     DataTableFilter,
@@ -56,7 +56,7 @@ export default class extends Vue {
   @Prop({ required: true }) readonly parentItem!: TableCodeGroupEntity;
 
   selected: TableCodeEntity[] = [];
-  dialog: boolean = false;
+  dialog = false;
   item: TableCodeEntity = Object.create(null);
 
   reloadList() {

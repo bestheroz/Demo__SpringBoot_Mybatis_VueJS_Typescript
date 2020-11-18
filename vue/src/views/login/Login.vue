@@ -6,7 +6,7 @@
           <v-toolbar color="primary" dark flat>
             <v-toolbar-title>Login at {{ title }}</v-toolbar-title>
             <v-spacer />
-            <template v-slot:heading>
+            <template #heading>
               <div class="text-center">
                 <h1 class="display-2 font-weight-bold">
                   <v-icon>mdi-lock-outline</v-icon>
@@ -103,6 +103,10 @@ export default class extends Vue {
   loading = false;
   dialog = false;
 
+  async beforeMount(): Promise<void> {
+    this.title = await getVariableApi("title");
+  }
+
   async mounted(): Promise<void> {
     await this.$store.dispatch("clearUser");
     await this.$store.dispatch("clearDrawer");
@@ -111,7 +115,6 @@ export default class extends Vue {
     if (this.$route.query.login === "need") {
       this.$toasted.error("로그인이 필요합니다.");
     }
-    this.title = await getVariableApi("title");
   }
 
   async login(): Promise<void> {

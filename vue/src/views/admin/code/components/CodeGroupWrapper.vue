@@ -34,7 +34,7 @@
 
 <script lang="ts">
 import { Component, Prop, PropSync, Vue } from "vue-property-decorator";
-import { TableCodeGroupEntity } from "@/common/types";
+import type { TableCodeGroupEntity } from "@/common/types";
 import ButtonSet from "@/components/speeddial/ButtonSet.vue";
 import CodeGroupEditDialog from "@/views/admin/code/components/CodeGroupEditDialog.vue";
 import CodeGroupList from "@/views/admin/code/components/CodeGroupList.vue";

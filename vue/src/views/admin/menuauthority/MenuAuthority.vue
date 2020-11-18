@@ -23,7 +23,7 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { SelectItem } from "@/common/types";
+import type { SelectItem } from "@/common/types";
 import { getCodesApi } from "@/utils/apis";
 import MenuAuthorityList from "@/views/admin/menuauthority/components/MenuAuthorityList.vue";
 
@@ -38,11 +38,11 @@ export default class extends Vue {
   loading = false;
   AUTHORITY: SelectItem[] = [];
 
-  mounted() {
+  mounted(): void {
     this.getCodeList();
   }
 
-  async getCodeList() {
+  async getCodeList(): Promise<void> {
     this.loading = true;
     const data: SelectItem[] = await getCodesApi("AUTHORITY");
     const user = await this.$store.dispatch("getUser");

@@ -18,7 +18,7 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { TableCodeGroupEntity } from "@/common/types";
+import type { TableCodeGroupEntity } from "@/common/types";
 import CodeList from "@/views/admin/code/components/CodeList.vue";
 import CodeGroupList from "@/views/admin/code/components/CodeGroupList.vue";
 import CodeGroupWrapper from "@/views/admin/code/components/CodeGroupWrapper.vue";

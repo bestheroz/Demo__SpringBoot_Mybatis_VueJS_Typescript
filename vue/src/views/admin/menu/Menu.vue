@@ -24,11 +24,11 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Ref, Vue } from "vue-property-decorator";
 import MenuList from "@/views/admin/menu/components/MenuList.vue";
 import ButtonSet from "@/components/speeddial/ButtonSet.vue";
 import MenuEditDialog from "@/views/admin/menu/components/MenuEditDialog.vue";
-import { TableMenuEntity } from "@/common/types";
+import type { TableMenuEntity } from "@/common/types";
 
 @Component({
   name: "Menu",
@@ -39,28 +39,31 @@ import { TableMenuEntity } from "@/common/types";
   },
 })
 export default class extends Vue {
+  @Ref("refList") readonly refList!: MenuList;
+  @Ref("refEditDialog") readonly refEditDialog!: MenuEditDialog;
+
   item: TableMenuEntity = Object.create(null);
   dialog = false;
 
-  reloadList() {
-    this.$refs.refList && (this.$refs.refList as any).getList();
+  reloadList(): void {
+    this.refList.getList();
   }
 
-  addItem(value: TableMenuEntity) {
+  addItem(value: TableMenuEntity): void {
     this.item = {
       parentId: value.id,
     };
     this.dialog = true;
   }
 
-  editItem(value: TableMenuEntity) {
+  editItem(value: TableMenuEntity): void {
     this.item = { ...value };
     this.dialog = true;
   }
 
-  deleteItem(value: TableMenuEntity) {
+  deleteItem(value: TableMenuEntity): void {
     this.item = { ...value };
-    (this.$refs.refEditDialog as any).delete();
+    this.refEditDialog.delete();
   }
 }
 </script>

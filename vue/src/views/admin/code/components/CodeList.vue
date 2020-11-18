@@ -16,14 +16,14 @@
       :height="height"
       :footer-props="envs.FOOTER_PROPS_MAX_1000"
     >
-      <template v-slot:header>
+      <template #header>
         <data-table-filter
           :header="headers"
           :output.sync="filteredItems"
           :input="items"
         />
       </template>
-      <template v-slot:[`item.code`]="{ item }">
+      <template #[`item.code`]="{ item }">
         <a
           :style="{ 'font-weight': 'bold' }"
           @click="$emit('row-id-clicked', { ...item })"
@@ -31,7 +31,7 @@
           {{ item.code }}
         </a>
       </template>
-      <template v-slot:[`item.available`]="{ item }">
+      <template #[`item.available`]="{ item }">
         <span style="display: inline-flex">
           <v-checkbox
             readonly
@@ -43,13 +43,13 @@
           />
         </span>
       </template>
-      <template v-slot:[`item.authority`]="{ item }" v-if="AUTHORITY">
+      <template #[`item.authority`]="{ item }" v-if="AUTHORITY">
         {{ item.authority | getCodeText(AUTHORITY) }}
       </template>
-      <template v-slot:[`item.updatedBy`]="{ item }">
+      <template #[`item.updatedBy`]="{ item }">
         {{ item.updatedBy | formatMemberNm }}
       </template>
-      <template v-slot:[`item.updated`]="{ item }">
+      <template #[`item.updated`]="{ item }">
         {{ item.updated | formatDatetime }}
       </template>
     </v-data-table>
@@ -57,19 +57,19 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, PropSync, Vue, Watch } from 'vue-property-decorator';
-import {
+import { Component, Prop, PropSync, Vue, Watch } from "vue-property-decorator";
+import type {
   DataTableHeader,
   SelectItem,
   TableCodeEntity,
   TableCodeGroupEntity,
-} from '@/common/types';
-import { getApi, getCodesApi } from '@/utils/apis';
-import envs from '@/constants/envs';
-import DataTableFilter from '@/components/datatable/DataTableFilter.vue';
+} from "@/common/types";
+import { getApi, getCodesApi } from "@/utils/apis";
+import envs from "@/constants/envs";
+import DataTableFilter from "@/components/datatable/DataTableFilter.vue";
 
 @Component({
-  name: 'CodeList',
+  name: "CodeList",
   components: {
     DataTableFilter,
   },
@@ -77,73 +77,73 @@ import DataTableFilter from '@/components/datatable/DataTableFilter.vue';
 export default class extends Vue {
   @Prop({ required: true }) readonly parentItem!: TableCodeGroupEntity;
   @Prop({ required: true }) readonly height!: number | string;
-  @PropSync('selected') syncedSelected!: TableCodeEntity[];
+  @PropSync("selected") syncedSelected!: TableCodeEntity[];
 
   readonly envs: typeof envs = envs;
   AUTHORITY: SelectItem[] = [];
 
-  loading: boolean = false;
-  sortBy: string[] = ['displayOrder'];
+  loading = false;
+  sortBy: string[] = ["displayOrder"];
   sortDesc: boolean[] = [false];
   items: TableCodeEntity[] = [];
   filteredItems: TableCodeEntity[] = [];
   headers: DataTableHeader[] = [
     {
-      text: `상세 코드`,
-      align: `start`,
-      value: `code`,
+      text: "상세 코드",
+      align: "start",
+      value: "code",
     },
     {
-      text: `상세 코드명`,
-      align: `start`,
-      value: `name`,
+      text: "상세 코드명",
+      align: "start",
+      value: "name",
     },
     {
-      text: `사용 가능`,
-      align: `center`,
-      value: `available`,
-      filterType: 'switch',
-      width: '6rem',
+      text: "사용 가능",
+      align: "center",
+      value: "available",
+      filterType: "switch",
+      width: "6rem",
     },
     {
-      text: `출력 순서`,
-      align: `end`,
-      value: `displayOrder`,
-      width: '6rem',
+      text: "출력 순서",
+      align: "end",
+      value: "displayOrder",
+      width: "6rem",
     },
     {
-      text: `권한(~부터 볼수 있음)`,
-      align: `center`,
-      value: `authority`,
-      filterType: 'select',
+      text: "권한(~부터 볼수 있음)",
+      align: "center",
+      value: "authority",
+      filterType: "select",
       filterSelectItem: [],
-      width: '11rem',
+      width: "11rem",
     },
     {
-      text: `작업 일시`,
-      align: `center`,
-      value: `updated`,
+      text: "작업 일시",
+      align: "center",
+      value: "updated",
       filterable: false,
-      width: '10rem',
+      width: "10rem",
     },
     {
-      text: `작업자`,
-      align: `start`,
-      value: `updatedBy`,
+      text: "작업자",
+      align: "start",
+      value: "updatedBy",
       filterable: false,
-      width: '7rem',
+      width: "7rem",
     },
   ];
 
   async mounted() {
     this.headers[
       this.headers.indexOf(
-        this.headers.find((item) => item.value === 'authority')!,
+        this.headers.find((item) => item.value === "authority")!,
       )
-    ].filterSelectItem = this.AUTHORITY = await getCodesApi('AUTHORITY');
+    ].filterSelectItem = this.AUTHORITY = await getCodesApi("AUTHORITY");
   }
 
-  @Watch('parentItem')
+  @Watch("parentItem")
   watchParentItem(val: TableCodeGroupEntity): void {
     this.items = [];
     val?.codeGroup && this.getList();

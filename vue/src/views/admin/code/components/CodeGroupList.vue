@@ -16,14 +16,14 @@
       :height="height"
       :footer-props="envs.FOOTER_PROPS_MAX_1000"
     >
-      <template v-slot:header>
+      <template #header>
         <data-table-filter
           :header="headers"
           :output.sync="filteredItems"
           :input="items"
         />
       </template>
-      <template v-slot:[`item.codeGroup`]="{ item }">
+      <template #[`item.codeGroup`]="{ item }">
         <a
           :style="{ 'font-weight': 'bold' }"
           @click="$emit('row-id-clicked', { ...item })"
@@ -31,10 +31,10 @@
           {{ item.codeGroup }}
         </a>
       </template>
-      <template v-slot:[`item.updated`]="{ item }">
+      <template #[`item.updated`]="{ item }">
         {{ item.updated | formatDatetime }}
       </template>
-      <template v-slot:[`item.updatedBy`]="{ item }">
+      <template #[`item.updatedBy`]="{ item }">
         {{ item.updatedBy | formatMemberNm }}
       </template>
     </v-data-table>
@@ -43,7 +43,7 @@
 
 <script lang="ts">
 import { Component, Emit, Prop, PropSync, Vue } from "vue-property-decorator";
-import { DataTableHeader, TableCodeGroupEntity } from "@/common/types";
+import type { DataTableHeader, TableCodeGroupEntity } from "@/common/types";
 import { getApi } from "@/utils/apis";
 import envs from "@/constants/envs";
 import DataTableFilter from "@/components/datatable/DataTableFilter.vue";

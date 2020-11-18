@@ -29,8 +29,11 @@ export default class extends Vue {
   now = "";
   color = "";
 
-  async mounted(): Promise<void> {
+  async beforeMount(): Promise<void> {
     this.title = await getVariableApi("title");
+  }
+
+  async mounted(): Promise<void> {
     this.now = dayjs().format("YYYY년 MM월 DD일 HH시 mm분 ss초");
     this.color = this.getRandomColor();
     this.interval = setInterval(() => {
@@ -44,7 +47,7 @@ export default class extends Vue {
     this.interval = null;
   }
 
-  getRandomColor() {
+  getRandomColor(): string {
     const letters = "0123456789ABCDEF";
     let color = "#";
     for (let i = 0; i < 6; i++) {

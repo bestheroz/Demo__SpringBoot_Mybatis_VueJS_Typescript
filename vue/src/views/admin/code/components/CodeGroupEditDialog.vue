@@ -1,14 +1,6 @@
 <template>
   <div>
-    <modal
-      name="CodeGroupEditDialog"
-      draggable
-      width="50%"
-      height="auto"
-      :shiftX="0.4"
-      :shiftY="0.1"
-      :clickToClose="false"
-    >
+    <v-dialog v-model="syncedDialog" persistent max-width="100%" width="60vw">
       <v-card>
         <v-card-title class="py-2 modal-header">
           <v-icon v-if="isNew">mdi-pencil-plus-outline</v-icon>
@@ -70,13 +62,13 @@
           </v-btn>
         </v-card-actions>
       </v-card>
-    </modal>
+    </v-dialog>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Prop, PropSync, Vue, Watch } from "vue-property-decorator";
-import { TableCodeGroupEntity } from "@/common/types";
+import type { TableCodeGroupEntity } from "@/common/types";
 import { deleteApi, patchApi, postApi } from "@/utils/apis";
 import { confirmDelete } from "@/utils/alerts";
 import { ValidationObserver } from "vee-validate";
@@ -96,8 +88,6 @@ export default class extends Vue {
     this.syncedDialog = false;
   }
 
-  mounted() {}
-
   @Watch("syncedDialog", { immediate: true })
   watchDialog(val: boolean) {
     if (val) {
@@ -106,9 +96,6 @@ export default class extends Vue {
         (this.$refs.observer as InstanceType<
           typeof ValidationObserver
         >).reset();
-      this.$modal.show("CodeGroupEditDialog");
-    } else {
-      this.$modal.hide("CodeGroupEditDialog");
     }
   }
 

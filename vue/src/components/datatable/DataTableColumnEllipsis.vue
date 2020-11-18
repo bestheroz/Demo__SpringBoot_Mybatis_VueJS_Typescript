@@ -13,7 +13,7 @@
         open-on-click
         :open-on-hover="false"
       >
-        <template v-slot:activator="{ on, attrs }">
+        <template #activator="{ on, attrs }">
           <span v-on="on" v-bind="attrs" @click="show = !show">
             {{ value }}
           </span>

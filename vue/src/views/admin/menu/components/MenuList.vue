@@ -14,22 +14,22 @@
         hide-default-footer
         :height="height"
       >
-        <template v-slot:[`item.type`]="{ item }" v-if="MENU_TYPE">
+        <template #[`item.type`]="{ item }" v-if="MENU_TYPE">
           {{ item.type | getCodeText(MENU_TYPE) }}
         </template>
-        <template v-slot:[`item.name`]="{ item }">
+        <template #[`item.name`]="{ item }">
           <span :style="`padding-left: ${80 * (item.level - 1)}px;`">
             <v-icon v-if="item.icon"> {{ item.icon }} </v-icon>
             {{ item.name }}
           </span>
         </template>
-        <template v-slot:[`item.updated`]="{ item }">
+        <template #[`item.updated`]="{ item }">
           {{ item.updated | formatDatetime }}
         </template>
-        <template v-slot:[`item.updatedBy`]="{ item }">
+        <template #[`item.updatedBy`]="{ item }">
           {{ item.updatedBy | formatMemberNm }}
         </template>
-        <template v-slot:[`item.action`]="{ item }">
+        <template #[`item.action`]="{ item }">
           <v-btn
             class="mx-1"
             tile
@@ -68,7 +68,11 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { DataTableHeader, SelectItem, TableMenuEntity } from "@/common/types";
+import type {
+  DataTableHeader,
+  SelectItem,
+  TableMenuEntity,
+} from "@/common/types";
 import { getApi, getCodesApi } from "@/utils/apis";
 
 interface MenuVO extends TableMenuEntity {
@@ -88,53 +92,58 @@ export default class extends Vue {
 
   headers: DataTableHeader[] = [
     {
-      text: `타입`,
-      align: `center`,
-      value: `type`,
+      text: "타입",
+      align: "center",
+      value: "type",
       filterType: "select",
       filterSelectItem: [],
       width: "5rem",
     },
     {
-      text: `메뉴명`,
-      align: `start`,
-      value: `name`,
+      text: "메뉴명",
+      align: "start",
+      value: "name",
     },
     {
-      text: `메뉴 순서`,
-      align: `end`,
-      value: `displayOrder`,
+      text: "메뉴 순서",
+      align: "end",
+      value: "displayOrder",
       width: "5rem",
     },
     {
-      text: `Action`,
-      align: `center`,
-      value: `action`,
+      text: "Action",
+      align: "center",
+      value: "action",
       filterable: false,
       width: "18rem",
     },
     {
-      text: `작업 일시`,
-      align: `center`,
-      value: `updated`,
+      text: "작업 일시",
+      align: "center",
+      value: "updated",
       filterable: false,
       width: "10rem",
     },
     {
-      text: `작업자`,
-      align: `start`,
-      value: `updatedBy`,
+      text: "작업자",
+      align: "start",
+      value: "updatedBy",
       filterable: false,
       width: "7rem",
     },
   ];
+  async beforeMount(): Promise<void> {
+    this.MENU_TYPE = await getCodesApi("MENU_TYPE");
+  }
 
-  async mounted(): Promise<void> {
-    this.MENU_TYPE = await getCodesApi(`MENU_TYPE`);
-    this.headers[
-      this.headers.indexOf(this.headers.find((item) => item.value === "type")!)
-    ].filterSelectItem = this.MENU_TYPE;
-    await this.getList();
+  mounted(): void {
+    const find = this.headers.find((item) => item.value === "type");
+    if (find) {
+      this.headers[
+        this.headers.indexOf(find)
+      ].filterSelectItem = this.MENU_TYPE;
+    }
+    this.getList();
   }
 
   async getList(): Promise<void> {

@@ -8,7 +8,7 @@
           :prepend-icon="item.icon"
           :value="false"
         >
-          <template v-slot:activator>
+          <template #activator>
             <v-list-item-content>
               <v-list-item-title> {{ item.title }}</v-list-item-title>
             </v-list-item-content>
@@ -48,7 +48,7 @@
       </template>
     </v-list>
 
-    <template v-slot:append>
+    <template #append>
       <div class="ma-2">
         <v-row no-gutters>
           <v-col cols="10">
@@ -71,7 +71,7 @@
 
 <script lang="ts">
 import { Component, PropSync, Vue, Watch } from "vue-property-decorator";
-import { DrawerItem } from "@/common/types";
+import type { DrawerItem } from "@/common/types";
 import { logout } from "@/utils/authentications";
 import { postApi } from "@/utils/apis";
 

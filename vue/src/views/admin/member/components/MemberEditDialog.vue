@@ -1,14 +1,6 @@
 <template>
   <div>
-    <modal
-      name="MemberEditDialog"
-      draggable
-      width="50%"
-      height="auto"
-      :shiftX="0.4"
-      :shiftY="0.15"
-      :clickToClose="false"
-    >
+    <v-dialog v-model="syncedDialog" persistent max-width="100%" width="60vw">
       <v-card>
         <v-card-title class="py-2 modal-header">
           <v-icon v-if="isNew">mdi-pencil-plus-outline</v-icon>
@@ -148,13 +140,13 @@
           </v-btn>
         </v-card-actions>
       </v-card>
-    </modal>
+    </v-dialog>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Prop, PropSync, Vue, Watch } from "vue-property-decorator";
-import { SelectItem, TableMemberEntity } from "@/common/types";
+import type { SelectItem, TableMemberEntity } from "@/common/types";
 import { deleteApi, getCodesApi, patchApi, postApi } from "@/utils/apis";
 import DatetimePicker from "@/components/picker/DatetimePicker.vue";
 import { confirmDelete } from "@/utils/alerts";
@@ -181,7 +173,7 @@ export default class extends Vue {
     this.syncedDialog = false;
   }
 
-  async mounted(): Promise<void> {
+  async beforeMount(): Promise<void> {
     this.AUTHORITY = await getCodesApi("AUTHORITY");
   }
 
@@ -196,9 +188,6 @@ export default class extends Vue {
         (this.$refs.observer as InstanceType<
           typeof ValidationObserver
         >).reset();
-      this.$modal.show("MemberEditDialog");
-    } else {
-      this.$modal.hide("MemberEditDialog");
     }
   }
 
@@ -225,7 +214,7 @@ export default class extends Vue {
       params,
     );
     this.loading = false;
-    if (response?.code?.startsWith(`S`)) {
+    if (response?.code?.startsWith("S")) {
       await this.$store.dispatch("setMemberCodes");
       this.syncedDialog = false;
       this.$emit("finished");
@@ -245,7 +234,7 @@ export default class extends Vue {
       params,
     );
     this.loading = false;
-    if (response?.code?.startsWith(`S`)) {
+    if (response?.code?.startsWith("S")) {
       const user = await this.$store.dispatch("getUser");
       if (this.item.id === user.id) {
         await this.$store.dispatch("setUser");
@@ -264,7 +253,7 @@ export default class extends Vue {
         `${this.ENDPOINT_URL}${this.item.id}/`,
       );
       this.loading = false;
-      if (response?.code?.startsWith(`S`)) {
+      if (response?.code?.startsWith("S")) {
         await this.$store.dispatch("setMemberCodes");
         this.$emit("finished");
       }

@@ -1,14 +1,6 @@
 <template>
   <div>
-    <modal
-      name="ChangePasswordDialog"
-      draggable
-      width="25%"
-      height="auto"
-      :shiftX="0.84"
-      :shiftY="0.2"
-      :clickToClose="false"
-    >
+    <v-dialog v-model="syncedDialog" persistent max-width="100%" width="25vw">
       <v-card>
         <v-card-title class="py-2 modal-header">
           비밀번호 변경
@@ -93,7 +85,7 @@
           </v-btn>
         </v-card-actions>
       </v-card>
-    </modal>
+    </v-dialog>
   </div>
 </template>
 
@@ -136,9 +128,6 @@ export default class extends Vue {
         (this.$refs.observer as InstanceType<
           typeof ValidationObserver
         >).reset();
-      this.$modal.show("ChangePasswordDialog");
-    } else {
-      this.$modal.hide("ChangePasswordDialog");
     }
   }
 

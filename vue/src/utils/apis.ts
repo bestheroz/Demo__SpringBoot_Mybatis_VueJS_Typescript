@@ -175,7 +175,7 @@ export async function getVariableApi<T = string>(
 }
 
 function alertResponseMessage(data: ApiDataResult<any>): void {
-  if (data.code.startsWith(`S`)) {
+  if (data.code.startsWith("S")) {
     alertSuccess(data.message);
   } else {
     alertError(data.message);
