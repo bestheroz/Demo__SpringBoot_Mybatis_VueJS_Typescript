@@ -102,7 +102,7 @@ jobs:
         run: |
           mvn dependency:go-offline
 
-  build:
+  test:
     name: 3. build & run & test
     needs: [npm-install, maven-install]
     runs-on: ubuntu-latest
