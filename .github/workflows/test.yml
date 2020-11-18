@@ -16,12 +16,8 @@ jobs:
 
     strategy:
       matrix:
-        os: [ubuntu-latest]
-        node-version: [14]
-        include:
-          - node: 15
-            os: ubuntu-latest
-            experimental: true
+        os: ubuntu-latest
+        node-version: 14
 
     steps:
       - uses: actions/checkout@v2
@@ -73,12 +69,8 @@ jobs:
 
     strategy:
       matrix:
-        os: [ubuntu-latest]
-        java-version: [11]
-        include:
-          - java: 15
-            os: ubuntu-latest
-            experimental: true
+        os: ubuntu-latest
+        java-version: 11
 
     steps:
       - uses: actions/checkout@v2
@@ -107,16 +99,13 @@ jobs:
   test:
     name: 3. build & run & test
     needs: [npm-install, maven-install]
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
 
     strategy:
       matrix:
-        os: [ubuntu-latest]
-        node-version: [14]
-        include:
-          - node: 15
-            os: ubuntu-latest
-            experimental: true
+        os: ubuntu-latest
+        node-version: 14
+        java-version: 11
 
     steps:
       - uses: actions/checkout@v2
@@ -166,8 +155,13 @@ jobs:
 
       - name: move front-end dist to target
         run: |
-          mkdir -p ~/work/swan_2020/swan_2020/target/classes/static
-          mv -f ~/work/swan_2020/swan_2020/vue/dist/* ~/work/swan_2020/swan_2020/target/classes/static/
+          mkdir -p target/classes/static
+          mv -f vue/dist/* target/classes/static/
+
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java-version }}
 
       - name: mvn package
         run: |
