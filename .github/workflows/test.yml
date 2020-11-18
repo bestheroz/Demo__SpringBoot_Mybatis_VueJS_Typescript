@@ -99,11 +99,6 @@ jobs:
           npm run lint
           npm run build
 
-      - name: serve
-        run: |
-          cd vue
-          npm run serve &
-
   test:
     name: 3. test - cypress
     needs: build
@@ -129,9 +124,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-${{ env.cache-name }}-
 
-      - name: run cypress
-        run: |
-          cd vue
-          npm run test
+      - name: Cypress run
+        uses: cypress-io/github-action@v2
         with:
-          wait-on: http://localhost:8081
+          start: npm run serve
+          wait-on: 'http://localhost:8081'
+          command-prefix: 'percy exec -- npx'
+          command: npm run test
