@@ -63,7 +63,7 @@ jobs:
           npm ci
 
   build:
-    name: 2. npm lint & build
+    name: 2. npm lint & build & test
     needs: install
     runs-on: ubuntu-latest
 
@@ -93,25 +93,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-${{ env.cache-name }}-
 
-      - name: lint & build
-        run: |
-          cd vue
-          npm run lint
-          npm run build
-
-  test:
-    name: 3. test - cypress
-    needs: build
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node-version }}
-
       - name: Cache Cypress
         id: cache-cypress
         uses: actions/cache@v2
@@ -124,6 +105,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-${{ env.cache-name }}-
 
+      - name: lint & build
+        run: |
+          cd vue
+          npm run lint
+          npm run build
+
       - name: Cypress run
         uses: cypress-io/github-action@v2
         with:
@@ -131,3 +118,4 @@ jobs:
           wait-on: 'http://localhost:8081'
           command-prefix: 'percy exec -- npx'
           command: npm run test
+
