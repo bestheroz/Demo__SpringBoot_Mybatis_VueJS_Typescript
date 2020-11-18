@@ -52,6 +52,8 @@ jobs:
         run: |
           cd vue
           npm ci
+        env:
+          CI: true
 
       - name: npm run lint
         if: steps.cache-node.outputs.cache-hit != 'true'
