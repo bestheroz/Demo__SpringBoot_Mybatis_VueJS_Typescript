@@ -120,12 +120,6 @@ jobs:
           path: ~/.cache/Cypress
           key: ${{ runner.os }}-cypress-${{ hashFiles('**/package-lock.json') }}
 
-      - name: Cache Maven packages
-        uses: actions/cache@v2
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-java-${{ matrix.java-version }}-${{ hashFiles('**/pom.xml') }}
-
       - name: npm run build
         run: |
           cd vue
@@ -140,6 +134,12 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: ${{ matrix.java-version }}
+
+      - name: Cache Maven packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-java-${{ matrix.java-version }}-${{ hashFiles('**/pom.xml') }}
 
       - name: mvn package
         run: |
