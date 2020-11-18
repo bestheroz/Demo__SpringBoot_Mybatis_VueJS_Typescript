@@ -1,4 +1,5 @@
 import Vue from "vue";
+import i18n from "@/plugins/vue-i18n";
 import vuetify from "@/plugins/vuetify";
 import App from "./App.vue";
 import router from "./router";
@@ -14,6 +15,7 @@ Vue.config.productionTip = false;
 new Vue({
   router,
   store,
+  i18n,
   vuetify,
   render: (h) => h(App),
 }).$mount("#app");

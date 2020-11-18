@@ -45,7 +45,7 @@ export default class extends Vue {
     );
   }
 
-  get accessToken(): string {
+  get accessToken(): string | undefined | null {
     return window?.localStorage?.getItem("accessToken");
   }
 

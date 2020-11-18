@@ -150,11 +150,11 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import DatePicker from "@/components/picker/date/DatePicker.vue";
+import DatePicker from "@/components/picker/DatePicker.vue";
 import dayjs from "dayjs";
-import DatetimePicker from "@/components/picker/date/DatetimePicker.vue";
-import DateStartEndPicker from "@/components/picker/date/DateStartEndPicker.vue";
-import DatetimeStartEndPicker from "@/components/picker/date/DatetimeStartEndPicker.vue";
+import DatetimePicker from "@/components/picker/DatetimePicker.vue";
+import DateStartEndPicker from "@/components/picker/DateStartEndPicker.vue";
+import DatetimeStartEndPicker from "@/components/picker/DatetimeStartEndPicker.vue";
 import { DateType } from "@/common/types";
 
 @Component({

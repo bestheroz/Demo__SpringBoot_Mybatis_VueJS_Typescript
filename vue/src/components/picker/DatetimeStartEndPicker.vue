@@ -77,7 +77,7 @@
 
 <script lang="ts">
 import { Component, Prop, PropSync, Ref, Vue } from "vue-property-decorator";
-import DatetimePicker from "@/components/picker/date/DatetimePicker.vue";
+import DatetimePicker from "@/components/picker/DatetimePicker.vue";
 import dayjs from "dayjs";
 
 @Component({
@@ -153,8 +153,8 @@ export default class extends Vue {
     ];
   }
 
-  validate(): boolean {
-    return this.refStart.validate() && this.refEnd.validate();
+  async validate(): Promise<boolean> {
+    return (await this.refStart.validate()) && (await this.refEnd.validate());
   }
 }
 </script>
