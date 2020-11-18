@@ -12,19 +12,19 @@
     >
       <template #activator>
         <v-btn v-model="fab" color="button-default" dark fab small>
-          <v-icon color="black" v-if="fab">mdi-close</v-icon>
+          <v-icon v-if="fab" color="black">mdi-close</v-icon>
           <v-icon v-else>mdi-function</v-icon>
         </v-btn>
       </template>
-      <v-tooltip top v-if="reloadButton">
+      <v-tooltip v-if="reloadButton" top>
         <template #activator="{ on }">
           <v-btn
             fab
             dark
             x-small
             color="button-reload"
-            @click="clickReload"
             :disabled="disabled || reloadDisabled"
+            @click="clickReload"
             v-on="on"
           >
             <v-icon>mdi-reload</v-icon>
@@ -32,15 +32,15 @@
         </template>
         <span> {{ reloadText }} </span>
       </v-tooltip>
-      <v-tooltip top v-if="saveButton">
+      <v-tooltip v-if="saveButton" top>
         <template #activator="{ on }">
           <v-btn
             fab
             dark
             x-small
             color="primary"
-            @click="clickSave"
             :disabled="disabled || saveDisabled"
+            @click="clickSave"
             v-on="on"
           >
             <v-icon>mdi-content-save</v-icon>
@@ -48,15 +48,15 @@
         </template>
         <span> {{ saveText }} </span>
       </v-tooltip>
-      <v-tooltip top v-if="excelButton">
+      <v-tooltip v-if="excelButton" top>
         <template #activator="{ on }">
           <v-btn
             fab
             dark
             x-small
             :color="excelColor"
-            @click="clickExcel"
             :disabled="disabled || excelDisabled"
+            @click="clickExcel"
             v-on="on"
           >
             <v-icon>mdi-file-excel-outline</v-icon>
@@ -64,15 +64,15 @@
         </template>
         <span> {{ excelText }} </span>
       </v-tooltip>
-      <v-tooltip top v-if="deleteButton">
+      <v-tooltip v-if="deleteButton" top>
         <template #activator="{ on }">
           <v-btn
             fab
             dark
             x-small
             color="button-delete"
-            @click="clickDelete"
             :disabled="disabled || deleteDisabled"
+            @click="clickDelete"
             v-on="on"
           >
             <v-icon>mdi-delete</v-icon>
@@ -80,15 +80,15 @@
         </template>
         <span> {{ deleteText }} </span>
       </v-tooltip>
-      <v-tooltip top v-if="addButton">
+      <v-tooltip v-if="addButton" top>
         <template #activator="{ on }">
           <v-btn
             fab
             dark
             x-small
             color="button-add"
-            @click="clickAdd"
             :disabled="disabled || addDisabled"
+            @click="clickAdd"
             v-on="on"
           >
             <v-icon>mdi-plus</v-icon>
@@ -96,15 +96,15 @@
         </template>
         <span> {{ addText }} </span>
       </v-tooltip>
-      <v-tooltip top v-if="inquiryButton">
+      <v-tooltip v-if="inquiryButton" top>
         <template #activator="{ on }">
           <v-btn
             fab
             dark
             x-small
             color="button-default"
-            @click="clickInquiry"
             :disabled="disabled || inquiryDisabled"
+            @click="clickInquiry"
             v-on="on"
           >
             <v-icon>mdi-magnify</v-icon>
@@ -144,21 +144,23 @@ export default class extends Vue {
 
   fab = false;
 
-  get excelColor() {
+  get excelColor(): string {
     return this.$vuetify.theme.dark ? colors.teal.darken4 : colors.teal.darken2;
   }
 
-  @Emit("click:add") clickAdd() {}
+  /* eslint-disable @typescript-eslint/no-empty-function */
+  @Emit("click:add") clickAdd(): void {}
 
-  @Emit("click:delete") clickDelete() {}
+  @Emit("click:delete") clickDelete(): void {}
 
-  @Emit("click:excel") clickExcel() {}
+  @Emit("click:excel") clickExcel(): void {}
 
-  @Emit("click:inquiry") clickInquiry() {}
+  @Emit("click:inquiry") clickInquiry(): void {}
 
-  @Emit("click:reload") clickReload() {}
+  @Emit("click:reload") clickReload(): void {}
 
-  @Emit("click:save") clickSave() {}
+  @Emit("click:save") clickSave(): void {}
+  /* eslint-enable @typescript-eslint/no-empty-function */
 }
 </script>
 <style lang="scss" scoped>

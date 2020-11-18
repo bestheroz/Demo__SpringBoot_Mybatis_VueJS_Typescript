@@ -1,8 +1,8 @@
 module.exports = {
   root: true,
-  parser: "@typescript-eslint/parser",
+  parser: "vue-eslint-parser",
   parserOptions: {
-    ecmaVersion: 2021,
+    ecmaVersion: 2020,
   },
   env: {
     node: true,

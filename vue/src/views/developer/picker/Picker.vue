@@ -1,11 +1,9 @@
 <template>
   <div>
     <v-card>
+      <v-card-title> DatePicker.vue </v-card-title>
       <v-card-text>
-        <v-row align="center">
-          <v-col cols="12">
-            <h2>DatePicker.vue</h2>
-          </v-col>
+        <v-row>
           <v-col cols="3">
             <v-subheader>
               parse Date
@@ -17,7 +15,7 @@
             <date-picker v-model="date" clearable required />
           </v-col>
           <v-col cols="5">
-            <span v-if="date">
+            <span>
               typeof =>
               {{ getType(date) }}
               <br />
@@ -28,14 +26,14 @@
             <v-subheader>
               parse string
               <br />
-              {{ dayjs().toISOString() }}
+              {{ new Date().toISOString() }}
             </v-subheader>
           </v-col>
           <v-col cols="4" class="text-right">
             <date-picker v-model="dateParseISOString" />
           </v-col>
           <v-col cols="5">
-            <span v-if="dateParseISOString">
+            <span>
               typeof =>
               {{ getType(dateParseISOString) }}
               <br />
@@ -46,14 +44,14 @@
             <v-subheader>
               parse number
               <br />
-              {{ dayjs().toDate().getTime() }}
+              {{ new Date().getTime() }}
             </v-subheader>
           </v-col>
           <v-col cols="4" class="text-right">
             <date-picker v-model="dateParseNumber" />
           </v-col>
           <v-col cols="5">
-            <span v-if="dateParseNumber">
+            <span>
               typeof =>
               {{ getType(dateParseNumber) }}
               <br />
@@ -61,8 +59,28 @@
             </span>
           </v-col>
           <v-divider class="mr-1" />
-          <v-col cols="12">
-            <h2>DatetimePicker.vue</h2>
+        </v-row>
+      </v-card-text>
+      <v-card-title> DatetimePicker.vue </v-card-title>
+      <v-card-text>
+        <v-row>
+          <v-col cols="3">
+            <v-subheader>
+              parse Date
+              <br />
+              {{ new Date() }}}
+            </v-subheader>
+          </v-col>
+          <v-col cols="4" class="text-right">
+            <datetime-picker v-model="date2" required clearable />
+          </v-col>
+          <v-col cols="5">
+            <span>
+              typeof =>
+              {{ getType(date2) }}
+              <br />
+              {{ date2 }}
+            </span>
           </v-col>
           <v-col cols="3">
             <v-subheader>
@@ -72,20 +90,22 @@
             </v-subheader>
           </v-col>
           <v-col cols="4" class="text-right">
-            <datetime-picker v-model="date2" />
+            <datetime-picker v-model="date3" required clearable use-seconds />
           </v-col>
           <v-col cols="5">
-            <span v-if="date2">
+            <span>
               typeof =>
-              {{ getType(date2) }}
+              {{ getType(date3) }}
               <br />
-              {{ date2 }}
+              {{ date3 }}
             </span>
           </v-col>
           <v-divider class="mr-1" />
-          <v-col cols="12">
-            <h2>DateStartEndPicker.vue</h2>
-          </v-col>
+        </v-row>
+      </v-card-text>
+      <v-card-title> DateStartEndPicker.vue </v-card-title>
+      <v-card-text>
+        <v-row>
           <v-col cols="4" class="text-right" offset="3">
             <date-start-end-picker :start.sync="start1" :end.sync="end1" />
           </v-col>
@@ -95,9 +115,11 @@
             {{ end1 }}
           </v-col>
           <v-divider class="mr-1" />
-          <v-col cols="12">
-            <h2>DatetimeStartEndPicker.vue</h2>
-          </v-col>
+        </v-row>
+      </v-card-text>
+      <v-card-title> DatetimeStartEndPicker.vue </v-card-title>
+      <v-card-text>
+        <v-row>
           <v-col cols="4" class="text-right" offset="3">
             <datetime-start-end-picker :start.sync="start2" :end.sync="end2" />
           </v-col>
@@ -105,6 +127,20 @@
             {{ start2 }}
             <br />
             {{ end2 }}
+          </v-col>
+          <v-col cols="4" class="text-right" offset="3">
+            <datetime-start-end-picker
+              :start.sync="start3"
+              :end.sync="end3"
+              use-seconds
+              required
+              clearable
+            />
+          </v-col>
+          <v-col cols="5">
+            {{ start3 }}
+            <br />
+            {{ end3 }}
           </v-col>
         </v-row>
       </v-card-text>
@@ -114,11 +150,12 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import DatePicker from "@/components/picker/DatePicker.vue";
+import DatePicker from "@/components/picker/date/DatePicker.vue";
 import dayjs from "dayjs";
-import DatetimePicker from "@/components/picker/DatetimePicker.vue";
-import DateStartEndPicker from "@/components/picker/DateStartEndPicker.vue";
-import DatetimeStartEndPicker from "@/components/picker/DatetimeStartEndPicker.vue";
+import DatetimePicker from "@/components/picker/date/DatetimePicker.vue";
+import DateStartEndPicker from "@/components/picker/date/DateStartEndPicker.vue";
+import DatetimeStartEndPicker from "@/components/picker/date/DatetimeStartEndPicker.vue";
+import { DateType } from "@/common/types";
 
 @Component({
   name: "Picker",
@@ -130,18 +167,19 @@ import DatetimeStartEndPicker from "@/components/picker/DatetimeStartEndPicker.v
   },
 })
 export default class extends Vue {
-  dayjs: typeof dayjs = dayjs;
-
-  date: Date = new Date();
+  date: DateType = new Date();
   dateParseISOString: string = dayjs().toISOString();
   dateParseNumber: number = dayjs().toDate().getTime();
-  date2: Date = new Date();
-  start1: Date = dayjs().add(-1, "day").toDate();
-  end1: Date = dayjs().add(1, "day").toDate();
-  start2: Date = dayjs().add(-1, "day").toDate();
-  end2: Date = dayjs().add(1, "day").endOf("day").toDate();
+  date2: DateType = new Date();
+  date3: DateType = new Date();
+  start1: DateType = dayjs().add(-1, "day").toDate();
+  end1: DateType = dayjs().add(1, "day").toDate();
+  start2: DateType = dayjs().add(-1, "day").startOf("day").toDate();
+  end2: DateType = dayjs().add(1, "day").endOf("day").toDate();
+  start3: DateType = dayjs().add(-1, "day").startOf("day").toDate();
+  end3: DateType = dayjs().add(1, "day").endOf("day").toDate();
 
-  getType(val: any): string {
+  getType(val: DateType): string {
     return typeof val === "object"
       ? val instanceof Date
         ? "Date"

@@ -1,9 +1,9 @@
 <template>
   <div>
     <v-data-table
+      v-model="syncedSelected"
       must-sort
       fixed-header
-      v-model="syncedSelected"
       :loading="loading"
       :headers="headers"
       :items="filteredItems"
@@ -91,12 +91,12 @@ export default class extends Vue {
     },
   ];
 
-  mounted() {
+  mounted(): void {
     this.getList();
   }
 
   @Emit("updated")
-  async getList() {
+  async getList(): Promise<void> {
     this.syncedSelected = [];
     this.items = [];
     this.loading = true;

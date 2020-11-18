@@ -14,10 +14,10 @@
             <v-row>
               <v-col cols="12">
                 <ValidationProvider
+                  v-slot="{ errors }"
                   name="이전 비밀번호"
                   vid="oldPassword"
                   rules="required|max:20"
-                  v-slot="{ errors }"
                 >
                   <v-text-field
                     v-model="oldPassword"
@@ -32,10 +32,10 @@
               </v-col>
               <v-col cols="12">
                 <ValidationProvider
+                  v-slot="{ errors }"
                   name="비밀번호"
                   vid="password"
                   rules="required|max:20"
-                  v-slot="{ errors }"
                 >
                   <v-text-field
                     v-model="password"
@@ -50,9 +50,9 @@
               </v-col>
               <v-col cols="12">
                 <ValidationProvider
+                  v-slot="{ errors }"
                   name="비밀번호 확인"
                   rules="required|confirmed:password|max:20"
-                  v-slot="{ errors }"
                 >
                   <v-text-field
                     v-model="password2"
@@ -76,7 +76,7 @@
             <v-icon> mdi-window-close</v-icon>
             닫기
           </v-btn>
-          <v-btn text @click="save" :loading="loading">
+          <v-btn text :loading="loading" @click="save">
             <v-icon> mdi-content-save-settings-outline</v-icon>
             저장
           </v-btn>
@@ -101,9 +101,9 @@ export default class extends Vue {
 
   readonly ENDPOINT_URL: string = "members/";
   loading = false;
-  oldPassword: string | null = null;
-  password: string | null = null;
-  password2: string | null = null;
+  oldPassword = "";
+  password = "";
+  password2 = "";
   show1 = false;
   show2 = false;
   show3 = false;
@@ -113,11 +113,11 @@ export default class extends Vue {
   }
 
   @Watch("syncedDialog")
-  watchDialog(val: boolean) {
+  watchDialog(val: boolean): void {
     if (val) {
-      this.oldPassword = null;
-      this.password = null;
-      this.password2 = null;
+      this.oldPassword = "";
+      this.password = "";
+      this.password2 = "";
       this.show1 = false;
       this.show2 = false;
       this.show3 = false;
@@ -142,10 +142,10 @@ export default class extends Vue {
       newPassword: string;
     }>(`${this.ENDPOINT_URL}mine/changePassword/`, {
       oldPassword: pbkdf2
-        .pbkdf2Sync(this.oldPassword!, "salt", 1, 32, "sha512")
+        .pbkdf2Sync(this.oldPassword, "salt", 1, 32, "sha512")
         .toString(),
       newPassword: pbkdf2
-        .pbkdf2Sync(this.password!, "salt", 1, 32, "sha512")
+        .pbkdf2Sync(this.password, "salt", 1, 32, "sha512")
         .toString(),
     });
     this.loading = false;

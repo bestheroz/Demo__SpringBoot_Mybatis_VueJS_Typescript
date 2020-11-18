@@ -17,9 +17,9 @@
             <v-row>
               <v-col cols="12" md="6">
                 <ValidationProvider
+                  v-slot="{ errors }"
                   name="그룹코드"
                   rules="required|max:32"
-                  v-slot="{ errors }"
                 >
                   <v-text-field
                     v-model="item.codeGroup"
@@ -32,9 +32,9 @@
               </v-col>
               <v-col cols="12" md="6">
                 <ValidationProvider
+                  v-slot="{ errors }"
                   name="그룹코드명"
                   rules="required|max:100"
-                  v-slot="{ errors }"
                 >
                   <v-text-field
                     v-model="item.name"
@@ -54,7 +54,7 @@
             <v-icon> mdi-window-close</v-icon>
             닫기
           </v-btn>
-          <v-btn text @click="save" :loading="loading">
+          <v-btn text :loading="loading" @click="save">
             <v-icon> mdi-content-save-settings-outline</v-icon>
             저장
           </v-btn>
@@ -87,7 +87,7 @@ export default class extends Vue {
   }
 
   @Watch("syncedDialog", { immediate: true })
-  watchDialog(val: boolean) {
+  watchDialog(val: boolean): void {
     if (val) {
       this.isNew = !this.item.codeGroup;
       this.$refs.observer &&
@@ -97,7 +97,7 @@ export default class extends Vue {
     }
   }
 
-  async save() {
+  async save(): Promise<void> {
     const isValid = await (this.$refs.observer as InstanceType<
       typeof ValidationObserver
     >).validate();
@@ -107,7 +107,7 @@ export default class extends Vue {
     this.isNew ? await this.create() : await this.patch();
   }
 
-  async create() {
+  async create(): Promise<void> {
     this.loading = true;
     const response = await postApi<TableCodeGroupEntity>(
       this.ENDPOINT_URL,
@@ -120,7 +120,7 @@ export default class extends Vue {
     }
   }
 
-  async patch() {
+  async patch(): Promise<void> {
     this.loading = true;
     const response = await patchApi<TableCodeGroupEntity>(
       `${this.ENDPOINT_URL}${this.item.codeGroup}/`,
@@ -133,7 +133,7 @@ export default class extends Vue {
     }
   }
 
-  async delete() {
+  async delete(): Promise<void> {
     const result = await confirmDelete();
     if (result.value) {
       this.loading = true;

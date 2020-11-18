@@ -1,13 +1,13 @@
 <template>
   <v-main :title="null">
     <v-alert
+      v-if="title"
       id="pageTitle"
       border="bottom"
       colored-border
       color="divider"
       dense
       class="mx-3 mt-3 mb-0 pl-6 elevation-1"
-      v-if="title"
     >
       <v-icon class="pb-1">{{ icon }}</v-icon>
       {{ title }}

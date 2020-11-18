@@ -1,25 +1,25 @@
 <template>
   <v-app-bar
+    v-if="!isPopup"
     absolute
     :dark="$vuetify.theme.dark"
     color="transparent"
     flat
     height="85"
-    v-if="!isPopup"
   >
     <v-container>
       <v-row align="center">
         <v-toolbar-title>
-          <v-btn x-large text @click="goHome" color="primary">
+          <v-btn x-large text color="primary" @click="goHome">
             {{ title }}
           </v-btn>
         </v-toolbar-title>
         <v-spacer />
         <v-toolbar-title
+          v-if="$router.currentRoute.path !== '/login' && accessToken"
           class="font-weight-light"
           :style="{ cursor: 'pointer' }"
           @click="logout"
-          v-if="$router.currentRoute.path !== '/login' && accessToken"
         >
           <v-icon>mdi-logout</v-icon>
           로그아웃
@@ -45,7 +45,7 @@ export default class extends Vue {
     );
   }
 
-  get accessToken() {
+  get accessToken(): string {
     return window?.localStorage?.getItem("accessToken");
   }
 
@@ -53,7 +53,7 @@ export default class extends Vue {
     this.title = await getVariableApi("title");
   }
 
-  goHome() {
+  goHome(): void {
     this.$router.currentRoute.path !== "/" && this.$router.push("/");
   }
 }

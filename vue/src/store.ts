@@ -5,7 +5,7 @@ import { DrawerItem, SelectItem, TableMemberEntity } from "@/common/types";
 import { getApi } from "@/utils/apis";
 
 Vue.use(Vuex);
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
 const user = {
   state: {
     user: null,
@@ -121,7 +121,7 @@ const temp = {
     },
   },
 };
-
+/* eslint-enable @typescript-eslint/no-explicit-any */
 export default new Vuex.Store({
   strict: true,
   modules: {

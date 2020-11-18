@@ -2,9 +2,9 @@
   <div>
     <v-card-text class="pb-1">
       <v-data-table
+        v-model="syncedSelected"
         must-sort
         fixed-header
-        v-model="syncedSelected"
         :loading="loading"
         :headers="headers"
         :items="filteredItems"
@@ -44,7 +44,7 @@
             />
           </span>
         </template>
-        <template #[`item.authority`]="{ item }" v-if="AUTHORITY">
+        <template v-if="AUTHORITY" #[`item.authority`]="{ item }">
           {{ item.authority | getCodeText(AUTHORITY) }}
         </template>
         <template #[`item.expired`]="{ item }">

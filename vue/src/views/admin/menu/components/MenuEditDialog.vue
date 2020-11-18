@@ -17,9 +17,9 @@
             <v-row>
               <v-col cols="12" md="3">
                 <ValidationProvider
+                  v-slot="{ errors }"
                   name="메뉴명"
                   rules="required|max:50"
-                  v-slot="{ errors }"
                 >
                   <v-text-field
                     v-model="item.name"
@@ -31,9 +31,9 @@
               </v-col>
               <v-col cols="12" md="3">
                 <ValidationProvider
+                  v-slot="{ errors }"
                   name="타입"
                   rules="required"
-                  v-slot="{ errors }"
                 >
                   <v-select
                     v-model="item.type"
@@ -45,9 +45,9 @@
               </v-col>
               <v-col cols="12" md="6">
                 <ValidationProvider
+                  v-slot="{ errors }"
                   name="링크 URL"
                   rules="max:255"
-                  v-slot="{ errors }"
                 >
                   <v-text-field
                     v-model="item.url"
@@ -61,9 +61,9 @@
               </v-col>
               <v-col cols="12" md="2">
                 <ValidationProvider
+                  v-slot="{ errors }"
                   name="메뉴 순서"
                   rules="required|numeric"
-                  v-slot="{ errors }"
                 >
                   <v-text-field
                     v-model="item.displayOrder"
@@ -72,10 +72,10 @@
                   />
                 </ValidationProvider>
               </v-col>
-              <v-col cols="12" md="4" v-if="item.level === 2">
+              <v-col v-if="item.level === 2" cols="12" md="4">
                 <v-text-field v-model="item.icon" label="메뉴 아이콘" />
               </v-col>
-              <v-col cols="12" md="1" v-if="item.level === 2">
+              <v-col v-if="item.level === 2" cols="12" md="1">
                 <v-icon> {{ item.icon }}</v-icon>
               </v-col>
             </v-row>
@@ -88,7 +88,7 @@
             <v-icon> mdi-window-close</v-icon>
             닫기
           </v-btn>
-          <v-btn text @click="save" :loading="loading">
+          <v-btn text :loading="loading" @click="save">
             <v-icon> mdi-content-save-settings-outline</v-icon>
             저장
           </v-btn>

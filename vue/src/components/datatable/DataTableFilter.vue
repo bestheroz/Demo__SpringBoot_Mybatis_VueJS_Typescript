@@ -3,34 +3,34 @@
     <td v-if="!filterFirstColumn" />
     <td v-for="(data, index) in header" :key="data.value">
       <v-select
+        v-if="
+          data.filterable !== false &&
+          data.filterType === 'select' &&
+          data.filterSelectItem
+        "
         v-model.trim="filter[index]"
         :items="data.filterSelectItem"
         outlined
         dense
         clearable
         hide-details
-        v-if="
-          data.filterable !== false &&
-          data.filterType === 'select' &&
-          data.filterSelectItem
-        "
       />
       <v-select
+        v-else-if="data.filterable !== false && data.filterType === 'switch'"
         v-model.trim="filter[index]"
         :items="USE_YN"
         outlined
         dense
         clearable
         hide-details
-        v-else-if="data.filterable !== false && data.filterType === 'switch'"
       />
       <v-text-field
+        v-else-if="data.filterable !== false"
         v-model.trim="filter[index]"
         outlined
         dense
         hide-details
         clearable
-        v-else-if="data.filterable !== false"
       />
     </td>
   </tr>

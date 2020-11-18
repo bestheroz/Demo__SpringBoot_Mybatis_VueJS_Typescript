@@ -4,10 +4,10 @@
       <v-dialog
         ref="refDialog"
         v-model="dialog"
-        :return-value.sync="timeValue"
+        :return-value.sync="textFieldString"
         :width="470"
         @keydown.esc="dialog = false"
-        @keydown.enter="$refs.refDialog.save(timeValue)"
+        @keydown.enter="$refs.refDialog.save(textFieldString)"
       >
         <template #activator="{ on }">
           <ValidationProvider
@@ -16,8 +16,10 @@
             v-slot="{ errors }"
           >
             <v-text-field
-              v-model="value"
-              :label="label"
+              :value="textFieldString"
+              :label="defaultLabel"
+              :hint="hideHint ? undefined : hint"
+              persistent-hint
               :messages="message"
               prepend-inner-icon="mdi-calendar-clock"
               @click:prepend-inner="dialog = true"
@@ -26,6 +28,7 @@
               :dense="dense"
               :hide-details="hideDetails"
               :clearable="clearable"
+              @click:clear="onClear"
               :error-messages="errors"
               :append-outer-icon="startType ? 'mdi-tilde' : undefined"
               :class="endType ? 'ml-3' : undefined"
@@ -35,31 +38,33 @@
           </ValidationProvider>
         </template>
         <v-date-picker
-          v-model="value"
+          v-model="datePickerString"
           :locale="envs.LOCALE"
           landscape
           reactive
           scrollable
-          header-color="primary"
           :max="maxDate"
           :min="minDate"
         >
         </v-date-picker>
         <v-time-picker
-          v-model="timeValue"
+          v-model="timePickerString"
           format="24hr"
           landscape
           scrollable
           :use-seconds="useSeconds"
-          header-color="primary"
           :max="maxTime"
           :min="minTime"
         >
-          <v-btn text color="primary" @click="setNow"> 지금</v-btn>
+          <v-btn outlined @click="setNow" :disabled="disableToday">
+            {{ $t("msg.now") }}
+          </v-btn>
           <div class="flex-grow-1"></div>
-          <v-btn text color="primary" @click="dialog = false"> 취소</v-btn>
-          <v-btn text color="primary" @click="$refs.refDialog.save(timeValue)">
-            확인
+          <v-btn outlined @click="dialog = false">
+            {{ $t("msg.cancel") }}
+          </v-btn>
+          <v-btn outlined @click="$refs.refDialog.save(textFieldString)">
+            {{ $t("msg.confirm") }}
           </v-btn>
         </v-time-picker>
       </v-dialog>
@@ -75,13 +80,13 @@ import { ValidationObserver } from "vee-validate";
 
 @Component({ name: "DatetimePicker" })
 export default class extends Vue {
-  @Model("input", { required: true }) readonly date!:
+  @Model("input", { required: true }) readonly outputDate!:
     | Date
     | string
     | number
     | null;
 
-  @Prop({ type: String, default: "날짜선택" }) readonly label!: string | null;
+  @Prop({ type: String }) readonly label!: string | null;
   @Prop({ type: String }) readonly message!: string | null;
   @Prop({ type: Boolean, default: false }) readonly required!: boolean;
   @Prop({ type: Boolean, default: false }) readonly disabled!: boolean;
@@ -92,105 +97,178 @@ export default class extends Vue {
   @Prop({ type: Boolean, default: false }) readonly startType!: boolean;
   @Prop({ type: Boolean, default: false }) readonly endType!: boolean;
   @Prop({ type: Boolean, default: false }) readonly fullWidth!: boolean;
+  @Prop({ type: Boolean, default: false }) readonly hideHint!: boolean;
   @Prop() readonly max!: string[];
   @Prop() readonly min!: string[];
 
   readonly envs: typeof envs = envs;
-  value: string | null = null;
+  readonly DATEPICKER_FORMAT = "YYYY-MM-DD";
+  readonly DATETIMEPICKER_MINUTE_FORMAT = "YYYY-MM-DD HH:mm";
+  readonly DATETIMEPICKER_FORMAT = "YYYY-MM-DD HH:mm:ss";
+  readonly TIMEPICKER_MINUTE_FORMAT = "HH:mm";
+  readonly TIMEPICKER_FORMAT = "HH:mm:ss";
+  textFieldString: string | null = null;
+  datePickerString: string | null = null;
+  timePickerString: string | null = null;
   dialog = false;
-  timeValue: string | null = null;
+  errors: string[] | null = null;
+  valid = false;
 
-  get format() {
-    return this.useSeconds
-      ? envs.DATETIME_FORMAT_STRING
-      : envs.DATETIME_MINUTE_FORMAT_STRING;
+  get defaultLabel(): string {
+    return this.label || this.$t("msg.picker.dateSelection").toString();
   }
 
-  get formatTime() {
-    return this.useSeconds
-      ? envs.TIME_FORMAT_STRING
-      : envs.TIME_MINUTE_FORMAT_STRING;
-  }
-
-  get maxDate() {
+  get maxDate(): string | undefined {
     return this.max?.length > 0 ? this.max[0] : undefined;
   }
 
-  get maxTime() {
+  get maxTime(): string | undefined {
     return this.max?.length > 1 ? this.max[1] : undefined;
   }
 
-  get minDate() {
+  get minDate(): string | undefined {
     return this.min?.length > 0 ? this.min[0] : undefined;
   }
 
-  get minTime() {
+  get minTime(): string | undefined {
     return this.min?.length > 1 ? this.min[1] : undefined;
   }
 
-  get style() {
+  get style(): string | undefined {
     if (this.fullWidth) {
       return undefined;
     }
-    let defaultWidth = 10.5;
-    this.clearable && (defaultWidth += 1.2);
-    this.startType && (defaultWidth += 2.2);
+    let defaultWidth = 9.5;
+    defaultWidth +=
+      ((this.useSeconds
+        ? envs.DATETIME_FORMAT_STRING.length
+        : envs.DATETIME_MINUTE_FORMAT_STRING.length) -
+        12) *
+      0.4;
+    this.clearable && (defaultWidth += 1);
+    this.startType && (defaultWidth += 2);
     return `max-width: ${defaultWidth}rem;`;
   }
 
-  @Watch("date", { immediate: true })
-  watchDate(
-    val: Date | string | number | null | undefined,
-    oldVal: Date | string | number | null,
-  ) {
+  get hint(): string | undefined {
+    return this.outputDate ? dayjs(this.outputDate).toISOString() : undefined;
+  }
+
+  get disableToday(): boolean {
+    if (!this.min && !this.max) {
+      return false;
+    }
+    /* eslint-disable indent */
+    if (this.useSeconds) {
+      return this.endType
+        ? dayjs().isBefore(
+            dayjs(this.min.join(" "), this.DATETIMEPICKER_FORMAT),
+          )
+        : dayjs(this.max.join(" "), this.DATETIMEPICKER_FORMAT).isBefore(
+            dayjs(),
+          );
+    } else {
+      return this.endType
+        ? dayjs().isBefore(
+            dayjs(this.min.join(" "), this.DATETIMEPICKER_MINUTE_FORMAT),
+          )
+        : dayjs().isAfter(
+            dayjs(this.max.join(" "), this.DATETIMEPICKER_MINUTE_FORMAT),
+          );
+    }
+    /* eslint-enable indent */
+  }
+
+  @Watch("outputDate", { immediate: true })
+  watchValue(val: string, oldVal: string): void {
+    if (!val || !dayjs(val).isValid() || val === oldVal) {
+      return;
+    }
+    this.datePickerString = dayjs(val).format(this.DATEPICKER_FORMAT);
+    this.timePickerString = this.useSeconds
+      ? dayjs(val).format(this.TIMEPICKER_FORMAT)
+      : dayjs(val).format(this.TIMEPICKER_MINUTE_FORMAT);
+  }
+
+  @Watch("datePickerString")
+  @Watch("timePickerString", { immediate: true })
+  watchDatePickerString(): void {
     if (
-      val &&
-      val !== oldVal &&
-      !isNaN(dayjs(val).toDate().getTime()) &&
-      dayjs(val).toDate().getTime() !==
-        dayjs(oldVal || "")
-          .toDate()
-          .getTime()
+      !this.datePickerString ||
+      !this.timePickerString ||
+      /* eslint-disable indent */
+      !dayjs(
+        `${this.datePickerString} ${this.timePickerString}`,
+        this.useSeconds
+          ? this.DATETIMEPICKER_FORMAT
+          : this.DATETIMEPICKER_MINUTE_FORMAT,
+      ).isValid()
+      /* eslint-enable indent */
     ) {
-      this.value = dayjs(val).format(this.format);
-      this.timeValue = this.value.split(" ")[1];
+      this.textFieldString = null;
+      return;
+    }
+    const _dayjs = dayjs(
+      `${this.datePickerString} ${this.timePickerString}`,
+      this.useSeconds
+        ? this.DATETIMEPICKER_FORMAT
+        : this.DATETIMEPICKER_MINUTE_FORMAT,
+    );
+    if (_dayjs) {
+      /* eslint-disable indent */
+      this.textFieldString = this.useSeconds
+        ? dayjs(
+            `${this.datePickerString} ${this.timePickerString}`,
+            envs.DATETIME_FORMAT_STRING,
+          ).format(this.DATETIMEPICKER_FORMAT)
+        : dayjs(
+            `${this.datePickerString} ${this.timePickerString}`,
+            envs.DATETIME_MINUTE_FORMAT_STRING,
+          ).format(this.DATETIMEPICKER_MINUTE_FORMAT);
+      /* eslint-enable indent */
+    } else {
+      this.textFieldString = null;
     }
   }
 
-  @Watch("timeValue")
-  watchTimeValue(val: string) {
-    if (this.value) {
-      this.value = `${this.value.split(" ")[0]} ${val}`;
+  @Watch("textFieldString", { immediate: true })
+  watchTextFieldString(val: string): void {
+    if (dayjs(val, envs.DATETIME_MINUTE_FORMAT_STRING).isValid()) {
+      /* eslint-disable indent */
+      this.$emit(
+        "input",
+        this.endType
+          ? this.useSeconds
+            ? dayjs(val, envs.DATETIME_FORMAT_STRING)
+                ?.endOf("second")
+                ?.toISOString()
+            : dayjs(val, envs.DATETIME_MINUTE_FORMAT_STRING)
+                ?.endOf("minute")
+                ?.toISOString()
+          : this.useSeconds
+          ? dayjs(val, envs.DATETIME_FORMAT_STRING)
+              ?.startOf("second")
+              ?.toISOString()
+          : dayjs(val, envs.DATETIME_MINUTE_FORMAT_STRING)
+              ?.startOf("minute")
+              ?.toISOString(),
+      );
+      /* eslint-enable indent */
+    } else {
+      this.$emit("input", null);
     }
   }
 
-  @Watch("value", { immediate: true })
-  watchValue(val: string, oldVal: string) {
-    if (
-      val !== oldVal &&
-      dayjs(val).toDate().getTime() !==
-        dayjs(oldVal || "")
-          .toDate()
-          .getTime()
-    ) {
-      if (this.endType) {
-        const split = val.split(" ");
-        this.$emit(
-          "input",
-          dayjs(
-            `${split[0]} ${split[1] || "23:59"}:${
-              this.useSeconds ? "" : "59"
-            }.999999`,
-          ).toDate(),
-        );
-      } else {
-        this.$emit("input", dayjs(val).toDate());
-      }
-    }
+  setNow(): void {
+    this.datePickerString = dayjs().format(this.DATEPICKER_FORMAT);
+    this.timePickerString = this.useSeconds
+      ? dayjs().format(this.TIMEPICKER_FORMAT)
+      : dayjs().format(this.TIMEPICKER_MINUTE_FORMAT);
   }
 
-  setNow() {
-    this.value = dayjs().format(this.format);
+  onClear(): void {
+    this.datePickerString = null;
+    this.timePickerString = null;
   }
 
   async validate(): Promise<boolean> {

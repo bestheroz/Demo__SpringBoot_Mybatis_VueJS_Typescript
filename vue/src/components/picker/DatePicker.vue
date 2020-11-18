@@ -4,10 +4,10 @@
       <v-dialog
         ref="refDialog"
         v-model="dialog"
-        :return-value.sync="value"
+        :return-value.sync="pickerString"
         :width="470"
         @keydown.esc="dialog = false"
-        @keydown.enter="$refs.refDialog.save(value)"
+        @keydown.enter="$refs.refDialog.save(pickerString)"
       >
         <template #activator="{ on }">
           <ValidationProvider
@@ -16,8 +16,10 @@
             v-slot="{ errors }"
           >
             <v-text-field
-              v-model="value"
-              :label="label"
+              :value="textFieldString"
+              :label="defaultLabel"
+              :hint="hideHint ? undefined : hint"
+              persistent-hint
               :messages="message"
               prepend-inner-icon="mdi-calendar-cursor"
               @click:prepend-inner="dialog = true"
@@ -26,6 +28,7 @@
               :dense="dense"
               :hide-details="hideDetails"
               :clearable="clearable"
+              @click:clear="pickerString = null"
               :error-messages="errors"
               :append-outer-icon="startType ? 'mdi-tilde' : undefined"
               :class="endType ? 'ml-3' : undefined"
@@ -35,20 +38,23 @@
           </ValidationProvider>
         </template>
         <v-date-picker
-          v-model="value"
+          v-model="pickerString"
           :locale="envs.LOCALE"
           landscape
           reactive
           scrollable
-          header-color="primary"
           :max="max"
           :min="min"
         >
-          <v-btn text color="primary" @click="setToday"> 오늘</v-btn>
+          <v-btn outlined @click="setToday" :disabled="disableToday">
+            {{ $t("msg.today") }}
+          </v-btn>
           <div class="flex-grow-1"></div>
-          <v-btn text color="primary" @click="dialog = false"> 취소</v-btn>
-          <v-btn text color="primary" @click="$refs.refDialog.save(value)">
-            확인
+          <v-btn outlined @click="dialog = false">
+            {{ $t("msg.cancel") }}
+          </v-btn>
+          <v-btn outlined @click="$refs.refDialog.save(pickerString)">
+            {{ $t("msg.confirm") }}
           </v-btn>
         </v-date-picker>
       </v-dialog>
@@ -64,76 +70,102 @@ import { ValidationObserver } from "vee-validate";
 
 @Component({ name: "DatePicker" })
 export default class extends Vue {
-  @Model("input", { required: true }) readonly date!:
+  @Model("input", { required: true }) readonly outputDate!:
     | Date
     | string
     | number
     | null;
 
-  @Prop({ type: String, default: "날짜선택" }) readonly label!: string | null;
+  @Prop({ type: String }) readonly label!: string | null;
   @Prop({ type: String }) readonly message!: string | null;
   @Prop({ type: Boolean, default: false }) readonly required!: boolean;
   @Prop({ type: Boolean, default: false }) readonly disabled!: boolean;
   @Prop({ type: Boolean, default: false }) readonly dense!: boolean;
   @Prop({ type: Boolean, default: false }) readonly hideDetails!: boolean;
   @Prop({ type: Boolean, default: false }) readonly clearable!: boolean;
-  @Prop({ type: Boolean, default: false }) readonly endOfDay!: boolean;
   @Prop({ type: Boolean, default: false }) readonly startType!: boolean;
   @Prop({ type: Boolean, default: false }) readonly endType!: boolean;
   @Prop({ type: Boolean, default: false }) readonly fullWidth!: boolean;
+  @Prop({ type: Boolean, default: false }) readonly hideHint!: boolean;
   @Prop({ type: String }) readonly max!: string;
   @Prop({ type: String }) readonly min!: string;
 
   readonly envs: typeof envs = envs;
-  value: string | null = null;
+  readonly DATEPICKER_FORMAT = "YYYY-MM-DD";
+  pickerString: string | null = null;
   dialog = false;
+  valid = false;
+  errors: string[] | null = null;
 
-  get format(): string {
-    return envs.DATE_FORMAT_STRING;
+  get defaultLabel(): string {
+    return this.label || this.$t("msg.picker.dateSelection").toString();
   }
 
   get style(): string | undefined {
     if (this.fullWidth) {
       return undefined;
     }
-    let defaultWidth = 7.7;
-    this.clearable && (defaultWidth += 1);
+    let defaultWidth = 9.5;
     this.startType && (defaultWidth += 2);
     return `max-width: ${defaultWidth}rem;`;
   }
 
-  @Watch("date", { immediate: true })
+  get hint(): string | undefined {
+    return this.outputDate && dayjs(this.outputDate).isValid()
+      ? dayjs(this.outputDate).toISOString()
+      : undefined;
+  }
+
+  get disableToday(): boolean {
+    if (!this.min && !this.max) {
+      return false;
+    }
+    return this.endType
+      ? dayjs().isBefore(dayjs(this.min, this.DATEPICKER_FORMAT))
+      : dayjs().isAfter(dayjs(this.max, this.DATEPICKER_FORMAT));
+  }
+
+  get textFieldString(): string {
+    if (
+      !this.pickerString ||
+      !dayjs(this.pickerString, this.DATEPICKER_FORMAT).isValid()
+    ) {
+      return "";
+    }
+    return dayjs(this.pickerString, this.DATEPICKER_FORMAT).format(
+      this.DATEPICKER_FORMAT,
+    );
+  }
+
+  @Watch("outputDate", { immediate: true })
   watchDate(
     val: Date | string | number | null,
     oldVal: Date | string | number | null,
   ): void {
-    if (!val || val === oldVal || isNaN(dayjs(val).toDate().getTime())) {
+    if (!val || !dayjs(val).isValid() || val === oldVal) {
       return;
     }
-    this.value = this.endOfDay
-      ? dayjs(val).endOf("day").format(this.format)
-      : dayjs(val).startOf("day").format(this.format);
+    this.pickerString = dayjs(val).format(this.DATEPICKER_FORMAT);
   }
 
-  @Watch("value", { immediate: true })
-  watchValue(val: string, oldVal: string): void {
-    if (
-      val !== oldVal &&
-      dayjs(val).toDate().getTime() !== dayjs(oldVal).toDate().getTime()
-    ) {
+  @Watch("textFieldString", { immediate: true })
+  watchText(val: string): void {
+    if (dayjs(val, envs.DATE_FORMAT_STRING).isValid()) {
+      /* eslint-disable indent */
       this.$emit(
         "input",
-        this.endOfDay
-          ? dayjs(val).endOf("day").toDate()
-          : dayjs(val).startOf("day").toDate(),
+        this.endType
+          ? dayjs(val, envs.DATE_FORMAT_STRING)?.endOf("day")?.toISOString()
+          : dayjs(val, envs.DATE_FORMAT_STRING)?.startOf("day")?.toISOString(),
       );
+      /* eslint-enable indent */
+    } else {
+      this.$emit("input", null);
     }
   }
 
   setToday(): void {
-    this.value = this.endOfDay
-      ? dayjs().endOf("day").format(this.format)
-      : dayjs().startOf("day").format(this.format);
+    this.pickerString = dayjs().format(this.DATEPICKER_FORMAT);
   }
 
   async validate(): Promise<boolean> {

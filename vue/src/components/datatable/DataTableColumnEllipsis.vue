@@ -5,16 +5,16 @@
       :style="`max-width: ${maxWidth} !important;`"
     >
       <v-tooltip
-        top
-        v-model="show"
         v-if="value && $store.state.temp.finishTextEllipsis"
+        v-model="show"
+        top
         color="secondary"
         :max-width="tooltipWidth"
         open-on-click
         :open-on-hover="false"
       >
         <template #activator="{ on, attrs }">
-          <span v-on="on" v-bind="attrs" @click="show = !show">
+          <span v-bind="attrs" v-on="on" @click="show = !show">
             {{ value }}
           </span>
         </template>
@@ -38,7 +38,7 @@ export default class extends Vue {
 
   show = false;
 
-  get maxWidth() {
+  get maxWidth(): string {
     return typeof this.width === "string" ? this.width : `${this.width}px`;
   }
 }

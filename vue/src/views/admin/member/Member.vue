@@ -2,11 +2,11 @@
   <div>
     <button-set
       add-button
-      @click:add="addItem"
       delete-button
       :delete-disabled="!selected || selected.length === 0"
-      @click:delete="deleteItem"
       reload-button
+      @click:add="addItem"
+      @click:delete="deleteItem"
       @click:reload="reloadList"
     />
     <v-card>

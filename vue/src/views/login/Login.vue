@@ -19,33 +19,33 @@
           <ValidationObserver ref="observer">
             <v-card-text class="text-center">
               <ValidationProvider
+                v-slot="{ errors, valid }"
                 name="ID"
                 rules="required"
-                v-slot="{ errors, valid }"
               >
                 <v-text-field
                   v-model="id"
                   label="ID..."
                   prepend-icon="mdi-key"
-                  @keyup.enter="login"
                   :error-messages="errors"
                   :success="valid"
+                  @keyup.enter="login"
                 />
               </ValidationProvider>
               <ValidationProvider
+                v-slot="{ errors, valid }"
                 name="Password"
                 rules="required"
-                v-slot="{ errors, valid }"
               >
                 <v-text-field
                   v-model="password"
                   label="Password..."
                   prepend-icon="mdi-lock-outline"
-                  @keyup.enter="login"
                   :error-messages="errors"
                   :success="valid"
                   :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
                   :type="show1 ? 'text' : 'password'"
+                  @keyup.enter="login"
                   @click:append="show1 = !show1"
                 />
               </ValidationProvider>

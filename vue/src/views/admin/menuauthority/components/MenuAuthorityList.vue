@@ -19,13 +19,13 @@
           <button-set
             reload-button
             :reload-disabled="!authority"
-            @click:reload="getList"
             save-button
             :save-disabled="!authority"
+            @click:reload="getList"
             @click:save="save"
           />
         </template>
-        <template #[`item.type`]="{ item }" v-if="MENU_TYPE">
+        <template v-if="MENU_TYPE" #[`item.type`]="{ item }">
           {{ item.type | getCodeText(MENU_TYPE) }}
         </template>
         <template #[`item.name`]="{ item }">

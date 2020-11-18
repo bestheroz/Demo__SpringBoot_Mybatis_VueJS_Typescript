@@ -17,9 +17,9 @@
             <v-row>
               <v-col cols="12" md="4">
                 <ValidationProvider
+                  v-slot="{ errors }"
                   name="그룹 코드"
                   rules="required"
-                  v-slot="{ errors }"
                 >
                   <v-text-field
                     v-model="item.codeGroup"
@@ -38,9 +38,9 @@
               <v-col cols="0" md="4" />
               <v-col cols="12" md="4">
                 <ValidationProvider
+                  v-slot="{ errors }"
                   name="상세 코드"
                   rules="max:50|required"
-                  v-slot="{ errors }"
                 >
                   <v-text-field
                     v-model="item.code"
@@ -53,9 +53,9 @@
               </v-col>
               <v-col cols="12" md="4">
                 <ValidationProvider
+                  v-slot="{ errors }"
                   name="상세 코드명"
                   rules="max:100"
-                  v-slot="{ errors }"
                 >
                   <v-text-field
                     v-model="item.name"
@@ -68,11 +68,12 @@
               </v-col>
               <v-col cols="12" md="4">
                 <ValidationProvider
+                  v-slot="{ errors }"
                   name="권한"
                   rules="required"
-                  v-slot="{ errors }"
                 >
                   <v-select
+                    v-if="AUTHORITY"
                     v-model.number="item.authority"
                     :items="
                       AUTHORITY.map((item) => {
@@ -81,15 +82,14 @@
                     "
                     label="*권한"
                     :error-messages="errors"
-                    v-if="AUTHORITY"
                   />
                 </ValidationProvider>
               </v-col>
               <v-col cols="12" md="4">
                 <ValidationProvider
+                  v-slot="{ errors }"
                   name="정렬순서"
                   rules="required|numeric"
-                  v-slot="{ errors }"
                 >
                   <v-text-field
                     v-model="item.displayOrder"
@@ -108,7 +108,7 @@
             <v-icon> mdi-window-close</v-icon>
             닫기
           </v-btn>
-          <v-btn text @click="save" :loading="loading">
+          <v-btn text :loading="loading" @click="save">
             <v-icon> mdi-content-save-settings-outline</v-icon>
             저장
           </v-btn>

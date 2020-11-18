@@ -17,9 +17,9 @@
             <v-row>
               <v-col cols="12" md="4">
                 <ValidationProvider
+                  v-slot="{ errors }"
                   name="사용자아이디"
                   rules="required|max:50"
-                  v-slot="{ errors }"
                 >
                   <v-text-field
                     v-model="item.id"
@@ -32,9 +32,9 @@
               </v-col>
               <v-col cols="12" md="4">
                 <ValidationProvider
+                  v-slot="{ errors }"
                   name="사용자명"
                   rules="required|max:100"
-                  v-slot="{ errors }"
                 >
                   <v-text-field
                     v-model="item.name"
@@ -52,11 +52,12 @@
               </v-col>
               <v-col cols="12" md="4">
                 <ValidationProvider
+                  v-slot="{ errors }"
                   name="권한"
                   rules="required"
-                  v-slot="{ errors }"
                 >
                   <v-select
+                    v-if="AUTHORITY"
                     v-model.number="item.authority"
                     :items="
                       AUTHORITY.map((item) => {
@@ -65,7 +66,6 @@
                     "
                     label="*권한"
                     :error-messages="errors"
-                    v-if="AUTHORITY"
                   />
                 </ValidationProvider>
               </v-col>
@@ -78,11 +78,11 @@
               </v-col>
               <v-col cols="12" md="4">
                 <ValidationProvider
+                  v-if="isNew"
+                  v-slot="{ errors }"
                   name="비밀번호"
                   vid="password"
                   rules="max:20"
-                  v-slot="{ errors }"
-                  v-if="isNew"
                 >
                   <v-text-field
                     v-model="item.password"
@@ -97,10 +97,10 @@
               </v-col>
               <v-col cols="12" md="4">
                 <ValidationProvider
+                  v-if="isNew"
+                  v-slot="{ errors }"
                   name="비밀번호 확인"
                   rules="required|confirmed:password|max:20"
-                  v-slot="{ errors }"
-                  v-if="isNew"
                 >
                   <v-text-field
                     v-model="password2"
@@ -109,15 +109,15 @@
                     :error-messages="errors"
                     :append-icon="show2 ? 'mdi-eye' : 'mdi-eye-off'"
                     :type="show2 ? 'text' : 'password'"
-                    @click:append="show2 = !show2"
                     clearable
+                    @click:append="show2 = !show2"
                   />
                 </ValidationProvider>
                 <v-btn
-                  color="warning"
-                  @click="resetPassword"
                   v-if="!isNew"
+                  color="warning"
                   outlined
+                  @click="resetPassword"
                 >
                   비밀번호 초기화
                 </v-btn>
@@ -132,7 +132,7 @@
             <v-icon> mdi-window-close</v-icon>
             닫기
           </v-btn>
-          <v-btn text @click="save" :loading="loading">
+          <v-btn text :loading="loading" @click="save">
             <v-icon> mdi-content-save-settings-outline</v-icon>
             저장
           </v-btn>
@@ -176,7 +176,7 @@ export default class extends Vue {
   }
 
   @Watch("syncedDialog", { immediate: true })
-  watchDialog(val: boolean) {
+  watchDialog(val: boolean): void {
     if (val) {
       this.password2 = "";
       this.show1 = false;
@@ -189,7 +189,7 @@ export default class extends Vue {
     }
   }
 
-  async save() {
+  async save(): Promise<void> {
     const isValid = await (this.$refs.observer as InstanceType<
       typeof ValidationObserver
     >).validate();
@@ -199,7 +199,7 @@ export default class extends Vue {
     this.isNew ? await this.create() : await this.patch();
   }
 
-  async create() {
+  async create(): Promise<void> {
     this.loading = true;
     const params = { ...this.item };
     if (params.password) {
@@ -219,7 +219,7 @@ export default class extends Vue {
     }
   }
 
-  async patch() {
+  async patch(): Promise<void> {
     this.loading = true;
     const params = { ...this.item };
     if (params.password) {
@@ -243,7 +243,7 @@ export default class extends Vue {
     }
   }
 
-  async delete() {
+  async delete(): Promise<void> {
     const result = await confirmDelete();
     if (result.value) {
       this.loading = true;
@@ -258,7 +258,7 @@ export default class extends Vue {
     }
   }
 
-  async resetPassword() {
+  async resetPassword(): Promise<void> {
     this.loading = true;
     await postApi<TableMemberEntity>(
       `${this.ENDPOINT_URL}${this.item.id}/resetPassword`,

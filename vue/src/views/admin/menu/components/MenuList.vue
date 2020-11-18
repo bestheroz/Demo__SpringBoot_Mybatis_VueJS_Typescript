@@ -14,7 +14,7 @@
         hide-default-footer
         :height="height"
       >
-        <template #[`item.type`]="{ item }" v-if="MENU_TYPE">
+        <template v-if="MENU_TYPE" #[`item.type`]="{ item }">
           {{ item.type | getCodeText(MENU_TYPE) }}
         </template>
         <template #[`item.name`]="{ item }">
@@ -35,8 +35,8 @@
             tile
             color="button-add"
             small
-            @click="$emit('add-item', item)"
             :disabled="item.level === 3"
+            @click="$emit('add-item', item)"
           >
             하위메뉴입력
           </v-btn>
@@ -55,8 +55,8 @@
             tile
             color="button-delete"
             small
-            @click="$emit('delete-item', item)"
             :disabled="!item.parentId"
+            @click="$emit('delete-item', item)"
           >
             삭제
           </v-btn>
@@ -132,6 +132,7 @@ export default class extends Vue {
       width: "7rem",
     },
   ];
+
   async beforeMount(): Promise<void> {
     this.MENU_TYPE = await getCodesApi("MENU_TYPE");
   }

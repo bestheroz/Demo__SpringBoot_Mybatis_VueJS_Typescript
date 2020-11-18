@@ -23,9 +23,9 @@
               </v-col>
               <v-col cols="12">
                 <ValidationProvider
+                  v-slot="{ errors }"
                   name="사용자명"
                   rules="required|max:100"
-                  v-slot="{ errors }"
                 >
                   <v-text-field
                     v-model="item.name"
@@ -37,9 +37,9 @@
               </v-col>
               <v-col cols="7">
                 <ValidationProvider
+                  v-slot="{ errors }"
                   name="비빌번호"
                   rules="required|max:20"
-                  v-slot="{ errors }"
                 >
                   <v-text-field
                     v-model="item.password"
@@ -55,9 +55,9 @@
               <v-col cols="5" class="text-right pt-7">
                 <v-btn
                   color="button-edit"
-                  @click="newPasswordDialog = true"
                   outlined
                   small
+                  @click="newPasswordDialog = true"
                 >
                   비밀번호 변경
                 </v-btn>
@@ -79,7 +79,7 @@
             <v-icon> mdi-window-close</v-icon>
             닫기
           </v-btn>
-          <v-btn text @click="save" :loading="loading">
+          <v-btn text :loading="loading" @click="save">
             <v-icon> mdi-content-save-settings-outline</v-icon>
             저장
           </v-btn>

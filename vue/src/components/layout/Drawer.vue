@@ -1,5 +1,5 @@
 <template>
-  <v-navigation-drawer v-model="syncedDrawer" app clipped fixed v-if="!isPopup">
+  <v-navigation-drawer v-if="!isPopup" v-model="syncedDrawer" app clipped fixed>
     <v-list>
       <template v-for="item in items">
         <v-list-group
@@ -14,11 +14,11 @@
             </v-list-item-content>
           </template>
           <v-list-item
+            v-for="child in item.children"
             :key="child.title"
             :to="child.type === 'W' || !child.to ? undefined : child.to"
-            @click="child.type === 'W' ? popupWindow(child.to) : undefined"
-            v-for="child in item.children"
             link
+            @click="child.type === 'W' ? popupWindow(child.to) : undefined"
           >
             <v-list-item-action>
               <v-icon>mdi-menu-right</v-icon>
@@ -52,7 +52,7 @@
       <div class="ma-2">
         <v-row no-gutters>
           <v-col cols="10">
-            <v-btn outlined @click="logout" class="px-10">
+            <v-btn outlined class="px-10" @click="logout">
               <v-icon>mdi-logout</v-icon>
               Logout
             </v-btn>
@@ -95,7 +95,7 @@ export default class extends Vue {
     this.items = await this.$store.dispatch("getDrawers");
   }
 
-  popupWindow(url: string) {
+  popupWindow(url: string): void {
     window.open(
       url,
       "_blank",
@@ -125,7 +125,7 @@ export default class extends Vue {
     }
   }
 
-  movePage(item: DrawerItem) {
+  movePage(item: DrawerItem): void {
     if (!item.to || item.to === this.$route.fullPath) {
       return;
     }

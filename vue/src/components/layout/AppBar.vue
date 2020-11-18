@@ -1,9 +1,9 @@
 <template>
   <div>
-    <v-app-bar dense app clipped-left v-if="!isPopup">
+    <v-app-bar v-if="!isPopup" dense app clipped-left>
       <v-app-bar-nav-icon @click.stop="syncedDrawer = !syncedDrawer" />
       <v-toolbar-title>
-        <v-btn x-large text @click="goHome" color="primary">
+        <v-btn x-large text color="primary" @click="goHome">
           {{ title }}
         </v-btn>
       </v-toolbar-title>

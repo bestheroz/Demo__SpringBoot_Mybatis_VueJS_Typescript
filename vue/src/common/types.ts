@@ -1,8 +1,12 @@
+import dayjs from "dayjs";
+
+export type DateType = dayjs.ConfigType;
+
 export interface SelectItem {
   value: string;
   text: string;
 }
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export interface DataTableHeader {
   text: string;
   value: string;
@@ -19,6 +23,7 @@ export interface DataTableHeader {
   filterSelectItem?: SelectItem[] | null;
   filterDefaultValue?: string | null;
 }
+/* eslint-enable @typescript-eslint/no-explicit-any */
 
 // export interface Pagination {
 //   page: number;

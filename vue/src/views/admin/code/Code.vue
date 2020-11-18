@@ -36,9 +36,10 @@ import CodeWrapper from "@/views/admin/code/components/CodeWrapper.vue";
 export default class extends Vue {
   selected: TableCodeGroupEntity[] = [];
 
-  get item() {
+  get item(): TableCodeGroupEntity {
     return (
-      (this.selected && this.selected.length > 0 && this.selected[0]) || []
+      (this.selected && this.selected.length > 0 && this.selected[0]) ||
+      Object.create(null)
     );
   }
 }

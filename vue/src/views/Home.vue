@@ -25,7 +25,7 @@ import dayjs from "dayjs";
 })
 export default class extends Vue {
   title: string | null = null;
-  interval: any = null;
+  interval: number | null = null;
   now = "";
   color = "";
 
@@ -36,7 +36,7 @@ export default class extends Vue {
   async mounted(): Promise<void> {
     this.now = dayjs().format("YYYY년 MM월 DD일 HH시 mm분 ss초");
     this.color = this.getRandomColor();
-    this.interval = setInterval(() => {
+    this.interval = window.setInterval(() => {
       this.now = dayjs().format("YYYY년 MM월 DD일 HH시 mm분 ss초");
       this.color = this.getRandomColor();
     }, 1000);

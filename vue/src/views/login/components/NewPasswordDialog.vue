@@ -13,10 +13,10 @@
             <v-row>
               <v-col cols="12">
                 <ValidationProvider
+                  v-slot="{ errors }"
                   name="비밀번호"
                   vid="password"
                   rules="required|max:20"
-                  v-slot="{ errors }"
                 >
                   <v-text-field
                     v-model="password"
@@ -31,9 +31,9 @@
               </v-col>
               <v-col cols="12">
                 <ValidationProvider
+                  v-slot="{ errors }"
                   name="비밀번호 확인"
                   rules="required|confirmed:password|max:20"
-                  v-slot="{ errors }"
                 >
                   <v-text-field
                     v-model="password2"
@@ -53,7 +53,7 @@
         <v-divider />
         <v-card-actions>
           <v-spacer />
-          <v-btn color="button-default" text @click="save" :loading="loading">
+          <v-btn color="button-default" text :loading="loading" @click="save">
             저장
           </v-btn>
         </v-card-actions>

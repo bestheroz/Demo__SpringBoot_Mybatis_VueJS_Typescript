@@ -1,9 +1,9 @@
 <template>
   <div>
     <v-data-table
+      v-model="syncedSelected"
       must-sort
       fixed-header
-      v-model="syncedSelected"
       :loading="loading"
       :headers="headers"
       :items="filteredItems"
@@ -43,7 +43,7 @@
           />
         </span>
       </template>
-      <template #[`item.authority`]="{ item }" v-if="AUTHORITY">
+      <template v-if="AUTHORITY" #[`item.authority`]="{ item }">
         {{ item.authority | getCodeText(AUTHORITY) }}
       </template>
       <template #[`item.updatedBy`]="{ item }">
@@ -135,12 +135,17 @@ export default class extends Vue {
     },
   ];
 
-  async mounted() {
-    this.headers[
-      this.headers.indexOf(
-        this.headers.find((item) => item.value === "authority")!,
-      )
-    ].filterSelectItem = this.AUTHORITY = await getCodesApi("AUTHORITY");
+  async beforeMount(): Promise<void> {
+    this.AUTHORITY = await getCodesApi("AUTHORITY");
+  }
+
+  mounted(): void {
+    const find = this.headers.find((item) => item.value === "authority");
+    if (find) {
+      this.headers[
+        this.headers.indexOf(find)
+      ].filterSelectItem = this.AUTHORITY;
+    }
   }
 
   @Watch("parentItem")
@@ -149,7 +154,7 @@ export default class extends Vue {
     val?.codeGroup && this.getList();
   }
 
-  async getList() {
+  async getList(): Promise<void> {
     this.syncedSelected = [];
     this.items = [];
     this.loading = true;

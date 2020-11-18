@@ -1,82 +1,80 @@
 <template>
   <div>
-    <ValidationObserver ref="observer">
-      <v-row no-gutters v-if="fullWidth">
-        <v-col cols="6">
-          <date-picker
-            ref="refStart"
-            v-model="syncedStart"
-            :label="startLabel"
-            :message="startMessage"
-            :required="required"
-            :disabled="disabled || startDisabled"
-            :dense="dense"
-            :hide-details="hideDetails"
-            :clearable="clearable"
-            :max="maxDate"
-            start-type
-            full-width
-          />
-        </v-col>
-        <v-col cols="6">
-          <date-picker
-            ref="refEnd"
-            v-model="syncedEnd"
-            :label="endLabel"
-            :message="endMessage"
-            :required="required"
-            :disabled="disabled || endDisabled"
-            :dense="dense"
-            :hide-details="hideDetails"
-            :clearable="clearable"
-            :min="minDate"
-            end-type
-            end-of-day
-            full-width
-          />
-        </v-col>
-      </v-row>
-      <v-row no-gutters v-else>
-        <v-col cols="12" style="display: inline-flex">
-          <date-picker
-            ref="refStart"
-            v-model="syncedStart"
-            :label="startLabel"
-            :message="startMessage"
-            :required="required"
-            :disabled="disabled || startDisabled"
-            :dense="dense"
-            :hide-details="hideDetails"
-            :clearable="clearable"
-            :max="maxDate"
-            start-type
-          />
-          <date-picker
-            ref="refEnd"
-            v-model="syncedEnd"
-            :label="endLabel"
-            :message="endMessage"
-            :required="required"
-            :disabled="disabled || endDisabled"
-            :dense="dense"
-            :hide-details="hideDetails"
-            :clearable="clearable"
-            :min="minDate"
-            end-type
-            end-of-day
-          />
-        </v-col>
-      </v-row>
-    </ValidationObserver>
+    <v-row no-gutters v-if="fullWidth">
+      <v-col cols="6">
+        <date-picker
+          ref="refStart"
+          v-model="syncedStart"
+          :label="defaultLabelForStart"
+          :message="startMessage"
+          :required="required"
+          :disabled="disabled || startDisabled"
+          :dense="dense"
+          :hide-details="hideDetails"
+          :clearable="clearable"
+          :hide-hint="hideHint"
+          :max="maxDate"
+          start-type
+          full-width
+        />
+      </v-col>
+      <v-col cols="6">
+        <date-picker
+          ref="refEnd"
+          v-model="syncedEnd"
+          :label="defaultLabelForEnd"
+          :message="endMessage"
+          :required="required"
+          :disabled="disabled || endDisabled"
+          :dense="dense"
+          :hide-details="hideDetails"
+          :clearable="clearable"
+          :hide-hint="hideHint"
+          :min="minDate"
+          end-type
+          full-width
+        />
+      </v-col>
+    </v-row>
+    <v-row no-gutters v-else>
+      <v-col cols="12" style="display: inline-flex">
+        <date-picker
+          ref="refStart"
+          v-model="syncedStart"
+          :label="defaultLabelForStart"
+          :message="startMessage"
+          :required="required"
+          :disabled="disabled || startDisabled"
+          :dense="dense"
+          :hide-details="hideDetails"
+          :clearable="clearable"
+          :hide-hint="hideHint"
+          :max="maxDate"
+          start-type
+        />
+        <date-picker
+          ref="refEnd"
+          v-model="syncedEnd"
+          :label="defaultLabelForEnd"
+          :message="endMessage"
+          :required="required"
+          :disabled="disabled || endDisabled"
+          :dense="dense"
+          :hide-details="hideDetails"
+          :clearable="clearable"
+          :hide-hint="hideHint"
+          :min="minDate"
+          end-type
+        />
+      </v-col>
+    </v-row>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Prop, PropSync, Vue } from "vue-property-decorator";
-import envs from "@/constants/envs";
+import { Component, Prop, PropSync, Ref, Vue } from "vue-property-decorator";
+import DatePicker from "@/components/picker/date/DatePicker.vue";
 import dayjs from "dayjs";
-import DatePicker from "@/components/picker/DatePicker.vue";
-import { ValidationObserver } from "vee-validate";
 
 @Component({
   name: "DateStartEndPicker",
@@ -95,13 +93,9 @@ export default class extends Vue {
     | number
     | null;
 
-  @Prop({ type: String, default: "시작날짜" }) readonly startLabel!:
-    | string
-    | null;
+  @Prop({ type: String }) readonly startLabel!: string | null;
 
-  @Prop({ type: String, default: "종료날짜" }) readonly endLabel!:
-    | string
-    | null;
+  @Prop({ type: String }) readonly endLabel!: string | null;
 
   @Prop({ type: String }) readonly startMessage!: string | null;
   @Prop({ type: String }) readonly endMessage!: string | null;
@@ -113,32 +107,37 @@ export default class extends Vue {
   @Prop({ type: Boolean, default: false }) readonly hideDetails!: boolean;
   @Prop({ type: Boolean, default: false }) readonly clearable!: boolean;
   @Prop({ type: Boolean, default: false }) readonly fullWidth!: boolean;
+  @Prop({ type: Boolean, default: false }) readonly hideHint!: boolean;
 
-  readonly envs: typeof envs = envs;
+  @Ref("refStart") readonly refStart!: DatePicker;
+  @Ref("refEnd") readonly refEnd!: DatePicker;
 
-  get minDate() {
+  readonly DATEPICKER_FORMAT = "YYYY-MM-DD";
+
+  get defaultLabelForStart(): string {
+    return this.startLabel || this.$t("msg.picker.startDate").toString();
+  }
+
+  get defaultLabelForEnd(): string {
+    return this.endLabel || this.$t("msg.picker.endDate").toString();
+  }
+
+  get minDate(): string | undefined {
     if (!this.syncedStart) {
       return undefined;
     }
-    return dayjs(this.syncedStart).format(envs.DATE_FORMAT_STRING);
+    return dayjs(this.syncedStart).format(this.DATEPICKER_FORMAT);
   }
 
-  get maxDate() {
+  get maxDate(): string | undefined {
     if (!this.syncedEnd) {
       return undefined;
     }
-    return dayjs(this.syncedEnd).format(envs.DATE_FORMAT_STRING);
+    return dayjs(this.syncedEnd).format(this.DATEPICKER_FORMAT);
   }
 
-  async validate(): Promise<boolean> {
-    return (
-      (await (this.$refs.refStart as InstanceType<
-        typeof ValidationObserver
-      >).validate()) &&
-      (await (this.$refs.refEnd as InstanceType<
-        typeof ValidationObserver
-      >).validate())
-    );
+  validate(): boolean {
+    return this.refStart.validate() && this.refEnd.validate();
   }
 }
 </script>

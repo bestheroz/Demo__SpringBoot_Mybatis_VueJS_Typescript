@@ -20,8 +20,8 @@
           ref="refList"
           :parent-item="parentItem"
           :selected.sync="selected"
-          @row-id-clicked="editItem"
           :height="height"
+          @row-id-clicked="editItem"
         />
         <code-edit-dialog
           ref="refEditDialog"
@@ -35,7 +35,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+import { Component, Prop, Ref, Vue } from "vue-property-decorator";
 import type { TableCodeEntity, TableCodeGroupEntity } from "@/common/types";
 import ButtonSet from "@/components/speeddial/ButtonSet.vue";
 import CodeEditDialog from "@/views/admin/code/components/CodeEditDialog.vue";
@@ -54,28 +54,30 @@ import CodeList from "@/views/admin/code/components/CodeList.vue";
 export default class extends Vue {
   @Prop({ required: true }) readonly height!: number | string;
   @Prop({ required: true }) readonly parentItem!: TableCodeGroupEntity;
+  @Ref("refList") readonly refList!: CodeList;
+  @Ref("refEditDialog") readonly refEditDialog!: CodeEditDialog;
 
   selected: TableCodeEntity[] = [];
   dialog = false;
   item: TableCodeEntity = Object.create(null);
 
-  reloadList() {
-    this.$refs.refList && (this.$refs.refList as any).getList();
+  reloadList(): void {
+    this.refList.getList();
   }
 
-  addItem() {
+  addItem(): void {
     this.item = { codeGroup: this.parentItem.codeGroup };
     this.dialog = true;
   }
 
-  editItem(value: TableCodeEntity) {
+  editItem(value: TableCodeEntity): void {
     this.item = { ...value };
     this.dialog = true;
   }
 
-  deleteItem() {
+  deleteItem(): void {
     this.item = this.selected[0];
-    (this.$refs.refEditDialog as any).delete();
+    this.refEditDialog.delete();
   }
 }
 </script>
