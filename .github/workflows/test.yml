@@ -162,6 +162,11 @@ jobs:
           cd vue
           npm run build
 
+      - name: move front-end dist to target
+        run: |
+          mkdir -p ~/work/swan_2020/swan_2020/target/classes/static
+          mv -f ~/work/swan_2020/swan_2020/vue/dist/* ~/work/swan_2020/swan_2020/target/classes/static/
+
       - name: mvn package
         run: |
           mvn clean
