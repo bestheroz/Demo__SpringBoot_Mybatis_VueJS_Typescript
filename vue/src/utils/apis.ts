@@ -127,8 +127,9 @@ export async function deleteApi<T>(
 export async function getCodesApi<SelectItem>(
   codeGroup: string,
 ): Promise<SelectItem[]> {
-  if (window.localStorage.getItem(`code__${codeGroup}`)) {
-    return JSON.parse(window.localStorage.getItem(`code__${codeGroup}`)!);
+  const item = window.localStorage.getItem(`code__${codeGroup}`);
+  if (item) {
+    return JSON.parse(item);
   } else {
     try {
       const response = await axiosInstance.get<ApiDataResult<SelectItem[]>>(
@@ -152,14 +153,15 @@ export async function getCodesApi<SelectItem>(
 export async function getVariableApi<T = string>(
   variable: string,
 ): Promise<T | null> {
-  if (window.localStorage.getItem(`variable__${variable}`)) {
-    return JSON.parse(window.localStorage.getItem(`variable__${variable}`)!);
+  const item = window.localStorage.getItem(`variable__${variable}`);
+  if (item) {
+    return JSON.parse(item);
   } else {
     try {
       const response = await axiosInstance.get<ApiDataResult<T>>(
         `api/variables/${variable}`,
       );
-      const result = response?.data?.data!;
+      const result = response?.data?.data || null;
       if (result) {
         window.localStorage.setItem(
           `variable__${variable}`,
@@ -174,7 +176,7 @@ export async function getVariableApi<T = string>(
   }
 }
 
-function alertResponseMessage(data: ApiDataResult<any>): void {
+function alertResponseMessage(data: ApiDataResult<unknown>): void {
   if (data.code.startsWith("S")) {
     alertSuccess(data.message);
   } else {
@@ -240,7 +242,7 @@ axiosInstanceForExcel.interceptors.response.use(
 );
 
 export async function getExcelApi(url: string): Promise<void> {
-  const response = await axiosInstanceForExcel.get<any>(`api/${url}`);
+  const response = await axiosInstanceForExcel.get<Blob>(`api/${url}`);
   const newUrl = window.URL.createObjectURL(
     new Blob([response?.data], { type: response.headers["content-type"] }),
   );

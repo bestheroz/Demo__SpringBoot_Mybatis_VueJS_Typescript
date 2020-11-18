@@ -7,6 +7,7 @@ import "./plugins/vue-toasted";
 import "./plugins/vee-validate";
 import "./plugins/vue-filter";
 import "./plugins/sentry";
+import dotenv from "dotenv";
 
 Vue.config.productionTip = false;
 
@@ -17,4 +18,4 @@ new Vue({
   render: (h) => h(App),
 }).$mount("#app");
 
-require("dotenv").config();
+dotenv.config();

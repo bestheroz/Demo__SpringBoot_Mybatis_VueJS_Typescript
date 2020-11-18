@@ -1,10 +1,10 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es6",
     "module": "esnext",
     "strict": true,
-    //    "alwaysStrict": true,
-    //    "strictNullChecks": true,
+    "alwaysStrict": true,
+    "strictNullChecks": true,
     "jsx": "preserve",
     "importHelpers": true,
     "moduleResolution": "node",
@@ -20,7 +20,7 @@
     "paths": {
       "@/*": ["src/*"]
     },
-    "lib": ["esnext", "dom"],
+    "lib": ["esnext", "dom", "dom.iterable"],
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "pretty": true

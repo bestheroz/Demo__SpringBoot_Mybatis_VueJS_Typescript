@@ -4,24 +4,31 @@ import { SweetAlertResult } from "sweetalert2";
 import Swal from "sweetalert2/src/sweetalert2.js";
 import { AxiosError } from "axios";
 
-let timerInterval: any;
+let timerInterval: number | undefined;
 
-const countdownDialog = () => {
-  if (Swal.getContent() !== null) {
+const countdownDialog = (): void => {
+  const content = Swal.getContent();
+  if (content !== null) {
     setTimeout(() => {
       if (Swal.getTimerLeft()) {
-        timerInterval = setInterval(() => {
+        timerInterval = window.setInterval(() => {
           try {
-            Swal.getContent()!.querySelector("b")!.textContent = (
-              +(Swal.getTimerLeft() || 0) / 1000
-            ).toFixed(0);
+            const querySelector = content.querySelector("b");
+            if (querySelector) {
+              querySelector.textContent = (
+                +(Swal.getTimerLeft() || 0) / 1000
+              ).toFixed(0);
+            }
           } catch (e) {
             timerInterval && clearInterval(timerInterval);
             timerInterval = undefined;
           }
         }, 1002);
-      } else if (Swal.getContent()!.querySelector("#swal2-content")) {
-        Swal.getContent()!.querySelector("#swal2-content")!.innerHTML = "";
+      } else {
+        const querySelector1 = content.querySelector("#swal2-content");
+        if (querySelector1) {
+          querySelector1.innerHTML = "";
+        }
       }
     }, 400);
   }
