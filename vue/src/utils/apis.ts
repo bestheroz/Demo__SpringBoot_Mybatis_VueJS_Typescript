@@ -1,20 +1,20 @@
-import axios, { AxiosError } from 'axios';
-import { alertError, alertSuccess, alertWarning } from '@/utils/alerts';
-import envs from '@/constants/envs';
-import { needLogin, refreshToken } from '@/utils/authentications';
-import { errorPage } from '@/utils/errors';
+import axios, { AxiosError } from "axios";
+import { alertError, alertSuccess, alertWarning } from "@/utils/alerts";
+import envs from "@/constants/envs";
+import { needLogin, refreshToken } from "@/utils/authentications";
+import { errorPage } from "@/utils/errors";
 
 export const axiosInstance = axios.create({
   baseURL: envs.API_HOST,
   headers: {
-    contentType: 'application/json',
-    Authorization: window.localStorage.getItem('accessToken'),
+    contentType: "application/json",
+    Authorization: window.localStorage.getItem("accessToken"),
   },
 });
 
 axiosInstance.interceptors.request.use(
   function (config) {
-    config.headers.Authorization = window.localStorage.getItem('accessToken');
+    config.headers.Authorization = window.localStorage.getItem("accessToken");
     return config;
   },
   function (error) {
@@ -27,12 +27,12 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   async function (error: AxiosError) {
-    if (error?.message === 'Network Error') {
-      alertWarning('Service Unavailable');
+    if (error?.message === "Network Error") {
+      alertWarning("Service Unavailable");
       return;
     }
     if (error?.response) {
-      if (error.response.headers.refreshtoken === 'must') {
+      if (error.response.headers.refreshtoken === "must") {
         const refreshToken = await apiRefreshToken(error);
         return refreshToken && axios.request(refreshToken.config);
       }
@@ -44,7 +44,7 @@ axiosInstance.interceptors.response.use(
         return;
       }
     }
-    if (process.env.NODE_ENV === 'local') {
+    if (process.env.NODE_ENV === "local") {
       alertAxiosError(error);
     }
     console.warn(error);
@@ -127,8 +127,9 @@ export async function deleteApi<T>(
 export async function getCodesApi<SelectItem>(
   codeGroup: string,
 ): Promise<SelectItem[]> {
-  if (window.localStorage.getItem(`code__${codeGroup}`)) {
-    return JSON.parse(window.localStorage.getItem(`code__${codeGroup}`)!);
+  const item = window.localStorage.getItem(`code__${codeGroup}`);
+  if (item) {
+    return JSON.parse(item);
   } else {
     try {
       const response = await axiosInstance.get<ApiDataResult<SelectItem[]>>(
@@ -152,14 +153,15 @@ export async function getCodesApi<SelectItem>(
 export async function getVariableApi<T = string>(
   variable: string,
 ): Promise<T | null> {
-  if (window.localStorage.getItem(`variable__${variable}`)) {
-    return JSON.parse(window.localStorage.getItem(`variable__${variable}`)!);
+  const item = window.localStorage.getItem(`variable__${variable}`);
+  if (item) {
+    return JSON.parse(item);
   } else {
     try {
       const response = await axiosInstance.get<ApiDataResult<T>>(
         `api/variables/${variable}`,
       );
-      const result = response?.data?.data!;
+      const result = response?.data?.data || null;
       if (result) {
         window.localStorage.setItem(
           `variable__${variable}`,
@@ -174,8 +176,8 @@ export async function getVariableApi<T = string>(
   }
 }
 
-function alertResponseMessage(data: ApiDataResult<any>): void {
-  if (data.code.startsWith(`S`)) {
+function alertResponseMessage(data: ApiDataResult<unknown>): void {
+  if (data.code.startsWith("S")) {
     alertSuccess(data.message);
   } else {
     alertError(data.message);
@@ -184,17 +186,17 @@ function alertResponseMessage(data: ApiDataResult<any>): void {
 
 const axiosInstanceForExcel = axios.create({
   baseURL: envs.API_HOST,
-  responseType: 'blob',
+  responseType: "blob",
   headers: {
-    Authorization: window.localStorage.getItem('accessToken'),
-    'Content-Type':
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    Authorization: window.localStorage.getItem("accessToken"),
+    "Content-Type":
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
   },
 });
 
 axiosInstanceForExcel.interceptors.request.use(
   function (config) {
-    config.headers.Authorization = window.localStorage.getItem('accessToken');
+    config.headers.Authorization = window.localStorage.getItem("accessToken");
     return config;
   },
   function (error) {
@@ -208,13 +210,13 @@ axiosInstanceForExcel.interceptors.response.use(
     return response;
   },
   async function (error: AxiosError) {
-    if (error?.message === 'Network Error') {
-      alertWarning('Service Unavailable');
+    if (error?.message === "Network Error") {
+      alertWarning("Service Unavailable");
       return;
     }
     if (error?.response) {
       if ([400, 401].includes(error.response?.status)) {
-        if (error.response.headers.refreshtoken === 'must') {
+        if (error.response.headers.refreshtoken === "must") {
           const refreshToken = await apiRefreshToken(error);
           return refreshToken && axios.request(refreshToken.config);
         }
@@ -222,7 +224,7 @@ axiosInstanceForExcel.interceptors.response.use(
         return;
       } else if (
         error.response.status === 404 &&
-        error.response.headers.refreshtoken === 'must'
+        error.response.headers.refreshtoken === "must"
       ) {
         // 로컬환경때문에 추가
         const refreshToken = await apiRefreshToken(error);
@@ -240,20 +242,20 @@ axiosInstanceForExcel.interceptors.response.use(
 );
 
 export async function getExcelApi(url: string): Promise<void> {
-  const response = await axiosInstanceForExcel.get<any>(`api/${url}`);
+  const response = await axiosInstanceForExcel.get<Blob>(`api/${url}`);
   const newUrl = window.URL.createObjectURL(
-    new Blob([response?.data], { type: response.headers['content-type'] }),
+    new Blob([response?.data], { type: response.headers["content-type"] }),
   );
-  const tempLink = document.createElement('a');
-  tempLink.style.display = 'none';
+  const tempLink = document.createElement("a");
+  tempLink.style.display = "none";
   tempLink.href = newUrl;
   tempLink.setAttribute(
-    'download',
-    response.headers['content-disposition']
-      .split('=')
+    "download",
+    response.headers["content-disposition"]
+      .split("=")
       .pop()
-      .split(';')
-      .join(''),
+      .split(";")
+      .join(""),
   );
   document.body.appendChild(tempLink);
   tempLink.click();
@@ -262,18 +264,18 @@ export async function getExcelApi(url: string): Promise<void> {
 }
 
 async function apiRefreshToken(error: AxiosError) {
-  if (error.response?.headers?.refreshtoken === 'must') {
+  if (error.response?.headers?.refreshtoken === "must") {
     try {
       const response = await axios
         .create({
           baseURL: envs.API_HOST,
           headers: {
-            contentType: 'application/json',
-            Authorization: window.localStorage.getItem('accessToken'),
-            AuthorizationR: window.localStorage.getItem('refreshToken'),
+            contentType: "application/json",
+            Authorization: window.localStorage.getItem("accessToken"),
+            AuthorizationR: window.localStorage.getItem("refreshToken"),
           },
         })
-        .get('api/auth/refreshToken');
+        .get("api/auth/refreshToken");
       await refreshToken(response?.data?.data);
     } catch (e) {
       if (e.response?.status === 401) {
@@ -282,15 +284,15 @@ async function apiRefreshToken(error: AxiosError) {
       }
     }
     error.config.headers.Authorization = window.localStorage.getItem(
-      'accessToken',
+      "accessToken",
     );
     error.config.headers.AuthorizationR = window.localStorage.getItem(
-      'refreshToken',
+      "refreshToken",
     );
   }
   return error;
 }
 
 export function alertAxiosError(e: AxiosError): void {
-  e.response && alertError(e?.response?.data?.message || 'System Error');
+  e.response && alertError(e?.response?.data?.message || "System Error");
 }

@@ -6,7 +6,7 @@
           <v-toolbar color="primary" dark flat>
             <v-toolbar-title>Login at {{ title }}</v-toolbar-title>
             <v-spacer />
-            <template v-slot:heading>
+            <template #heading>
               <div class="text-center">
                 <h1 class="display-2 font-weight-bold">
                   <v-icon>mdi-lock-outline</v-icon>
@@ -81,41 +81,43 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Vue } from "vue-property-decorator";
 import {
   alertAxiosError,
   ApiDataResult,
   axiosInstance,
   getVariableApi,
-} from '@/utils/apis';
-import { alertError } from '@/utils/alerts';
-import NewPasswordDialog from '@/views/login/components/NewPasswordDialog.vue';
-import { saveToken } from '@/utils/authentications';
-import { ValidationObserver } from 'vee-validate';
+} from "@/utils/apis";
+import { alertError } from "@/utils/alerts";
+import NewPasswordDialog from "@/views/login/components/NewPasswordDialog.vue";
+import { saveToken } from "@/utils/authentications";
+import { ValidationObserver } from "vee-validate";
+import pbkdf2 from "pbkdf2";
 
-const pbkdf2 = require('pbkdf2');
-
-@Component({ name: 'Login', components: { NewPasswordDialog } })
+@Component({ name: "Login", components: { NewPasswordDialog } })
 export default class extends Vue {
   id: string | null = null;
   password: string | null = null;
-  show1: boolean = false;
+  show1 = false;
   title: string | null = null;
-  loading: boolean = false;
-  dialog: boolean = false;
+  loading = false;
+  dialog = false;
 
-  async mounted() {
-    await this.$store.dispatch('clearUser');
-    await this.$store.dispatch('clearDrawer');
-    await this.$store.dispatch('clearCache');
-    window.localStorage.clear();
-    if (this.$route.query.login === 'need') {
-      this.$toasted.error('로그인이 필요합니다.');
-    }
-    this.title = await getVariableApi('title');
+  async beforeMount(): Promise<void> {
+    this.title = await getVariableApi("title");
   }
 
-  async login() {
+  async mounted(): Promise<void> {
+    await this.$store.dispatch("clearUser");
+    await this.$store.dispatch("clearDrawer");
+    await this.$store.dispatch("clearCache");
+    window.localStorage.clear();
+    if (this.$route.query.login === "need") {
+      this.$toasted.error("로그인이 필요합니다.");
+    }
+  }
+
+  async login(): Promise<void> {
     const inValid = await (this.$refs.observer as InstanceType<
       typeof ValidationObserver
     >).validate();
@@ -125,27 +127,30 @@ export default class extends Vue {
     this.loading = true;
     try {
       const pbkdf2Password: string = pbkdf2
-        .pbkdf2Sync(this.password, 'salt', 1, 32, 'sha512')
+        .pbkdf2Sync(this.password || "", "salt", 1, 32, "sha512")
         .toString();
       const response = await axiosInstance.post<
         ApiDataResult<{
           accessToken: string;
           refreshToken: string;
         }>
-      >(`api/auth/login`, {
+      >("api/auth/login", {
         id: this.id,
         password: pbkdf2Password,
       });
-      if (response?.data?.code === 'S002') {
+      if (response?.data?.code === "S002") {
         this.dialog = true;
         this.password = null;
-      } else if (response?.data?.code?.startsWith(`S`)) {
+      } else if (
+        response?.data?.code?.startsWith("S") &&
+        response?.data?.data
+      ) {
         saveToken({
-          accessToken: response?.data?.data!.accessToken,
-          refreshToken: response?.data?.data!.refreshToken,
+          accessToken: response.data.data.accessToken,
+          refreshToken: response.data.data.refreshToken,
         });
         this.$toasted.clear();
-        await this.$router.push('/');
+        await this.$router.push("/");
       } else {
         alertError(response?.data?.message);
       }

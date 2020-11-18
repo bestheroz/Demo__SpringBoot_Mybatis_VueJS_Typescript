@@ -1,14 +1,6 @@
 <template>
   <div>
-    <modal
-      name="ChangePasswordDialog"
-      draggable
-      width="25%"
-      height="auto"
-      :shiftX="0.84"
-      :shiftY="0.2"
-      :clickToClose="false"
-    >
+    <v-dialog v-model="syncedDialog" persistent max-width="100%" width="25vw">
       <v-card>
         <v-card-title class="py-2 modal-header">
           비밀번호 변경
@@ -93,38 +85,37 @@
           </v-btn>
         </v-card-actions>
       </v-card>
-    </modal>
+    </v-dialog>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, PropSync, Vue, Watch } from 'vue-property-decorator';
-import { postApi } from '@/utils/apis';
-import { ValidationObserver } from 'vee-validate';
-
-const pbkdf2 = require('pbkdf2');
+import { Component, PropSync, Vue, Watch } from "vue-property-decorator";
+import { postApi } from "@/utils/apis";
+import { ValidationObserver } from "vee-validate";
+import pbkdf2 from "pbkdf2";
 
 @Component({
-  name: 'ChangePasswordDialog',
+  name: "ChangePasswordDialog",
   components: {},
 })
 export default class extends Vue {
-  @PropSync('dialog', { required: true, type: Boolean }) syncedDialog!: boolean;
+  @PropSync("dialog", { required: true, type: Boolean }) syncedDialog!: boolean;
 
-  readonly ENDPOINT_URL: string = `members/`;
-  loading: boolean = false;
+  readonly ENDPOINT_URL: string = "members/";
+  loading = false;
   oldPassword: string | null = null;
   password: string | null = null;
   password2: string | null = null;
-  show1: boolean = false;
-  show2: boolean = false;
-  show3: boolean = false;
+  show1 = false;
+  show2 = false;
+  show3 = false;
 
-  beforeDestroy() {
+  beforeDestroy(): void {
     this.syncedDialog = false;
   }
 
-  @Watch('syncedDialog')
+  @Watch("syncedDialog")
   watchDialog(val: boolean) {
     if (val) {
       this.oldPassword = null;
@@ -137,13 +128,10 @@ export default class extends Vue {
         (this.$refs.observer as InstanceType<
           typeof ValidationObserver
         >).reset();
-      this.$modal.show('ChangePasswordDialog');
-    } else {
-      this.$modal.hide('ChangePasswordDialog');
     }
   }
 
-  async save() {
+  async save(): Promise<void> {
     const isValid = await (this.$refs.observer as InstanceType<
       typeof ValidationObserver
     >).validate();
@@ -157,16 +145,16 @@ export default class extends Vue {
       newPassword: string;
     }>(`${this.ENDPOINT_URL}mine/changePassword/`, {
       oldPassword: pbkdf2
-        .pbkdf2Sync(this.oldPassword, 'salt', 1, 32, 'sha512')
+        .pbkdf2Sync(this.oldPassword!, "salt", 1, 32, "sha512")
         .toString(),
       newPassword: pbkdf2
-        .pbkdf2Sync(this.password, 'salt', 1, 32, 'sha512')
+        .pbkdf2Sync(this.password!, "salt", 1, 32, "sha512")
         .toString(),
     });
     this.loading = false;
-    if (response?.code?.startsWith(`S`)) {
+    if (response?.code?.startsWith("S")) {
       this.syncedDialog = false;
-      this.$emit('finished');
+      this.$emit("finished");
     }
   }
 }

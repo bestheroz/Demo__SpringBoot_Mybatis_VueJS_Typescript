@@ -7,13 +7,13 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
-import AppBar from '@/components/layout/AppBar.vue';
-import Drawer from '@/components/layout/Drawer.vue';
-import Viewer from '@/components/layout/Viewer.vue';
+import { Component, Vue } from "vue-property-decorator";
+import AppBar from "@/components/layout/AppBar.vue";
+import Drawer from "@/components/layout/Drawer.vue";
+import Viewer from "@/components/layout/Viewer.vue";
 
 @Component({
-  name: 'Index',
+  name: "Index",
   components: {
     Viewer,
     Drawer,
@@ -21,10 +21,10 @@ import Viewer from '@/components/layout/Viewer.vue';
   },
 })
 export default class extends Vue {
-  drawer: boolean = true;
+  drawer = true;
 
-  async mounted() {
-    await this.$store.dispatch('getMemberCodes');
+  async mounted(): Promise<void> {
+    await this.$store.dispatch("getMemberCodes");
   }
 }
 </script>

@@ -16,37 +16,40 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
-import { getVariableApi } from '@/utils/apis';
-import dayjs from 'dayjs';
+import { Component, Vue } from "vue-property-decorator";
+import { getVariableApi } from "@/utils/apis";
+import dayjs from "dayjs";
 
 @Component({
-  name: 'Home',
+  name: "Home",
 })
 export default class extends Vue {
   title: string | null = null;
   interval: any = null;
-  now: string = '';
-  color: string = '';
+  now = "";
+  color = "";
 
-  async mounted() {
-    this.title = await getVariableApi('title');
-    this.now = dayjs().format('YYYY년 MM월 DD일 HH시 mm분 ss초');
+  async beforeMount(): Promise<void> {
+    this.title = await getVariableApi("title");
+  }
+
+  async mounted(): Promise<void> {
+    this.now = dayjs().format("YYYY년 MM월 DD일 HH시 mm분 ss초");
     this.color = this.getRandomColor();
     this.interval = setInterval(() => {
-      this.now = dayjs().format('YYYY년 MM월 DD일 HH시 mm분 ss초');
+      this.now = dayjs().format("YYYY년 MM월 DD일 HH시 mm분 ss초");
       this.color = this.getRandomColor();
     }, 1000);
   }
 
-  beforeDestroy() {
+  beforeDestroy(): void {
     this.interval && clearInterval(this.interval);
     this.interval = null;
   }
 
-  getRandomColor() {
-    const letters = '0123456789ABCDEF';
-    let color = '#';
+  getRandomColor(): string {
+    const letters = "0123456789ABCDEF";
+    let color = "#";
     for (let i = 0; i < 6; i++) {
       color += letters[Math.floor(Math.random() * 16)];
     }

@@ -30,31 +30,31 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
-import { getVariableApi } from '@/utils/apis';
-import { logout } from '@/utils/authentications';
+import { Component, Vue } from "vue-property-decorator";
+import { getVariableApi } from "@/utils/apis";
+import { logout } from "@/utils/authentications";
 
-@Component({ name: 'AppBarNoDrawer' })
+@Component({ name: "AppBarNoDrawer" })
 export default class extends Vue {
   readonly logout: typeof logout = logout;
   title: string | null = null;
 
   get isPopup(): boolean {
     return (
-      !window.toolbar.visible || this.$route.fullPath.indexOf('/popup') === 0
+      !window.toolbar.visible || this.$route.fullPath.indexOf("/popup") === 0
     );
   }
 
   get accessToken() {
-    return window?.localStorage?.getItem('accessToken');
+    return window?.localStorage?.getItem("accessToken");
   }
 
-  async mounted() {
-    this.title = await getVariableApi('title');
+  async beforeMount(): Promise<void> {
+    this.title = await getVariableApi("title");
   }
 
   goHome() {
-    this.$router.currentRoute.path !== '/' && this.$router.push('/');
+    this.$router.currentRoute.path !== "/" && this.$router.push("/");
   }
 }
 </script>

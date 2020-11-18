@@ -15,7 +15,7 @@
         hide-default-footer
         :height="height"
       >
-        <template v-slot:top>
+        <template #top>
           <button-set
             reload-button
             :reload-disabled="!authority"
@@ -25,10 +25,10 @@
             @click:save="save"
           />
         </template>
-        <template v-slot:[`item.type`]="{ item }" v-if="MENU_TYPE">
+        <template #[`item.type`]="{ item }" v-if="MENU_TYPE">
           {{ item.type | getCodeText(MENU_TYPE) }}
         </template>
-        <template v-slot:[`item.name`]="{ item }">
+        <template #[`item.name`]="{ item }">
           <span
             :style="`padding-left: ${
               80 * (item.level - 1)
@@ -58,18 +58,22 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
-import { DataTableHeader, SelectItem, TableMenuEntity } from '@/common/types';
-import { getApi, getCodesApi, putApi } from '@/utils/apis';
-import envs from '@/constants/envs';
-import ButtonSet from '@/components/speeddial/ButtonSet.vue';
+import { Component, Prop, Vue, Watch } from "vue-property-decorator";
+import type {
+  DataTableHeader,
+  SelectItem,
+  TableMenuEntity,
+} from "@/common/types";
+import { getApi, getCodesApi, putApi } from "@/utils/apis";
+import envs from "@/constants/envs";
+import ButtonSet from "@/components/speeddial/ButtonSet.vue";
 
 interface AdminMenuAuthorityVO extends TableMenuEntity {
   checked: boolean;
 }
 
 @Component({
-  name: 'MenuAuthorityList',
+  name: "MenuAuthorityList",
   components: {
     ButtonSet,
   },
@@ -78,54 +82,61 @@ export default class extends Vue {
   @Prop({ required: true }) readonly authority!: string;
   @Prop({ required: true }) readonly height!: number | string;
   readonly envs: typeof envs = envs;
-  readonly ENDPOINT_URL = 'admin/menuAuthority/';
+  readonly ENDPOINT_URL = "admin/menuAuthority/";
   items: AdminMenuAuthorityVO[] = [];
-  loading: boolean = false;
+  loading = false;
 
   MENU_TYPE: SelectItem[] = [];
 
   headers: DataTableHeader[] = [
     {
-      text: `타입`,
-      align: `center`,
-      value: `type`,
-      filterType: 'select',
+      text: "타입",
+      align: "center",
+      value: "type",
+      filterType: "select",
       filterSelectItem: [],
-      width: '5rem',
+      width: "5rem",
     },
     {
-      text: `메뉴 ID`,
-      align: `end`,
-      value: `id`,
-      width: '6rem',
+      text: "메뉴 ID",
+      align: "end",
+      value: "id",
+      width: "6rem",
     },
     {
-      text: `상위 메뉴 ID`,
-      align: `end`,
-      value: `parentId`,
-      width: '6rem',
+      text: "상위 메뉴 ID",
+      align: "end",
+      value: "parentId",
+      width: "6rem",
     },
     {
-      text: `메뉴명`,
-      align: `start`,
-      value: `name`,
+      text: "메뉴명",
+      align: "start",
+      value: "name",
     },
   ];
 
-  async mounted() {
-    this.headers[
-      this.headers.indexOf(this.headers.find((item) => item.value === 'type')!)
-    ].filterSelectItem = this.MENU_TYPE = await getCodesApi(`MENU_TYPE`);
+  async beforeMount(): Promise<void> {
+    this.MENU_TYPE = await getCodesApi("MENU_TYPE");
   }
 
-  @Watch('authority', { immediate: true })
-  watchAuthority(val: string) {
+  mounted(): void {
+    const find = this.headers.find((item) => item.value === "type");
+    if (find) {
+      this.headers[
+        this.headers.indexOf(find)
+      ].filterSelectItem = this.MENU_TYPE;
+    }
+  }
+
+  @Watch("authority")
+  watchAuthority(val: string): void {
     if (val) {
       this.getList();
     }
   }
 
-  setChildrenChecked(item: AdminMenuAuthorityVO) {
+  setChildrenChecked(item: AdminMenuAuthorityVO): void {
     if (!item.checked) {
       this.items
         .filter((value) => value.parentId === item.id)
@@ -135,7 +146,7 @@ export default class extends Vue {
     }
   }
 
-  async getList() {
+  async getList(): Promise<void> {
     this.items = [];
     this.loading = true;
     const response = await getApi<AdminMenuAuthorityVO[]>(
@@ -145,7 +156,7 @@ export default class extends Vue {
     this.items = response?.data || [];
   }
 
-  async save() {
+  async save(): Promise<void> {
     this.loading = true;
     await putApi<{ menuIdList: string }>(
       `${this.ENDPOINT_URL}${this.authority}/`,
@@ -153,7 +164,7 @@ export default class extends Vue {
         menuIdList: this.items
           .map((value) => (value.checked ? value.id : undefined))
           .filter((value) => value !== undefined)
-          .join(','),
+          .join(","),
       },
     );
     this.loading = false;

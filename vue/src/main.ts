@@ -1,13 +1,13 @@
-import Vue from 'vue';
-import vuetify from '@/plugins/vuetify';
-import App from './App.vue';
-import router from './router';
-import store from './store';
-import './plugins/vue-toasted';
-import './plugins/vee-validate';
-import './plugins/vue-filter';
-import './plugins/vue-js-modal';
-import './plugins/sentry';
+import Vue from "vue";
+import vuetify from "@/plugins/vuetify";
+import App from "./App.vue";
+import router from "./router";
+import store from "./store";
+import "./plugins/vue-toasted";
+import "./plugins/vee-validate";
+import "./plugins/vue-filter";
+import "./plugins/sentry";
+import dotenv from "dotenv";
 
 Vue.config.productionTip = false;
 
@@ -16,6 +16,6 @@ new Vue({
   store,
   vuetify,
   render: (h) => h(App),
-}).$mount(`#app`);
+}).$mount("#app");
 
-require(`dotenv`).config();
+dotenv.config();

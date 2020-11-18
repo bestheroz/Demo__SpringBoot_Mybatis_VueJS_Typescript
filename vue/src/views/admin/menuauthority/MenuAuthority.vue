@@ -22,30 +22,30 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
-import { SelectItem } from '@/common/types';
-import { getCodesApi } from '@/utils/apis';
-import MenuAuthorityList from '@/views/admin/menuauthority/components/MenuAuthorityList.vue';
+import { Component, Vue } from "vue-property-decorator";
+import type { SelectItem } from "@/common/types";
+import { getCodesApi } from "@/utils/apis";
+import MenuAuthorityList from "@/views/admin/menuauthority/components/MenuAuthorityList.vue";
 
 @Component({
-  name: 'MenuAuthority',
+  name: "MenuAuthority",
   components: {
     MenuAuthorityList,
   },
 })
 export default class extends Vue {
   authority: string | null = null;
-  loading: boolean = false;
+  loading = false;
   AUTHORITY: SelectItem[] = [];
 
-  mounted() {
+  mounted(): void {
     this.getCodeList();
   }
 
-  async getCodeList() {
+  async getCodeList(): Promise<void> {
     this.loading = true;
-    const data: SelectItem[] = await getCodesApi('AUTHORITY');
-    const user = await this.$store.dispatch('getUser');
+    const data: SelectItem[] = await getCodesApi("AUTHORITY");
+    const user = await this.$store.dispatch("getUser");
     this.loading = false;
     this.AUTHORITY =
       data.filter(

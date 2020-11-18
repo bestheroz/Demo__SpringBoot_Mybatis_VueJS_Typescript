@@ -1,14 +1,6 @@
 <template>
   <div>
-    <modal
-      name="EditMeDialog"
-      draggable
-      width="25%"
-      height="auto"
-      :shiftX="0.97"
-      :shiftY="0.15"
-      :clickToClose="false"
-    >
+    <v-dialog v-model="syncedDialog" persistent max-width="100%" width="25vw">
       <v-card>
         <v-card-title class="py-2 modal-header">
           내 정보 수정
@@ -95,57 +87,53 @@
           </v-btn>
         </v-card-actions>
       </v-card>
-    </modal>
+    </v-dialog>
     <change-password-dialog :dialog.sync="newPasswordDialog" />
   </div>
 </template>
 
 <script lang="ts">
-import { Component, PropSync, Vue, Watch } from 'vue-property-decorator';
-import { TableMemberEntity } from '@/common/types';
-import { getApi, patchApi } from '@/utils/apis';
-import DatetimePicker from '@/components/picker/DatetimePicker.vue';
-import ChangePasswordDialog from '@/components/layout/components/ChangePasswordDialog.vue';
-import { ValidationObserver } from 'vee-validate';
-
-const pbkdf2 = require('pbkdf2');
+import { Component, PropSync, Vue, Watch } from "vue-property-decorator";
+import type { TableMemberEntity } from "@/common/types";
+import { getApi, patchApi } from "@/utils/apis";
+import DatetimePicker from "@/components/picker/DatetimePicker.vue";
+import ChangePasswordDialog from "@/components/layout/components/ChangePasswordDialog.vue";
+import { ValidationObserver } from "vee-validate";
+import pbkdf2 from "pbkdf2";
 
 @Component({
-  name: 'EditMeDialog',
+  name: "EditMeDialog",
   components: { ChangePasswordDialog, DatetimePicker },
 })
 export default class extends Vue {
-  @PropSync('dialog', { required: true, type: Boolean }) syncedDialog!: boolean;
+  @PropSync("dialog", { required: true, type: Boolean }) syncedDialog!: boolean;
 
-  readonly ENDPOINT_URL: string = `members/`;
+  readonly ENDPOINT_URL: string = "members/";
   item: TableMemberEntity = Object.create(null);
-  loading: boolean = false;
-  show1: boolean = false;
-  newPasswordDialog: boolean = false;
+  loading = false;
+  show1 = false;
+  newPasswordDialog = false;
 
-  beforeDestroy() {
+  beforeDestroy(): void {
     this.syncedDialog = false;
   }
 
-  @Watch('syncedDialog')
-  async watchDialog(val: boolean) {
+  @Watch("syncedDialog")
+  async watchDialog(val: boolean): Promise<void> {
     if (val) {
       this.show1 = false;
       const response = await getApi<TableMemberEntity>(
         `${this.ENDPOINT_URL}mine`,
       );
-      this.item = response?.data!;
+      this.item = response?.data || Object.create(null);
       this.$refs.observer &&
         (this.$refs.observer as InstanceType<
           typeof ValidationObserver
         >).reset();
-      this.$modal.show('EditMeDialog');
-    } else {
-      this.$modal.hide('EditMeDialog');
     }
   }
 
-  async save() {
+  async save(): Promise<void> {
     const isValid = await (this.$refs.observer as InstanceType<
       typeof ValidationObserver
     >).validate();
@@ -156,18 +144,18 @@ export default class extends Vue {
     this.loading = true;
     const payload = { ...this.item };
     payload.password = pbkdf2
-      .pbkdf2Sync(this.item.password, 'salt', 1, 32, 'sha512')
+      .pbkdf2Sync(this.item.password || "", "salt", 1, 32, "sha512")
       .toString();
     const response = await patchApi<TableMemberEntity>(
       `${this.ENDPOINT_URL}mine`,
       payload,
     );
     this.loading = false;
-    if (response?.code?.startsWith(`S`)) {
-      await this.$store.dispatch('setUser');
-      await this.$store.dispatch('setMemberCodes');
+    if (response?.code?.startsWith("S")) {
+      await this.$store.dispatch("setUser");
+      await this.$store.dispatch("setMemberCodes");
       this.syncedDialog = false;
-      this.$emit('finished');
+      this.$emit("finished");
     }
   }
 }

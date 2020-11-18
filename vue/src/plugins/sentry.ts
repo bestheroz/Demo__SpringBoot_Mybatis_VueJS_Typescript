@@ -1,7 +1,7 @@
-import * as Sentry from '@sentry/browser';
-import { Vue as VueIntegration } from '@sentry/integrations';
-import { Integrations } from '@sentry/tracing';
-import Vue from 'vue';
+import * as Sentry from "@sentry/browser";
+import { Vue as VueIntegration } from "@sentry/integrations";
+import { Integrations } from "@sentry/tracing";
+import Vue from "vue";
 
 if (process.env.VUE_APP_SENTRY_DSN) {
   Sentry.init({

@@ -1,14 +1,18 @@
-import Vue from 'vue';
-import Router from 'vue-router';
-import { needLogin } from '@/utils/authentications';
+import Vue from "vue";
+import Router, { Route } from "vue-router";
+import { needLogin } from "@/utils/authentications";
+import { NavigationGuardNext } from "vue-router/types/router";
 
 Vue.use(Router);
 
-// @ts-ignore
-const requireAuth = () => async (to: Route, from: Route, next: Route) => {
+const requireAuth = () => async (
+  _to: Route,
+  _from: Route,
+  next: NavigationGuardNext,
+) => {
   if (
-    window.localStorage.getItem('accessToken') &&
-    window.localStorage.getItem('refreshToken')
+    window.localStorage.getItem("accessToken") &&
+    window.localStorage.getItem("refreshToken")
   ) {
     return next();
   }
@@ -18,96 +22,96 @@ const requireAuth = () => async (to: Route, from: Route, next: Route) => {
 const routes = () => {
   const admin = [
     {
-      path: 'code',
-      component: () => import('@/views/admin/code/Code.vue'),
+      path: "code",
+      component: () => import("@/views/admin/code/Code.vue"),
     },
     {
-      path: 'menu',
-      component: () => import('@/views/admin/menu/Menu.vue'),
+      path: "menu",
+      component: () => import("@/views/admin/menu/Menu.vue"),
     },
     {
-      path: 'menuAuthority',
-      component: () => import('@/views/admin/menuauthority/MenuAuthority.vue'),
+      path: "menuAuthority",
+      component: () => import("@/views/admin/menuauthority/MenuAuthority.vue"),
     },
     {
-      path: 'member',
-      component: () => import('@/views/admin/member/Member.vue'),
+      path: "member",
+      component: () => import("@/views/admin/member/Member.vue"),
     },
   ];
   const developer = [
     {
-      path: 'picker',
-      component: () => import('@/views/developer/picker/Picker.vue'),
+      path: "picker",
+      component: () => import("@/views/developer/picker/Picker.vue"),
     },
   ];
 
   return [
     {
-      path: '/login',
-      component: () => import('@/views/index/IndexNoDrawer.vue'),
+      path: "/login",
+      component: () => import("@/views/index/IndexNoDrawer.vue"),
       children: [
         {
-          name: 'Login',
-          path: '',
-          component: () => import('@/views/login/Login.vue'),
+          name: "Login",
+          path: "",
+          component: () => import("@/views/login/Login.vue"),
         },
       ],
     },
     {
-      path: '/index',
-      component: () => import('@/views/index/Index.vue'),
+      path: "/index",
+      component: () => import("@/views/index/Index.vue"),
       beforeEnter: requireAuth(),
       children: [
         {
-          path: '',
-          component: () => import('@/views/Home.vue'),
+          path: "",
+          component: () => import("@/views/Home.vue"),
         },
       ],
     },
     {
-      path: '/',
-      component: () => import('@/views/Redirect.vue'),
+      path: "/",
+      component: () => import("@/views/Redirect.vue"),
     },
     {
-      path: '/admin',
-      component: () => import('@/views/index/Index.vue'),
+      path: "/admin",
+      component: () => import("@/views/index/Index.vue"),
       beforeEnter: requireAuth(),
       children: admin,
     },
     {
-      path: '/developer',
-      component: () => import('@/views/index/Index.vue'),
+      path: "/developer",
+      component: () => import("@/views/index/Index.vue"),
       beforeEnter: requireAuth(),
       children: developer,
     },
     {
-      path: '/error',
-      component: () => import('@/views/index/IndexNoDrawer.vue'),
+      path: "/error",
+      component: () => import("@/views/index/IndexNoDrawer.vue"),
       children: [
         {
-          name: 'Error',
-          path: '',
-          component: () => import('@/views/error/Error500.vue'),
+          name: "Error",
+          path: "",
+          component: () => import("@/views/error/Error500.vue"),
         },
         {
-          name: '403 Forbidden',
-          path: '403',
-          component: () => import('@/views/error/Error403.vue'),
+          name: "403 Forbidden",
+          path: "403",
+          component: () => import("@/views/error/Error403.vue"),
         },
         {
-          name: '404 Page not found',
-          path: '404',
-          component: () => import('@/views/error/Error404.vue'),
+          name: "404 Page not found",
+          path: "404",
+          component: () => import("@/views/error/Error404.vue"),
         },
       ],
     },
     {
-      path: '*',
-      component: () => import('@/views/index/IndexNoDrawer.vue'),
+      path: "*",
+      component: () => import("@/views/index/IndexNoDrawer.vue"),
       children: [
         {
-          path: '',
-          component: () => import('@/views/error/Error404.vue'),
+          path: "",
+          component: () => import("@/views/error/Error404.vue"),
         },
       ],
     },
@@ -115,7 +119,7 @@ const routes = () => {
 };
 
 export default new Router({
-  mode: 'history',
+  mode: "history",
   base: process.env.BASE_URL,
   routes: routes(),
 });

@@ -9,7 +9,7 @@
       </v-toolbar-title>
       <v-spacer />
       <v-menu open-on-hover bottom offset-y>
-        <template v-slot:activator="{ on }">
+        <template #activator="{ on }">
           <v-btn color="primary" x-large text v-on="on">
             <v-icon> mdi-account</v-icon>
             {{ user.name }}
@@ -41,39 +41,39 @@
 </template>
 
 <script lang="ts">
-import { Component, PropSync, Vue, Watch } from 'vue-property-decorator';
-import { getVariableApi } from '@/utils/apis';
-import { logout } from '@/utils/authentications';
-import EditMeDialog from '@/components/layout/components/EditMeDialog.vue';
-import { TableMemberEntity } from '@/common/types';
+import { Component, PropSync, Vue, Watch } from "vue-property-decorator";
+import { getVariableApi } from "@/utils/apis";
+import { logout } from "@/utils/authentications";
+import EditMeDialog from "@/components/layout/components/EditMeDialog.vue";
+import type { TableMemberEntity } from "@/common/types";
 
 @Component({
-  name: 'AppBar',
+  name: "AppBar",
   components: { EditMeDialog },
 })
 export default class extends Vue {
-  @PropSync('drawer', { required: true, default: true }) syncedDrawer!: boolean;
+  @PropSync("drawer", { required: true, default: true }) syncedDrawer!: boolean;
   readonly logout: typeof logout = logout;
   title: string | null = null;
-  user: TableMemberEntity = { name: '' };
-  editMeDialog: boolean = false;
+  user: TableMemberEntity = { name: "" };
+  editMeDialog = false;
 
   get isPopup(): boolean {
     return !window.toolbar.visible;
   }
 
-  async mounted() {
-    this.title = await getVariableApi('title');
+  async beforeMount(): Promise<void> {
+    this.title = await getVariableApi("title");
   }
 
-  @Watch('$store.state.user.user', { immediate: true })
-  async watchUser() {
-    this.user = await this.$store.dispatch('getUser');
-    this.$vuetify.theme.dark = (this.user.theme || 'light') === 'dark';
+  @Watch("$store.state.user.user", { immediate: true })
+  async watchUser(): Promise<void> {
+    this.user = await this.$store.dispatch("getUser");
+    this.$vuetify.theme.dark = (this.user.theme || "light") === "dark";
   }
 
-  goHome() {
-    this.$router.currentRoute.path !== '/' && this.$router.push('/');
+  goHome(): void {
+    this.$router.currentRoute.path !== "/" && this.$router.push("/");
   }
 }
 </script>

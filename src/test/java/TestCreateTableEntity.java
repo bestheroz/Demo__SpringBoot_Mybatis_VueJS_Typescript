@@ -131,7 +131,7 @@ public class TestCreateTableEntity {
             DbTableVOCheckerContext.BYTE_JDBC_TYPE_SET.contains(columnTypeName)
           ) {
             fieldType = "Byte[];";
-            tsType = "any[]";
+            tsType = "never[]";
             log.debug(
               "private Byte[] {}{}",
               camelColumnName,

@@ -10,14 +10,14 @@
       open-on-hover
       transition="scale-transition"
     >
-      <template v-slot:activator>
+      <template #activator>
         <v-btn v-model="fab" color="button-default" dark fab small>
           <v-icon color="black" v-if="fab">mdi-close</v-icon>
           <v-icon v-else>mdi-function</v-icon>
         </v-btn>
       </template>
       <v-tooltip top v-if="reloadButton">
-        <template v-slot:activator="{ on }">
+        <template #activator="{ on }">
           <v-btn
             fab
             dark
@@ -33,7 +33,7 @@
         <span> {{ reloadText }} </span>
       </v-tooltip>
       <v-tooltip top v-if="saveButton">
-        <template v-slot:activator="{ on }">
+        <template #activator="{ on }">
           <v-btn
             fab
             dark
@@ -49,7 +49,7 @@
         <span> {{ saveText }} </span>
       </v-tooltip>
       <v-tooltip top v-if="excelButton">
-        <template v-slot:activator="{ on }">
+        <template #activator="{ on }">
           <v-btn
             fab
             dark
@@ -65,7 +65,7 @@
         <span> {{ excelText }} </span>
       </v-tooltip>
       <v-tooltip top v-if="deleteButton">
-        <template v-slot:activator="{ on }">
+        <template #activator="{ on }">
           <v-btn
             fab
             dark
@@ -81,7 +81,7 @@
         <span> {{ deleteText }} </span>
       </v-tooltip>
       <v-tooltip top v-if="addButton">
-        <template v-slot:activator="{ on }">
+        <template #activator="{ on }">
           <v-btn
             fab
             dark
@@ -97,7 +97,7 @@
         <span> {{ addText }} </span>
       </v-tooltip>
       <v-tooltip top v-if="inquiryButton">
-        <template v-slot:activator="{ on }">
+        <template #activator="{ on }">
           <v-btn
             fab
             dark
@@ -117,48 +117,48 @@
 </template>
 
 <script lang="ts">
-import { Component, Emit, Prop, Vue } from 'vue-property-decorator';
-import colors from 'vuetify/lib/util/colors';
+import { Component, Emit, Prop, Vue } from "vue-property-decorator";
+import colors from "vuetify/lib/util/colors";
 
-@Component({ name: 'ButtonSet' })
+@Component({ name: "ButtonSet" })
 export default class extends Vue {
   @Prop({ type: Boolean, default: false }) readonly disabled!: boolean;
   @Prop({ type: Boolean, default: false }) readonly addButton!: boolean;
   @Prop({ type: Boolean, default: false }) readonly addDisabled!: boolean;
-  @Prop({ type: String, default: '추가' }) readonly addText!: string;
+  @Prop({ type: String, default: "추가" }) readonly addText!: string;
   @Prop({ type: Boolean, default: false }) readonly deleteButton!: boolean;
   @Prop({ type: Boolean, default: false }) readonly deleteDisabled!: boolean;
-  @Prop({ type: String, default: '삭제' }) readonly deleteText!: string;
+  @Prop({ type: String, default: "삭제" }) readonly deleteText!: string;
   @Prop({ type: Boolean, default: false }) readonly excelButton!: boolean;
   @Prop({ type: Boolean, default: false }) readonly excelDisabled!: boolean;
-  @Prop({ type: String, default: 'Excel' }) readonly excelText!: string;
+  @Prop({ type: String, default: "Excel" }) readonly excelText!: string;
   @Prop({ type: Boolean, default: false }) readonly inquiryButton!: boolean;
   @Prop({ type: Boolean, default: false }) readonly inquiryDisabled!: boolean;
-  @Prop({ type: String, default: '조회' }) readonly inquiryText!: string;
+  @Prop({ type: String, default: "조회" }) readonly inquiryText!: string;
   @Prop({ type: Boolean, default: false }) readonly reloadButton!: boolean;
   @Prop({ type: Boolean, default: false }) readonly reloadDisabled!: boolean;
-  @Prop({ type: String, default: '새로고침' }) readonly reloadText!: string;
+  @Prop({ type: String, default: "새로고침" }) readonly reloadText!: string;
   @Prop({ type: Boolean, default: false }) readonly saveButton!: boolean;
   @Prop({ type: Boolean, default: false }) readonly saveDisabled!: boolean;
-  @Prop({ type: String, default: '저장' }) readonly saveText!: string;
+  @Prop({ type: String, default: "저장" }) readonly saveText!: string;
 
-  fab: boolean = false;
+  fab = false;
 
   get excelColor() {
     return this.$vuetify.theme.dark ? colors.teal.darken4 : colors.teal.darken2;
   }
 
-  @Emit('click:add') clickAdd() {}
+  @Emit("click:add") clickAdd() {}
 
-  @Emit('click:delete') clickDelete() {}
+  @Emit("click:delete") clickDelete() {}
 
-  @Emit('click:excel') clickExcel() {}
+  @Emit("click:excel") clickExcel() {}
 
-  @Emit('click:inquiry') clickInquiry() {}
+  @Emit("click:inquiry") clickInquiry() {}
 
-  @Emit('click:reload') clickReload() {}
+  @Emit("click:reload") clickReload() {}
 
-  @Emit('click:save') clickSave() {}
+  @Emit("click:save") clickSave() {}
 }
 </script>
 <style lang="scss" scoped>

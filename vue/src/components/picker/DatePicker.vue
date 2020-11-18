@@ -9,7 +9,7 @@
         @keydown.esc="dialog = false"
         @keydown.enter="$refs.refDialog.save(value)"
       >
-        <template v-slot:activator="{ on }">
+        <template #activator="{ on }">
           <ValidationProvider
             :name="label"
             :rules="required ? 'required' : ''"
@@ -57,20 +57,20 @@
 </template>
 
 <script lang="ts">
-import { Component, Model, Prop, Vue, Watch } from 'vue-property-decorator';
-import envs from '@/constants/envs';
-import dayjs from 'dayjs';
-import { ValidationObserver } from 'vee-validate';
+import { Component, Model, Prop, Vue, Watch } from "vue-property-decorator";
+import envs from "@/constants/envs";
+import dayjs from "dayjs";
+import { ValidationObserver } from "vee-validate";
 
-@Component({ name: 'DatePicker' })
+@Component({ name: "DatePicker" })
 export default class extends Vue {
-  @Model('input', { required: true }) readonly date!:
+  @Model("input", { required: true }) readonly date!:
     | Date
     | string
     | number
     | null;
 
-  @Prop({ type: String, default: '날짜선택' }) readonly label!: string | null;
+  @Prop({ type: String, default: "날짜선택" }) readonly label!: string | null;
   @Prop({ type: String }) readonly message!: string | null;
   @Prop({ type: Boolean, default: false }) readonly required!: boolean;
   @Prop({ type: Boolean, default: false }) readonly disabled!: boolean;
@@ -86,13 +86,13 @@ export default class extends Vue {
 
   readonly envs: typeof envs = envs;
   value: string | null = null;
-  dialog: boolean = false;
+  dialog = false;
 
-  get format() {
+  get format(): string {
     return envs.DATE_FORMAT_STRING;
   }
 
-  get style() {
+  get style(): string | undefined {
     if (this.fullWidth) {
       return undefined;
     }
@@ -102,41 +102,41 @@ export default class extends Vue {
     return `max-width: ${defaultWidth}rem;`;
   }
 
-  @Watch('date', { immediate: true })
+  @Watch("date", { immediate: true })
   watchDate(
     val: Date | string | number | null,
     oldVal: Date | string | number | null,
-  ) {
+  ): void {
     if (!val || val === oldVal || isNaN(dayjs(val).toDate().getTime())) {
       return;
     }
     this.value = this.endOfDay
-      ? dayjs(val).endOf('day').format(this.format)
-      : dayjs(val).startOf('day').format(this.format);
+      ? dayjs(val).endOf("day").format(this.format)
+      : dayjs(val).startOf("day").format(this.format);
   }
 
-  @Watch('value', { immediate: true })
-  watchValue(val: string, oldVal: string) {
+  @Watch("value", { immediate: true })
+  watchValue(val: string, oldVal: string): void {
     if (
       val !== oldVal &&
       dayjs(val).toDate().getTime() !== dayjs(oldVal).toDate().getTime()
     ) {
       this.$emit(
-        'input',
+        "input",
         this.endOfDay
-          ? dayjs(val).endOf('day').toDate()
-          : dayjs(val).startOf('day').toDate(),
+          ? dayjs(val).endOf("day").toDate()
+          : dayjs(val).startOf("day").toDate(),
       );
     }
   }
 
-  setToday() {
+  setToday(): void {
     this.value = this.endOfDay
-      ? dayjs().endOf('day').format(this.format)
-      : dayjs().startOf('day').format(this.format);
+      ? dayjs().endOf("day").format(this.format)
+      : dayjs().startOf("day").format(this.format);
   }
 
-  async validate() {
+  async validate(): Promise<boolean> {
     return await (this.$refs.observer as InstanceType<
       typeof ValidationObserver
     >).validate();

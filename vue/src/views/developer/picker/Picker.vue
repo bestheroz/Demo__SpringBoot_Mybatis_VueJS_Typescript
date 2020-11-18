@@ -113,15 +113,15 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
-import DatePicker from '@/components/picker/DatePicker.vue';
-import dayjs from 'dayjs';
-import DatetimePicker from '@/components/picker/DatetimePicker.vue';
-import DateStartEndPicker from '@/components/picker/DateStartEndPicker.vue';
-import DatetimeStartEndPicker from '@/components/picker/DatetimeStartEndPicker.vue';
+import { Component, Vue } from "vue-property-decorator";
+import DatePicker from "@/components/picker/DatePicker.vue";
+import dayjs from "dayjs";
+import DatetimePicker from "@/components/picker/DatetimePicker.vue";
+import DateStartEndPicker from "@/components/picker/DateStartEndPicker.vue";
+import DatetimeStartEndPicker from "@/components/picker/DatetimeStartEndPicker.vue";
 
 @Component({
-  name: 'Picker',
+  name: "Picker",
   components: {
     DatetimeStartEndPicker,
     DateStartEndPicker,
@@ -136,16 +136,16 @@ export default class extends Vue {
   dateParseISOString: string = dayjs().toISOString();
   dateParseNumber: number = dayjs().toDate().getTime();
   date2: Date = new Date();
-  start1: Date = dayjs().add(-1, 'day').toDate();
-  end1: Date = dayjs().add(1, 'day').toDate();
-  start2: Date = dayjs().add(-1, 'day').toDate();
-  end2: Date = dayjs().add(1, 'day').endOf('day').toDate();
+  start1: Date = dayjs().add(-1, "day").toDate();
+  end1: Date = dayjs().add(1, "day").toDate();
+  start2: Date = dayjs().add(-1, "day").toDate();
+  end2: Date = dayjs().add(1, "day").endOf("day").toDate();
 
   getType(val: any): string {
-    return typeof val === 'object'
+    return typeof val === "object"
       ? val instanceof Date
-        ? 'Date'
-        : 'object'
+        ? "Date"
+        : "object"
       : typeof val;
   }
 }

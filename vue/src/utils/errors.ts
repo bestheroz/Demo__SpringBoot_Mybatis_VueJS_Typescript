@@ -1,8 +1,8 @@
-import router from '@/router';
+import router from "@/router";
 
-export async function errorPage(statusCode: number | string) {
+export async function errorPage(statusCode: number | string): Promise<void> {
   if (
-    !['/', '/login', '/error', '/error/403', '/error/404'].includes(
+    !["/", "/login", "/error", "/error/403", "/error/404"].includes(
       router.currentRoute.path,
     )
   ) {

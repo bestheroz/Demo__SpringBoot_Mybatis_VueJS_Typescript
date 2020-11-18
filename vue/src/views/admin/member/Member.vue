@@ -31,41 +31,44 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
-import MemberList from '@/views/admin/member/components/MemberList.vue';
-import MemberEditDialog from '@/views/admin/member/components/MemberEditDialog.vue';
-import { TableMemberEntity } from '@/common/types';
-import ButtonSet from '@/components/speeddial/ButtonSet.vue';
-import dayjs from 'dayjs';
+import { Component, Ref, Vue } from "vue-property-decorator";
+import MemberList from "@/views/admin/member/components/MemberList.vue";
+import MemberEditDialog from "@/views/admin/member/components/MemberEditDialog.vue";
+import type { TableMemberEntity } from "@/common/types";
+import ButtonSet from "@/components/speeddial/ButtonSet.vue";
+import dayjs from "dayjs";
 
 @Component({
-  name: 'Member',
+  name: "Member",
   components: { ButtonSet, MemberEditDialog, MemberList },
 })
 export default class extends Vue {
-  dialog: boolean = false;
+  dialog = false;
   item: TableMemberEntity = { expired: null };
   selected: TableMemberEntity[] = [];
 
-  reloadList() {
-    this.$refs.refList && (this.$refs.refList as any).getList();
+  @Ref("refEditDialog") readonly refEditDialog!: MemberEditDialog;
+  @Ref("refList") readonly refList!: MemberList;
+
+  reloadList(): void {
+    this.refList.getList();
   }
 
-  addItem() {
+  addItem(): void {
     this.item = {
-      expired: dayjs().add(1, 'year').toDate(),
+      expired: dayjs().add(1, "year").toDate(),
     };
     this.dialog = true;
   }
 
-  editItem(value: TableMemberEntity) {
+  editItem(value: TableMemberEntity): void {
     this.item = value;
     this.dialog = true;
   }
 
-  deleteItem() {
+  deleteItem(): void {
     this.item = this.selected[0];
-    (this.$refs.refEditDialog as any).delete();
+    this.refEditDialog.delete();
   }
 }
 </script>
