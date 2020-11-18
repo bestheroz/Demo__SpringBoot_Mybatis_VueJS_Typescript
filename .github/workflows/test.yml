@@ -109,6 +109,19 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
+      - name: Cache npm install
+          id: npm-install
+          uses: actions/cache@v2
+          env:
+            cache-name: cache-node-modules
+          with:
+            path: |
+              ~/.npm
+              **/node_modules
+            key: ${{ runner.os }}-npm-install-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+            restore-keys: |
+              ${{ runner.os }}-npm-install-${{ env.cache-name }}-
+
       - name: test
         run: |
           cd vue
