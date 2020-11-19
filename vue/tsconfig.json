@@ -20,14 +20,7 @@
     "paths": {
       "@/*": ["src/*"]
     },
-    "lib": [
-      "ESNext",
-      "DOM",
-      "DOM.Iterable",
-      "ESNext.Array",
-      "ESNext.AsyncIterable",
-      "ESNext.Symbol"
-    ],
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "pretty": true
