@@ -16,8 +16,7 @@ public class MapDeserializerTypeAdapter
     final JsonElement json,
     final Type typeOfT,
     final JsonDeserializationContext context
-  )
-    throws JsonParseException {
+  ) throws JsonParseException {
     final Map<String, Object> map = new HashMap<>();
     final JsonObject jsonObject = json.getAsJsonObject();
     jsonObject

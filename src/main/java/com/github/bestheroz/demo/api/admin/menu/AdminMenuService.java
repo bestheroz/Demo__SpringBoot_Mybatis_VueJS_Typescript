@@ -10,8 +10,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AdminMenuService {
+
   @Resource
   private TableMenuRepository tableMenuRepository;
+
   @Resource
   private TableMenuAuthorityRepository tableMenuAuthorityRepository;
 
@@ -27,12 +29,12 @@ public class AdminMenuService {
       .forEach(
         item -> {
           this.tableMenuAuthorityRepository.updateMapByKey(
-            Map.of(
-              "menuIdList",
-              StringUtils.remove(item.getMenuIdList(), "^|" + id + ",")
-            ),
-            Map.of("authority", item.getAuthority())
-          );
+              Map.of(
+                "menuIdList",
+                StringUtils.remove(item.getMenuIdList(), "^|" + id + ",")
+              ),
+              Map.of("authority", item.getAuthority())
+            );
         }
       );
   }

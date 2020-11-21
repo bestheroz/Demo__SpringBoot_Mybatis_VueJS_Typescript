@@ -10,6 +10,7 @@ import lombok.EqualsAndHashCode;
 public class TableMenuEntity
   extends AbstractCreatedUpdateEntity
   implements Serializable {
+
   private static final long serialVersionUID = 2658557582464222508L;
   private Integer id;
   private String name;

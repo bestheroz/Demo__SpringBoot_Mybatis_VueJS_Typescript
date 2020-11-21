@@ -17,8 +17,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("api/admin/menuAuthority/")
 @Slf4j
 public class AdminMenuAuthorityController {
+
   @Resource
   private TableMenuAuthorityRepository tableMenuAuthorityRepository;
+
   @Resource
   private AdminMenuAuthorityService adminMenuAuthorityService;
 
@@ -40,18 +42,18 @@ public class AdminMenuAuthorityController {
       .collect(Collectors.joining(StringUtils.EMPTY));
 
     this.tableMenuAuthorityRepository.getItemByKey(
-      Map.of("authority", authority)
-    )
+        Map.of("authority", authority)
+      )
       .ifPresentOrElse(
         item ->
           this.tableMenuAuthorityRepository.updateMapByKey(
-            Map.of("menuIdList", menuIdList),
-            Map.of("authority", authority)
-          ),
+              Map.of("menuIdList", menuIdList),
+              Map.of("authority", authority)
+            ),
         () ->
           this.tableMenuAuthorityRepository.insert(
-            new TableMenuAuthorityEntity(authority, menuIdList)
-          )
+              new TableMenuAuthorityEntity(authority, menuIdList)
+            )
       );
     return Result.ok();
   }

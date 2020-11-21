@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @ConfigurationProperties(prefix = "variable")
 @Setter
 public class VariableController {
+
   private Map<String, String> app;
 
   @GetMapping("title")

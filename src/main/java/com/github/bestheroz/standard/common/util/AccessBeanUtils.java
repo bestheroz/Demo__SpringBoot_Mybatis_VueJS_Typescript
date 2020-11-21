@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class AccessBeanUtils {
+
   private static AccessBeanUtils instance;
 
   @Resource

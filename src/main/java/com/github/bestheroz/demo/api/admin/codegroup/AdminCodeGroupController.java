@@ -14,8 +14,10 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(value = "api/admin/codeGroups")
 public class AdminCodeGroupController {
+
   @Resource
   private TableCodeGroupRepository tableCodeGroupRepository;
+
   @Resource
   private AdminCodeGroupService adminCodeGroupService;
 
@@ -47,9 +49,9 @@ public class AdminCodeGroupController {
     @RequestBody final TableCodeGroupEntity tableCodeGroupEntity
   ) {
     this.tableCodeGroupRepository.updateByKey(
-      tableCodeGroupEntity,
-      Map.of("codeGroup", codeGroup)
-    );
+        tableCodeGroupEntity,
+        Map.of("codeGroup", codeGroup)
+      );
     return Result.ok();
   }
 

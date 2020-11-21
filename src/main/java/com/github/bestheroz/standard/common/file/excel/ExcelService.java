@@ -25,6 +25,7 @@ import org.apache.poi.xssf.usermodel.XSSFFont;
 
 @Slf4j
 public class ExcelService extends AbstractExcelXView {
+
   public static final String VIEW_NAME = "excelView";
 
   @Override

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(value = "api/admin/codes")
 public class AdminCodeController {
+
   @Resource
   private TableCodeRepository tableCodeRepository;
 
@@ -33,8 +34,8 @@ public class AdminCodeController {
   ) {
     return Result.ok(
       this.tableCodeRepository.getItemByKey(
-        Map.of("codeGroup", codeGroup, "code", code)
-      )
+          Map.of("codeGroup", codeGroup, "code", code)
+        )
     );
   }
 
@@ -55,9 +56,9 @@ public class AdminCodeController {
     @RequestBody final TableCodeEntity tableCodeEntity
   ) {
     this.tableCodeRepository.updateByKey(
-      tableCodeEntity,
-      Map.of("codeGroup", codeGroup, "code", code)
-    );
+        tableCodeEntity,
+        Map.of("codeGroup", codeGroup, "code", code)
+      );
     return Result.ok();
   }
 
@@ -67,8 +68,8 @@ public class AdminCodeController {
     @PathVariable(value = "code") final String code
   ) {
     this.tableCodeRepository.deleteByKey(
-      Map.of("codeGroup", codeGroup, "code", code)
-    );
+        Map.of("codeGroup", codeGroup, "code", code)
+      );
     return Result.ok();
   }
 }

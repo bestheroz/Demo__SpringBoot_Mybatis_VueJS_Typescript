@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(value = "api/admin/members")
 public class AdminMemberController {
+
   @Resource
   private TableMemberRepository tableMemberRepository;
 
@@ -57,18 +58,18 @@ public class AdminMemberController {
     @RequestBody final TableMemberEntity tableMemberEntity
   ) {
     this.tableMemberRepository.updateMapByKey(
-      Map.of(
-        "name",
-        tableMemberEntity.getName(),
-        "authority",
-        tableMemberEntity.getAuthority(),
-        "expired",
-        tableMemberEntity.getExpired(),
-        "available",
-        tableMemberEntity.isAvailable()
-      ),
-      Map.of("id", id)
-    );
+        Map.of(
+          "name",
+          tableMemberEntity.getName(),
+          "authority",
+          tableMemberEntity.getAuthority(),
+          "expired",
+          tableMemberEntity.getExpired(),
+          "available",
+          tableMemberEntity.isAvailable()
+        ),
+        Map.of("id", id)
+      );
     return Result.ok();
   }
 

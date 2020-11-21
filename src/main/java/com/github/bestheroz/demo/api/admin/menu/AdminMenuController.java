@@ -13,10 +13,13 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(value = "api/admin/menus")
 public class AdminMenuController {
+
   @Resource
   private MenuService menuService;
+
   @Resource
   private AdminMenuService adminMenuService;
+
   @Resource
   private TableMenuRepository tableMenuRepository;
 

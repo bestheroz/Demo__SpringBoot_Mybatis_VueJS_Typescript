@@ -17,7 +17,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
-  public static final String[] PUBLIC = new String[]{
+
+  public static final String[] PUBLIC = new String[] {
     "/login",
     "/error",
     "/api/auth/login",

@@ -5,6 +5,7 @@ import lombok.Data;
 
 @Data
 public abstract class AbstractCreatedUpdateEntity {
+
   protected String createdBy;
   protected Instant created;
   protected String updatedBy;

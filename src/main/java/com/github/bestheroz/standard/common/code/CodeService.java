@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CodeService {
+
   @Resource
   private TableCodeRepository tableCodeRepository;
 
@@ -26,8 +27,8 @@ public class CodeService {
 
   public List<TableCodeEntity> getCodeVOList(final String codeGroup) {
     return this.tableCodeRepository.getItemsByKeyWithOrder(
-      Map.of("codeGroup", codeGroup),
-      Set.of("displayOrder")
-    );
+        Map.of("codeGroup", codeGroup),
+        Set.of("displayOrder")
+      );
   }
 }

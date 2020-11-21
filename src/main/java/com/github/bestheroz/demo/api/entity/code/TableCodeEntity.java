@@ -10,6 +10,7 @@ import lombok.EqualsAndHashCode;
 public class TableCodeEntity
   extends AbstractCreatedUpdateEntity
   implements Serializable {
+
   private static final long serialVersionUID = -6076508411557466173L;
   private String codeGroup;
   private String code;

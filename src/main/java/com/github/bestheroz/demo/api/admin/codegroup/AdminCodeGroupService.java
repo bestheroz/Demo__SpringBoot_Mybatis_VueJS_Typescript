@@ -11,8 +11,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 public class AdminCodeGroupService {
+
   @Resource
   private TableCodeGroupRepository tableCodeGroupRepository;
+
   @Resource
   private TableCodeRepository tableCodeRepository;
 

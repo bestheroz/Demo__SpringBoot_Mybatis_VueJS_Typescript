@@ -25,6 +25,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 @UtilityClass
 @Slf4j
 public class FileUtils {
+
   private final String FILE_ROOT_PATH = "/workspace/uploadRootPath/";
   private final String STR_DOT = ".";
   private final String STR_INFO_MESSAGE = "Target for uploading file : {}";

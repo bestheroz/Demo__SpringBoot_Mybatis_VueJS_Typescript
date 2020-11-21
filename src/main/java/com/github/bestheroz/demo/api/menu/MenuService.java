@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class MenuService {
+
   @Resource
   private TableMenuRepository tableMenuRepository;
 
@@ -56,9 +57,9 @@ public class MenuService {
           item ->
             item.setChildren(
               this.tableMenuRepository.getItemsByLevel3AndAuthorityAndParentId(
-                authority,
-                item.getId()
-              )
+                  authority,
+                  item.getId()
+                )
                 .stream()
                 .map(this::convertTableMenuEntityToDrawerVO)
                 .collect(Collectors.toList())

@@ -20,6 +20,7 @@ import org.springframework.lang.NonNull;
 
 @Slf4j
 public class SqlCommand {
+
   public static final String SELECT_ITEMS = "getItems";
   public static final String SELECT_ITEMS_WITH_ORDER = "getItemsWithOrder";
   public static final String SELECT_ITEMS_BY_KEY = "getItemsByKey";

@@ -8,6 +8,7 @@ import java.util.Optional;
 import org.springframework.util.Assert;
 
 public class ApiResult extends HashMap<String, Object> {
+
   public static final String CODE_KEY = "code";
   public static final String MESSAGE_KEY = "message";
   public static final String DATA_KEY = "data";

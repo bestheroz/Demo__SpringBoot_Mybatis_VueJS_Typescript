@@ -13,16 +13,18 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AdminMenuAuthorityService {
+
   @Resource
   private MenuService menuService;
+
   @Resource
   private TableMenuAuthorityRepository tableMenuAuthorityRepository;
 
   public List<AdminMenuAuthorityVO> getItems(final Integer authority) {
     final String menuIdList =
       this.tableMenuAuthorityRepository.getItemByKey(
-        Map.of("authority", authority)
-      )
+          Map.of("authority", authority)
+        )
         .orElseGet(TableMenuAuthorityEntity::new)
         .getMenuIdList();
     return this.menuService.getMenuList()
@@ -35,7 +37,7 @@ public class AdminMenuAuthorityService {
           );
           adminMenuAuthorityVO.setChecked(
             item.getId().equals(1) ||
-              StringUtils.contains(menuIdList, "^|" + item.getId() + ",")
+            StringUtils.contains(menuIdList, "^|" + item.getId() + ",")
           );
           return adminMenuAuthorityVO;
         }
