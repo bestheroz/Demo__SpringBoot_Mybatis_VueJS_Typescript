@@ -24,7 +24,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest(classes = { WebConfiguration.class })
 @AutoConfigureMybatis
 public class TestCreateTableEntity {
-
   private final String tableName = "code_group";
   private final String javaPackageEndPoint =
     this.tableName.replaceAll("_", ".").toLowerCase();
@@ -167,7 +166,8 @@ public class TestCreateTableEntity {
     final String tableEntityName,
     final StringBuilder javaString,
     final StringBuilder tsString
-  ) throws IOException {
+  )
+    throws IOException {
     final boolean hasAbstractCreatedUpdateEntity =
       StringUtils.contains(javaString, " createdBy") &&
       StringUtils.contains(javaString, " created") &&

@@ -7,7 +7,6 @@ import lombok.Data;
 
 @Data
 public class ExcelVO {
-
   private String title;
   private String dbColName;
   private Double charByte = 1.0D; // 셀넓이를 추가로 주기 위함..(한글과 영어 넓이 다름.)

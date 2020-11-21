@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CodeVO implements Serializable {
-
   private static final long serialVersionUID = 272726757907169621L;
   private String value;
   private String text;

@@ -35,7 +35,6 @@ import org.springframework.web.servlet.view.AbstractView;
 
 @Slf4j
 public abstract class AbstractExcelXView extends AbstractView {
-
   /**
    * The extension to look for existing templates
    */
@@ -197,7 +196,8 @@ public abstract class AbstractExcelXView extends AbstractView {
   protected SXSSFWorkbook getTemplateSource(
     final String url,
     final HttpServletRequest request
-  ) throws Exception {
+  )
+    throws Exception {
     final ApplicationContext applicationContext = this.getApplicationContext();
     Optional
       .ofNullable(applicationContext)
@@ -408,6 +408,6 @@ public abstract class AbstractExcelXView extends AbstractView {
     DOUBLE,
     DATE,
     DATE_YYYYMMDD,
-    DATE_YYYYMMDDHHMMSS,
+    DATE_YYYYMMDDHHMMSS
   }
 }

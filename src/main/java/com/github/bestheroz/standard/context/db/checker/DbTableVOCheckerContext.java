@@ -33,7 +33,6 @@ import org.springframework.util.SystemPropertyUtils;
 @Slf4j
 @Component
 public class DbTableVOCheckerContext {
-
   public static final String DEFAULT_DATE_TYPE = "Instant";
   public static final Set<String> STRING_JDBC_TYPE_SET = Set.of(
     "VARCHAR",

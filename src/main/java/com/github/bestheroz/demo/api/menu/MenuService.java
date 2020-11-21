@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class MenuService {
-
   @Resource
   private TableMenuRepository tableMenuRepository;
 

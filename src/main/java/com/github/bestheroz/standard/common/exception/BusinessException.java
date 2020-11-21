@@ -16,7 +16,6 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 @Setter
 @Getter
 public class BusinessException extends RuntimeException {
-
   public static final BusinessException SUCCESS_NORMAL = new BusinessException(
     ExceptionCode.SUCCESS_NORMAL
   );

@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("api/members")
 @Slf4j
 public class MemberController {
-
   @Resource
   private TableMemberRepository tableMemberRepository;
 

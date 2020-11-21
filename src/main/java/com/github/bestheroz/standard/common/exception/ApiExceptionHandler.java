@@ -57,7 +57,7 @@ public class ApiExceptionHandler {
     {
       BindException.class,
       MethodArgumentTypeMismatchException.class,
-      MissingServletRequestParameterException.class,
+      MissingServletRequestParameterException.class
     }
   )
   public ResponseEntity<ApiResult> bindException(final Throwable e) {
@@ -70,7 +70,7 @@ public class ApiExceptionHandler {
       HttpMediaTypeNotAcceptableException.class,
       HttpMediaTypeNotSupportedException.class,
       HttpRequestMethodNotSupportedException.class,
-      HttpClientErrorException.class,
+      HttpClientErrorException.class
     }
   )
   public ResponseEntity<ApiResult> httpMediaTypeNotAcceptableException(

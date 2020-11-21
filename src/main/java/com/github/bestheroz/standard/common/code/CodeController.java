@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("api/codes")
 public class CodeController {
-
   @Resource
   private CodeService codeService;
 

@@ -17,7 +17,6 @@ import org.springframework.web.servlet.view.AbstractView;
 
 @Slf4j
 public class AbstractDownloadView extends AbstractView {
-
   public static final String DOWNLOAD_FILE = "downloadFile";
   public static final String VIEW_NAME = "downloadView";
   public static final String DOWNLOAD_ORI_FILE_NAME = "oriDownloadFileName";

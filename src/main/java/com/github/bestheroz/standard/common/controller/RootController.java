@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
 public class RootController implements ErrorController {
-
   private static final String INDEX_HTML = "index.html";
 
   @RequestMapping(
@@ -18,7 +17,7 @@ public class RootController implements ErrorController {
       RequestMethod.POST,
       RequestMethod.PUT,
       RequestMethod.PATCH,
-      RequestMethod.DELETE,
+      RequestMethod.DELETE
     }
   )
   public String root() {

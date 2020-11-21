@@ -22,7 +22,6 @@ import org.springframework.stereotype.Component;
 @Aspect
 @Component
 public class TraceLogger {
-
   private static final String STR_CLASS_METHOD = "{0}.{1}({2})";
   private static final String STR_START_EXECUTE_TIME =
     "{} START ....... Execute Time ....... : {}";

@@ -24,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Transactional
 public class AuthService implements UserDetailsService {
-
   @Resource
   private TableMemberRepository tableMemberRepository;
 

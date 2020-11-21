@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(value = "api/admin/codeGroups")
 public class AdminCodeGroupController {
-
   @Resource
   private TableCodeGroupRepository tableCodeGroupRepository;
 

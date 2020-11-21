@@ -18,7 +18,7 @@ public class ClientUtils {
       "Proxy-Client-IP",
       "WL-Proxy-Client-IP",
       "HTTP_CLIENT_IP",
-      "HTTP_X_FORWARDED_FOR",
+      "HTTP_X_FORWARDED_FOR"
     };
     return Arrays
       .stream(headerValues)

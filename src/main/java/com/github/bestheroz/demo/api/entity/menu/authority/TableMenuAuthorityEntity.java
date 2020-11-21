@@ -14,7 +14,6 @@ import lombok.NoArgsConstructor;
 public class TableMenuAuthorityEntity
   extends AbstractCreatedUpdateEntity
   implements Serializable {
-
   private static final long serialVersionUID = -3932696265402053506L;
   private Integer authority;
   private String menuIdList;

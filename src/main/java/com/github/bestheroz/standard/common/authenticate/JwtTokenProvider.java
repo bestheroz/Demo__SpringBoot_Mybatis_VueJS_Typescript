@@ -19,7 +19,6 @@ import org.springframework.util.Assert;
 @Slf4j
 @UtilityClass
 public class JwtTokenProvider {
-
   private final Algorithm ALGORITHM = Algorithm.HMAC512("secret");
   private final Long expiresAtAccessToken = 300L;
   private final Long expiresAtRefreshToken = 2592000L; // 3600 * 24 * 30 == 1month

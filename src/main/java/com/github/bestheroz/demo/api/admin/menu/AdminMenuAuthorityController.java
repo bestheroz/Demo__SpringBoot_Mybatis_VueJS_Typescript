@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("api/admin/menuAuthority/")
 @Slf4j
 public class AdminMenuAuthorityController {
-
   @Resource
   private TableMenuAuthorityRepository tableMenuAuthorityRepository;
 

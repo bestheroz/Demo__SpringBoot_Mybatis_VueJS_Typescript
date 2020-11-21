@@ -5,7 +5,6 @@ import lombok.Data;
 
 @Data
 public class DrawerVO {
-
   private Integer id;
   private String title;
   private String icon;

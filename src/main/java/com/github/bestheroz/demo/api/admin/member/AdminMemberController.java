@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(value = "api/admin/members")
 public class AdminMemberController {
-
   @Resource
   private TableMemberRepository tableMemberRepository;
 

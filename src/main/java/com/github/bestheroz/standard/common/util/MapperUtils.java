@@ -20,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @UtilityClass
 public class MapperUtils {
-
   private final Gson GSON_INSTANCE = new GsonBuilder()
     .registerTypeAdapter(Instant.class, new InstantDeserializerTypeAdapter())
     .registerTypeAdapter(Instant.class, new InstantSerializerTypeAdapter())
