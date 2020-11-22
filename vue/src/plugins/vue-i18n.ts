@@ -7,8 +7,8 @@ Vue.use(VueI18n);
 
 const i18n = new VueI18n({
   // locale: store.getters.lang,
-  locale: "en",
-  fallbackLocale: "en",
+  locale: "ok",
+  fallbackLocale: "ok",
   messages: {
     en: {
       msg: msg.en,
