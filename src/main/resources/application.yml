@@ -1,9 +1,6 @@
 spring:
   profiles:
     active: local
-  resources:
-    chain:
-      compressed: true
   servlet:
     multipart:
       enabled: true
@@ -15,6 +12,10 @@ spring:
       preferred-json-mapper: gson
   autoconfigure:
     exclude: org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration
+  web:
+    resources:
+      chain:
+        compressed: true
 #  datasource:
 #    hikari:
 #      driver-class-name: org.jdbcdslog.DriverLoggingProxy
@@ -48,7 +49,9 @@ server:
 #        include: shutdown
 ---
 spring:
-  profiles: local
+  config:
+    activate:
+      on-profile: local
   datasource:
     initialization-mode: always
     schema: classpath:/removabledb/schema.sql
@@ -64,7 +67,9 @@ variable:
     title: My SpringBoot + Mybatis + VueJs + Typescript
 ---
 spring:
-  profiles: dev
+  config:
+    activate:
+      on-profile: dev
   datasource:
     hikari:
       username:
@@ -83,7 +88,9 @@ variable:
     title:
 ---
 spring:
-  profiles: production
+  config:
+    activate:
+      on-profile: production
   datasource:
     hikari:
       username:
