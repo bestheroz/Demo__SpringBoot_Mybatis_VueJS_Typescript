@@ -1,11 +1,11 @@
-import * as core from "@actions/core";
+const core = require('@actions/core');
 
 async function run() {
   try {
-    core.run("npm i");
+    core.run("npm ci")
   } catch (error) {
     core.setFailed(error.message);
   }
 }
 
-run().then();
+run()
