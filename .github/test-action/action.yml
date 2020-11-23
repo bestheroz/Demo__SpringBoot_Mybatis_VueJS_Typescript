@@ -1,0 +1,12 @@
+name: 'Hello World'
+description: 'Greet someone'
+inputs:
+  cached:
+    description: 'cached'
+    required: true
+    default: 'true'
+runs:
+  using: "composite"
+  steps:
+    - run: npm run lint
+      shell: bash
