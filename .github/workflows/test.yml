@@ -36,7 +36,7 @@ jobs:
             **/node_modules
           key: ${{ runner.os }}-node-${{ matrix.node-version }}-${{ hashFiles('**/package-lock.json') }}
 
-      - uses: ../.github/workflows/test-action
+      - uses: ./../.github/workflows/test-action
 #  npm-install:
 #    name: 1. npm install & cache
 #    runs-on: ${{ matrix.os }}
