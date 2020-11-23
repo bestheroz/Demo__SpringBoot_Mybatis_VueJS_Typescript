@@ -10,5 +10,10 @@ runs:
   steps:
     - run: |
         cd vue
+        npm ci
+      env:
+        CI: true
+    - run: |
+        cd vue
         npm run lint
       shell: bash

@@ -50,12 +50,8 @@ jobs:
         env:
           CI: true
 
-      - uses: ./.github/test-action
-#      - name: npm run lint
-#        run: |
-#          cd vue
-#          npm run lint
-#
+      - uses: ./.github/npm-test-action
+
 #  maven-install:
 #    name: 2. maven install & cache
 #    runs-on: ${{ matrix.os }}
