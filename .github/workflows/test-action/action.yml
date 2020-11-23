@@ -1,0 +1,5 @@
+name: "npm install & lint & cache"
+description: "npm install & lint & cache"
+runs:
+  using: "node12"
+  main: 'index.js'
