@@ -11,8 +11,10 @@ runs:
     - run: |
         cd vue
         npm ci
+      if: steps.cache-node.outputs.cache-hit != 'true'
       env:
         CI: true
+      shell: bash
     - run: |
         cd vue
         npm run lint
