@@ -85,39 +85,8 @@ jobs:
           mvn dependency:go-offline
           mvn install
 
-  tsc:
-    name: 3-1. tsc
-    needs: [npm-install, maven-install]
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      matrix:
-        os: [ ubuntu-latest ]
-        node-version: [ 14 ]
-
-    steps:
-      - uses: actions/checkout@main
-
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@main
-        with:
-          node-version: ${{ matrix.node-version }}
-
-      - name: Cache node
-        uses: actions/cache@main
-        with:
-          path: |
-            ~/.npm
-            **/node_modules
-          key: ${{ runner.os }}-node-${{ matrix.node-version }}-${{ hashFiles('**/package-lock.json') }}
-
-      - name: npm run tsc
-        run: |
-          cd vue
-          npm run tsc
-
   lint:
-    name: 3-2. lint
+    name: 3-1. lint
     needs: [npm-install, maven-install]
     runs-on: ${{ matrix.os }}
 
@@ -147,6 +116,36 @@ jobs:
           cd vue
           npm run lint
 
+  tsc:
+    name: 3-2. tsc
+    needs: [npm-install, maven-install]
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ ubuntu-latest ]
+        node-version: [ 14 ]
+
+    steps:
+      - uses: actions/checkout@main
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@main
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Cache node
+        uses: actions/cache@main
+        with:
+          path: |
+            ~/.npm
+            **/node_modules
+          key: ${{ runner.os }}-node-${{ matrix.node-version }}-${{ hashFiles('**/package-lock.json') }}
+
+      - name: npm run tsc
+        run: |
+          cd vue
+          npm run tsc
 
   test:
     name: 4. build & run & test
