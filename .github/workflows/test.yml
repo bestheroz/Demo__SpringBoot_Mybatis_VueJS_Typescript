@@ -85,9 +85,72 @@ jobs:
           mvn dependency:go-offline
           mvn install
 
-  test:
-    name: 3. lint & build & run & test
+  tsc:
+    name: 3-1. tsc
     needs: [npm-install, maven-install]
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ ubuntu-latest ]
+        node-version: [ 14 ]
+
+    steps:
+      - uses: actions/checkout@main
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@main
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Cache node
+        uses: actions/cache@main
+        with:
+          path: |
+            ~/.npm
+            **/node_modules
+          key: ${{ runner.os }}-node-${{ matrix.node-version }}-${{ hashFiles('**/package-lock.json') }}
+
+      - name: npm run tsc
+        run: |
+          cd vue
+          npm run tsc
+
+  lint:
+    name: 3-2. lint
+    needs: [npm-install, maven-install]
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ ubuntu-latest ]
+        node-version: [ 14 ]
+
+    steps:
+      - uses: actions/checkout@main
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@main
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Cache node
+        uses: actions/cache@main
+        with:
+          path: |
+            ~/.npm
+            **/node_modules
+          key: ${{ runner.os }}-node-${{ matrix.node-version }}-${{ hashFiles('**/package-lock.json') }}
+
+      - name: npm run lint
+        run: |
+          cd vue
+          npm run lint
+
+
+  test:
+    name: 4. build & run & test
+    needs: [tsc, lint]
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -111,16 +174,6 @@ jobs:
             ~/.npm
             **/node_modules
           key: ${{ runner.os }}-node-${{ matrix.node-version }}-${{ hashFiles('**/package-lock.json') }}
-
-      - name: npm run lint
-        run: |
-          cd vue
-          npm run tsc
-
-      - name: npm run lint
-        run: |
-          cd vue
-          npm run lint
 
       - name: npm run build
         run: |
