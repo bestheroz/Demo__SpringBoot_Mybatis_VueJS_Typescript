@@ -1,12 +1,12 @@
 # This is a basic workflow to help you get started with Actions
 
-name: Test
+name: Develop
 
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the master branch
 on:
   push:
-    branches: [ develop, master ]
+    branches: [ develop ]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -86,7 +86,7 @@ jobs:
           mvn install
 
   lint:
-    name: 3-1. lint
+    name: 3. npm lint & tsc & build
     needs: [npm-install, maven-install]
     runs-on: ${{ matrix.os }}
 
@@ -111,113 +111,9 @@ jobs:
             **/node_modules
           key: ${{ runner.os }}-node-${{ matrix.node-version }}-${{ hashFiles('**/package-lock.json') }}
 
-      - name: npm run lint
+      - name: npm run lint & tsc & build
         run: |
           cd vue
           npm run lint
-
-  tsc:
-    name: 3-2. tsc
-    needs: [npm-install, maven-install]
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      matrix:
-        os: [ ubuntu-latest ]
-        node-version: [ 14 ]
-
-    steps:
-      - uses: actions/checkout@main
-
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@main
-        with:
-          node-version: ${{ matrix.node-version }}
-
-      - name: Cache node
-        uses: actions/cache@main
-        with:
-          path: |
-            ~/.npm
-            **/node_modules
-          key: ${{ runner.os }}-node-${{ matrix.node-version }}-${{ hashFiles('**/package-lock.json') }}
-
-      - name: npm run tsc
-        run: |
-          cd vue
           npm run tsc
-
-  test:
-    name: 4. build & run & test
-    needs: [tsc, lint]
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      matrix:
-        os: [ ubuntu-latest ]
-        node-version: [ 14 ]
-        java-version: [ 11 ]
-
-    steps:
-      - uses: actions/checkout@main
-
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@main
-        with:
-          node-version: ${{ matrix.node-version }}
-
-      - name: Cache node
-        uses: actions/cache@main
-        with:
-          path: |
-            ~/.npm
-            **/node_modules
-          key: ${{ runner.os }}-node-${{ matrix.node-version }}-${{ hashFiles('**/package-lock.json') }}
-
-      - name: npm run build
-        run: |
-          cd vue
           npm run build
-
-      - name: move front-end dist to target
-        run: |
-          mkdir -p target/classes/static
-          mv -f vue/dist/* target/classes/static/
-
-      - name: Set up JDK ${{ matrix.java-version }}
-        uses: actions/setup-java@main
-        with:
-          java-version: ${{ matrix.java-version }}
-
-      - name: Cache Maven
-        uses: actions/cache@main
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-java-${{ matrix.java-version }}-${{ hashFiles('**/pom.xml') }}
-
-      - name: mvn package
-        run: |
-          mvn package -Dmaven.test.skip=true -Dspring.profiles.active=dev
-
-      - name: start server
-        run: |
-          cd target
-          java -Dfile.encoding=UTF-8 -Xms2g -Xmx2g -XX:+UseG1GC -jar demo-1.jar &
-
-      - name: Cache Cypress
-        id: cache-cypress
-        uses: actions/cache@main
-        with:
-          path: ~/.cache/Cypress
-          key: ${{ runner.os }}-cypress-${{ hashFiles('**/package-lock.json') }}
-
-      - name: Cypress run
-        uses: cypress-io/github-action@master
-        with:
-          working-directory: vue
-          start: npm run serve
-          wait-on: 'http://localhost:8081'
-          command-prefix: 'percy exec -- npx'
-          command: npm run test
-
-
