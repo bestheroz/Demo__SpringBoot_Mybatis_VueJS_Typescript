@@ -155,7 +155,7 @@ jobs:
           key: ${{ runner.os }}-cypress-${{ hashFiles('**/package-lock.json') }}
 
       - name: Cypress run
-        uses: cypress-io/github-action@main
+        uses: cypress-io/github-action@master
         with:
           working-directory: vue
           start: npm run serve
