@@ -115,6 +115,11 @@ jobs:
       - name: npm run lint
         run: |
           cd vue
+          npm run tsc
+
+      - name: npm run lint
+        run: |
+          cd vue
           npm run lint
 
       - name: npm run build

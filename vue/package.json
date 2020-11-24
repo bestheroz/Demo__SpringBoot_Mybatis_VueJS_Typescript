@@ -6,7 +6,8 @@
     "serve": "vue-cli-service serve --port 8081 --skip-plugins cypress,cypress-localstorage-commands,prettier",
     "build": "vue-cli-service build --skip-plugins cypress,cypress-localstorage-commands,prettier",
     "lint": "vue-cli-service lint --mode production",
-    "test": "npx cypress run"
+    "test": "npx cypress run",
+    "tsc": "tsc"
   },
   "dependencies": {
     "axios": "^0.21.0",
