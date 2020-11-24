@@ -148,11 +148,6 @@ jobs:
           java -Dfile.encoding=UTF-8 -Xms2g -Xmx2g -XX:+UseG1GC -jar demo-1.jar &
 
       - name: Cache Cypress
-          id: cache-cypress
-          uses: actions/cache@main
-          with:
-            path: ~/.cache/Cypress
-            key: ${{ runner.os }}-cypress-${{ hashFiles('**/package-lock.json') }}
         id: cache-cypress
         uses: actions/cache@main
         with:
