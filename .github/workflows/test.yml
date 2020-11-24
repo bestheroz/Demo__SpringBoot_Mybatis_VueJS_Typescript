@@ -113,9 +113,9 @@ jobs:
           key: ${{ runner.os }}-node-${{ matrix.node-version }}-${{ hashFiles('**/package-lock.json') }}
 
       - name: npm run lint
-          run: |
-            cd vue
-            npm run lint
+        run: |
+          cd vue
+          npm run lint
 
       - name: npm run build
         run: |
