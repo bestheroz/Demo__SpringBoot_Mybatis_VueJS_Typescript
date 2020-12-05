@@ -5,7 +5,7 @@
         <v-col cols="12">
           <code-group-list
             ref="codeGroupList"
-            height="23vh"
+            height="25vh"
             @select-row="onSelectRow"
           />
         </v-col>

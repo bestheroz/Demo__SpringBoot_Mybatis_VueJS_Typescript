@@ -71,7 +71,6 @@
       </v-card-text>
     </v-card>
     <member-edit-dialog
-      ref="refEditDialog"
       :item="item"
       :dialog.sync="dialog"
       @finished="getList"
