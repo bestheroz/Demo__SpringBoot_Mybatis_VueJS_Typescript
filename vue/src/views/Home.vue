@@ -1,17 +1,15 @@
 <template>
   <div>
-    <v-main>
-      <v-container class="fill-height" fluid>
-        <v-row align="center" justify="center">
-          <v-col cols="12" class="text-center">
-            <h1 style="font-size: 3rem">{{ title }}</h1>
-          </v-col>
-          <v-col cols="12" class="text-center">
-            <h1 :style="`color: ${color}`">{{ now }}</h1>
-          </v-col>
-        </v-row>
-      </v-container>
-    </v-main>
+    <v-container class="fill-height" fluid>
+      <v-row align="center" justify="center">
+        <v-col cols="12" class="text-center">
+          <h1 style="font-size: 3rem">{{ title }}</h1>
+        </v-col>
+        <v-col cols="12" class="text-center">
+          <h1 :style="`color: ${color}`">{{ now }}</h1>
+        </v-col>
+      </v-row>
+    </v-container>
   </div>
 </template>
 
@@ -29,11 +27,16 @@ export default class extends Vue {
   now = "";
   color = "";
 
-  async beforeMount(): Promise<void> {
+  protected beforeDestroy(): void {
+    this.interval && clearInterval(this.interval);
+    this.interval = null;
+  }
+
+  protected async beforeMount(): Promise<void> {
     this.title = await getVariableApi("title");
   }
 
-  async mounted(): Promise<void> {
+  protected async mounted(): Promise<void> {
     this.now = dayjs().format("YYYY년 MM월 DD일 HH시 mm분 ss초");
     this.color = this.getRandomColor();
     this.interval = window.setInterval(() => {
@@ -42,12 +45,7 @@ export default class extends Vue {
     }, 1000);
   }
 
-  beforeDestroy(): void {
-    this.interval && clearInterval(this.interval);
-    this.interval = null;
-  }
-
-  getRandomColor(): string {
+  protected getRandomColor(): string {
     const letters = "0123456789ABCDEF";
     let color = "#";
     for (let i = 0; i < 6; i++) {

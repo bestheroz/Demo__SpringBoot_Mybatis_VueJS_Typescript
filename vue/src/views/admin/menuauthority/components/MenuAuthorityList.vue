@@ -1,59 +1,60 @@
 <template>
   <div>
-    <v-card-text class="pt-0 pb-1">
-      <v-data-table
-        must-sort
-        fixed-header
-        :loading="loading"
-        :headers="headers"
-        :items="items"
-        item-key="id"
-        disable-sort
-        disable-filtering
-        disable-pagination
-        dense
-        hide-default-footer
-        :height="height"
-      >
-        <template #top>
-          <button-set
-            reload-button
-            :reload-disabled="!authority"
-            save-button
-            :save-disabled="!authority"
-            @click:reload="getList"
-            @click:save="save"
-          />
-        </template>
-        <template v-if="MENU_TYPE" #[`item.type`]="{ item }">
-          {{ item.type | getCodeText(MENU_TYPE) }}
-        </template>
-        <template #[`item.name`]="{ item }">
-          <span
-            :style="`padding-left: ${
-              80 * (item.level - 1)
-            }px; display: inline-flex;`"
-          >
-            <v-checkbox
-              v-model="item.checked"
-              :label="item.name"
-              :prepend-icon="item.icon"
-              :readonly="item.id === 1"
-              :disabled="
-                item.id !== 1 &&
-                item.parentId &&
-                !items.find((value) => value.id === item.parentId).checked
-              "
-              :ripple="item.id !== 1"
-              dense
-              hide-details
-              class="mt-0 pa-0"
-              @click.passive="setChildrenChecked(item)"
-            />
-          </span>
-        </template>
-      </v-data-table>
-    </v-card-text>
+    <v-card flat>
+      <button-set
+        :loading="saving"
+        reload-button
+        :reload-disabled="!authority"
+        save-button
+        :save-disabled="!authority"
+        @click:reload="getList"
+        @click:save="saveItem"
+      />
+      <v-card-text class="pt-0 pb-1">
+        <v-data-table
+          must-sort
+          fixed-header
+          :loading="loading"
+          :headers="headers"
+          :items="items"
+          item-key="id"
+          disable-sort
+          disable-filtering
+          disable-pagination
+          dense
+          hide-default-footer
+          :height="height"
+        >
+          <template v-if="MENU_TYPE" #[`item.type`]="{ item }">
+            {{ item.type | getCodeText(MENU_TYPE) }}
+          </template>
+          <template #[`item.name`]="{ item }">
+            <span
+              :style="`padding-left: ${
+                80 * (item.level - 1)
+              }px; display: inline-flex;`"
+            >
+              <v-checkbox
+                v-model="item.checked"
+                :label="item.name"
+                :prepend-icon="item.icon"
+                :readonly="item.id === 1"
+                :disabled="
+                  item.id !== 1 &&
+                  item.parentId &&
+                  !items.find((value) => value.id === item.parentId).checked
+                "
+                :ripple="item.id !== 1"
+                dense
+                hide-details
+                class="mt-0 pa-0"
+                @click.passive="setChildrenChecked(item)"
+              />
+            </span>
+          </template>
+        </v-data-table>
+      </v-card-text>
+    </v-card>
   </div>
 </template>
 
@@ -85,58 +86,52 @@ export default class extends Vue {
   readonly ENDPOINT_URL = "admin/menuAuthority/";
   items: AdminMenuAuthorityVO[] = [];
   loading = false;
+  saving = false;
 
   MENU_TYPE: SelectItem[] = [];
 
-  headers: DataTableHeader[] = [
-    {
-      text: "타입",
-      align: "center",
-      value: "type",
-      filterType: "select",
-      filterSelectItem: [],
-      width: "5rem",
-    },
-    {
-      text: "메뉴 ID",
-      align: "end",
-      value: "id",
-      width: "6rem",
-    },
-    {
-      text: "상위 메뉴 ID",
-      align: "end",
-      value: "parentId",
-      width: "6rem",
-    },
-    {
-      text: "메뉴명",
-      align: "start",
-      value: "name",
-    },
-  ];
+  get headers(): DataTableHeader[] {
+    return [
+      {
+        text: "타입",
+        align: "center",
+        value: "type",
+        filterType: "select",
+        filterSelectItem: this.MENU_TYPE,
+        width: "5rem",
+      },
+      {
+        text: "메뉴 ID",
+        align: "end",
+        value: "id",
+        width: "6rem",
+      },
+      {
+        text: "상위 메뉴 ID",
+        align: "end",
+        value: "parentId",
+        width: "6rem",
+      },
+      {
+        text: "메뉴명",
+        align: "start",
+        value: "name",
+      },
+    ];
+  }
 
-  async beforeMount(): Promise<void> {
+  protected async beforeMount(): Promise<void> {
     this.MENU_TYPE = await getCodesApi("MENU_TYPE");
   }
 
-  mounted(): void {
-    const find = this.headers.find((item) => item.value === "type");
-    if (find) {
-      this.headers[
-        this.headers.indexOf(find)
-      ].filterSelectItem = this.MENU_TYPE;
-    }
-  }
-
   @Watch("authority")
-  watchAuthority(val: string): void {
+  protected watchAuthority(val: string): void {
     if (val) {
       this.getList();
     }
   }
 
-  setChildrenChecked(item: AdminMenuAuthorityVO): void {
+  protected setChildrenChecked(item: AdminMenuAuthorityVO): void {
     if (!item.checked) {
       this.items
         .filter((value) => value.parentId === item.id)
@@ -146,7 +141,7 @@ export default class extends Vue {
     }
   }
 
-  async getList(): Promise<void> {
+  public async getList(): Promise<void> {
     this.items = [];
     this.loading = true;
     const response = await getApi<AdminMenuAuthorityVO[]>(
@@ -156,8 +151,8 @@ export default class extends Vue {
     this.items = response?.data || [];
   }
 
-  async save(): Promise<void> {
-    this.loading = true;
+  protected async saveItem(): Promise<void> {
+    this.saving = true;
     await putApi<{ menuIdList: string }>(
       `${this.ENDPOINT_URL}${this.authority}/`,
       {
@@ -167,7 +162,7 @@ export default class extends Vue {
           .join(","),
       },
     );
-    this.loading = false;
+    this.saving = false;
   }
 }
 </script>

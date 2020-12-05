@@ -19,7 +19,7 @@
           v-if="$router.currentRoute.path !== '/login' && accessToken"
           class="font-weight-light"
           :style="{ cursor: 'pointer' }"
-          @click="logout"
+          @click="$store.dispatch('logout')"
         >
           <v-icon>mdi-logout</v-icon>
           로그아웃
@@ -32,11 +32,9 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import { getVariableApi } from "@/utils/apis";
-import { logout } from "@/utils/authentications";
 
 @Component({ name: "AppBarNoDrawer" })
 export default class extends Vue {
-  readonly logout: typeof logout = logout;
   title: string | null = null;
 
   get isPopup(): boolean {
@@ -53,7 +51,7 @@ export default class extends Vue {
     this.title = await getVariableApi("title");
   }
 
-  goHome(): void {
+  protected goHome(): void {
     this.$router.currentRoute.path !== "/" && this.$router.push("/");
   }
 }

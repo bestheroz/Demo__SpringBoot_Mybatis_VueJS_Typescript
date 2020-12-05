@@ -1,5 +1,6 @@
 package com.github.bestheroz.standard.context.log;
 
+import com.github.bestheroz.standard.common.exception.BusinessException;
 import com.github.bestheroz.standard.common.util.MapperUtils;
 import java.text.MessageFormat;
 import java.util.Arrays;
@@ -29,8 +30,9 @@ public class TraceLogger {
     "{} E N D ....... Execute Time ....... : {} - return Value({}) : {}";
 
   @Around(
-    "execution(!private * com.github.bestheroz..*Controller.*(..)) || execution(!private * com.github.bestheroz..*Service.*(..)) " +
-    "|| execution(!private * com.github.bestheroz..*Repository.*(..)) || execution(!private * com.github.bestheroz..*DAO.*(..))"
+    "execution(!private * com.github.bestheroz..*Controller.*(..)) || execution(!private * com.github.bestheroz..*Service.*(..)) "
+      +
+      "|| execution(!private * com.github.bestheroz..*Repository.*(..)) || execution(!private * com.github.bestheroz..*DAO.*(..))"
   )
   public Object writeLog(final ProceedingJoinPoint pjp) throws Throwable {
     final Object retVal;
@@ -71,7 +73,9 @@ public class TraceLogger {
         )
       );
     } catch (final Throwable e) {
-      log.warn("{} -\n{}", formatClassMethod, ExceptionUtils.getStackTrace(e));
+      if (!(e instanceof BusinessException)) {
+        log.warn("{} -\n{}", formatClassMethod, ExceptionUtils.getStackTrace(e));
+      }
       throw e;
     }
     return retVal;

@@ -1,7 +1,7 @@
 <template>
   <v-navigation-drawer v-if="!isPopup" v-model="syncedDrawer" app clipped fixed>
     <v-list>
-      <template v-for="item in items">
+      <template v-for="item in $store.getters.drawers">
         <v-list-group
           v-if="item.children"
           :key="item.title"
@@ -52,13 +52,13 @@
       <div class="ma-2">
         <v-row no-gutters>
           <v-col cols="10">
-            <v-btn outlined class="px-10" @click="logout">
+            <v-btn outlined class="px-10" @click="$store.dispatch('logout')">
               <v-icon>mdi-logout</v-icon>
               Logout
             </v-btn>
           </v-col>
           <v-col cols="2" class="text-right">
-            <v-btn icon outlined @click="changeTheme">
+            <v-btn icon outlined @click="$store.dispatch('toggleTheme')">
               <v-icon v-if="$vuetify.theme.dark"> mdi-weather-night</v-icon>
               <v-icon v-else> mdi-weather-sunny</v-icon>
             </v-btn>
@@ -70,10 +70,8 @@
 </template>
 
 <script lang="ts">
-import { Component, PropSync, Vue, Watch } from "vue-property-decorator";
+import { Component, PropSync, Vue } from "vue-property-decorator";
 import type { DrawerItem } from "@/common/types";
-import { logout } from "@/utils/authentications";
-import { postApi } from "@/utils/apis";
 
 @Component({
   name: "Drawer",
@@ -82,20 +80,11 @@ export default class extends Vue {
   @PropSync("drawer", { required: true, default: true })
   readonly syncedDrawer!: boolean;
 
-  readonly logout: typeof logout = logout;
-
-  items: DrawerItem[] | null = null;
-
   get isPopup(): boolean {
     return !window.toolbar.visible;
   }
 
-  @Watch("$store.state.drawer.drawers", { immediate: true })
-  async watchDrawers(): Promise<void> {
-    this.items = await this.$store.dispatch("getDrawers");
-  }
-
-  popupWindow(url: string): void {
+  protected popupWindow(url: string): void {
     window.open(
       url,
       "_blank",
@@ -103,29 +92,7 @@ export default class extends Vue {
     );
   }
 
-  async changeTheme(): Promise<void> {
-    this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
-    window.localStorage.setItem(
-      "theme",
-      this.$vuetify.theme.dark ? "dark" : "light",
-    );
-    try {
-      await postApi<{
-        theme: string;
-      }>(
-        "members/mine/changeTheme/",
-        {
-          theme: this.$vuetify.theme.dark ? "dark" : "light",
-        },
-        false,
-      );
-      await this.$store.dispatch("setUser");
-    } catch (e) {
-      console.warn(e);
-    }
-  }
-
-  movePage(item: DrawerItem): void {
+  protected movePage(item: DrawerItem): void {
     if (!item.to || item.to === this.$route.fullPath) {
       return;
     }

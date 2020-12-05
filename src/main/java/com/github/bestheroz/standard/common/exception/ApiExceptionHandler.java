@@ -25,27 +25,25 @@ import org.springframework.web.multipart.MultipartException;
 @ControllerAdvice
 @RestController
 public class ApiExceptionHandler {
-
   // 아래서 놓친 예외가 있을때 이곳으로 확인하기 위해 존재한다.
   // 놓친 예외는 이곳에서 확인하여 추가해주면 된다.
-  @ExceptionHandler({ Throwable.class })
+  @ExceptionHandler({Throwable.class})
   public ResponseEntity<ApiResult> exception(final Throwable e) {
     log.warn(ExceptionUtils.getStackTrace(e));
     return Result.error();
   }
 
-  @ExceptionHandler({ BusinessException.class })
+  @ExceptionHandler({BusinessException.class})
   public ResponseEntity<ApiResult> businessException(
     final BusinessException e
   ) {
-    log.warn(e.toString());
     if (e.isEquals(ExceptionCode.FAIL_TRY_LOGIN_FIRST)) {
       return Result.unauthenticated();
     }
     return Result.error(e);
   }
 
-  @ExceptionHandler({ UsernameNotFoundException.class })
+  @ExceptionHandler({UsernameNotFoundException.class})
   public ResponseEntity<ApiResult> usernameNotFoundException(
     final UsernameNotFoundException e
   ) {
@@ -77,14 +75,15 @@ public class ApiExceptionHandler {
     final Throwable e,
     final HttpServletResponse response
   ) {
-    if (StringUtils.equals(response.getHeader("refreshToken"), "must")) { // 데이터 수정시 가끔 이곳으로 넘어와 버리네..
+    if (StringUtils
+      .equals(response.getHeader("refreshToken"), "must")) { // 데이터 수정시 가끔 이곳으로 넘어와 버리네..
       return Result.unauthenticated();
     }
     log.warn(ExceptionUtils.getStackTrace(e));
     return Result.error(BusinessException.FAIL_INVALID_REQUEST);
   }
 
-  @ExceptionHandler({ MultipartException.class })
+  @ExceptionHandler({MultipartException.class})
   public ResponseEntity<ApiResult> multipartException(
     final MultipartException e
   ) {
@@ -98,7 +97,7 @@ public class ApiExceptionHandler {
     return result;
   }
 
-  @ExceptionHandler({ DuplicateKeyException.class })
+  @ExceptionHandler({DuplicateKeyException.class})
   public ResponseEntity<ApiResult> duplicateKeyException(
     final DuplicateKeyException e
   ) {

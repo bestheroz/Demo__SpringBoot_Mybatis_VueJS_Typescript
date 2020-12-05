@@ -4,7 +4,7 @@
       <v-app-bar-nav-icon @click.stop="syncedDrawer = !syncedDrawer" />
       <v-toolbar-title>
         <v-btn x-large text color="primary" @click="goHome">
-          {{ title }}
+          {{ title || "" }}
         </v-btn>
       </v-toolbar-title>
       <v-spacer />
@@ -12,7 +12,7 @@
         <template #activator="{ on }">
           <v-btn color="primary" x-large text v-on="on">
             <v-icon> mdi-account</v-icon>
-            {{ user.name }}
+            {{ $store.getters.user.name }}
           </v-btn>
         </template>
 
@@ -27,7 +27,7 @@
           </v-list-item>
           <v-list-item>
             <v-list-item-title>
-              <v-btn block text @click="logout">
+              <v-btn block text @click="$store.dispatch('logout')">
                 <v-icon>mdi-logout</v-icon>
                 Logout
               </v-btn>
@@ -36,16 +36,14 @@
         </v-list>
       </v-menu>
     </v-app-bar>
-    <edit-me-dialog :dialog.sync="editMeDialog" />
+    <edit-me-dialog :dialog.sync="editMeDialog" v-if="editMeDialog" />
   </div>
 </template>
 
 <script lang="ts">
-import { Component, PropSync, Vue, Watch } from "vue-property-decorator";
+import { Component, PropSync, Vue } from "vue-property-decorator";
 import { getVariableApi } from "@/utils/apis";
-import { logout } from "@/utils/authentications";
 import EditMeDialog from "@/components/layout/components/EditMeDialog.vue";
-import type { TableMemberEntity } from "@/common/types";
 
 @Component({
   name: "AppBar",
@@ -53,26 +51,22 @@ import type { TableMemberEntity } from "@/common/types";
 })
 export default class extends Vue {
   @PropSync("drawer", { required: true, default: true }) syncedDrawer!: boolean;
-  readonly logout: typeof logout = logout;
   title: string | null = null;
-  user: TableMemberEntity = { name: "" };
   editMeDialog = false;
 
   get isPopup(): boolean {
     return !window.toolbar.visible;
   }
 
-  async beforeMount(): Promise<void> {
+  get theme() {
+    return this.$store.getters.theme;
+  }
+
+  protected async beforeMount(): Promise<void> {
     this.title = await getVariableApi("title");
   }
 
-  @Watch("$store.state.user.user", { immediate: true })
-  async watchUser(): Promise<void> {
-    this.user = await this.$store.dispatch("getUser");
-    this.$vuetify.theme.dark = (this.user.theme || "light") === "dark";
-  }
-
-  goHome(): void {
+  protected goHome(): void {
     this.$router.currentRoute.path !== "/" && this.$router.push("/");
   }
 }

@@ -145,9 +145,8 @@
 <script lang="ts">
 import { Component, Prop, PropSync, Vue, Watch } from "vue-property-decorator";
 import type { SelectItem, TableMemberEntity } from "@/common/types";
-import { deleteApi, getCodesApi, patchApi, postApi } from "@/utils/apis";
+import { getCodesApi, patchApi, postApi } from "@/utils/apis";
 import DatetimePicker from "@/components/picker/DatetimePicker.vue";
-import { confirmDelete } from "@/utils/alerts";
 import { ValidationObserver } from "vee-validate";
 import pbkdf2 from "pbkdf2";
 
@@ -159,7 +158,6 @@ export default class extends Vue {
   @PropSync("dialog", { required: true, type: Boolean }) syncedDialog!: boolean;
   @Prop({ required: true }) readonly item!: TableMemberEntity;
 
-  readonly ENDPOINT_URL: string = "admin/members/";
   loading = false;
   AUTHORITY: SelectItem[] = [];
   password2: string | null = null;
@@ -167,16 +165,19 @@ export default class extends Vue {
   show2 = false;
   isNew = false;
 
-  beforeDestroy(): void {
+  protected beforeDestroy(): void {
     this.syncedDialog = false;
+    this.$nextTick(() => {
+      this.syncedDialog = false;
+    });
   }
 
-  async beforeMount(): Promise<void> {
+  protected async beforeMount(): Promise<void> {
     this.AUTHORITY = await getCodesApi("AUTHORITY");
   }
 
   @Watch("syncedDialog", { immediate: true })
-  watchDialog(val: boolean): void {
+  protected watchDialog(val: boolean): void {
     if (val) {
       this.password2 = "";
       this.show1 = false;
@@ -189,7 +190,7 @@ export default class extends Vue {
     }
   }
 
-  async save(): Promise<void> {
+  protected async save(): Promise<void> {
     const isValid = await (this.$refs.observer as InstanceType<
       typeof ValidationObserver
     >).validate();
@@ -199,7 +200,7 @@ export default class extends Vue {
     this.isNew ? await this.create() : await this.patch();
   }
 
-  async create(): Promise<void> {
+  protected async create(): Promise<void> {
     this.loading = true;
     const params = { ...this.item };
     if (params.password) {
@@ -207,19 +208,16 @@ export default class extends Vue {
         .pbkdf2Sync(params.password, "salt", 1, 32, "sha512")
         .toString();
     }
-    const response = await postApi<TableMemberEntity>(
-      `${this.ENDPOINT_URL}`,
-      params,
-    );
+    const response = await postApi<TableMemberEntity>("admin/members/", params);
     this.loading = false;
     if (response?.code?.startsWith("S")) {
-      await this.$store.dispatch("setMemberCodes");
+      await this.$store.dispatch("initMemberCodes");
       this.syncedDialog = false;
       this.$emit("finished");
     }
   }
 
-  async patch(): Promise<void> {
+  protected async patch(): Promise<void> {
     this.loading = true;
     const params = { ...this.item };
     if (params.password) {
@@ -228,40 +226,24 @@ export default class extends Vue {
         .toString();
     }
     const response = await patchApi<TableMemberEntity>(
-      `${this.ENDPOINT_URL}${this.item.id}/`,
+      `admin/members/${this.item.id}/`,
       params,
     );
     this.loading = false;
     if (response?.code?.startsWith("S")) {
-      const user = await this.$store.dispatch("getUser");
-      if (this.item.id === user.id) {
-        await this.$store.dispatch("setUser");
+      if (this.item.id === this.$store.getters.user.id) {
+        await this.$store.dispatch("reissueAccessToken");
       }
-      await this.$store.dispatch("setMemberCodes");
+      await this.$store.dispatch("initMemberCodes");
       this.syncedDialog = false;
       this.$emit("finished");
     }
   }
 
-  async delete(): Promise<void> {
-    const result = await confirmDelete();
-    if (result.value) {
-      this.loading = true;
-      const response = await deleteApi<TableMemberEntity>(
-        `${this.ENDPOINT_URL}${this.item.id}/`,
-      );
-      this.loading = false;
-      if (response?.code?.startsWith("S")) {
-        await this.$store.dispatch("setMemberCodes");
-        this.$emit("finished");
-      }
-    }
-  }
-
-  async resetPassword(): Promise<void> {
+  protected async resetPassword(): Promise<void> {
     this.loading = true;
     await postApi<TableMemberEntity>(
-      `${this.ENDPOINT_URL}${this.item.id}/resetPassword`,
+      `admin/members/${this.item.id}/resetPassword`,
       this.item,
     );
     this.loading = false;

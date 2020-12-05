@@ -2,7 +2,7 @@ module.exports = {
   root: true,
   parser: "vue-eslint-parser",
   parserOptions: {
-    ecmaVersion: 2020,
+    ecmaVersion: 2021,
   },
   env: {
     node: true,
@@ -27,5 +27,7 @@ module.exports = {
     "comma-dangle": "off",
     "no-cond-assign": ["error", "always"],
     "space-before-function-paren": "off",
+    indent: "off",
+    "prettier/prettier": "off",
   },
 };

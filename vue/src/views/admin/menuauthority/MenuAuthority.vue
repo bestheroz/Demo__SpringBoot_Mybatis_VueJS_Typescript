@@ -1,23 +1,24 @@
 <template>
   <div>
-    <v-card>
-      <v-row no-gutters>
-        <v-col cols="12">
-          <v-card-text class="pt-0 pb-1">
+    <v-row no-gutters>
+      <v-col cols="12">
+        <v-card flat>
+          <v-card-text>
             <v-select
               v-model="authority"
               label="권한 선택"
               :loading="loading"
               :items="AUTHORITY"
+              dense
               hide-details
             />
           </v-card-text>
-        </v-col>
-        <v-col cols="12">
-          <menu-authority-list :authority="authority" height="75vh" />
-        </v-col>
-      </v-row>
-    </v-card>
+        </v-card>
+      </v-col>
+      <v-col cols="12">
+        <menu-authority-list :authority="authority" height="75vh" />
+      </v-col>
+    </v-row>
   </div>
 </template>
 
@@ -38,18 +39,20 @@ export default class extends Vue {
   loading = false;
   AUTHORITY: SelectItem[] = [];
 
-  mounted(): void {
+  protected mounted(): void {
     this.getCodeList();
   }
 
-  async getCodeList(): Promise<void> {
+  protected async getCodeList(): Promise<void> {
     this.loading = true;
     const data: SelectItem[] = await getCodesApi("AUTHORITY");
-    const user = await this.$store.dispatch("getUser");
     this.loading = false;
     this.AUTHORITY =
       data.filter(
-        (value) => ![user.authority, 999].includes(parseInt(value.value)),
+        (value) =>
+          ![this.$store.getters.user.authority, 999].includes(
+            parseInt(value.value),
+          ),
       ) || [];
   }
 }

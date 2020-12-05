@@ -1,5 +1,11 @@
 .v-application {
-  font-family: 'Open Sans', sans-serif;
+  font-family: "Open Sans", sans-serif;
+
+  .text--anchor {
+    color: var(--v-anchor-base);
+    font-weight: bold;
+    cursor: pointer;
+  }
 
   div.v-data-table {
     div.v-data-table__wrapper {
@@ -272,7 +278,7 @@
     }
   }
 
-  .v-btn{
+  .v-btn {
     text-transform: initial;
   }
 }

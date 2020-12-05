@@ -76,7 +76,7 @@
         </v-card>
       </v-slide-y-transition>
     </v-row>
-    <new-password-dialog :id="id" :dialog.sync="dialog" />
+    <new-password-dialog :id="id" :dialog.sync="dialog" v-if="dialog" />
   </v-container>
 </template>
 
@@ -90,7 +90,6 @@ import {
 } from "@/utils/apis";
 import { alertError } from "@/utils/alerts";
 import NewPasswordDialog from "@/views/login/components/NewPasswordDialog.vue";
-import { saveToken } from "@/utils/authentications";
 import { ValidationObserver } from "vee-validate";
 import pbkdf2 from "pbkdf2";
 
@@ -103,11 +102,12 @@ export default class extends Vue {
   loading = false;
   dialog = false;
 
-  async beforeMount(): Promise<void> {
+  protected async beforeMount(): Promise<void> {
     this.title = await getVariableApi("title");
+    this.$vuetify.theme.dark = false;
   }
 
-  async mounted(): Promise<void> {
+  protected async mounted(): Promise<void> {
     await this.$store.dispatch("clearUser");
     await this.$store.dispatch("clearDrawer");
     await this.$store.dispatch("clearCache");
@@ -117,18 +117,18 @@ export default class extends Vue {
     }
   }
 
-  async login(): Promise<void> {
+  protected async login(): Promise<void> {
     const inValid = await (this.$refs.observer as InstanceType<
       typeof ValidationObserver
     >).validate();
     if (!inValid) {
       return;
     }
-    this.loading = true;
     try {
       const pbkdf2Password: string = pbkdf2
         .pbkdf2Sync(this.password || "", "salt", 1, 32, "sha512")
         .toString();
+      this.loading = true;
       const response = await axiosInstance.post<
         ApiDataResult<{
           accessToken: string;
@@ -138,6 +138,7 @@ export default class extends Vue {
         id: this.id,
         password: pbkdf2Password,
       });
+      this.loading = false;
       if (response?.data?.code === "S002") {
         this.dialog = true;
         this.password = null;
@@ -145,7 +146,7 @@ export default class extends Vue {
         response?.data?.code?.startsWith("S") &&
         response?.data?.data
       ) {
-        saveToken({
+        await this.$store.dispatch("saveToken", {
           accessToken: response.data.data.accessToken,
           refreshToken: response.data.data.refreshToken,
         });
@@ -157,7 +158,6 @@ export default class extends Vue {
     } catch (e) {
       alertAxiosError(e);
     }
-    this.loading = false;
   }
 }
 </script>

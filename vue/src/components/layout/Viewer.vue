@@ -7,12 +7,12 @@
       colored-border
       color="divider"
       dense
-      class="mx-3 mt-3 mb-0 pl-6 elevation-1"
+      class="mt-1 mb-0 pl-8"
     >
-      <v-icon class="pb-1">{{ icon }}</v-icon>
+      <v-icon :size="20" style="top: -1px">{{ icon }}</v-icon>
       {{ title }}
     </v-alert>
-    <v-container fluid class="pt-0 elevation-1">
+    <v-container fluid class="pa-0 elevation-1">
       <router-view />
     </v-container>
   </v-main>
@@ -22,28 +22,33 @@
 import { Component, Vue, Watch } from "vue-property-decorator";
 import type { DrawerItem } from "@/common/types";
 import { errorPage } from "@/utils/errors";
+import { getVariableApi } from "@/utils/apis";
 
 @Component({ name: "Viewer" })
 export default class extends Vue {
-  drawers: DrawerItem[] = [];
   icon = "mdi-file-document-outline";
 
   get title(): string {
     if (this.$route.fullPath === "/index") {
       return "";
     }
-    if (this.drawers?.length > 0) {
+    if (this.$store.getters.drawers?.length > 0) {
       return this.findThisPage().title.split("(팝업)").join("");
     }
     return "";
   }
 
-  findThisPage(): DrawerItem {
+  @Watch("title")
+  protected async watchTitle(val: string): Promise<void> {
+    document.title = ((await getVariableApi("title")) || "") + `:: ${val}`;
+  }
+
+  protected findThisPage(): DrawerItem {
     let result: DrawerItem | undefined;
     if (this.$route.name) {
       return { id: 0, title: "" };
     }
-    this.drawers?.forEach((drawer) => {
+    this.$store.getters.drawers?.forEach((drawer: DrawerItem) => {
       if (!result) {
         result = drawer.children?.find((child: DrawerItem) => {
           if (child.to) {
@@ -58,11 +63,6 @@ export default class extends Vue {
       return { id: 0, title: "" };
     }
     return result || { id: 0, title: "" };
-  }
-
-  @Watch("$store.state.drawer.drawers", { immediate: true })
-  async watchDrawers(): Promise<void> {
-    this.drawers = await this.$store.dispatch("getDrawers");
   }
 }
 </script>

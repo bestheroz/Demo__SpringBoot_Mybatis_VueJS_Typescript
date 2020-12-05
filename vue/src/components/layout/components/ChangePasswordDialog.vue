@@ -99,7 +99,6 @@ import pbkdf2 from "pbkdf2";
 export default class extends Vue {
   @PropSync("dialog", { required: true, type: Boolean }) syncedDialog!: boolean;
 
-  readonly ENDPOINT_URL: string = "members/";
   loading = false;
   oldPassword = "";
   password = "";
@@ -108,12 +107,15 @@ export default class extends Vue {
   show2 = false;
   show3 = false;
 
-  beforeDestroy(): void {
+  protected beforeDestroy(): void {
     this.syncedDialog = false;
+    this.$nextTick(() => {
+      this.syncedDialog = false;
+    });
   }
 
-  @Watch("syncedDialog")
-  watchDialog(val: boolean): void {
+  @Watch("syncedDialog", { immediate: true })
+  protected watchDialog(val: boolean): void {
     if (val) {
       this.oldPassword = "";
       this.password = "";
@@ -128,7 +130,7 @@ export default class extends Vue {
     }
   }
 
-  async save(): Promise<void> {
+  protected async save(): Promise<void> {
     const isValid = await (this.$refs.observer as InstanceType<
       typeof ValidationObserver
     >).validate();
@@ -140,7 +142,7 @@ export default class extends Vue {
     const response = await postApi<{
       oldPassword: string;
       newPassword: string;
-    }>(`${this.ENDPOINT_URL}mine/changePassword/`, {
+    }>("members/mine/changePassword/", {
       oldPassword: pbkdf2
         .pbkdf2Sync(this.oldPassword, "salt", 1, 32, "sha512")
         .toString(),
