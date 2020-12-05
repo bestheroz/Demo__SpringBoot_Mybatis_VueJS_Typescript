@@ -122,6 +122,11 @@ jobs:
           cd vue
           npm run tsc
 
+      - name: npm run build
+        run: |
+          cd vue
+          npm run build
+
       - name: move front-end dist to target
         run: |
           mkdir -p target/classes/static
