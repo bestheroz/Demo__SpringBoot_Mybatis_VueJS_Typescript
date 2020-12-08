@@ -45,7 +45,7 @@ export default class extends Vue {
     this.codeGroupList.getList();
   }
 
-  onSelectRow(val: TableCodeGroupEntity) {
+  onSelectRow(val: TableCodeGroupEntity): void {
     this.selected = val;
   }
 }

@@ -58,7 +58,7 @@ export default class extends Vue {
     return !window.toolbar.visible;
   }
 
-  get theme() {
+  get theme(): string {
     return this.$store.getters.theme;
   }
 

@@ -121,8 +121,8 @@ export default class extends Vue {
 
   @Watch("selected")
   @Emit()
-  selectRow(val: TableCodeGroupEntity[]) {
-    return val && val.length > 0 ? val[0] : [];
+  selectRow(val: TableCodeGroupEntity[]): TableCodeGroupEntity {
+    return val && val.length > 0 ? val[0] : {};
   }
 
   public async getList(): Promise<void> {

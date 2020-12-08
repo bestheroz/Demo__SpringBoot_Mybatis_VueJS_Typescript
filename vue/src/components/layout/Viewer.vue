@@ -51,9 +51,7 @@ export default class extends Vue {
     this.$store.getters.drawers?.forEach((drawer: DrawerItem) => {
       if (!result) {
         result = drawer.children?.find((child: DrawerItem) => {
-          if (child.to) {
-            return child.to === this.$route.fullPath;
-          }
+          return child?.to === this.$route.fullPath;
         });
         this.icon = drawer.icon || "mdi-file-document-outline";
       }
