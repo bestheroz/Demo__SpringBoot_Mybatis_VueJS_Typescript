@@ -27,7 +27,7 @@
     <commons-io-version>2.8.0</commons-io-version>
     <tika-version>1.24.1</tika-version>
     <poi-version>4.1.2</poi-version>
-    <sentry-version>3.1.3</sentry-version>
+    <sentry-version>3.2.0</sentry-version>
     <h2-version>1.4.200</h2-version>
     <prettier-maven-plugin-version>0.11</prettier-maven-plugin-version>
     <!-- ci 이용시 제거 가능 START -->
