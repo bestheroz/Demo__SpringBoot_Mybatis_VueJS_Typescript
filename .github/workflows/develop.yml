@@ -94,7 +94,7 @@ jobs:
           mvn install
 
   lint:
-    name: 3. lint & tsc & build
+    name: 3. lint & tsc
     needs: [npm-install, maven-install]
     runs-on: ${{ matrix.os }}
 
