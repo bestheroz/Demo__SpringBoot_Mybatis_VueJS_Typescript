@@ -31,6 +31,10 @@ jobs:
             ~/.npm
             **/node_modules
           key: ${{ runner.os }}-node-${{ matrix.node-version }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-${{ matrix.node-version }}-
+            ${{ runner.os }}-node-$
+            ${{ runner.os }}-
 
       - name: Use Node.js ${{ matrix.node-version }}
         if: steps.cache-node.outputs.cache-hit != 'true'
@@ -71,6 +75,10 @@ jobs:
         with:
           path: ~/.m2
           key: ${{ runner.os }}-java-${{ matrix.java-version }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-java-${{ matrix.java-version }}-
+            ${{ runner.os }}-java-
+            ${{ runner.os }}-
 
       - name: Set up JDK ${{ matrix.java-version }}
         if: steps.cache-maven.outputs.cache-hit != 'true'
@@ -110,6 +118,10 @@ jobs:
             ~/.npm
             **/node_modules
           key: ${{ runner.os }}-node-${{ matrix.node-version }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-${{ matrix.node-version }}-
+            ${{ runner.os }}-node-$
+            ${{ runner.os }}-
 
       - name: npm run lint
         run: |
