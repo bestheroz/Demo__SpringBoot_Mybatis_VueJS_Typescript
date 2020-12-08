@@ -11,7 +11,14 @@
       transition="scale-transition"
     >
       <template #activator>
-        <v-btn v-model="fab" color="button-default" dark fab small>
+        <v-btn
+          v-model="fab"
+          color="button-default"
+          dark
+          fab
+          small
+          :loading="loading"
+        >
           <v-icon v-if="fab" color="black">mdi-close</v-icon>
           <v-icon v-else>mdi-function</v-icon>
         </v-btn>
@@ -21,9 +28,8 @@
           <v-btn
             fab
             dark
-            x-small
             color="button-reload"
-            :disabled="disabled || reloadDisabled"
+            :disabled="disabled || reloadDisabled || loading"
             @click="clickReload"
             v-on="on"
           >
@@ -37,9 +43,8 @@
           <v-btn
             fab
             dark
-            x-small
             color="primary"
-            :disabled="disabled || saveDisabled"
+            :disabled="disabled || saveDisabled || loading"
             @click="clickSave"
             v-on="on"
           >
@@ -53,9 +58,8 @@
           <v-btn
             fab
             dark
-            x-small
             :color="excelColor"
-            :disabled="disabled || excelDisabled"
+            :disabled="disabled || excelDisabled || loading"
             @click="clickExcel"
             v-on="on"
           >
@@ -69,9 +73,8 @@
           <v-btn
             fab
             dark
-            x-small
             color="button-delete"
-            :disabled="disabled || deleteDisabled"
+            :disabled="disabled || deleteDisabled || loading"
             @click="clickDelete"
             v-on="on"
           >
@@ -85,9 +88,8 @@
           <v-btn
             fab
             dark
-            x-small
             color="button-add"
-            :disabled="disabled || addDisabled"
+            :disabled="disabled || addDisabled || loading"
             @click="clickAdd"
             v-on="on"
           >
@@ -101,9 +103,8 @@
           <v-btn
             fab
             dark
-            x-small
             color="button-default"
-            :disabled="disabled || inquiryDisabled"
+            :disabled="disabled || inquiryDisabled || loading"
             @click="clickInquiry"
             v-on="on"
           >
@@ -122,6 +123,7 @@ import colors from "vuetify/lib/util/colors";
 
 @Component({ name: "ButtonSet" })
 export default class extends Vue {
+  @Prop({ type: Boolean, default: false }) readonly loading!: boolean;
   @Prop({ type: Boolean, default: false }) readonly disabled!: boolean;
   @Prop({ type: Boolean, default: false }) readonly addButton!: boolean;
   @Prop({ type: Boolean, default: false }) readonly addDisabled!: boolean;

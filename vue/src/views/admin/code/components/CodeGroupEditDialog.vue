@@ -67,8 +67,7 @@
 <script lang="ts">
 import { Component, Prop, PropSync, Vue, Watch } from "vue-property-decorator";
 import type { TableCodeGroupEntity } from "@/common/types";
-import { deleteApi, patchApi, postApi } from "@/utils/apis";
-import { confirmDelete } from "@/utils/alerts";
+import { patchApi, postApi } from "@/utils/apis";
 import { ValidationObserver } from "vee-validate";
 
 @Component({
@@ -78,12 +77,14 @@ export default class extends Vue {
   @PropSync("dialog", { required: true, type: Boolean }) syncedDialog!: boolean;
   @Prop({ required: true }) readonly item!: TableCodeGroupEntity;
 
-  readonly ENDPOINT_URL = "admin/codeGroups/";
   loading = false;
   isNew = false;
 
   beforeDestroy(): void {
     this.syncedDialog = false;
+    this.$nextTick(() => {
+      this.syncedDialog = false;
+    });
   }
 
   @Watch("syncedDialog", { immediate: true })
@@ -110,7 +111,7 @@ export default class extends Vue {
   async create(): Promise<void> {
     this.loading = true;
     const response = await postApi<TableCodeGroupEntity>(
-      this.ENDPOINT_URL,
+      "admin/codeGroups/",
       this.item,
     );
     this.loading = false;
@@ -123,27 +124,13 @@ export default class extends Vue {
   async patch(): Promise<void> {
     this.loading = true;
     const response = await patchApi<TableCodeGroupEntity>(
-      `${this.ENDPOINT_URL}${this.item.codeGroup}/`,
+      `admin/codeGroups/${this.item.codeGroup}/`,
       this.item,
     );
     this.loading = false;
     if (response?.code?.startsWith("S")) {
       this.syncedDialog = false;
       this.$emit("finished");
-    }
-  }
-
-  async delete(): Promise<void> {
-    const result = await confirmDelete();
-    if (result.value) {
-      this.loading = true;
-      const response = await deleteApi<TableCodeGroupEntity>(
-        `${this.ENDPOINT_URL}${this.item.codeGroup}/`,
-      );
-      this.loading = false;
-      if (response?.code?.startsWith("S")) {
-        this.$emit("finished");
-      }
     }
   }
 }

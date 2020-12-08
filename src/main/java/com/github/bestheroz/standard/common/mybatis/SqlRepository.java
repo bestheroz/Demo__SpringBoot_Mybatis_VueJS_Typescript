@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import org.apache.ibatis.annotations.DeleteProvider;
 import org.apache.ibatis.annotations.InsertProvider;
 import org.apache.ibatis.annotations.SelectProvider;
@@ -18,7 +17,7 @@ public interface SqlRepository<T extends Serializable> {
     type = SqlCommand.class,
     method = SqlCommand.SELECT_ITEMS_WITH_ORDER
   )
-  List<T> getItemsWithOrder(final Set<String> orderByConditions);
+  List<T> getItemsWithOrder(final List<String> orderByConditions);
 
   @SelectProvider(
     type = SqlCommand.class,
@@ -32,7 +31,45 @@ public interface SqlRepository<T extends Serializable> {
   )
   List<T> getItemsByKeyWithOrder(
     final Map<String, Object> whereConditions,
-    Set<String> orderByConditions
+    List<String> orderByConditions
+  );
+
+  @SelectProvider(
+    type = SqlCommand.class,
+    method = SqlCommand.SELECT_TARGET_ITEMS
+  )
+    // Target 시리즈를 사용하기 위해서는 Entity에 반드시 @NoArgsConstructor 가 필요하다
+  List<T> getTargetItems(final List<String> targetColumns);
+
+  @SelectProvider(
+    type = SqlCommand.class,
+    method = SqlCommand.SELECT_TARGET_ITEMS_WITH_ORDER
+  )
+    // Target 시리즈를 사용하기 위해서는 Entity에 반드시 @NoArgsConstructor 가 필요하다
+  List<T> getTargetItemsWithOrder(
+    final List<String> targetColumns,
+    final List<String> orderByConditions
+  );
+
+  @SelectProvider(
+    type = SqlCommand.class,
+    method = SqlCommand.SELECT_TARGET_ITEMS_BY_KEY
+  )
+    // Target 시리즈를 사용하기 위해서는 Entity에 반드시 @NoArgsConstructor 가 필요하다
+  List<T> getTargetItemsByKey(
+    final List<String> targetColumns,
+    final Map<String, Object> whereConditions
+  );
+
+  @SelectProvider(
+    type = SqlCommand.class,
+    method = SqlCommand.SELECT_TARGET_ITEMS_BY_KEY_WITH_ORDER
+  )
+    // Target 시리즈를 사용하기 위해서는 Entity에 반드시 @NoArgsConstructor 가 필요하다
+  List<T> getTargetItemsByKeyWithOrder(
+    final List<String> targetColumns,
+    final Map<String, Object> whereConditions,
+    List<String> orderByConditions
   );
 
   @SelectProvider(
@@ -48,8 +85,12 @@ public interface SqlRepository<T extends Serializable> {
   int countByKey(final Map<String, Object> whereConditions);
 
   @InsertProvider(type = SqlCommand.class, method = SqlCommand.INSERT)
-  // @SelectKey(statement = "SELECT SEQSEQSEQSEQ.NEXTVAL FROM DUAL", keyProperty = "seq", before = true, resultType = Long.class)
+    // @SelectKey(statement = "SELECT SEQSEQSEQSEQ.NEXTVAL FROM DUAL", keyProperty = "seq", before = true, resultType = Long.class)
+    //  @Options(useGeneratedKeys = true, keyProperty = "id")
   void insert(final T entity);
+
+  @InsertProvider(type = SqlCommand.class, method = SqlCommand.INSERT_BATCH)
+  void insertBatch(final List<T> entities);
 
   @UpdateProvider(type = SqlCommand.class, method = SqlCommand.UPDATE_BY_KEY)
   void updateByKey(final T entity, final Map<String, Object> whereConditions);

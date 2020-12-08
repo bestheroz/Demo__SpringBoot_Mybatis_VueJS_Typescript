@@ -1,7 +1,7 @@
 import Vue from "vue";
 import Router, { Route } from "vue-router";
-import { needLogin } from "@/utils/authentications";
 import { NavigationGuardNext } from "vue-router/types/router";
+import store from "@/store";
 
 Vue.use(Router);
 
@@ -10,13 +10,10 @@ const requireAuth = () => async (
   _from: Route,
   next: NavigationGuardNext,
 ) => {
-  if (
-    window.localStorage.getItem("accessToken") &&
-    window.localStorage.getItem("refreshToken")
-  ) {
+  if (store.getters.loggedIn) {
     return next();
   }
-  return needLogin();
+  return store.dispatch("needLogin");
 };
 
 const routes = () => {

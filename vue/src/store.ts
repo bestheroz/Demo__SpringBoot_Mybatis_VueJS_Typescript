@@ -2,16 +2,24 @@ import Vue from "vue";
 import Vuex, { ActionContext } from "vuex";
 import createPersistedState from "vuex-persistedstate";
 import { DrawerItem, SelectItem, TableMemberEntity } from "@/common/types";
-import { getApi } from "@/utils/apis";
+import { axiosInstance, getApi, postApi } from "@/utils/apis";
+/* eslint-disable camelcase */
+import jwt_decode from "jwt-decode";
+/* eslint-enable camelcase */
+import axios from "axios";
+import envs from "@/constants/envs";
+import router from "@/router";
 
 Vue.use(Vuex);
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const user = {
   state: {
     user: null,
+    accessToken: null,
+    refreshToken: null,
   },
   getters: {
-    user: (state: any) => {
+    user(state: any) {
       return {
         id: state.user?.id,
         name: state.user?.name,
@@ -19,31 +27,86 @@ const user = {
         theme: state.user?.theme,
       };
     },
+    loggedIn(state: any): boolean {
+      return !!state.user?.id && !!state.accessToken && !!state.refreshToken;
+    },
+    theme(state: any): string {
+      return state.user?.theme || "light";
+    },
+    accessToken(state: any): string | null {
+      return state.accessToken;
+    },
+    refreshToken(state: any): string | null {
+      return state.refreshToken;
+    },
   },
   mutations: {
     setUser(state: any, user: TableMemberEntity): void {
       state.user = user;
     },
+    setTheme(state: any, theme: string): void {
+      state.user.theme = theme;
+    },
+    setAccessToken(state: any, accessToken: string): void {
+      const jwt = jwt_decode<{
+        exp: number;
+        userPk: string;
+        userVO: string;
+      }>(accessToken);
+      state.user = JSON.parse(jwt.userVO);
+      state.accessToken = accessToken;
+    },
+    setRefreshToken(state: any, refreshToken: string): void {
+      state.refreshToken = refreshToken;
+    },
   },
   actions: {
-    setUser: async function ({
+    toggleTheme: async function ({
       commit,
-    }: ActionContext<any, any>): Promise<void> {
-      const response = await getApi<TableMemberEntity>("auth/me");
-      commit("setUser", response?.data);
-    },
-    async getUser({
-      state,
-      dispatch,
       getters,
-    }: ActionContext<any, any>): Promise<TableMemberEntity> {
-      if (!state.user) {
-        await dispatch("setUser");
+    }: ActionContext<any, any>): Promise<void> {
+      let theme;
+      if (getters.theme === "dark") {
+        theme = "light";
+      } else {
+        theme = "dark";
       }
-      return getters.user;
+      await postApi<{
+        theme: string;
+      }>(
+        "members/mine/changeTheme/",
+        {
+          theme: theme,
+        },
+        false,
+      );
+      commit("setTheme", theme);
     },
     clearUser({ commit }: ActionContext<any, any>): void {
       commit("setUser", null);
+    },
+    saveToken(
+      { commit }: ActionContext<any, any>,
+      payload: { accessToken: string; refreshToken: string },
+    ): void {
+      commit("setAccessToken", payload.accessToken);
+      commit("setRefreshToken", payload.refreshToken);
+    },
+    async reissueAccessToken({
+      commit,
+      getters,
+    }: ActionContext<any, any>): Promise<void> {
+      const response = await axios
+        .create({
+          baseURL: envs.API_HOST,
+          headers: {
+            contentType: "application/json",
+            Authorization: getters.accessToken,
+            AuthorizationR: getters.refreshToken,
+          },
+        })
+        .get("api/auth/refreshToken");
+      await commit("setAccessToken", response?.data?.data);
     },
   },
 };
@@ -52,24 +115,20 @@ const drawer = {
   state: {
     drawers: null,
   },
+  getters: {
+    drawers: (state: any): DrawerItem[] => {
+      return state.drawers || [];
+    },
+  },
   mutations: {
     setDrawers(state: any, drawers: DrawerItem[]): void {
       state.drawers = drawers;
     },
   },
   actions: {
-    async setDrawers({ commit }: ActionContext<any, any>): Promise<void> {
+    async initDrawers({ commit }: ActionContext<any, any>): Promise<void> {
       const response = await getApi<DrawerItem[]>("menus/drawer");
       commit("setDrawers", response?.data);
-    },
-    async getDrawers({
-      state,
-      dispatch,
-    }: ActionContext<any, any>): Promise<DrawerItem[]> {
-      if (!state.drawers) {
-        await dispatch("setDrawers");
-      }
-      return state.drawers;
     },
     clearDrawer({ commit }: ActionContext<any, any>): void {
       commit("setDrawers", null);
@@ -77,9 +136,14 @@ const drawer = {
   },
 };
 
-const cache = {
+const codes = {
   state: {
     memberCodes: null,
+  },
+  getters: {
+    memberCodes: (state: any): SelectItem[] => {
+      return state.memberCodes || [];
+    },
   },
   mutations: {
     setMemberCodes(state: any, memberCodes: SelectItem[]): void {
@@ -87,22 +151,34 @@ const cache = {
     },
   },
   actions: {
-    async setMemberCodes({ commit }: ActionContext<any, any>): Promise<void> {
+    async initMemberCodes({ commit }: ActionContext<any, any>): Promise<void> {
       const response = await getApi<SelectItem[]>("members/codes");
       commit("setMemberCodes", response?.data);
-    },
-    async getMemberCodes({ state, dispatch }: ActionContext<any, any>) {
-      if (!state.memberCodes) {
-        await dispatch("setMemberCodes");
-      }
-      return state.memberCodes;
     },
     clearCache({ commit }: ActionContext<any, any>): void {
       commit("setMemberCodes", null);
     },
   },
 };
-
+const command = {
+  state: {},
+  mutations: {},
+  actions: {
+    async needLogin(): Promise<void> {
+      if (router.currentRoute.path !== "/login") {
+        await router.push("/login?login=need");
+      }
+    },
+    async logout(): Promise<void> {
+      try {
+        axiosInstance.delete(`${envs.API_HOST}api/auth/logout`).then();
+      } catch (e) {
+        console.error(e);
+      }
+      await router.push("/login").then();
+    },
+  },
+};
 const temp = {
   state: {
     finishTextEllipsis: false,
@@ -127,7 +203,8 @@ export default new Vuex.Store({
   modules: {
     user,
     drawer,
-    cache,
+    codes,
+    command,
     temp,
   },
   plugins: [createPersistedState()],

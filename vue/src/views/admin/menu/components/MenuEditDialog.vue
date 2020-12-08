@@ -88,7 +88,7 @@
             <v-icon> mdi-window-close</v-icon>
             닫기
           </v-btn>
-          <v-btn text :loading="loading" @click="save">
+          <v-btn text :saving="saving" @click="save">
             <v-icon> mdi-content-save-settings-outline</v-icon>
             저장
           </v-btn>
@@ -101,8 +101,7 @@
 <script lang="ts">
 import { Component, Prop, PropSync, Vue, Watch } from "vue-property-decorator";
 import type { SelectItem, TableMenuEntity } from "@/common/types";
-import { deleteApi, getCodesApi, patchApi, postApi } from "@/utils/apis";
-import { confirmDelete } from "@/utils/alerts";
+import { getCodesApi, patchApi, postApi } from "@/utils/apis";
 import { ValidationObserver } from "vee-validate";
 
 interface MenuVO extends TableMenuEntity {
@@ -117,20 +116,23 @@ export default class extends Vue {
   @Prop({ required: true }) readonly item!: MenuVO;
 
   readonly ENDPOINT_URL = "admin/menus/";
-  loading = false;
+  saving = false;
   MENU_TYPE: SelectItem[] = [];
   isNew = false;
 
-  beforeDestroy(): void {
+  protected beforeDestroy(): void {
     this.syncedDialog = false;
+    this.$nextTick(() => {
+      this.syncedDialog = false;
+    });
   }
 
-  async beforeMount(): Promise<void> {
+  protected async beforeMount(): Promise<void> {
     this.MENU_TYPE = await getCodesApi("MENU_TYPE");
   }
 
   @Watch("syncedDialog")
-  watchDialog(val: boolean): void {
+  protected watchDialog(val: boolean): void {
     if (val) {
       this.isNew = !this.item.id;
       this.$refs.observer &&
@@ -140,7 +142,7 @@ export default class extends Vue {
     }
   }
 
-  async save(): Promise<void> {
+  protected async save(): Promise<void> {
     const isValid = await (this.$refs.observer as InstanceType<
       typeof ValidationObserver
     >).validate();
@@ -150,50 +152,35 @@ export default class extends Vue {
     this.isNew ? await this.create() : await this.patch();
   }
 
-  async create(): Promise<void> {
-    this.loading = true;
+  protected async create(): Promise<void> {
+    this.saving = true;
     const response = await postApi<TableMenuEntity>(
       this.ENDPOINT_URL,
       this.item,
     );
-    this.loading = false;
+    this.saving = false;
     if (response?.code?.startsWith("S")) {
-      await this.$store.dispatch("setDrawers");
+      await this.$store.dispatch("initDrawers");
       this.syncedDialog = false;
       this.$emit("finished");
     }
   }
 
-  async patch(): Promise<void> {
-    this.loading = true;
+  protected async patch(): Promise<void> {
+    this.saving = true;
     const response = await patchApi<TableMenuEntity>(
       `${this.ENDPOINT_URL}${this.item.id}/`,
       this.item,
     );
-    this.loading = false;
+    this.saving = false;
     if (response?.code?.startsWith("S")) {
-      await this.$store.dispatch("setDrawers");
+      await this.$store.dispatch("initDrawers");
       this.syncedDialog = false;
       this.$emit("finished");
     }
   }
 
-  async delete(): Promise<void> {
-    const result = await confirmDelete();
-    if (result.value) {
-      this.loading = true;
-      const response = await deleteApi<TableMenuEntity>(
-        `${this.ENDPOINT_URL}${this.item.id}/`,
-      );
-      this.loading = false;
-      if (response?.code?.startsWith("S")) {
-        await this.$store.dispatch("setDrawers");
-        this.$emit("finished");
-      }
-    }
-  }
-
-  filterMenuType(item: MenuVO): SelectItem[] {
+  protected filterMenuType(item: MenuVO): SelectItem[] {
     if (item.parentId !== 1) {
       return this.MENU_TYPE.filter((item) => item.value !== "G");
     }

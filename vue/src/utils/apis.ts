@@ -1,20 +1,20 @@
 import axios, { AxiosError } from "axios";
-import { alertError, alertSuccess, alertWarning } from "@/utils/alerts";
+import { alertError, alertSuccess } from "@/utils/alerts";
 import envs from "@/constants/envs";
-import { needLogin, refreshToken } from "@/utils/authentications";
 import { errorPage } from "@/utils/errors";
+import store from "@/store";
 
 export const axiosInstance = axios.create({
   baseURL: envs.API_HOST,
   headers: {
     contentType: "application/json",
-    Authorization: window.localStorage.getItem("accessToken"),
+    Authorization: store.getters.accessToken,
   },
 });
 
 axiosInstance.interceptors.request.use(
   function (config) {
-    config.headers.Authorization = window.localStorage.getItem("accessToken");
+    config.headers.Authorization = store.getters.accessToken;
     return config;
   },
   function (error) {
@@ -28,7 +28,7 @@ axiosInstance.interceptors.response.use(
   },
   async function (error: AxiosError) {
     if (error?.message === "Network Error") {
-      alertWarning("Service Unavailable");
+      alertError("Service Unavailable");
       return;
     }
     if (error?.response) {
@@ -37,7 +37,7 @@ axiosInstance.interceptors.response.use(
         return refreshToken && axios.request(refreshToken.config);
       }
       if ([400, 401].includes(error.response?.status)) {
-        await needLogin();
+        await store.dispatch("needLogin");
         return;
       } else if ([403, 404, 500].includes(error.response.status)) {
         await errorPage(error.response.status);
@@ -188,7 +188,7 @@ const axiosInstanceForExcel = axios.create({
   baseURL: envs.API_HOST,
   responseType: "blob",
   headers: {
-    Authorization: window.localStorage.getItem("accessToken"),
+    Authorization: store.getters.accessToken,
     "Content-Type":
       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
   },
@@ -196,7 +196,7 @@ const axiosInstanceForExcel = axios.create({
 
 axiosInstanceForExcel.interceptors.request.use(
   function (config) {
-    config.headers.Authorization = window.localStorage.getItem("accessToken");
+    config.headers.Authorization = store.getters.accessToken;
     return config;
   },
   function (error) {
@@ -211,7 +211,7 @@ axiosInstanceForExcel.interceptors.response.use(
   },
   async function (error: AxiosError) {
     if (error?.message === "Network Error") {
-      alertWarning("Service Unavailable");
+      alertError("Service Unavailable");
       return;
     }
     if (error?.response) {
@@ -220,7 +220,7 @@ axiosInstanceForExcel.interceptors.response.use(
           const refreshToken = await apiRefreshToken(error);
           return refreshToken && axios.request(refreshToken.config);
         }
-        await needLogin();
+        await store.dispatch("needLogin");
         return;
       } else if (
         error.response.status === 404 &&
@@ -264,32 +264,16 @@ export async function getExcelApi(url: string): Promise<void> {
 }
 
 async function apiRefreshToken(error: AxiosError) {
-  if (error.response?.headers?.refreshtoken === "must") {
-    try {
-      const response = await axios
-        .create({
-          baseURL: envs.API_HOST,
-          headers: {
-            contentType: "application/json",
-            Authorization: window.localStorage.getItem("accessToken"),
-            AuthorizationR: window.localStorage.getItem("refreshToken"),
-          },
-        })
-        .get("api/auth/refreshToken");
-      await refreshToken(response?.data?.data);
-    } catch (e) {
-      if (e.response?.status === 401) {
-        await needLogin();
-        return;
-      }
+  try {
+    await store.dispatch("reissueAccessToken");
+  } catch (e) {
+    if (e.response?.status === 401) {
+      await store.dispatch("needLogin");
+      return;
     }
-    error.config.headers.Authorization = window.localStorage.getItem(
-      "accessToken",
-    );
-    error.config.headers.AuthorizationR = window.localStorage.getItem(
-      "refreshToken",
-    );
   }
+  error.config.headers.Authorization = store.getters.accessToken;
+  error.config.headers.AuthorizationR = store.getters.refreshToken;
   return error;
 }
 

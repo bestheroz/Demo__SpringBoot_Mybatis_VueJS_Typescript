@@ -86,7 +86,10 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <change-password-dialog :dialog.sync="newPasswordDialog" />
+    <change-password-dialog
+      :dialog.sync="newPasswordDialog"
+      v-if="newPasswordDialog"
+    />
   </div>
 </template>
 
@@ -106,23 +109,23 @@ import pbkdf2 from "pbkdf2";
 export default class extends Vue {
   @PropSync("dialog", { required: true, type: Boolean }) syncedDialog!: boolean;
 
-  readonly ENDPOINT_URL: string = "members/";
   item: TableMemberEntity = Object.create(null);
   loading = false;
   show1 = false;
   newPasswordDialog = false;
 
-  beforeDestroy(): void {
+  protected beforeDestroy(): void {
     this.syncedDialog = false;
+    this.$nextTick(() => {
+      this.syncedDialog = false;
+    });
   }
 
-  @Watch("syncedDialog")
-  async watchDialog(val: boolean): Promise<void> {
+  @Watch("syncedDialog", { immediate: true })
+  protected async watchDialog(val: boolean): Promise<void> {
     if (val) {
       this.show1 = false;
-      const response = await getApi<TableMemberEntity>(
-        `${this.ENDPOINT_URL}mine`,
-      );
+      const response = await getApi<TableMemberEntity>("members/mine");
       this.item = response?.data || Object.create(null);
       this.$refs.observer &&
         (this.$refs.observer as InstanceType<
@@ -131,7 +134,7 @@ export default class extends Vue {
     }
   }
 
-  async save(): Promise<void> {
+  protected async save(): Promise<void> {
     const isValid = await (this.$refs.observer as InstanceType<
       typeof ValidationObserver
     >).validate();
@@ -144,14 +147,11 @@ export default class extends Vue {
     payload.password = pbkdf2
       .pbkdf2Sync(this.item.password || "", "salt", 1, 32, "sha512")
       .toString();
-    const response = await patchApi<TableMemberEntity>(
-      `${this.ENDPOINT_URL}mine`,
-      payload,
-    );
+    const response = await patchApi<TableMemberEntity>("members/mine", payload);
     this.loading = false;
     if (response?.code?.startsWith("S")) {
-      await this.$store.dispatch("setUser");
-      await this.$store.dispatch("setMemberCodes");
+      await this.$store.dispatch("reissueAccessToken");
+      await this.$store.dispatch("initMemberCodes");
       this.syncedDialog = false;
       this.$emit("finished");
     }

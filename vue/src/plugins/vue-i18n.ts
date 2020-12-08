@@ -7,8 +7,8 @@ Vue.use(VueI18n);
 
 const i18n = new VueI18n({
   // locale: store.getters.lang,
-  locale: "ok",
-  fallbackLocale: "ok",
+  locale: "ko",
+  fallbackLocale: "ko",
   messages: {
     en: {
       msg: msg.en,
@@ -20,5 +20,4 @@ const i18n = new VueI18n({
     },
   },
 });
-
 export default i18n;

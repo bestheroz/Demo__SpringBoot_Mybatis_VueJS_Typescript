@@ -121,8 +121,7 @@
 <script lang="ts">
 import { Component, Prop, PropSync, Vue, Watch } from "vue-property-decorator";
 import type { SelectItem, TableCodeEntity } from "@/common/types";
-import { deleteApi, getCodesApi, patchApi, postApi } from "@/utils/apis";
-import { confirmDelete } from "@/utils/alerts";
+import { getCodesApi, patchApi, postApi } from "@/utils/apis";
 import { ValidationObserver } from "vee-validate";
 
 @Component({
@@ -132,13 +131,15 @@ export default class extends Vue {
   @PropSync("dialog", { required: true, type: Boolean }) syncedDialog!: boolean;
   @Prop({ required: true }) readonly item!: TableCodeEntity;
 
-  readonly ENDPOINT_URL = "admin/codes/";
   AUTHORITY: SelectItem[] = [];
   isNew = false;
   loading = false;
 
   beforeDestroy(): void {
     this.syncedDialog = false;
+    this.$nextTick(() => {
+      this.syncedDialog = false;
+    });
   }
 
   async beforeMount(): Promise<void> {
@@ -169,7 +170,7 @@ export default class extends Vue {
   async create(): Promise<void> {
     this.loading = true;
     const response = await postApi<TableCodeEntity>(
-      `${this.ENDPOINT_URL}${this.item.codeGroup}`,
+      `admin/codes/${this.item.codeGroup}`,
       this.item,
     );
     this.loading = false;
@@ -182,7 +183,7 @@ export default class extends Vue {
   async patch(): Promise<void> {
     this.loading = true;
     const response = await patchApi<TableCodeEntity>(
-      `${this.ENDPOINT_URL}${this.item.codeGroup}/${this.item.code}/`,
+      `admin/codes/${this.item.codeGroup}/${this.item.code}/`,
       this.item,
     );
     this.loading = false;
@@ -190,21 +191,6 @@ export default class extends Vue {
       this.syncedDialog = false;
       window.localStorage.removeItem(`code__${this.item.codeGroup}`);
       this.$emit("finished");
-    }
-  }
-
-  async delete(): Promise<void> {
-    const result = await confirmDelete();
-    if (result.value) {
-      this.loading = true;
-      const response = await deleteApi<TableCodeEntity>(
-        `${this.ENDPOINT_URL}${this.item.codeGroup}/${this.item.code}/`,
-      );
-      this.loading = false;
-      if (response?.code?.startsWith("S")) {
-        window.localStorage.removeItem(`code__${this.item.codeGroup}`);
-        this.$emit("finished");
-      }
     }
   }
 }

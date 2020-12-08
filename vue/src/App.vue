@@ -4,17 +4,20 @@
 
 <script lang="ts">
 import "@/scss/common.scss";
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Vue, Watch } from "vue-property-decorator";
 import { getVariableApi } from "@/utils/apis";
 
 @Component({ name: "App" })
 export default class extends Vue {
   title: string | null = null;
 
-  async mounted(): Promise<void> {
+  protected async mounted(): Promise<void> {
     document.title = (await getVariableApi("title")) || "";
-    this.$vuetify.theme.dark =
-      (window.localStorage.getItem("theme") || "light") === "dark";
+  }
+
+  @Watch("$store.getters.theme", { immediate: true })
+  watchTheme(val: string): void {
+    this.$vuetify.theme.dark = val === "dark";
   }
 }
 </script>

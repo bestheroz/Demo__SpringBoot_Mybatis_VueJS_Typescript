@@ -5,7 +5,6 @@ import com.github.bestheroz.demo.api.entity.code.TableCodeRepository;
 import com.github.bestheroz.standard.common.util.AuthenticationUtils;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import org.springframework.stereotype.Service;
@@ -26,8 +25,8 @@ public class CodeService {
 
   public List<TableCodeEntity> getCodeVOList(final String codeGroup) {
     return this.tableCodeRepository.getItemsByKeyWithOrder(
-        Map.of("codeGroup", codeGroup),
-        Set.of("displayOrder")
-      );
+      Map.of("codeGroup", codeGroup),
+      List.of("displayOrder")
+    );
   }
 }
