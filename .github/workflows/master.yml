@@ -124,19 +124,11 @@ jobs:
             ${{ runner.os }}-node-$
             ${{ runner.os }}-
 
-      - name: npm run lint
+      - name: npm run lint & tsc & build
         run: |
           cd vue
           npm run lint
-
-      - name: npm run tsc
-        run: |
-          cd vue
           npm run tsc
-
-      - name: npm run build
-        run: |
-          cd vue
           npm run build
 
       - name: move front-end dist to target

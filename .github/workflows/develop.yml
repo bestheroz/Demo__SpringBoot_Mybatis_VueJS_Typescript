@@ -123,12 +123,8 @@ jobs:
             ${{ runner.os }}-node-$
             ${{ runner.os }}-
 
-      - name: npm run lint
+      - name: npm run lint & tsc
         run: |
           cd vue
           npm run lint
-
-      - name: npm run tsc
-        run: |
-          cd vue
           npm run tsc
