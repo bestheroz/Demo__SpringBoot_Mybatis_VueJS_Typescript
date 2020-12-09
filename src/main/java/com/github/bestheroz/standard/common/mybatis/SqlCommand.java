@@ -653,7 +653,7 @@ public class SqlCommand {
               } else {
                 final Object o = entity.get(column);
                 values.add(
-                  o == null ? "null" : MessageFormat.format("''{0}''", o)
+                  o == null ? "null" : o instanceof String ? MessageFormat.format("''{0}''", o) : o
                 );
               }
             }
