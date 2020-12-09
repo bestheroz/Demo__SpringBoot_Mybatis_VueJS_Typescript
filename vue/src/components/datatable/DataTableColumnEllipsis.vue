@@ -5,7 +5,7 @@
       :style="`max-width: ${maxWidth} !important;`"
     >
       <v-tooltip
-        v-if="value && $store.state.temp.finishTextEllipsis"
+        v-if="value && $store.getters.finishTextEllipsis"
         v-model="show"
         top
         color="secondary"

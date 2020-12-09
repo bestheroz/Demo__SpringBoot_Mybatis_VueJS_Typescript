@@ -183,6 +183,11 @@ const temp = {
   state: {
     finishTextEllipsis: false,
   },
+  getters: {
+    finishTextEllipsis(state: any) {
+      return state.finishTextEllipsis;
+    },
+  },
   mutations: {
     setFinishTextEllipsis(state: any, isFinishTextEllipsis: boolean): void {
       state.finishTextEllipsis = isFinishTextEllipsis;
