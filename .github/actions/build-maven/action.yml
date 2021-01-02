@@ -1,0 +1,15 @@
+name: 'Build Maven'
+description: 'Build maven'
+
+runs:
+  using: 'composite'
+  steps:
+    - run: |
+        echo "move front-end dist to target"
+        mkdir -p target/classes/static
+        mv -f vue/dist/* target/classes/static/
+
+        echo "mvn package"
+        mvn package -Dmaven.test.skip=true -Dspring.profiles.active=dev
+        cp target/classes/application.yml target/
+      shell: bash

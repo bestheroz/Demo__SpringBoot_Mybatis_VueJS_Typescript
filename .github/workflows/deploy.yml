@@ -1,0 +1,130 @@
+name: Deploy
+
+on:
+  push:
+    branches: [ main, RC/** ]
+
+jobs:
+  npm-install:
+    name: npm install & cache
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ ubuntu-20.04 ]
+        node-version: [ 14 ]
+
+    steps:
+      - uses: actions/checkout@main
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@main
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Extract version info
+        id: version
+        uses: ./.github/actions/parse-version
+
+      - name: Cache node
+        id: cache-node
+        uses: actions/cache@main
+        with:
+          path: |
+            ~/.npm
+            **/node_modules
+          key: ${{ runner.os }}-node-${{ steps.version.outputs.nodeVersion }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-node-${{ steps.version.outputs.nodeVersion }}-
+
+      - name: npm install
+        if: steps.cache-node.outputs.cache-hit != 'true'
+        run: |
+          cd vue
+          npm ci
+        env:
+          CI: true
+
+  maven-install:
+    name: maven install & cache
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ ubuntu-20.04 ]
+        java-version: [ 11 ]
+
+    steps:
+      - uses: actions/checkout@main
+
+      - name: Cache Maven packages
+        id: cache-maven
+        uses: actions/cache@main
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-java-${{ matrix.java-version }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-java-${{ matrix.java-version }}-
+
+      - name: Set up JDK ${{ matrix.java-version }}
+        if: steps.cache-maven.outputs.cache-hit != 'true'
+        uses: actions/setup-java@main
+        with:
+          java-version: ${{ matrix.java-version }}
+
+      - name: mvn install
+        if: steps.cache-maven.outputs.cache-hit != 'true'
+        run: |
+          mvn clean
+          mvn dependency:go-offline
+          mvn install
+
+
+  build-and-deploy:
+    name: depoly
+    runs-on: ${{ matrix.os }}
+    needs: [maven-install]
+
+    strategy:
+      matrix:
+        os: [ ubuntu-20.04 ]
+        node-version: [ 14 ]
+        java-version: [ 11 ]
+
+    steps:
+      - uses: actions/checkout@main
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@main
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Extract version info
+        id: version
+        uses: ./.github/actions/parse-version
+
+      - name: Cache node
+        id: cache-node
+        uses: actions/cache@main
+        with:
+          path: |
+            ~/.npm
+            **/node_modules
+          key: ${{ runner.os }}-node-${{ steps.version.outputs.nodeVersion }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-node-${{ steps.version.outputs.nodeVersion }}-
+
+      - uses: ./.github/actions/test
+
+      - uses: ./.github/actions/build-node
+
+      - name: Set up JDK ${{ matrix.java-version }}
+        uses: actions/setup-java@main
+        with:
+          java-version: ${{ matrix.java-version }}
+
+      - name: Cache Maven
+        uses: actions/cache@main
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-java-${{ matrix.java-version }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-java-${{ matrix.java-version }}-
+
+      - uses: ./.github/actions/build-maven
