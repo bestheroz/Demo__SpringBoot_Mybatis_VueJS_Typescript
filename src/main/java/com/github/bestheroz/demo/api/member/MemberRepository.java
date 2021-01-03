@@ -14,5 +14,5 @@ public interface MemberRepository extends SqlRepository<CodeVO> {
   @Select(
     value = "SELECT M.ID AS VALUE, M.NAME AS TEXT FROM MEMBER M ORDER BY M.NAME ASC"
   )
-  List<CodeVO> getCodeItems() throws BusinessException;
+  List<CodeVO> getCodes() throws BusinessException;
 }

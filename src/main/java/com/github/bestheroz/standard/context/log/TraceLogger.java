@@ -73,8 +73,34 @@ public class TraceLogger {
         )
       );
     } catch (final Throwable e) {
-      if (!(e instanceof BusinessException)) {
-        log.warn("{} -\n{}", formatClassMethod, ExceptionUtils.getStackTrace(e));
+      if (e instanceof BusinessException) {
+        if (!((BusinessException) e).printedStack) {
+          final String stacksOfProject = Arrays
+            .stream(ExceptionUtils.getStackFrames(e))
+            .filter(
+              item ->
+                item.startsWith("\tat com.github.bestheroz") ||
+                  item.startsWith("{\"code\":")
+            )
+            .collect(Collectors.joining("\n"));
+          if (
+            StringUtils.startsWith(
+              (String) ((BusinessException) e).getApiResult().get("code"),
+              "F"
+            )
+          ) {
+            log.info("{} - {}", formatClassMethod, stacksOfProject);
+          } else {
+            log.warn("{} - {}", formatClassMethod, stacksOfProject);
+          }
+          ((BusinessException) e).printedStack = true;
+        }
+      } else {
+        log.error(
+          "{} -\n{}",
+          formatClassMethod,
+          ExceptionUtils.getStackTrace(e)
+        );
       }
       throw e;
     }

@@ -47,7 +47,7 @@ export default class extends Vue {
     return window?.localStorage?.getItem("accessToken");
   }
 
-  async beforeMount(): Promise<void> {
+  async created(): Promise<void> {
     this.title = await getVariableApi("title");
   }
 

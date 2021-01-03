@@ -25,7 +25,7 @@ public class MemberController {
 
   @GetMapping(value = "codes")
   ResponseEntity<ApiResult> getItems() {
-    return Result.ok(this.memberRepository.getCodeItems());
+    return Result.ok(this.memberRepository.getCodes());
   }
 
   @GetMapping(value = "mine")
@@ -41,10 +41,7 @@ public class MemberController {
           }
         )
         .orElseThrow(
-          () -> {
-            log.warn(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER.toString());
-            return new BusinessException(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER);
-          }
+          () -> new BusinessException(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER)
         )
     );
   }
@@ -66,7 +63,6 @@ public class MemberController {
               pbkdf2PasswordEncoder.encode(payload.getPassword())
             )
           ) {
-            log.warn(ExceptionCode.FAIL_MATCH_PASSWORD.toString());
             throw new BusinessException(ExceptionCode.FAIL_MATCH_PASSWORD);
           }
           this.tableMemberRepository.updateMapByKey(
@@ -79,7 +75,6 @@ public class MemberController {
       .orElseThrow(
         () -> {
           // 1. 유저가 없으면
-          log.warn(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER.toString());
           return new BusinessException(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER);
         }
       );
@@ -102,7 +97,6 @@ public class MemberController {
               pbkdf2PasswordEncoder.encode(payload.get("oldPassword"))
             )
           ) {
-            log.warn(ExceptionCode.FAIL_MATCH_OLD_PASSWORD.toString());
             throw new BusinessException(ExceptionCode.FAIL_MATCH_OLD_PASSWORD);
           }
           this.tableMemberRepository.updateMapByKey(
@@ -115,7 +109,6 @@ public class MemberController {
       .orElseThrow(
         () -> {
           // 1. 유저가 없으면
-          log.warn(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER.toString());
           return new BusinessException(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER);
         }
       );
@@ -138,11 +131,7 @@ public class MemberController {
         }
       )
       .orElseThrow(
-        () -> {
-          // 1. 유저가 없으면
-          log.warn(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER.toString());
-          return new BusinessException(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER);
-        }
+        () -> new BusinessException(ExceptionCode.FAIL_NOT_ALLOWED_MEMBER)
       );
   }
 }

@@ -4,7 +4,7 @@
       <v-slide-y-transition appear>
         <v-card :min-width="600" width="40%" class="elevation-12">
           <v-toolbar color="primary" dark flat>
-            <v-toolbar-title>Login at {{ title }}</v-toolbar-title>
+            <v-toolbar-title>Login at demo</v-toolbar-title>
             <v-spacer />
             <template #heading>
               <div class="text-center">
@@ -88,7 +88,6 @@ import {
   axiosInstance,
   getVariableApi,
 } from "@/utils/apis";
-import { alertError } from "@/utils/alerts";
 import NewPasswordDialog from "@/views/login/components/NewPasswordDialog.vue";
 import { ValidationObserver } from "vee-validate";
 import pbkdf2 from "pbkdf2";
@@ -102,7 +101,7 @@ export default class extends Vue {
   loading = false;
   dialog = false;
 
-  protected async beforeMount(): Promise<void> {
+  protected async created(): Promise<void> {
     this.title = await getVariableApi("title");
     this.$vuetify.theme.dark = false;
   }
@@ -111,9 +110,10 @@ export default class extends Vue {
     await this.$store.dispatch("clearUser");
     await this.$store.dispatch("clearDrawer");
     await this.$store.dispatch("clearCache");
+    await this.$store.dispatch("clearMenuSelected");
     window.localStorage.clear();
     if (this.$route.query.login === "need") {
-      this.$toasted.error("로그인이 필요합니다.");
+      this.$toast.error("로그인이 필요합니다.");
     }
   }
 
@@ -150,10 +150,10 @@ export default class extends Vue {
           accessToken: response.data.data.accessToken,
           refreshToken: response.data.data.refreshToken,
         });
-        this.$toasted.clear();
+        this.$toast.clear();
         await this.$router.push("/");
       } else {
-        alertError(response?.data?.message);
+        this.$toast.error(response?.data?.message);
       }
     } catch (e) {
       alertAxiosError(e);

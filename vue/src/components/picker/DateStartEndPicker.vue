@@ -115,11 +115,10 @@ export default class extends Vue {
   readonly DATEPICKER_FORMAT = "YYYY-MM-DD";
 
   get defaultLabelForStart(): string {
-    return this.startLabel || this.$t("msg.picker.startDate").toString();
+    return this.startLabel || "시작 날짜";
   }
-
   get defaultLabelForEnd(): string {
-    return this.endLabel || this.$t("msg.picker.endDate").toString();
+    return this.endLabel || "종료 날짜";
   }
 
   get minDate(): string | undefined {

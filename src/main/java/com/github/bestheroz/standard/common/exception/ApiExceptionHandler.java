@@ -47,7 +47,6 @@ public class ApiExceptionHandler {
   public ResponseEntity<ApiResult> usernameNotFoundException(
     final UsernameNotFoundException e
   ) {
-    log.warn(e.toString());
     return Result.unauthenticated();
   }
 

@@ -65,7 +65,6 @@
 <script lang="ts">
 import { Component, Prop, PropSync, Vue } from "vue-property-decorator";
 import { alertAxiosError, ApiDataResult, axiosInstance } from "@/utils/apis";
-import { alertError } from "@/utils/alerts";
 import { ValidationObserver } from "vee-validate";
 import pbkdf2 from "pbkdf2";
 
@@ -81,13 +80,6 @@ export default class extends Vue {
   password2: string | null = null;
   show1 = false;
   show2 = false;
-
-  protected beforeDestroy(): void {
-    this.syncedDialog = false;
-    this.$nextTick(() => {
-      this.syncedDialog = false;
-    });
-  }
 
   protected async save(): Promise<void> {
     const inValid = await (this.$refs.observer as InstanceType<
@@ -111,10 +103,10 @@ export default class extends Vue {
         password: pbkdf2Password,
       });
       if (response?.data?.code?.startsWith("S")) {
-        this.$toasted.info("패스워드 설정 완료, 재 로그인 해주세요.");
+        this.$toast.info("패스워드 설정 완료, 재 로그인 해주세요.");
         this.syncedDialog = false;
       } else {
-        alertError(response?.data?.message);
+        this.$toast.error(response?.data?.message);
       }
     } catch (e) {
       alertAxiosError(e);

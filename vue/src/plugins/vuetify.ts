@@ -3,7 +3,6 @@ import Vue from "vue";
 import Vuetify from "vuetify/lib";
 import ko from "vuetify/src/locale/ko";
 import colors from "vuetify/lib/util/colors";
-import i18n from "@/plugins/vue-i18n";
 
 Vue.use(Vuetify);
 
@@ -14,8 +13,6 @@ export default new Vuetify({
   lang: {
     locales: { ko },
     current: "ko",
-    t: (key: string, ...params: Array<string | number>) =>
-      i18n.t(key, params).toString(),
   },
   theme: {
     dark: false,

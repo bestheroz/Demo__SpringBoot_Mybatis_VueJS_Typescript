@@ -19,7 +19,7 @@ const user = {
     refreshToken: null,
   },
   getters: {
-    user(state: any) {
+    user: (state: any) => {
       return {
         id: state.user?.id,
         name: state.user?.name,
@@ -27,16 +27,16 @@ const user = {
         theme: state.user?.theme,
       };
     },
-    loggedIn(state: any): boolean {
+    loggedIn: (state: any): boolean => {
       return !!state.user?.id && !!state.accessToken && !!state.refreshToken;
     },
-    theme(state: any): string {
+    theme: (state: any): string => {
       return state.user?.theme || "light";
     },
-    accessToken(state: any): string | null {
+    accessToken: (state: any): string | null => {
       return state.accessToken;
     },
-    refreshToken(state: any): string | null {
+    refreshToken: (state: any): string | null => {
       return state.refreshToken;
     },
   },
@@ -114,15 +114,22 @@ const user = {
 const drawer = {
   state: {
     drawers: null,
+    selected: null,
   },
   getters: {
     drawers: (state: any): DrawerItem[] => {
       return state.drawers || [];
     },
+    selected: (state: any): number | null => {
+      return state.selected || null;
+    },
   },
   mutations: {
     setDrawers(state: any, drawers: DrawerItem[]): void {
       state.drawers = drawers;
+    },
+    setSelected(state: any, selected: number): void {
+      state.selected = selected;
     },
   },
   actions: {
@@ -132,6 +139,15 @@ const drawer = {
     },
     clearDrawer({ commit }: ActionContext<any, any>): void {
       commit("setDrawers", null);
+    },
+    setMenuSelected(
+      { commit }: ActionContext<any, any>,
+      selected: number,
+    ): void {
+      commit("setSelected", selected);
+    },
+    clearMenuSelected({ commit }: ActionContext<any, any>): void {
+      commit("setSelected", null);
     },
   },
 };
@@ -182,6 +198,11 @@ const command = {
 const temp = {
   state: {
     finishTextEllipsis: false,
+  },
+  getters: {
+    finishTextEllipsis(state: any) {
+      return state.finishTextEllipsis;
+    },
   },
   mutations: {
     setFinishTextEllipsis(state: any, isFinishTextEllipsis: boolean): void {

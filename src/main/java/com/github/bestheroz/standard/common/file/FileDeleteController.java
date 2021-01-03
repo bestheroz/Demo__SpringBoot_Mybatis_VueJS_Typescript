@@ -5,25 +5,18 @@ import com.github.bestheroz.standard.common.response.Result;
 import com.github.bestheroz.standard.common.util.FileUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("api/delete/file")
 public class FileDeleteController {
-
-  @DeleteMapping(value = "/common/file/delete/fileDelete")
+  @DeleteMapping(value = "{fileName}")
   ResponseEntity<ApiResult> deleteFile(
-    @RequestParam("filePath") final String filePath
+    @PathVariable("fileName") final String fileName
   ) {
-    FileUtils.deleteFile(filePath);
-    return Result.ok();
-  }
-
-  @DeleteMapping(value = "/common/file/delete/deleteAllFiles")
-  ResponseEntity<ApiResult> deleteAllFiles(
-    @RequestParam("filePath") final String filePath
-  ) {
-    FileUtils.deleteDirectory(filePath);
+    FileUtils.deleteFile("uploaded/" + fileName);
     return Result.ok();
   }
 }

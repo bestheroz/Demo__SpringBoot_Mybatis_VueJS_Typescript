@@ -10,7 +10,6 @@ import org.apache.commons.lang3.StringUtils;
 
 public class MapDeserializerTypeAdapter
   implements JsonDeserializer<Map<String, Object>> {
-
   @Override
   public Map<String, Object> deserialize(
     final JsonElement json,
@@ -36,14 +35,14 @@ public class MapDeserializerTypeAdapter
             // String 처리
             if (
               StringUtils.startsWith(value.toString(), "\"") &&
-              StringUtils.endsWith(value.toString(), "\"")
+                StringUtils.endsWith(value.toString(), "\"")
             ) {
               // System.err.println("String");
               map.put(key, value.getAsString());
             } else if ( // Double
               StringUtils.countMatches(value.toString(), ".") == 1 ||
-              StringUtils.countMatches(value.toString(), ".") == 1 &&
-              StringUtils.countMatches(value.toString(), "E") == 1
+                StringUtils.countMatches(value.toString(), ".") == 1 &&
+                  StringUtils.countMatches(value.toString(), "E") == 1
             ) {
               // System.err.println("Double");
               map.put(key, value.getAsDouble());

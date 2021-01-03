@@ -4,7 +4,7 @@ import dayjs from "dayjs";
 import _ from "lodash";
 
 export function getMemberNm(value: string | undefined | null): string {
-  const find: SelectItem = store.state?.cache?.memberCodes?.find(
+  const find: SelectItem = store.getters.memberCodes.find(
     (value1: SelectItem) => value1.value === value,
   );
   return find?.text || value || "-";
@@ -44,16 +44,30 @@ export function getSwitchLabel(yn: boolean, prefix?: string): string {
   return (prefix?.trim() || "") + (yn ? " 사용" : " 사용안함");
 }
 
-export function textEllipsis(): void {
-  document
-    .querySelectorAll<HTMLElement>(".text-ellipsis-target")
-    .forEach((item) => item.classList.remove("text-ellipsis"));
-  setTimeout(() => {
-    document
-      .querySelectorAll<HTMLElement>(".text-ellipsis-target")
-      .forEach((item) => {
-        item.style.maxWidth = item.offsetWidth + "px";
-        item.classList.add("text-ellipsis");
+const debounceTextEllipsis = () => {
+  store.dispatch("setFinishTextEllipsis", false).then(() => {
+    Promise.resolve()
+      .then(() => {
+        document
+          .querySelectorAll<HTMLElement>(".text-ellipsis-target")
+          .forEach((item) => item.classList.remove("text-ellipsis"));
+      })
+      .then(() => {
+        document
+          .querySelectorAll<HTMLElement>(".text-ellipsis-target")
+          .forEach((item) => {
+            item.style.maxWidth = item.offsetWidth + "px";
+            item.classList.add("text-ellipsis");
+          });
+      })
+      .then(() => {
+        store.dispatch("setFinishTextEllipsis", true).then();
       });
-  }, 200);
+  });
+};
+
+const debounce = _.debounce(debounceTextEllipsis, 100);
+
+export function textEllipsis(): void {
+  debounce && debounce();
 }

@@ -47,14 +47,12 @@
           :min="min"
         >
           <v-btn outlined @click="setToday" :disabled="disableToday">
-            {{ $t("msg.today") }}
+            오늘
           </v-btn>
           <div class="flex-grow-1"></div>
-          <v-btn outlined @click="dialog = false">
-            {{ $t("msg.cancel") }}
-          </v-btn>
+          <v-btn outlined @click="dialog = false"> 취소 </v-btn>
           <v-btn outlined @click="$refs.refDialog.save(pickerString)">
-            {{ $t("msg.confirm") }}
+            확인
           </v-btn>
         </v-date-picker>
       </v-dialog>
@@ -98,7 +96,7 @@ export default class extends Vue {
   errors: string[] | null = null;
 
   get defaultLabel(): string {
-    return this.label || this.$t("msg.picker.dateSelection").toString();
+    return this.label || "날짜 선택";
   }
 
   get style(): string | undefined {
@@ -142,7 +140,14 @@ export default class extends Vue {
     val: Date | string | number | null,
     oldVal: Date | string | number | null,
   ): void {
-    if (!val || !dayjs(val).isValid() || val === oldVal) {
+    if (
+      !val ||
+      !dayjs(val).isValid() ||
+      val === oldVal ||
+      (oldVal &&
+        dayjs(oldVal).isValid() &&
+        dayjs(val).diff(dayjs(oldVal)) === 0)
+    ) {
       return;
     }
     this.pickerString = dayjs(val).format(this.DATEPICKER_FORMAT);
@@ -151,14 +156,12 @@ export default class extends Vue {
   @Watch("textFieldString", { immediate: true })
   watchText(val: string): void {
     if (dayjs(val, envs.DATE_FORMAT_STRING).isValid()) {
-      /* eslint-disable indent */
       this.$emit(
         "input",
         this.endType
           ? dayjs(val, envs.DATE_FORMAT_STRING)?.endOf("day")?.toISOString()
           : dayjs(val, envs.DATE_FORMAT_STRING)?.startOf("day")?.toISOString(),
       );
-      /* eslint-enable indent */
     } else {
       this.$emit("input", null);
     }

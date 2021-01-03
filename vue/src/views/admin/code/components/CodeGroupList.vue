@@ -2,12 +2,13 @@
   <div>
     <v-card flat>
       <button-set
+        :loading="saving"
         add-button
-        delete-button
-        reload-button
-        :delete-disabled="!selected || selected.length === 0"
         @click:add="addItem"
+        delete-button
+        :delete-disabled="!selected || selected.length === 0"
         @click:delete="deleteItem"
+        reload-button
         @click:reload="getList"
       />
       <v-card-title class="datatable-title">
@@ -21,9 +22,8 @@
           fixed-header
           :loading="loading"
           :headers="headers"
-          :items="filteredItems"
-          :sort-by="sortBy"
-          :sort-desc="sortDesc"
+          :items="items"
+          :options.sync="pagination"
           item-key="codeGroup"
           single-select
           show-select
@@ -33,9 +33,8 @@
         >
           <template #header>
             <data-table-filter
-              :header="headers"
-              :output.sync="filteredItems"
-              :input="items"
+              :headers="headers"
+              :filter.sync="datatableFilter"
             />
           </template>
           <template #[`item.codeGroup`]="{ item }">
@@ -63,12 +62,14 @@
 <script lang="ts">
 import { Component, Emit, Prop, Vue, Watch } from "vue-property-decorator";
 import type { DataTableHeader, TableCodeGroupEntity } from "@/common/types";
+import { Pagination } from "@/common/types";
 import { deleteApi, getApi } from "@/utils/apis";
 import envs from "@/constants/envs";
 import DataTableFilter from "@/components/datatable/DataTableFilter.vue";
 import ButtonSet from "@/components/speeddial/ButtonSet.vue";
 import CodeGroupEditDialog from "@/views/admin/code/components/CodeGroupEditDialog.vue";
 import { confirmDelete } from "@/utils/alerts";
+import qs from "qs";
 
 @Component({
   name: "CodeGroupList",
@@ -81,13 +82,18 @@ import { confirmDelete } from "@/utils/alerts";
 export default class extends Vue {
   @Prop({ required: true }) readonly height!: number | string;
   readonly envs: typeof envs = envs;
-  sortBy: string[] = ["codeGroup"];
-  sortDesc: boolean[] = [false];
-  items: TableCodeGroupEntity[] = [];
-  filteredItems: TableCodeGroupEntity[] = [];
-  loading = false;
   selected: TableCodeGroupEntity[] = [];
+  pagination: Pagination = {
+    page: 1,
+    sortBy: ["codeGroup"],
+    sortDesc: [true],
+    itemsPerPage: 20,
+  };
+  items: TableCodeGroupEntity[] = [];
+  loading = false;
+  saving = false;
   dialog = false;
+  datatableFilter: { [p: string]: string | number } = {};
   item: TableCodeGroupEntity = Object.create(null);
 
   get headers(): DataTableHeader[] {
@@ -119,17 +125,25 @@ export default class extends Vue {
     ];
   }
 
-  @Watch("selected")
-  @Emit()
-  selectRow(val: TableCodeGroupEntity[]) {
-    return val && val.length > 0 ? val[0] : [];
+  get queryString(): string {
+    return qs.stringify({
+      filter: this.datatableFilter,
+      ...this.pagination,
+    });
   }
 
+  @Watch("selected")
+  @Emit()
+  selectRow(val: TableCodeGroupEntity[]): TableCodeGroupEntity {
+    return val && val.length > 0 ? val[0] : {};
+  }
+
+  @Watch("queryString")
   public async getList(): Promise<void> {
     this.selected = [];
     this.items = [];
     this.loading = true;
-    const response = await getApi<TableCodeGroupEntity[]>("admin/codeGroups/");
+    const response = await getApi<TableCodeGroupEntity[]>("admin/code/groups/");
     this.loading = false;
     this.items = response?.data || [];
   }
@@ -148,11 +162,11 @@ export default class extends Vue {
     this.item = this.selected[0];
     const result = await confirmDelete();
     if (result.value) {
-      this.loading = true;
+      this.saving = true;
       const response = await deleteApi<TableCodeGroupEntity>(
-        `admin/codeGroups/${this.item.codeGroup}/`,
+        `admin/code/groups/${this.item.codeGroup}/`,
       );
-      this.loading = false;
+      this.saving = false;
       if (response?.code?.startsWith("S")) {
         this.getList().then();
       }

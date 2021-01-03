@@ -35,10 +35,10 @@ public class BusinessException extends RuntimeException {
     ExceptionCode.FAIL_NO_DATA_SUCCESS
   );
   private static final long serialVersionUID = -6837907198565524472L;
+  public boolean printedStack = false;
   private ApiResult apiResult = Result.ok().getBody();
 
   public BusinessException(final Throwable throwable) {
-    super(throwable);
     this.setApiResult(throwable);
   }
 
@@ -60,8 +60,8 @@ public class BusinessException extends RuntimeException {
       return ExceptionCode.FAIL_INVALID_PARAMETER;
     } else if (
       e instanceof HttpMediaTypeNotAcceptableException ||
-      e instanceof HttpMediaTypeNotSupportedException ||
-      e instanceof HttpRequestMethodNotSupportedException
+        e instanceof HttpMediaTypeNotSupportedException ||
+        e instanceof HttpRequestMethodNotSupportedException
     ) {
       return ExceptionCode.FAIL_INVALID_REQUEST;
     } else if (e instanceof FileNotFoundException) {

@@ -11,15 +11,14 @@ spring:
     converters:
       preferred-json-mapper: gson
   autoconfigure:
-    exclude: org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration
+    exclude:
+      - org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration
+      - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
   web:
     resources:
       chain:
         compressed: true
-#  datasource:
-#    hikari:
-#      driver-class-name: org.jdbcdslog.DriverLoggingProxy
-#      connection-test-query: SELECT 1
 mybatis:
   mapper-locations: classpath:**/*Mapper.xml
   type-aliases-super-type: java.io.Serializable
@@ -38,15 +37,15 @@ server:
       charset: UTF-8
       enabled: true
       force: true
-#management:
-#  endpoint:
-#    shutdown:
-#      enabled: true
-#  endpoints:
-#    enabled-by-default: false
-#    web:
-#      exposure:
-#        include: shutdown
+management:
+  endpoint:
+    shutdown:
+      enabled: true
+  endpoints:
+    enabled-by-default: false
+    web:
+      exposure:
+        include: shutdown
 ---
 spring:
   config:
@@ -62,21 +61,25 @@ server:
 sentry:
   logging:
     enabled: false
+management:
+  endpoint:
+    shutdown:
+      enabled: false
+  endpoints:
+    enabled-by-default: false
 variable:
   app:
-    title: My SpringBoot + Mybatis + VueJs + Typescript
+    title: Demo Of SpringBoot + Mybatis + VueJs + Typescript
 ---
 spring:
   config:
     activate:
       on-profile: dev
   datasource:
-    hikari:
-      username:
-      password:
-      driver-class-name: org.jdbcdslog.DriverLoggingProxy
-      jdbc-url: jdbc:jdbcdslog:mysql://127.0.0.1:3306/dbname?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&validationQuery=select 1&zeroDateTimeBehavior=convertToNull;targetDriver=org.gjt.mm.mysql.Driver
-      connection-test-query: SELECT 1
+    url: jdbc:jdbcdslog:mysql://127.0.0.1:3306/dbname?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&validationQuery=select 1&zeroDateTimeBehavior=convertToNull;targetDriver=org.gjt.mm.mysql.Driver
+    username:
+    password:
+    driver-class-name: org.jdbcdslog.DriverLoggingProxy
 server:
   port: 8080
 sentry:
@@ -92,12 +95,10 @@ spring:
     activate:
       on-profile: production
   datasource:
-    hikari:
-      username:
-      password:
-      driver-class-name: org.jdbcdslog.DriverLoggingProxy
-      jdbc-url: jdbc:jdbcdslog:mysql://127.0.0.1:3306/dbname?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&validationQuery=select 1&zeroDateTimeBehavior=convertToNull;targetDriver=org.gjt.mm.mysql.Driver
-      connection-test-query: SELECT 1
+    url: jdbc:jdbcdslog:mysql://127.0.0.1:3306/dbname?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&validationQuery=select 1&zeroDateTimeBehavior=convertToNull;targetDriver=org.gjt.mm.mysql.Driver
+    username:
+    password:
+    driver-class-name: org.jdbcdslog.DriverLoggingProxy
 server:
   port:
 sentry:

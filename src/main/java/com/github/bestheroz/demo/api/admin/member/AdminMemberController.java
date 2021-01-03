@@ -2,10 +2,11 @@ package com.github.bestheroz.demo.api.admin.member;
 
 import com.github.bestheroz.demo.api.entity.member.TableMemberEntity;
 import com.github.bestheroz.demo.api.entity.member.TableMemberRepository;
+import com.github.bestheroz.standard.common.mybatis.DataTableFilterDTO;
 import com.github.bestheroz.standard.common.response.ApiResult;
 import com.github.bestheroz.standard.common.response.Result;
+import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -19,12 +20,16 @@ public class AdminMemberController {
   private TableMemberRepository tableMemberRepository;
 
   @GetMapping
-  ResponseEntity<ApiResult> getItems() {
+  ResponseEntity<ApiResult> getItems(
+    final DataTableFilterDTO dataTableFilterDTO
+  ) {
+    final int count =
+      this.tableMemberRepository.countForDataTable(dataTableFilterDTO);
     return Result.ok(
-      this.tableMemberRepository.getItems()
-        .stream()
-        .peek(item -> item.setPassword(null))
-        .collect(Collectors.toList())
+      count > 0
+        ? this.tableMemberRepository.getItemsForDataTable(dataTableFilterDTO)
+        : List.of(),
+      count
     );
   }
 
@@ -57,18 +62,18 @@ public class AdminMemberController {
     @RequestBody final TableMemberEntity tableMemberEntity
   ) {
     this.tableMemberRepository.updateMapByKey(
-        Map.of(
-          "name",
-          tableMemberEntity.getName(),
-          "authority",
-          tableMemberEntity.getAuthority(),
-          "expired",
-          tableMemberEntity.getExpired(),
-          "available",
-          tableMemberEntity.isAvailable()
-        ),
-        Map.of("id", id)
-      );
+      Map.of(
+        "name",
+        tableMemberEntity.getName(),
+        "authority",
+        tableMemberEntity.getAuthority(),
+        "expired",
+        tableMemberEntity.getExpired(),
+        "available",
+        tableMemberEntity.isAvailable()
+      ),
+      Map.of("id", id)
+    );
     return Result.ok();
   }
 

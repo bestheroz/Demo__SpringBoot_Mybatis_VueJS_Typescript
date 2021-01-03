@@ -1,0 +1,17 @@
+name: 'Parse Node version For Cache'
+description: 'Parse Node version For Cache (npm_modules)'
+
+outputs:
+  nodeVersion:
+    description: 'using node version'
+    value: ${{ steps.extract.outputs.nodeVersion }}
+
+runs:
+  using: 'composite'
+  steps:
+    - id: extract
+      shell: bash
+      run: |
+        NODE_VERSION="$(node --version)"
+        echo $NODE_VERSION
+        echo "::set-output name=nodeVersion::$(echo ${NODE_VERSION})"

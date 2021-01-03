@@ -37,7 +37,7 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
   )
     throws IOException, ServletException {
     final String requestURI = new UrlPathHelper()
-    .getPathWithinApplication(request);
+      .getPathWithinApplication(request);
     log.info(REQUEST_PARAMETERS, request.getMethod(), requestURI);
     final StopWatch stopWatch = new StopWatch();
     stopWatch.start();

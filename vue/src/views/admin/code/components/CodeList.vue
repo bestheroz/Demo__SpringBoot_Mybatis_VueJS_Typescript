@@ -2,7 +2,7 @@
   <div>
     <v-card>
       <button-set
-        :disabled="!parentItem.codeGroup"
+        :disabled="!codeGroup"
         add-button
         delete-button
         reload-button
@@ -33,7 +33,7 @@
           :footer-props="envs.FOOTER_PROPS_MAX_1000"
         >
           <template #header>
-            <data-table-filter
+            <data-table-client-side-filter
               :header="headers"
               :output.sync="filteredItems"
               :input="items"
@@ -78,7 +78,6 @@ import type {
   DataTableHeader,
   SelectItem,
   TableCodeEntity,
-  TableCodeGroupEntity,
 } from "@/common/types";
 import { deleteApi, getApi, getCodesApi } from "@/utils/apis";
 import envs from "@/constants/envs";
@@ -86,18 +85,20 @@ import DataTableFilter from "@/components/datatable/DataTableFilter.vue";
 import ButtonSet from "@/components/speeddial/ButtonSet.vue";
 import { confirmDelete } from "@/utils/alerts";
 import CodeEditDialog from "@/views/admin/code/components/CodeEditDialog.vue";
+import DataTableClientSideFilter from "@/components/datatable/DataTableClientSideFilter.vue";
 
 @Component({
   name: "CodeList",
   components: {
+    DataTableClientSideFilter,
     CodeEditDialog,
     ButtonSet,
     DataTableFilter,
   },
 })
 export default class extends Vue {
-  @Prop({ required: true }) readonly parentItem!: TableCodeGroupEntity;
   @Prop({ required: true }) readonly height!: number | string;
+  @Prop({ required: true }) readonly codeGroup!: string;
 
   readonly envs: typeof envs = envs;
   AUTHORITY: SelectItem[] = [];
@@ -166,25 +167,23 @@ export default class extends Vue {
     this.AUTHORITY = await getCodesApi("AUTHORITY");
   }
 
-  @Watch("parentItem")
-  protected watchParentItem(val: TableCodeGroupEntity): void {
-    this.items = [];
-    val?.codeGroup && this.getList();
-  }
-
+  @Watch("codeGroup")
   async getList(): Promise<void> {
     this.selected = [];
     this.items = [];
+    if (!this.codeGroup) {
+      return;
+    }
     this.loading = true;
     const response = await getApi<TableCodeEntity[]>(
-      `admin/codes/${this.parentItem.codeGroup}`,
+      `admin/codes/${this.codeGroup}`,
     );
     this.loading = false;
     this.items = response?.data || [];
   }
 
   protected addItem(): void {
-    this.item = { codeGroup: this.parentItem.codeGroup };
+    this.item = { codeGroup: this.codeGroup };
     this.dialog = true;
   }
 
@@ -198,11 +197,11 @@ export default class extends Vue {
     if (result.value) {
       this.loading = true;
       const response = await deleteApi<TableCodeEntity>(
-        `admin/codes/${this.parentItem.codeGroup}/${this.selected[0].code}/`,
+        `admin/codes/${this.codeGroup}/${this.selected[0].code}/`,
       );
       this.loading = false;
       if (response?.code?.startsWith("S")) {
-        window.localStorage.removeItem(`code__${this.parentItem.codeGroup}`);
+        window.localStorage.removeItem(`code__${this.codeGroup}`);
         this.getList().then();
       }
     }

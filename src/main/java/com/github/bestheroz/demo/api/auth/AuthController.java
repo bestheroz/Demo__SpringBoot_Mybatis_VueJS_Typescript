@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
   @Resource
   private AuthService authService;
-
   @Resource
   private TableMemberRepository tableMemberRepository;
 
@@ -28,9 +27,9 @@ public class AuthController {
   ) {
     return Result.ok(
       this.authService.login(
-          tableMemberEntity.getId(),
-          tableMemberEntity.getPassword()
-        )
+        tableMemberEntity.getId(),
+        tableMemberEntity.getPassword()
+      )
     );
   }
 
@@ -40,8 +39,8 @@ public class AuthController {
   ) {
     return Result.ok(
       this.tableMemberRepository.getItemByKey(
-          Map.of("id", JwtTokenProvider.getUserPk(token))
-        )
+        Map.of("id", JwtTokenProvider.getUserPk(token))
+      )
         .orElseThrow(() -> BusinessException.FAIL_TRY_LOGIN_FIRST)
     );
   }
@@ -58,9 +57,9 @@ public class AuthController {
     @RequestBody final TableMemberEntity tableMemberEntity
   ) {
     this.authService.initPassword(
-        tableMemberEntity.getId(),
-        tableMemberEntity.getPassword()
-      );
+      tableMemberEntity.getId(),
+      tableMemberEntity.getPassword()
+    );
     return Result.ok();
   }
 

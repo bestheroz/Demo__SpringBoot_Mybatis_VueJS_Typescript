@@ -58,11 +58,7 @@ export default class extends Vue {
     return !window.toolbar.visible;
   }
 
-  get theme() {
-    return this.$store.getters.theme;
-  }
-
-  protected async beforeMount(): Promise<void> {
+  protected async created(): Promise<void> {
     this.title = await getVariableApi("title");
   }
 

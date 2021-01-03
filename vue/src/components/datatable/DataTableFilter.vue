@@ -1,54 +1,66 @@
 <template>
   <tr class="datatable-header-filter">
     <td v-if="!filterFirstColumn" />
-    <td v-for="(data, index) in header" :key="data.value">
+    <td v-for="(header, index) in headers" :key="header.value">
       <v-select
         v-if="
-          data.filterable !== false &&
-          data.filterType === 'select' &&
-          data.filterSelectItem
+          header.filterable !== false &&
+          header.filterType === 'select' &&
+          header.filterSelectItem
         "
-        v-model.trim="filter[index]"
-        :items="data.filterSelectItem"
+        v-model.trim="filters[index]"
+        :items="header.filterSelectItem"
         outlined
         dense
         clearable
         hide-details
+        multiple
+        style="width: 95%"
       />
       <v-select
-        v-else-if="data.filterable !== false && data.filterType === 'switch'"
-        v-model.trim="filter[index]"
+        v-else-if="
+          header.filterable !== false && header.filterType === 'switch'
+        "
+        v-model.trim="filters[index]"
         :items="USE_YN"
         outlined
         dense
         clearable
         hide-details
+        style="width: 95%"
       />
       <v-text-field
-        v-else-if="data.filterable !== false"
-        v-model.trim="filter[index]"
+        v-else-if="header.filterable !== false"
+        v-model.trim="filters[index]"
         outlined
         dense
         hide-details
         clearable
+        style="width: 95%"
       />
     </td>
   </tr>
 </template>
 
 <script lang="ts">
-import { Component, Emit, Prop, Vue, Watch } from "vue-property-decorator";
+import {
+  Component,
+  Emit,
+  Prop,
+  PropSync,
+  Vue,
+  Watch,
+} from "vue-property-decorator";
 import type { DataTableHeader, SelectItem } from "@/common/types";
 import _, { DebouncedFunc } from "lodash";
 
 @Component({ name: "DataTableFilter" })
 export default class extends Vue {
-  /* eslint-disable */
-  @Prop({ required: true }) readonly output!: any[];
-  @Prop({ required: true }) readonly input!: any[];
-  /* eslint-enable */
-  @Prop({ required: true }) readonly header!: DataTableHeader[];
-  @Prop({ type: Boolean, default: false }) readonly filterFirstColumn!: boolean;
+  @Prop({ required: true }) readonly headers!: DataTableHeader[];
+  @Prop({ type: Boolean }) readonly filterFirstColumn!: boolean;
+  @PropSync("filter") syncedFilter!: { [p: string]: string | number };
+
+  ready = false;
 
   readonly debounceHeader: DebouncedFunc<
     () => {
@@ -60,61 +72,88 @@ export default class extends Vue {
     () => {
       //
     }
-  > = _.debounce(this.debouncedFilter, 100);
+  > = _.debounce(this.debouncedFilter, 300);
 
   readonly USE_YN: SelectItem[] = [
     { value: "true", text: "예" },
     { value: "false", text: "아니요" },
   ];
 
-  filter: string[] = [];
-  filterMap: string[] = [];
+  filters: string[] = [];
+  filtersMap: {
+    key: string;
+    value?: string | string[] | null;
+    condition: string;
+  }[] = [];
 
-  @Watch("header", { deep: true, immediate: true })
-  watchHeader(): void {
+  protected created(): void {
+    this.filters = this.headers.map((header) => {
+      return header.filterDefaultValue || "";
+    });
+    this.$nextTick(() => {
+      this.ready = true;
+    });
+  }
+
+  @Watch("headers", { deep: true, immediate: true })
+  protected watchHeader(): void {
     this.debounceHeader && this.debounceHeader();
   }
 
-  @Watch("input", { deep: true, immediate: true })
-  @Watch("filter", { deep: true })
-  watchFilter(): void {
-    this.debounceFilter && this.debounceFilter();
+  @Watch("filters", { deep: true })
+  protected watchFilter(): void {
+    if (this.ready) {
+      this.debounceFilter && this.debounceFilter();
+    }
   }
 
-  debouncedHeader(): void {
-    const filter: string[] = [];
-    const filterMap: string[] = [];
-    this.header.forEach((value: DataTableHeader) => {
-      filterMap.push(value.value);
-      filter.push(value.filterDefaultValue || "");
-      value.filterSelectItem &&
-        value.filterSelectItem?.forEach((item: SelectItem) => {
+  protected debouncedHeader(): void {
+    this.headers.forEach((value: DataTableHeader) => {
+      (value.filterSelectItem || [])
+        .filter((item) => !item)
+        .forEach((item: SelectItem) => {
           item.text = item.text || "-";
         });
     });
-    this.filter = filter;
-    this.filterMap = filterMap;
+    this.filtersMap = this.headers.map((header) => {
+      let condition;
+      if (header.filterType === "select") {
+        condition = "set";
+      } else if (header.filterType === "switch") {
+        condition = "booleanEquals";
+      } else {
+        condition = "contains";
+      }
+      return { key: header.value, condition: condition };
+    });
   }
 
-  @Emit("update:output")
-  debouncedFilter(): unknown[] {
-    let output = this.input;
-    this.filter &&
-      this.filter.forEach((filter: string | undefined | null, index) => {
-        if (filter === undefined || filter === "" || filter === null) {
-          return;
-        }
-        output = output.filter(
-          (value) =>
-            !this.filterMap[index] ||
-            value[this.filterMap[index]] === undefined ||
-            value[this.filterMap[index]]
-              .toString()
-              .toUpperCase()
-              .indexOf(filter.toUpperCase()) !== -1,
-        );
-      });
-    return output;
+  @Emit("update:filter")
+  protected debouncedFilter(): { [p: string]: string | string[] | number } {
+    (this.filters || []).forEach((filter: string | undefined | null, index) => {
+      this.filtersMap[index] = { ...this.filtersMap[index], value: filter };
+    });
+    return Object.fromEntries(
+      Object.entries(
+        this.filtersMap.filter(
+          (filter) =>
+            (filter.condition !== "set" && filter.value) ||
+            (filter.condition === "set" && (filter.value || []).length > 0),
+        ),
+      ).map(([, v]) => [
+        `${v.key}:${v.condition || "contains"}`,
+        v.condition === "set" ? JSON.stringify(v.value || "") : v.value || "",
+      ]),
+    );
   }
 }
 </script>
+<style lang="scss">
+.datatable-header-filter {
+  .v-select__selections {
+    .v-select__selection--comma:not(:first-child) {
+      display: none;
+    }
+  }
+}
+</style>

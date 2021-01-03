@@ -2,9 +2,9 @@ package com.github.bestheroz.standard.common.mybatis;
 
 import com.github.bestheroz.standard.common.exception.BusinessException;
 import com.github.bestheroz.standard.common.util.AuthenticationUtils;
+import com.github.bestheroz.standard.common.util.CaseUtils;
 import com.github.bestheroz.standard.common.util.MapperUtils;
 import com.github.bestheroz.standard.common.util.NullUtils;
-import com.google.common.base.CaseFormat;
 import java.lang.reflect.Field;
 import java.text.MessageFormat;
 import java.time.Instant;
@@ -29,13 +29,11 @@ public class SqlCommand {
   public static final String SELECT_TARGET_ITEMS_BY_KEY = "getTargetItemsByKey";
   public static final String SELECT_TARGET_ITEMS_BY_KEY_WITH_ORDER =
     "getTargetItemsByKeyWithOrder";
-  public static final String SELECT_ITEMS_BY_SERVER_SIDE_PARAMS =
-    "getItemsForAgGridServerSide";
+  public static final String SELECT_ITEMS_BY_DATATABLE = "getItemsForDataTable";
   public static final String SELECT_ITEM_BY_KEY = "getItemByKey";
   public static final String COUNT_ALL = "countAll";
+  public static final String COUNT_BY_DATATABLE = "countForDataTable";
   public static final String COUNT_BY_KEY = "countByKey";
-  public static final String COUNT_BY_SERVER_SIDE_PARAMS =
-    "countByServerSideParams";
   public static final String INSERT = "insert";
   public static final String INSERT_BATCH = "insertBatch";
   public static final String UPDATE_BY_KEY = "updateByKey";
@@ -62,10 +60,6 @@ public class SqlCommand {
     "boolean"
   );
   // 참고용: 각VO에 암호화 컬럼 정의 방법
-  private static final Set<String> ENCRYPTED_COLUMN_LIST = Set.of(
-    "empnm",
-    "smsphone"
-  );
   private static final String TABLE_COLUMN_NAME_CREATED_BY = "CREATED_BY";
   private static final String TABLE_COLUMN_NAME_CREATED = "CREATED";
   private static final String TABLE_COLUMN_NAME_UPDATED_BY = "UPDATED_BY";
@@ -80,84 +74,49 @@ public class SqlCommand {
     "serialVersionUID",
     "E_N_C_R_Y_P_T_E_D__C_O_L_U_M_N__L_I_S_T"
   );
-  private static final String SELECT_ENCRYPTED_STRING =
-    "FNC_GET_DECRYPT ({0}) AS {0}";
   private static final String INSERT_STRING = "#'{'{0}{1}'}'";
-  private static final String INSERT_ENCRYPTED_STRING =
-    "FNC_GET_ENCRYPT (#'{'{1}{2}'}')";
   private static final String SET_STRING = "{0} = #'{'param{3}.{1}{2}'}'";
   private static final String SET_UPDATED_BY_STRING = "{0} = ''{1}''";
-  private static final String SET_ENCRYPTED_STRING =
-    "{0} = FNC_GET_ENCRYPT (#'{'param{3}.{1}{2}'}')";
   private static final String WHERE_EQUALS_STRING =
     "{0} = #'{'whereConditions.{1}{2}'}'";
-  private static final String WHERE_EQUALS_ENCRYPTED =
-    "{0} = FNC_GET_ENCRYPT (#'{'whereConditions.{1}{2}'}')";
   private static final String WHERE_NOT_EQUALS_STRING =
     "{0} <> #'{'whereConditions.{1}{2}'}'";
-  private static final String WHERE_NOT_EQUALS_ENCRYPTED =
-    "{0} <> FNC_GET_ENCRYPT (#'{'whereConditions.{1}{2}'}')";
   private static final String WHERE_CONTAINS_STRING =
     "INSTR({0},  #'{'whereConditions.{1}{2}'}') > 0";
-  private static final String WHERE_CONTAINS_ENCRYPTED =
-    "INSTR(FNC_GET_DECRYPT ({0}), #'{'whereConditions.{1}{2}'}') > 0";
   private static final String WHERE_NOT_CONTAINS_STRING =
     "INSTR({0},  #'{'whereConditions.{1}{2}'}') = 0";
-  private static final String WHERE_NOT_CONTAINS_ENCRYPTED =
-    "INSTR(FNC_GET_DECRYPT ({0}), #'{'whereConditions.{1}{2}'}') = 0";
   private static final String WHERE_STARTS_WITH_STRING =
     "INSTR({0},  #'{'whereConditions.{1}{2}'}') = 1";
-  private static final String WHERE_STARTS_WITH_ENCRYPTED =
-    "INSTR(FNC_GET_DECRYPT ({0}), #'{'whereConditions.{1}{2}'}') = 1";
   private static final String WHERE_ENDS_WITH_STRING =
     "RIGHT({0}, CHAR_LENGTH(#'{'whereConditions.{1}{2}'}')) = #'{'whereConditions.{1}{2}'}'";
-  private static final String WHERE_ENDS_WITH_ENCRYPTED =
-    "RIGHT({0}, FNC_GET_DECRYPT ( CHAR_LENGTH(#'{'whereConditions.{1}{2}'}'))) = #'{'whereConditions.{1}{2}'}'";
   private static final String WHERE_LESS_THAN_STRING =
     "{0} < #'{'whereConditions.{1}{2}'}'";
-  private static final String WHERE_LESS_THAN_ENCRYPTED =
-    "{0} < FNC_GET_ENCRYPT (#'{'whereConditions.{1}{2}'}')";
   private static final String WHERE_LESS_THAN_EQUALS_STRING =
     "{0} <= #'{'whereConditions.{1}{2}'}'";
-  private static final String WHERE_LESS_THAN_EQUALS_ENCRYPTED =
-    "{0} <= FNC_GET_ENCRYPT (#'{'whereConditions.{1}{2}'}')";
   private static final String WHERE_GREATER_THAN_STRING =
     "{0} > #'{'whereConditions.{1}{2}'}'";
-  private static final String WHERE_GREATER_THAN_ENCRYPTED =
-    "{0} > FNC_GET_ENCRYPT (#'{'whereConditions.{1}{2}'}')";
   private static final String WHERE_GREATER_THAN_EQUALS_STRING =
     "{0} >= #'{'whereConditions.{1}{2}'}'";
-  private static final String WHERE_GREATER_THAN_EQUALS_ENCRYPTED =
-    "{0} >= FNC_GET_ENCRYPT (#'{'whereConditions.{1}{2}'}')";
   private static final String WHERE_IN_STRING = "{0} IN ({1})";
-  private static final String WHERE_IN_ENCRYPTED =
-    "{0} IN (FNC_GET_ENCRYPT ({1}))";
   private static final String WHERE_NOT_IN_STRING = "{0} NOT IN ({1})";
-  private static final String WHERE_NOT_IN_ENCRYPTED =
-    "{0} NOT IN (FNC_GET_ENCRYPT ({1}))";
 
   public String getTableName() {
     return getTableName(this.getEntityClass().getSimpleName());
   }
 
   public static String getTableName(final String javaClassName) {
-    return CaseFormat.LOWER_CAMEL.to(
-      CaseFormat.UPPER_UNDERSCORE,
-      StringUtils.substringBetween(javaClassName, "Table", "Entity")
+    return StringUtils.upperCase(
+      CaseUtils.getCamelCaseToSnakeCase(
+        StringUtils.substringBetween(javaClassName, "Table", "Entity")
+      )
     );
   }
 
   private void getSelectSql(final SQL sql, final List<String> columns) {
     columns.forEach(
       column -> {
-        final String dbColumnName = this.getCamelCaseToSnakeCase(column);
-        if (ENCRYPTED_COLUMN_LIST.contains(column)) {
-          sql.SELECT(
-            MessageFormat.format(SELECT_ENCRYPTED_STRING, dbColumnName)
-          );
-        } else {
-          sql.SELECT(dbColumnName);
-        }
+        final String dbColumnName = CaseUtils.getCamelCaseToSnakeCase(column);
+        sql.SELECT(dbColumnName);
       }
     );
   }
@@ -183,10 +142,8 @@ public class SqlCommand {
         if (StringUtils.equals(conditionType, "in")) {
           sql.WHERE(
             MessageFormat.format(
-              ENCRYPTED_COLUMN_LIST.contains(key)
-                ? WHERE_IN_ENCRYPTED
-                : WHERE_IN_STRING,
-              this.getCamelCaseToSnakeCase(columnName),
+              WHERE_IN_STRING,
+              CaseUtils.getCamelCaseToSnakeCase(columnName),
               StringUtils.defaultIfEmpty(
                 MapperUtils
                   .toArrayList(value, String.class)
@@ -200,10 +157,8 @@ public class SqlCommand {
         } else if (conditionType.equals("notIn")) {
           sql.WHERE(
             MessageFormat.format(
-              ENCRYPTED_COLUMN_LIST.contains(key)
-                ? WHERE_NOT_IN_ENCRYPTED
-                : WHERE_NOT_IN_STRING,
-              this.getCamelCaseToSnakeCase(columnName),
+              WHERE_NOT_IN_STRING,
+              CaseUtils.getCamelCaseToSnakeCase(columnName),
               StringUtils.defaultIfEmpty(
                 MapperUtils
                   .toArrayList(value, String.class)
@@ -215,13 +170,13 @@ public class SqlCommand {
             )
           );
         } else {
-          final String whereString = this.getWhereString(conditionType, key);
+          final String whereString = this.getWhereString(conditionType);
           sql.WHERE(
             MessageFormat.format(
               this.getRepositoryMethodParamLength() == 1
                 ? whereString.replace("whereConditions.", "")
                 : whereString,
-              this.getCamelCaseToSnakeCase(columnName),
+              CaseUtils.getCamelCaseToSnakeCase(columnName),
               columnName,
               this.getJdbcType(value)
             )
@@ -231,71 +186,45 @@ public class SqlCommand {
     );
   }
 
-  private String getWhereString(
-    final String conditionType,
-    final String column
-  ) {
-    final boolean isEncryptColumn = ENCRYPTED_COLUMN_LIST.contains(column);
+  private String getWhereString(final String conditionType) {
     final String whereString;
     switch (conditionType) {
       case "contains":
-        whereString =
-          isEncryptColumn ? WHERE_CONTAINS_ENCRYPTED : WHERE_CONTAINS_STRING;
+        whereString = WHERE_CONTAINS_STRING;
         break;
       case "notEqual":
-        whereString =
-          isEncryptColumn
-            ? WHERE_NOT_EQUALS_ENCRYPTED
-            : WHERE_NOT_EQUALS_STRING;
+      case "booleanNotEqual":
+        whereString = WHERE_NOT_EQUALS_STRING;
         break;
       case "notContains":
-        whereString =
-          isEncryptColumn
-            ? WHERE_NOT_CONTAINS_ENCRYPTED
-            : WHERE_NOT_CONTAINS_STRING;
+        whereString = WHERE_NOT_CONTAINS_STRING;
         break;
       case "startsWith":
-        whereString =
-          isEncryptColumn
-            ? WHERE_STARTS_WITH_ENCRYPTED
-            : WHERE_STARTS_WITH_STRING;
+        whereString = WHERE_STARTS_WITH_STRING;
         break;
       case "endsWith":
-        whereString =
-          isEncryptColumn ? WHERE_ENDS_WITH_ENCRYPTED : WHERE_ENDS_WITH_STRING;
+        whereString = WHERE_ENDS_WITH_STRING;
         break;
       case "lessThan":
-        whereString =
-          isEncryptColumn ? WHERE_LESS_THAN_ENCRYPTED : WHERE_LESS_THAN_STRING;
+        whereString = WHERE_LESS_THAN_STRING;
         break;
       case "lessThanOrEqual":
-        whereString =
-          isEncryptColumn
-            ? WHERE_LESS_THAN_EQUALS_ENCRYPTED
-            : WHERE_LESS_THAN_EQUALS_STRING;
+        whereString = WHERE_LESS_THAN_EQUALS_STRING;
         break;
       case "greaterThan":
-        whereString =
-          isEncryptColumn
-            ? WHERE_GREATER_THAN_ENCRYPTED
-            : WHERE_GREATER_THAN_STRING;
+        whereString = WHERE_GREATER_THAN_STRING;
         break;
       case "greaterThanOrEqual":
-        whereString =
-          isEncryptColumn
-            ? WHERE_GREATER_THAN_EQUALS_ENCRYPTED
-            : WHERE_GREATER_THAN_EQUALS_STRING;
+        whereString = WHERE_GREATER_THAN_EQUALS_STRING;
         break;
       case "in":
-        whereString = isEncryptColumn ? WHERE_IN_ENCRYPTED : WHERE_IN_STRING;
+        whereString = WHERE_IN_STRING;
         break;
       case "notIn":
-        whereString =
-          isEncryptColumn ? WHERE_NOT_IN_ENCRYPTED : WHERE_NOT_IN_STRING;
+        whereString = WHERE_NOT_IN_STRING;
         break;
       default:
-        whereString =
-          isEncryptColumn ? WHERE_EQUALS_ENCRYPTED : WHERE_EQUALS_STRING;
+        whereString = WHERE_EQUALS_STRING;
         break;
     }
     return whereString;
@@ -332,11 +261,11 @@ public class SqlCommand {
                     SELECT_TARGET_ITEMS_WITH_ORDER,
                     SELECT_TARGET_ITEMS_BY_KEY,
                     SELECT_TARGET_ITEMS_BY_KEY_WITH_ORDER,
-                    SELECT_ITEMS_BY_SERVER_SIDE_PARAMS,
+                    SELECT_ITEMS_BY_DATATABLE,
                     SELECT_ITEM_BY_KEY,
                     COUNT_ALL,
                     COUNT_BY_KEY,
-                    COUNT_BY_SERVER_SIDE_PARAMS,
+                    COUNT_BY_DATATABLE,
                     INSERT,
                     UPDATE_BY_KEY,
                     UPDATE_MAP_BY_KEY,
@@ -396,11 +325,11 @@ public class SqlCommand {
                   SELECT_TARGET_ITEMS_WITH_ORDER,
                   SELECT_TARGET_ITEMS_BY_KEY,
                   SELECT_TARGET_ITEMS_BY_KEY_WITH_ORDER,
-                  SELECT_ITEMS_BY_SERVER_SIDE_PARAMS,
+                  SELECT_ITEMS_BY_DATATABLE,
                   SELECT_ITEM_BY_KEY,
                   COUNT_ALL,
                   COUNT_BY_KEY,
-                  COUNT_BY_SERVER_SIDE_PARAMS,
+                  COUNT_BY_DATATABLE,
                   INSERT,
                   UPDATE_BY_KEY,
                   UPDATE_MAP_BY_KEY,
@@ -525,7 +454,7 @@ public class SqlCommand {
     sql.FROM(this.getTableName());
     this.getWhereSql(sql, whereConditions);
     orderByConditions.forEach(
-      columns -> sql.ORDER_BY(this.getCamelCaseToSnakeCase(columns))
+      columns -> sql.ORDER_BY(CaseUtils.getCamelCaseToSnakeCase(columns))
     );
     log.debug(sql.toString());
     return sql.toString();
@@ -556,31 +485,15 @@ public class SqlCommand {
           )
       )
       .forEach(
-        item -> {
-          final String javaFieldName = item.getKey();
-          final String dbColumnName =
-            this.getCamelCaseToSnakeCase(javaFieldName);
-          if (ENCRYPTED_COLUMN_LIST.contains(javaFieldName)) {
-            sql.VALUES(
-              dbColumnName,
-              MessageFormat.format(
-                INSERT_ENCRYPTED_STRING,
-                dbColumnName,
-                javaFieldName,
-                this.getJdbcType(item.getValue())
-              )
-            );
-          } else {
-            sql.VALUES(
-              dbColumnName,
-              MessageFormat.format(
-                INSERT_STRING,
-                javaFieldName,
-                this.getJdbcType(item.getValue())
-              )
-            );
-          }
-        }
+        item ->
+          sql.VALUES(
+            CaseUtils.getCamelCaseToSnakeCase(item.getKey()),
+            MessageFormat.format(
+              INSERT_STRING,
+              item.getKey(),
+              this.getJdbcType(item.getValue())
+            )
+          )
       );
 
     final List<String> fieldNames = this.getEntityFields(entity);
@@ -620,7 +533,7 @@ public class SqlCommand {
     final String intoColumns = StringUtils.join(
       columns
         .stream()
-        .map(this::getCamelCaseToSnakeCase)
+        .map(CaseUtils::getCamelCaseToSnakeCase)
         .collect(Collectors.joining(","))
     );
     sql.INTO_COLUMNS(intoColumns);
@@ -653,7 +566,11 @@ public class SqlCommand {
               } else {
                 final Object o = entity.get(column);
                 values.add(
-                  o == null ? "null" : MessageFormat.format("''{0}''", o)
+                  o == null
+                    ? "null"
+                    : o instanceof String
+                      ? MessageFormat.format("''{0}''", o)
+                      : o
                 );
               }
             }
@@ -718,56 +635,29 @@ public class SqlCommand {
       )
       .filter(fieldName -> !whereConditions.containsKey(fieldName))
       .forEach(
-        javaFieldName -> {
-          if (ENCRYPTED_COLUMN_LIST.contains(javaFieldName)) {
-            sql.SET(
-              MessageFormat.format(
-                SET_ENCRYPTED_STRING,
-                this.getCamelCaseToSnakeCase(javaFieldName),
-                javaFieldName,
-                this.getJdbcType(param.get(javaFieldName)),
-                1
-              )
-            );
-          } else {
-            sql.SET(
-              MessageFormat.format(
-                SET_STRING,
-                this.getCamelCaseToSnakeCase(javaFieldName),
-                javaFieldName,
-                this.getJdbcType(param.get(javaFieldName)),
-                1
-              )
-            );
-          }
-        }
+        javaFieldName ->
+          sql.SET(
+            MessageFormat.format(
+              SET_STRING,
+              CaseUtils.getCamelCaseToSnakeCase(javaFieldName),
+              javaFieldName,
+              this.getJdbcType(param.get(javaFieldName)),
+              1
+            )
+          )
       );
 
     whereConditions.forEach(
-      (key, value) -> {
-        final String dbColumnName = this.getCamelCaseToSnakeCase(key);
-        if (ENCRYPTED_COLUMN_LIST.contains(key)) {
-          sql.WHERE(
-            MessageFormat.format(
-              WHERE_EQUALS_ENCRYPTED,
-              dbColumnName,
-              key,
-              this.getJdbcType(value),
-              2
-            )
-          );
-        } else {
-          sql.WHERE(
-            MessageFormat.format(
-              WHERE_EQUALS_STRING,
-              dbColumnName,
-              key,
-              this.getJdbcType(value),
-              2
-            )
-          );
-        }
-      }
+      (key, value) ->
+        sql.WHERE(
+          MessageFormat.format(
+            WHERE_EQUALS_STRING,
+            CaseUtils.getCamelCaseToSnakeCase(key),
+            key,
+            this.getJdbcType(value),
+            2
+          )
+        )
     );
 
     this.getUpdateSetSql(sql, this.getEntityFields(entity));
@@ -788,56 +678,29 @@ public class SqlCommand {
     final SQL sql = new SQL();
     sql.UPDATE(this.getTableName());
     updateMap.forEach(
-      (javaFieldName, value) -> {
-        if (ENCRYPTED_COLUMN_LIST.contains(javaFieldName)) {
-          sql.SET(
-            MessageFormat.format(
-              SET_ENCRYPTED_STRING,
-              this.getCamelCaseToSnakeCase(javaFieldName),
-              javaFieldName,
-              this.getJdbcType(value),
-              1
-            )
-          );
-        } else {
-          sql.SET(
-            MessageFormat.format(
-              SET_STRING,
-              this.getCamelCaseToSnakeCase(javaFieldName),
-              javaFieldName,
-              this.getJdbcType(value),
-              1
-            )
-          );
-        }
-      }
+      (javaFieldName, value) ->
+        sql.SET(
+          MessageFormat.format(
+            SET_STRING,
+            CaseUtils.getCamelCaseToSnakeCase(javaFieldName),
+            javaFieldName,
+            this.getJdbcType(value),
+            1
+          )
+        )
     );
 
     whereConditions.forEach(
-      (key, value) -> {
-        final String dbColumnName = this.getCamelCaseToSnakeCase(key);
-        if (ENCRYPTED_COLUMN_LIST.contains(key)) {
-          sql.WHERE(
-            MessageFormat.format(
-              WHERE_EQUALS_ENCRYPTED,
-              dbColumnName,
-              key,
-              this.getJdbcType(value),
-              2
-            )
-          );
-        } else {
-          sql.WHERE(
-            MessageFormat.format(
-              WHERE_EQUALS_STRING,
-              dbColumnName,
-              key,
-              this.getJdbcType(value),
-              2
-            )
-          );
-        }
-      }
+      (key, value) ->
+        sql.WHERE(
+          MessageFormat.format(
+            WHERE_EQUALS_STRING,
+            CaseUtils.getCamelCaseToSnakeCase(key),
+            key,
+            this.getJdbcType(value),
+            2
+          )
+        )
     );
 
     this.getUpdateSetSql(sql, this.getEntityFields());
@@ -874,15 +737,56 @@ public class SqlCommand {
     return sql.toString();
   }
 
+  public String countForDataTable(final DataTableFilterDTO dataTableFilterDTO) {
+    final SQL sql = new SQL();
+    sql.SELECT("COUNT(1) AS CNT").FROM(this.getTableName());
+    Optional
+      .ofNullable(dataTableFilterDTO.getFilter())
+      .ifPresent(item -> this.getWhereBoundSql(sql, item));
+    log.debug(sql.toString());
+    return sql.toString();
+  }
+
+  public String getItemsForDataTable(
+    final DataTableFilterDTO dataTableFilterDTO
+  ) {
+    final SQL sql = new SQL();
+    this.getSelectSql(sql, this.getEntityFields());
+    sql.FROM(this.getTableName());
+
+    Optional
+      .ofNullable(dataTableFilterDTO.getFilter())
+      .ifPresent(item -> this.getWhereBoundSql(sql, item));
+
+    Optional
+      .ofNullable(dataTableFilterDTO.getSortBy())
+      .ifPresent(
+        items ->
+          items.forEach(
+            columns ->
+              sql.ORDER_BY(
+                columns.startsWith("-")
+                  ? CaseUtils.getCamelCaseToSnakeCase(
+                  columns.replaceFirst("-", "")
+                ) +
+                  " DESC"
+                  : CaseUtils.getCamelCaseToSnakeCase(columns) + " ASC"
+              )
+          )
+      );
+    if (dataTableFilterDTO.getPage() != 0) {
+      sql.LIMIT(dataTableFilterDTO.getItemsPerPage());
+      sql.OFFSET(dataTableFilterDTO.getStartIndex());
+    }
+    log.debug(sql.toString());
+    return sql.toString();
+  }
+
   private void requiredWhereConditions(final SQL sql) {
     if (!StringUtils.containsIgnoreCase(sql.toString(), "WHERE ")) {
       log.warn("whereConditions is empty");
       throw BusinessException.ERROR_SYSTEM;
     }
-  }
-
-  private String getCamelCaseToSnakeCase(final String javaFileName) {
-    return CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, javaFileName);
   }
 
   private String getJdbcType(final Object object) {
@@ -910,5 +814,86 @@ public class SqlCommand {
       log.warn("케이스 빠짐 {}", object.getClass().getSimpleName());
     }
     return jdbcType;
+  }
+
+  private void getWhereBoundSql(
+    final SQL sql,
+    final Map<String, Object> whereConditions
+  ) {
+    whereConditions.forEach(
+      (key, value) -> {
+        final String columnName = StringUtils.substringBefore(key, ":");
+        final String conditionType = StringUtils.defaultString(
+          StringUtils.substringAfter(key, ":"),
+          "equals"
+        );
+        if (conditionType.equals("set")) {
+          sql.WHERE(
+            MessageFormat.format(
+              WHERE_IN_STRING,
+              CaseUtils.getCamelCaseToSnakeCase(columnName),
+              StringUtils.defaultIfEmpty(
+                MapperUtils
+                  .toArrayList(value, String.class)
+                  .stream()
+                  .map(item -> "'" + item + "'")
+                  .collect(Collectors.joining(",")),
+                "''"
+              )
+            )
+          );
+        } else if (conditionType.equals("notSet")) {
+          sql.WHERE(
+            MessageFormat.format(
+              WHERE_NOT_IN_STRING,
+              CaseUtils.getCamelCaseToSnakeCase(columnName),
+              StringUtils.defaultIfEmpty(
+                MapperUtils
+                  .toArrayList(value, String.class)
+                  .stream()
+                  .map(item -> "'" + item + "'")
+                  .collect(Collectors.joining(",")),
+                "''"
+              )
+            )
+          );
+        } else {
+          String whereString = this.getWhereString(conditionType);
+          whereString = whereString.replace("whereConditions.", "");
+          whereString =
+            whereString.replace(
+              "{0}",
+              CaseUtils.getCamelCaseToSnakeCase(columnName)
+            );
+          if (
+            StringUtils.countMatches(((String) value), '-') == 2 &&
+              StringUtils.countMatches(((String) value), ':') == 2 &&
+              StringUtils.countMatches(((String) value), 'T') == 1 &&
+              StringUtils.endsWith(((String) value), "Z")
+          ) {
+            whereString =
+              whereString.replace(
+                "#'{'{1}{2}'}'",
+                "FROM_UNIXTIME(" +
+                  Integer.parseInt(
+                    String.valueOf(
+                      Instant.parse((String) value).toEpochMilli() / 1000
+                    )
+                  ) +
+                  ")"
+              );
+          } else {
+            if (conditionType.startsWith("boolean")) {
+              whereString =
+                whereString.replace("#'{'{1}{2}'}'", (String) value);
+            } else {
+              whereString =
+                whereString.replace("#'{'{1}{2}'}'", "'" + value + "'");
+            }
+          }
+          sql.WHERE(whereString);
+        }
+      }
+    );
   }
 }

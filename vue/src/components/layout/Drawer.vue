@@ -1,31 +1,29 @@
 <template>
   <v-navigation-drawer v-if="!isPopup" v-model="syncedDrawer" app clipped fixed>
-    <v-list>
+    <v-list nav>
       <template v-for="item in $store.getters.drawers">
         <v-list-group
           v-if="item.children"
-          :key="item.title"
+          :key="item.name"
           :prepend-icon="item.icon"
-          :value="false"
         >
           <template #activator>
             <v-list-item-content>
-              <v-list-item-title> {{ item.title }}</v-list-item-title>
+              <v-list-item-title v-text="item.name"></v-list-item-title>
             </v-list-item-content>
           </template>
           <v-list-item
             v-for="child in item.children"
-            :key="child.title"
-            :to="child.type === 'W' || !child.to ? undefined : child.to"
-            link
-            @click="child.type === 'W' ? popupWindow(child.to) : undefined"
+            :key="child.name"
+            @click="movePage(child)"
+            :class="selected === child.id ? 'v-list-item--active' : undefined"
           >
             <v-list-item-action>
               <v-icon>mdi-menu-right</v-icon>
             </v-list-item-action>
             <v-list-item-content>
               <v-list-item-title>
-                {{ child.title }}
+                {{ child.name }}
                 <v-icon v-if="child.type === 'W'">mdi-dock-window</v-icon>
               </v-list-item-title>
             </v-list-item-content>
@@ -34,15 +32,15 @@
 
         <v-list-item
           v-else
-          :key="item.title"
-          :link="!!item.to"
+          :key="item.name"
           @click="movePage(item)"
+          :class="selected === item.id ? 'v-list-item--active' : undefined"
         >
-          <v-list-item-action>
-            <v-icon> {{ item.icon }}</v-icon>
+          <v-list-item-action v-if="item.icon">
+            <v-icon v-text="item.icon"></v-icon>
           </v-list-item-action>
           <v-list-item-content>
-            <v-list-item-title> {{ item.title }}</v-list-item-title>
+            <v-list-item-title v-text="item.name"></v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </template>
@@ -84,6 +82,10 @@ export default class extends Vue {
     return !window.toolbar.visible;
   }
 
+  get selected(): number {
+    return this.$store.getters.selected;
+  }
+
   protected popupWindow(url: string): void {
     window.open(
       url,
@@ -93,13 +95,14 @@ export default class extends Vue {
   }
 
   protected movePage(item: DrawerItem): void {
-    if (!item.to || item.to === this.$route.fullPath) {
+    this.$store.dispatch("setMenuSelected", item.id || 0);
+    if (!item.url || item.url === this.$route.fullPath) {
       return;
     }
     if (item.type === "W") {
-      this.popupWindow(item.to);
+      this.popupWindow(item.url);
     } else {
-      item.to && this.$router.push(item.to);
+      item.url && this.$router.push(item.url);
     }
   }
 }
