@@ -104,7 +104,7 @@ export default class extends Vue {
         password: pbkdf2Password,
       });
       if (response?.data?.code?.startsWith("S")) {
-        this.$toasted.info("패스워드 설정 완료, 재 로그인 해주세요.");
+        this.$toast.info("패스워드 설정 완료, 재 로그인 해주세요.");
         this.syncedDialog = false;
       } else {
         alertError(response?.data?.message);

@@ -114,7 +114,7 @@ export default class extends Vue {
     await this.$store.dispatch("clearMenuSelected");
     window.localStorage.clear();
     if (this.$route.query.login === "need") {
-      this.$toasted.error("로그인이 필요합니다.");
+      this.$toast.error("로그인이 필요합니다.");
     }
   }
 
@@ -151,7 +151,7 @@ export default class extends Vue {
           accessToken: response.data.data.accessToken,
           refreshToken: response.data.data.refreshToken,
         });
-        this.$toasted.clear();
+        this.$toast.clear();
         await this.$router.push("/");
       } else {
         alertError(response?.data?.message);
