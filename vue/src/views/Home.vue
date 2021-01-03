@@ -30,13 +30,14 @@ export default class extends Vue {
   protected beforeDestroy(): void {
     this.interval && clearInterval(this.interval);
     this.interval = null;
+    this.$nextTick(() => {
+      this.interval && clearInterval(this.interval);
+      this.interval = null;
+    });
   }
 
-  protected async beforeMount(): Promise<void> {
+  protected async created(): Promise<void> {
     this.title = await getVariableApi("title");
-  }
-
-  protected async mounted(): Promise<void> {
     this.now = dayjs().format("YYYY년 MM월 DD일 HH시 mm분 ss초");
     this.color = this.getRandomColor();
     this.interval = window.setInterval(() => {

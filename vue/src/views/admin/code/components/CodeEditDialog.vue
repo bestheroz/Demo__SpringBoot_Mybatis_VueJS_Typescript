@@ -121,7 +121,7 @@
 <script lang="ts">
 import { Component, Prop, PropSync, Vue, Watch } from "vue-property-decorator";
 import type { SelectItem, TableCodeEntity } from "@/common/types";
-import { getCodesApi, patchApi, postApi } from "@/utils/apis";
+import { getCodesApi, putApi, postApi } from "@/utils/apis";
 import { ValidationObserver } from "vee-validate";
 
 @Component({
@@ -142,7 +142,7 @@ export default class extends Vue {
     });
   }
 
-  async beforeMount(): Promise<void> {
+  async created(): Promise<void> {
     this.AUTHORITY = await getCodesApi("AUTHORITY");
   }
 
@@ -164,7 +164,7 @@ export default class extends Vue {
     if (!isValid) {
       return;
     }
-    this.isNew ? await this.create() : await this.patch();
+    this.isNew ? await this.create() : await this.put();
   }
 
   async create(): Promise<void> {
@@ -180,9 +180,9 @@ export default class extends Vue {
     }
   }
 
-  async patch(): Promise<void> {
+  async put(): Promise<void> {
     this.loading = true;
-    const response = await patchApi<TableCodeEntity>(
+    const response = await putApi<TableCodeEntity>(
       `admin/codes/${this.item.codeGroup}/${this.item.code}/`,
       this.item,
     );

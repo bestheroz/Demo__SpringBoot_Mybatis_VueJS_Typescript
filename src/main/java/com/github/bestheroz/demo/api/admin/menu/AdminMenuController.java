@@ -47,13 +47,6 @@ public class AdminMenuController {
     }
   }
 
-  @GetMapping(value = "{id}")
-  ResponseEntity<ApiResult> getItem(
-    @PathVariable(value = "id", required = false) final Integer id
-  ) {
-    return Result.ok(this.tableMenuRepository.getItemByKey(Map.of("id", id)));
-  }
-
   @PostMapping
   public ResponseEntity<ApiResult> post(
     @RequestBody final TableMenuEntity tableMenuEntity

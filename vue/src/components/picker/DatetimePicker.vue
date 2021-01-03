@@ -57,14 +57,12 @@
           :min="minTime"
         >
           <v-btn outlined @click="setNow" :disabled="disableToday">
-            {{ $t("msg.now") }}
+            지금
           </v-btn>
           <div class="flex-grow-1"></div>
-          <v-btn outlined @click="dialog = false">
-            {{ $t("msg.cancel") }}
-          </v-btn>
+          <v-btn outlined @click="dialog = false"> 취소 </v-btn>
           <v-btn outlined @click="$refs.refDialog.save(textFieldString)">
-            {{ $t("msg.confirm") }}
+            확인
           </v-btn>
         </v-time-picker>
       </v-dialog>
@@ -115,7 +113,7 @@ export default class extends Vue {
   valid = false;
 
   get defaultLabel(): string {
-    return this.label || this.$t("msg.picker.dateSelection").toString();
+    return this.label || "날짜 선택";
   }
 
   get maxDate(): string | undefined {
@@ -158,7 +156,6 @@ export default class extends Vue {
     if (!this.min && !this.max) {
       return false;
     }
-    /* eslint-disable indent */
     if (this.useSeconds) {
       return this.endType
         ? dayjs().isBefore(
@@ -176,12 +173,18 @@ export default class extends Vue {
             dayjs(this.max.join(" "), this.DATETIMEPICKER_MINUTE_FORMAT),
           );
     }
-    /* eslint-enable indent */
   }
 
   @Watch("outputDate", { immediate: true })
   watchValue(val: string, oldVal: string): void {
-    if (!val || !dayjs(val).isValid() || val === oldVal) {
+    if (
+      !val ||
+      !dayjs(val).isValid() ||
+      val === oldVal ||
+      (oldVal &&
+        dayjs(oldVal).isValid() &&
+        dayjs(val).diff(dayjs(oldVal)) === 0)
+    ) {
       return;
     }
     this.datePickerString = dayjs(val).format(this.DATEPICKER_FORMAT);
@@ -196,14 +199,12 @@ export default class extends Vue {
     if (
       !this.datePickerString ||
       !this.timePickerString ||
-      /* eslint-disable indent */
       !dayjs(
         `${this.datePickerString} ${this.timePickerString}`,
         this.useSeconds
           ? this.DATETIMEPICKER_FORMAT
           : this.DATETIMEPICKER_MINUTE_FORMAT,
       ).isValid()
-      /* eslint-enable indent */
     ) {
       this.textFieldString = null;
       return;
@@ -215,7 +216,6 @@ export default class extends Vue {
         : this.DATETIMEPICKER_MINUTE_FORMAT,
     );
     if (_dayjs) {
-      /* eslint-disable indent */
       this.textFieldString = this.useSeconds
         ? dayjs(
             `${this.datePickerString} ${this.timePickerString}`,
@@ -225,16 +225,13 @@ export default class extends Vue {
             `${this.datePickerString} ${this.timePickerString}`,
             envs.DATETIME_MINUTE_FORMAT_STRING,
           ).format(this.DATETIMEPICKER_MINUTE_FORMAT);
-      /* eslint-enable indent */
     } else {
       this.textFieldString = null;
     }
   }
-
   @Watch("textFieldString", { immediate: true })
   watchTextFieldString(val: string): void {
     if (dayjs(val, envs.DATETIME_MINUTE_FORMAT_STRING).isValid()) {
-      /* eslint-disable indent */
       this.$emit(
         "input",
         this.endType
@@ -253,7 +250,6 @@ export default class extends Vue {
               ?.startOf("minute")
               ?.toISOString(),
       );
-      /* eslint-enable indent */
     } else {
       this.$emit("input", null);
     }

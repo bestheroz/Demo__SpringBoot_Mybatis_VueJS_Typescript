@@ -29,5 +29,6 @@ module.exports = {
     "space-before-function-paren": "off",
     indent: "off",
     "prettier/prettier": "off",
+    "lines-between-class-members": "off",
   },
 };

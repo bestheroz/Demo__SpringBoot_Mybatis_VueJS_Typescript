@@ -107,13 +107,6 @@ export default class extends Vue {
   show2 = false;
   show3 = false;
 
-  protected beforeDestroy(): void {
-    this.syncedDialog = false;
-    this.$nextTick(() => {
-      this.syncedDialog = false;
-    });
-  }
-
   @Watch("syncedDialog", { immediate: true })
   protected watchDialog(val: boolean): void {
     if (val) {

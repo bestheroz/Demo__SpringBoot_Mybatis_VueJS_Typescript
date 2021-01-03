@@ -13,6 +13,6 @@ if (process.env.VUE_APP_SENTRY_DSN) {
         tracing: true,
       }),
     ],
-    tracesSampleRate: 1.0, // Be sure to lower this in production
+    tracesSampleRate: process.env.NODE_ENV === "production" ? 0.1 : 1.0, // Be sure to lower this in production
   });
 }

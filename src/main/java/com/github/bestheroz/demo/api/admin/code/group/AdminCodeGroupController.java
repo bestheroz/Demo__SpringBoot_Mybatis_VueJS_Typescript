@@ -1,4 +1,4 @@
-package com.github.bestheroz.demo.api.admin.codegroup;
+package com.github.bestheroz.demo.api.admin.code.group;
 
 import com.github.bestheroz.demo.api.entity.code.group.TableCodeGroupEntity;
 import com.github.bestheroz.demo.api.entity.code.group.TableCodeGroupRepository;
@@ -12,26 +12,16 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
-@RequestMapping(value = "api/admin/codeGroups")
+@RequestMapping(value = "api/admin/code/groups")
 public class AdminCodeGroupController {
   @Resource
   private TableCodeGroupRepository tableCodeGroupRepository;
-
   @Resource
   private AdminCodeGroupService adminCodeGroupService;
 
   @GetMapping
   ResponseEntity<ApiResult> getItems() {
     return Result.ok(this.tableCodeGroupRepository.getItems());
-  }
-
-  @GetMapping(value = "{codeGroup}")
-  ResponseEntity<ApiResult> getItem(
-    @PathVariable(value = "codeGroup", required = false) final String codeGroup
-  ) {
-    return Result.ok(
-      this.tableCodeGroupRepository.getItemByKey(Map.of("codeGroup", codeGroup))
-    );
   }
 
   @PostMapping
@@ -42,15 +32,15 @@ public class AdminCodeGroupController {
     return Result.created();
   }
 
-  @PatchMapping(value = "{codeGroup}")
-  ResponseEntity<ApiResult> patch(
+  @PutMapping(value = "{codeGroup}")
+  ResponseEntity<ApiResult> put(
     @PathVariable(value = "codeGroup") final String codeGroup,
     @RequestBody final TableCodeGroupEntity tableCodeGroupEntity
   ) {
     this.tableCodeGroupRepository.updateByKey(
-        tableCodeGroupEntity,
-        Map.of("codeGroup", codeGroup)
-      );
+      tableCodeGroupEntity,
+      Map.of("codeGroup", codeGroup)
+    );
     return Result.ok();
   }
 

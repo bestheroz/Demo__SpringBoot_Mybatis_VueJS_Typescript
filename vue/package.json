@@ -1,13 +1,11 @@
 {
   "name": "vue",
-  "version": "20.12.06",
+  "version": "21.01.03",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve --port 8081 --skip-plugins prettier",
     "build": "vue-cli-service build --skip-plugins prettier",
-    "lint": "vue-cli-service lint --mode production",
-    "test": "npx cypress run",
-    "tsc": "tsc"
+    "lint": "vue-cli-service lint --mode production"
   },
   "dependencies": {
     "axios": "^0.21.1",
@@ -17,9 +15,9 @@
     "sweetalert2": "^10.12.7",
     "vee-validate": "^3.4.5",
     "vue": "^2.6.12",
-    "vue-i18n": "^8.22.2",
     "vue-router": "^3.4.9",
     "vue-toasted": "^1.1.28",
+    "vuedraggable": "^2.24.3",
     "vuetify": "^2.4.0",
     "vuex": "^3.6.0",
     "vuex-persistedstate": "^3.1.0"

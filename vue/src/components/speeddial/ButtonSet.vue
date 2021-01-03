@@ -1,19 +1,19 @@
 <template>
   <div>
     <v-speed-dial
-      id="buttonSet"
+      class="button-set"
       v-model="fab"
       absolute
       top
       right
       direction="left"
       open-on-hover
-      transition="scale-transition"
     >
       <template #activator>
         <v-btn
           v-model="fab"
           color="button-default"
+          elevation="5"
           dark
           fab
           small
@@ -26,6 +26,7 @@
       <v-tooltip v-if="reloadButton" top>
         <template #activator="{ on }">
           <v-btn
+            elevation="5"
             fab
             dark
             color="button-reload"
@@ -41,6 +42,7 @@
       <v-tooltip v-if="saveButton" top>
         <template #activator="{ on }">
           <v-btn
+            elevation="5"
             fab
             dark
             color="primary"
@@ -56,6 +58,7 @@
       <v-tooltip v-if="excelButton" top>
         <template #activator="{ on }">
           <v-btn
+            elevation="5"
             fab
             dark
             :color="excelColor"
@@ -71,6 +74,7 @@
       <v-tooltip v-if="deleteButton" top>
         <template #activator="{ on }">
           <v-btn
+            elevation="5"
             fab
             dark
             color="button-delete"
@@ -86,6 +90,7 @@
       <v-tooltip v-if="addButton" top>
         <template #activator="{ on }">
           <v-btn
+            elevation="5"
             fab
             dark
             color="button-add"
@@ -101,6 +106,7 @@
       <v-tooltip v-if="inquiryButton" top>
         <template #activator="{ on }">
           <v-btn
+            elevation="5"
             fab
             dark
             color="button-default"
@@ -166,8 +172,8 @@ export default class extends Vue {
 }
 </script>
 <style lang="scss" scoped>
-#buttonSet {
+.button-set {
   right: 8px;
-  top: 8px;
+  top: 12px;
 }
 </style>

@@ -37,13 +37,13 @@
                 >
                   <v-select
                     v-model="item.type"
-                    :items="filterMenuType(item)"
+                    :items="MENU_TYPE"
                     label="*타입"
                     :error-messages="errors"
                   />
                 </ValidationProvider>
               </v-col>
-              <v-col cols="12" md="6">
+              <v-col cols="12" md="6" v-if="item.type !== 'G'">
                 <ValidationProvider
                   v-slot="{ errors }"
                   name="링크 URL"
@@ -53,29 +53,20 @@
                     v-model="item.url"
                     label="링크 URL"
                     :counter="255"
-                    :disabled="item.type === 'G'"
                     :error-messages="errors"
                     clearable
                   />
                 </ValidationProvider>
               </v-col>
-              <v-col cols="12" md="2">
-                <ValidationProvider
-                  v-slot="{ errors }"
-                  name="메뉴 순서"
-                  rules="required|numeric"
-                >
-                  <v-text-field
-                    v-model="item.displayOrder"
-                    label="*메뉴 순서"
-                    :error-messages="errors"
-                  />
-                </ValidationProvider>
+              <v-col v-if="item.type === 'G'" cols="12" md="4">
+                <v-text-field
+                  v-model="item.icon"
+                  label="메뉴 아이콘"
+                  append-icon="mdi-dock-window"
+                  @click:append="linkIconSite"
+                />
               </v-col>
-              <v-col v-if="item.level === 2" cols="12" md="4">
-                <v-text-field v-model="item.icon" label="메뉴 아이콘" />
-              </v-col>
-              <v-col v-if="item.level === 2" cols="12" md="1">
+              <v-col v-if="item.type === 'G'" cols="12" md="1">
                 <v-icon> {{ item.icon }}</v-icon>
               </v-col>
             </v-row>
@@ -101,7 +92,7 @@
 <script lang="ts">
 import { Component, Prop, PropSync, Vue, Watch } from "vue-property-decorator";
 import type { SelectItem, TableMenuEntity } from "@/common/types";
-import { getCodesApi, patchApi, postApi } from "@/utils/apis";
+import { getCodesApi, putApi, postApi } from "@/utils/apis";
 import { ValidationObserver } from "vee-validate";
 
 interface MenuVO extends TableMenuEntity {
@@ -120,18 +111,11 @@ export default class extends Vue {
   MENU_TYPE: SelectItem[] = [];
   isNew = false;
 
-  protected beforeDestroy(): void {
-    this.syncedDialog = false;
-    this.$nextTick(() => {
-      this.syncedDialog = false;
-    });
-  }
-
-  protected async beforeMount(): Promise<void> {
+  protected async created(): Promise<void> {
     this.MENU_TYPE = await getCodesApi("MENU_TYPE");
   }
 
-  @Watch("syncedDialog")
+  @Watch("syncedDialog", { immediate: true })
   protected watchDialog(val: boolean): void {
     if (val) {
       this.isNew = !this.item.id;
@@ -149,7 +133,7 @@ export default class extends Vue {
     if (!isValid) {
       return;
     }
-    this.isNew ? await this.create() : await this.patch();
+    this.isNew ? await this.create() : await this.put();
   }
 
   protected async create(): Promise<void> {
@@ -166,9 +150,9 @@ export default class extends Vue {
     }
   }
 
-  protected async patch(): Promise<void> {
+  protected async put(): Promise<void> {
     this.saving = true;
-    const response = await patchApi<TableMenuEntity>(
+    const response = await putApi<TableMenuEntity>(
       `${this.ENDPOINT_URL}${this.item.id}/`,
       this.item,
     );
@@ -180,11 +164,8 @@ export default class extends Vue {
     }
   }
 
-  protected filterMenuType(item: MenuVO): SelectItem[] {
-    if (item.parentId !== 1) {
-      return this.MENU_TYPE.filter((item) => item.value !== "G");
-    }
-    return this.MENU_TYPE;
+  protected linkIconSite(): void {
+    window.open("https://materialdesignicons.com/cdn/5.8.55/", "_blank");
   }
 }
 </script>

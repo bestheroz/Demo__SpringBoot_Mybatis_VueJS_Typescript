@@ -60,8 +60,8 @@
                     v-if="AUTHORITY"
                     v-model.number="item.authority"
                     :items="
-                      AUTHORITY.map((item) => {
-                        return { value: parseInt(item.value), text: item.text };
+                      AUTHORITY.map((code) => {
+                        return { value: parseInt(code.value), text: code.text };
                       })
                     "
                     label="*권한"
@@ -165,14 +165,7 @@ export default class extends Vue {
   show2 = false;
   isNew = false;
 
-  protected beforeDestroy(): void {
-    this.syncedDialog = false;
-    this.$nextTick(() => {
-      this.syncedDialog = false;
-    });
-  }
-
-  protected async beforeMount(): Promise<void> {
+  protected async created(): Promise<void> {
     this.AUTHORITY = await getCodesApi("AUTHORITY");
   }
 

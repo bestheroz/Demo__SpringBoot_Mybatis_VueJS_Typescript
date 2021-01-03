@@ -61,7 +61,7 @@ const debounceTextEllipsis = () => {
           });
       })
       .then(() => {
-        store.dispatch("setFinishTextEllipsis", true);
+        store.dispatch("setFinishTextEllipsis", true).then();
       });
   });
 };

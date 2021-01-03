@@ -25,23 +25,11 @@ export interface DataTableHeader {
 }
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
-// export interface Pagination {
-//   page: number;
-//   sortBy: string[];
-//   sortDesc: boolean[];
-//   itemsPerPage: number; // -1 for All
-// }
-
-export interface DrawerItem {
-  id: number;
-  title: string;
-  icon?: string | null;
-  to?: string | null;
-  type?: string | null;
-  group?: string | null;
-  checked?: boolean | null;
-  depth?: number | null;
-  children?: DrawerItem[];
+export interface Pagination {
+  page: number;
+  sortBy: string[];
+  sortDesc: boolean[];
+  itemsPerPage: number; // -1 for All
 }
 
 export interface TableMemberEntity {
@@ -75,14 +63,9 @@ export interface TableMenuEntity {
   updatedBy?: string | null;
 }
 
-// export interface TableMenuAuthorityVO {
-//   authority?: number | null;
-//   menuIdList?: string | null;
-//   created?: Date | string | null;
-//   createdBy?: string | null;
-//   updated?: Date | string | null;
-//   updatedBy?: string | null;
-// }
+export interface DrawerItem extends TableMenuEntity {
+  children?: DrawerItem[];
+}
 
 export interface TableCodeGroupEntity {
   codeGroup?: string | null;
@@ -104,4 +87,18 @@ export interface TableCodeEntity {
   createdBy?: string | null;
   updated?: Date | string | null;
   updatedBy?: string | null;
+}
+export interface TableMemberMenuEntity {
+  authority?: number | null;
+  id?: number | null;
+  name?: string | null;
+  type?: string | null;
+  parentId?: number | null;
+  displayOrder?: number | null;
+  icon?: string | null;
+  url?: string | null;
+  createdBy?: string | null;
+  created?: Date | string | null;
+  updatedBy?: string | null;
+  updated?: Date | string | null;
 }

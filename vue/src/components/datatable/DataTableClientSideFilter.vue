@@ -14,7 +14,6 @@
         dense
         clearable
         hide-details
-        style="width: 95%"
       />
       <v-select
         v-else-if="data.filterable !== false && data.filterType === 'switch'"
@@ -24,7 +23,6 @@
         dense
         clearable
         hide-details
-        style="width: 95%"
       />
       <v-text-field
         v-else-if="data.filterable !== false"
@@ -33,7 +31,6 @@
         dense
         hide-details
         clearable
-        style="width: 95%"
       />
     </td>
   </tr>
@@ -43,14 +40,14 @@
 import { Component, Emit, Prop, Vue, Watch } from "vue-property-decorator";
 import type { DataTableHeader, SelectItem } from "@/common/types";
 import _, { DebouncedFunc } from "lodash";
-import qs from "qs";
 
-@Component({ name: "DataTableServerFilter" })
+@Component({ name: "DataTableClientSideFilter" })
 export default class extends Vue {
-  @Prop({ required: true }) readonly header!: DataTableHeader[];
-  /* eslint-disable */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  @Prop({ required: true }) readonly output!: any[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   @Prop({ required: true }) readonly input!: any[];
-  /* eslint-enable */
+  @Prop({ required: true }) readonly header!: DataTableHeader[];
   @Prop({ type: Boolean, default: false }) readonly filterFirstColumn!: boolean;
 
   readonly debounceHeader: DebouncedFunc<
@@ -66,26 +63,25 @@ export default class extends Vue {
   > = _.debounce(this.debouncedFilter, 100);
 
   readonly USE_YN: SelectItem[] = [
-    { value: "Y", text: "예" },
-    { value: "N", text: "아니요" },
+    { value: "true", text: "예" },
+    { value: "false", text: "아니요" },
   ];
 
   filter: string[] = [];
   filterMap: string[] = [];
 
   @Watch("header", { deep: true, immediate: true })
-  watchHeader(): void {
+  protected watchHeader(): void {
     this.debounceHeader && this.debounceHeader();
   }
 
   @Watch("input", { deep: true, immediate: true })
   @Watch("filter", { deep: true })
-  @Emit("update:query-string")
-  watchFilter(): void {
+  protected watchFilter(): void {
     this.debounceFilter && this.debounceFilter();
   }
 
-  debouncedHeader(): void {
+  protected debouncedHeader(): void {
     const filter: string[] = [];
     const filterMap: string[] = [];
     this.header.forEach((value: DataTableHeader) => {
@@ -100,19 +96,26 @@ export default class extends Vue {
     this.filterMap = filterMap;
   }
 
-  @Emit("update:query-string")
-  debouncedFilter(): string {
-    /* eslint-disable */
-    const result: any = Object.create(null);
-    /* eslint-enable */
+  @Emit("update:output")
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  protected debouncedFilter(): any[] {
+    let output = this.input;
     this.filter &&
       this.filter.forEach((filter: string | undefined | null, index) => {
         if (filter === undefined || filter === "" || filter === null) {
           return;
         }
-        result[this.filterMap?.[index]] = filter;
+        output = output.filter(
+          (value) =>
+            !this.filterMap[index] ||
+            value[this.filterMap[index]] === undefined ||
+            value[this.filterMap[index]]
+              .toString()
+              .toUpperCase()
+              .indexOf(filter.toUpperCase()) !== -1,
+        );
       });
-    return qs.stringify(result);
+    return output;
   }
 }
 </script>

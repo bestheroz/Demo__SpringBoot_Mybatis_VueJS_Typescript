@@ -1,76 +1,56 @@
 <template>
   <div>
+    <button-set
+      reload-button
+      @click:reload="getList"
+      add-button
+      @click:add="onAdd"
+      save-button
+      save-text="순서저장"
+      @click:save="saveItems"
+    />
     <v-card flat>
-      <button-set reload-button @click:reload="getList" />
       <v-card-text>
-        <v-data-table
-          fixed-header
-          :loading="loading"
-          :headers="headers"
-          :items="items"
-          item-key="id"
-          disable-sort
-          disable-filtering
-          disable-pagination
-          dense
-          hide-default-footer
-          :height="height"
-        >
-          <template v-if="MENU_TYPE" #[`item.type`]="{ item }">
-            {{ item.type | getCodeText(MENU_TYPE) }}
-          </template>
-          <template #[`item.name`]="{ item }">
-            <span :style="`padding-left: ${80 * (item.level - 1)}px;`">
-              <v-icon v-if="item.icon"> {{ item.icon }} </v-icon>
-              {{ item.name }}
-            </span>
-          </template>
-          <template #[`item.updated`]="{ item }">
-            {{ item.updated | formatDatetime }}
-          </template>
-          <template #[`item.updatedBy`]="{ item }">
-            {{ item.updatedBy | formatMemberNm }}
-          </template>
-          <template #[`item.action`]="{ item }">
-            <v-btn
-              class="mx-1"
-              tile
-              color="button-add"
-              small
-              :loading="saving"
-              :disabled="item.level === 3"
-              @click="onAdd(item)"
-            >
-              하위메뉴입력
-            </v-btn>
-            <v-btn
-              class="mx-1"
-              tile
-              color="button-edit"
-              small
-              :loading="saving"
-              :disabled="item.name === '///'"
-              @click="onEdit(item)"
-            >
-              수정
-            </v-btn>
-            <v-btn
-              class="mx-1"
-              tile
-              color="button-delete"
-              small
-              :loading="saving"
-              :disabled="!item.parentId"
-              @click="onDelete(item)"
-            >
-              삭제
-            </v-btn>
-          </template>
-        </v-data-table>
+        <v-list dense>
+          <draggable
+            tag="div"
+            v-model="items"
+            v-bind="dragOptions"
+            handle=".drag-handle"
+          >
+            <transition-group type="transition" name="flip-list">
+              <v-list-item
+                :key="item.id"
+                v-for="item in items"
+                class="elevation-1"
+                dense
+                @dblclick="onEdit(item)"
+              >
+                <v-list-item-icon>
+                  <v-icon v-text="item.icon"></v-icon>
+                </v-list-item-icon>
+                <v-list-item-content style="display: inline-block" class="py-0">
+                  <v-icon color="secondary" class="drag-handle">
+                    mdi-sort
+                  </v-icon>
+                  {{ item.name }}
+                </v-list-item-content>
+                <v-list-item-content style="display: inline-block" class="py-0">
+                  {{ item.url }}
+                </v-list-item-content>
+                <v-list-item-action style="display: inline-block" class="my-0">
+                  <v-icon color="button-delete" @click="onDelete(item)">
+                    mdi-minus
+                  </v-icon>
+                </v-list-item-action>
+              </v-list-item>
+            </transition-group>
+          </draggable>
+        </v-list>
       </v-card-text>
     </v-card>
     <menu-edit-dialog
-      :item="item"
+      :item="editItem"
       :dialog.sync="dialog"
       @finished="getList"
       v-if="dialog"
@@ -80,81 +60,39 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import type {
-  DataTableHeader,
-  SelectItem,
-  TableMenuEntity,
-} from "@/common/types";
-import { deleteApi, getApi, getCodesApi } from "@/utils/apis";
+import type { TableMenuEntity } from "@/common/types";
+import { deleteApi, getApi, postApi } from "@/utils/apis";
 import { confirmDelete } from "@/utils/alerts";
 import MenuEditDialog from "@/views/admin/menu/components/MenuEditDialog.vue";
 import ButtonSet from "@/components/speeddial/ButtonSet.vue";
+import draggable from "vuedraggable";
 
 interface MenuVO extends TableMenuEntity {
-  level: number;
+  children: TableMenuEntity[];
 }
 
 @Component({
   name: "MenuList",
-  components: { ButtonSet, MenuEditDialog },
+  components: { ButtonSet, MenuEditDialog, draggable },
 })
 export default class extends Vue {
   @Prop({ required: true }) readonly height!: number | string;
   items: TableMenuEntity[] = [];
   loading = false;
   saving = false;
-  MENU_TYPE: SelectItem[] = [];
+  drag = false;
 
-  item: TableMenuEntity = Object.create(null);
+  editItem: TableMenuEntity = Object.create(null);
   dialog = false;
 
-  get headers(): DataTableHeader[] {
-    return [
-      {
-        text: "타입",
-        align: "center",
-        value: "type",
-        filterType: "select",
-        filterSelectItem: this.MENU_TYPE,
-        width: "5rem",
-      },
-      {
-        text: "메뉴명",
-        align: "start",
-        value: "name",
-      },
-      {
-        text: "메뉴 순서",
-        align: "end",
-        value: "displayOrder",
-        width: "5rem",
-      },
-      {
-        text: "Action",
-        align: "center",
-        value: "action",
-        filterable: false,
-        width: "18rem",
-      },
-      {
-        text: "작업 일시",
-        align: "center",
-        value: "updated",
-        filterable: false,
-        width: "10rem",
-      },
-      {
-        text: "작업자",
-        align: "start",
-        value: "updatedBy",
-        filterable: false,
-        width: "7rem",
-      },
-    ];
+  get dragOptions(): { animation: number } {
+    return {
+      animation: 200,
+    };
   }
 
-  protected async beforeMount(): Promise<void> {
-    this.MENU_TYPE = await getCodesApi("MENU_TYPE");
+  protected mounted(): void {
+    this.getList();
   }
 
   public async getList(): Promise<void> {
@@ -165,15 +103,13 @@ export default class extends Vue {
     this.items = response?.data || [];
   }
 
-  protected onAdd(value: TableMenuEntity): void {
-    this.item = {
-      parentId: value.id,
-    };
+  protected onAdd(): void {
+    this.editItem = { parentId: 0, displayOrder: 0 };
     this.dialog = true;
   }
 
   protected onEdit(value: TableMenuEntity): void {
-    this.item = { ...value };
+    this.editItem = { ...value };
     this.dialog = true;
   }
 
@@ -189,6 +125,29 @@ export default class extends Vue {
         await this.$store.dispatch("initDrawers");
         this.getList().then();
       }
+    }
+  }
+
+  protected async saveItems(): Promise<void> {
+    let parentId = 0;
+    this.saving = true;
+    const response = await postApi<TableMenuEntity[]>(
+      "admin/menus/save",
+      this.items.map((item, index) => {
+        if (item.type === "G") {
+          parentId = item.id || 0;
+        }
+        return {
+          ...item,
+          displayOrder: index + 1,
+          parentId: item.type === "G" ? 0 : parentId,
+        };
+      }),
+    );
+    this.saving = false;
+    if (response?.code?.startsWith("S")) {
+      await this.$store.dispatch("initDrawers");
+      this.getList().then();
     }
   }
 }

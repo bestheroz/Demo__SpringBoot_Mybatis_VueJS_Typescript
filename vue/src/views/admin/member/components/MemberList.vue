@@ -1,16 +1,18 @@
 <template>
   <div>
+    <button-set
+      :loading="saving"
+      add-button
+      @click:add="addItem"
+      delete-button
+      :delete-disabled="!selected || selected.length === 0"
+      @click:delete="deleteItem"
+      reload-button
+      @click:reload="getList"
+      excel-button
+      @click:excel="excel"
+    />
     <v-card flat>
-      <button-set
-        :loading="saving"
-        add-button
-        delete-button
-        :delete-disabled="!selected || selected.length === 0"
-        reload-button
-        @click:add="addItem"
-        @click:delete="deleteItem"
-        @click:reload="getList"
-      />
       <v-card-text class="pb-0">
         <v-data-table
           v-model="selected"
@@ -18,9 +20,8 @@
           fixed-header
           :loading="loading"
           :headers="headers"
-          :items="filteredItems"
-          :sort-by="sortBy"
-          :sort-desc="sortDesc"
+          :items="items"
+          :options.sync="pagination"
           item-key="id"
           single-select
           show-select
@@ -30,9 +31,8 @@
         >
           <template #header>
             <data-table-filter
-              :header="headers"
-              :output.sync="filteredItems"
-              :input="items"
+              :headers="headers"
+              :filter.sync="datatableFilter"
             />
           </template>
           <template #[`item.id`]="{ item }">
@@ -71,6 +71,7 @@
       </v-card-text>
     </v-card>
     <member-edit-dialog
+      ref="refEditDialog"
       :item="item"
       :dialog.sync="dialog"
       @finished="getList"
@@ -80,42 +81,48 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import type {
   DataTableHeader,
+  Pagination,
   SelectItem,
   TableMemberEntity,
 } from "@/common/types";
-import { deleteApi, getApi, getCodesApi } from "@/utils/apis";
+import { deleteApi, getApi, getCodesApi, getExcelApi } from "@/utils/apis";
 import envs from "@/constants/envs";
-import DataTableFilter from "@/components/datatable/DataTableFilter.vue";
 import ButtonSet from "@/components/speeddial/ButtonSet.vue";
 import MemberEditDialog from "@/views/admin/member/components/MemberEditDialog.vue";
 import dayjs from "dayjs";
 import { confirmDelete } from "@/utils/alerts";
+import DataTableFilter from "@/components/datatable/DataTableFilter.vue";
+import qs from "qs";
 
 @Component({
   name: "MemberList",
   components: {
+    DataTableFilter,
     MemberEditDialog,
     ButtonSet,
-    DataTableFilter,
   },
 })
 export default class extends Vue {
   @Prop({ required: true }) readonly height!: number | string;
   readonly envs: typeof envs = envs;
-  readonly ENDPOINT_URL: string = "admin/members/";
   selected: TableMemberEntity[] = [];
-  sortBy: string[] = ["authority"];
-  sortDesc: boolean[] = [true];
+  pagination: Pagination = {
+    page: 1,
+    sortBy: ["authority"],
+    sortDesc: [true],
+    itemsPerPage: 20,
+  };
+
   items: TableMemberEntity[] = [];
-  filteredItems: TableMemberEntity[] = [];
   loading = false;
   saving = false;
   item: TableMemberEntity = { expired: null };
   AUTHORITY: SelectItem[] = [];
   dialog = false;
+  datatableFilter: { [p: string]: string | number } = {};
 
   get headers(): DataTableHeader[] {
     return [
@@ -167,15 +174,25 @@ export default class extends Vue {
     ];
   }
 
-  protected async beforeMount(): Promise<void> {
+  get queryString(): string {
+    return qs.stringify({
+      filter: this.datatableFilter,
+      ...this.pagination,
+    });
+  }
+
+  protected async created(): Promise<void> {
     this.AUTHORITY = await getCodesApi("AUTHORITY");
   }
 
+  @Watch("queryString")
   public async getList(): Promise<void> {
     this.selected = [];
     this.items = [];
     this.loading = true;
-    const response = await getApi<TableMemberEntity[]>(this.ENDPOINT_URL);
+    const response = await getApi<TableMemberEntity[]>(
+      `admin/members/?${this.queryString}`,
+    );
     this.loading = false;
     this.items = response?.data || [];
   }
@@ -205,6 +222,12 @@ export default class extends Vue {
         this.getList().then();
       }
     }
+  }
+
+  protected async excel(): Promise<void> {
+    this.saving = true;
+    await getExcelApi("admin/members/download/excel");
+    this.saving = false;
   }
 }
 </script>

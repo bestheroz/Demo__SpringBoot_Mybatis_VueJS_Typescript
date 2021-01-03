@@ -3,20 +3,32 @@
     <v-row no-gutters>
       <v-col cols="12">
         <v-card flat>
-          <v-card-text>
-            <v-select
+          <v-card-text class="py-0">
+            <v-chip-group
               v-model="authority"
-              label="권한 선택"
-              :loading="loading"
-              :items="AUTHORITY"
+              column
+              active-class="primary"
+              mandatory
               dense
-              hide-details
-            />
+            >
+              <v-chip
+                v-for="item in AUTHORITY"
+                :value="item.value"
+                filter
+                :key="item.value"
+              >
+                {{ item.text }}
+              </v-chip>
+            </v-chip-group>
           </v-card-text>
         </v-card>
       </v-col>
       <v-col cols="12">
-        <menu-authority-list :authority="authority" height="75vh" />
+        <member-menu-list
+          :authority="authority"
+          height="70vh"
+          v-if="authority"
+        />
       </v-col>
     </v-row>
   </div>
@@ -24,29 +36,22 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import type { SelectItem } from "@/common/types";
+import { SelectItem } from "@/common/types";
+import MemberMenuList from "@/views/admin/member/menu/components/MemberMenuList.vue";
 import { getCodesApi } from "@/utils/apis";
-import MenuAuthorityList from "@/views/admin/menuauthority/components/MenuAuthorityList.vue";
 
 @Component({
-  name: "MenuAuthority",
+  name: "MemberMenu",
   components: {
-    MenuAuthorityList,
+    MemberMenuList,
   },
 })
 export default class extends Vue {
   authority: string | null = null;
-  loading = false;
   AUTHORITY: SelectItem[] = [];
 
-  protected mounted(): void {
-    this.getCodeList();
-  }
-
-  protected async getCodeList(): Promise<void> {
-    this.loading = true;
+  protected async created(): Promise<void> {
     const data: SelectItem[] = await getCodesApi("AUTHORITY");
-    this.loading = false;
     this.AUTHORITY =
       data.filter(
         (value) =>

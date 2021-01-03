@@ -44,7 +44,7 @@ axiosInstance.interceptors.response.use(
         return;
       }
     }
-    if (process.env.NODE_ENV === "local") {
+    if (process.env.NODE_ENV === "development") {
       alertAxiosError(error);
     }
     console.warn(error);

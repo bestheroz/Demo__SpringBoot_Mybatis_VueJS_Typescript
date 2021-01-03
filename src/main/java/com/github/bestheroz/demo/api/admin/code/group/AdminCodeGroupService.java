@@ -1,4 +1,4 @@
-package com.github.bestheroz.demo.api.admin.codegroup;
+package com.github.bestheroz.demo.api.admin.code.group;
 
 import com.github.bestheroz.demo.api.entity.code.TableCodeRepository;
 import com.github.bestheroz.demo.api.entity.code.group.TableCodeGroupRepository;
@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class AdminCodeGroupService {
   @Resource
   private TableCodeGroupRepository tableCodeGroupRepository;
-
   @Resource
   private TableCodeRepository tableCodeRepository;
 

@@ -8,7 +8,7 @@
             <v-subheader>
               parse Date
               <br />
-              {{ new Date() }}}
+              {{ now }}}
             </v-subheader>
           </v-col>
           <v-col cols="4" class="text-right">
@@ -26,7 +26,7 @@
             <v-subheader>
               parse string
               <br />
-              {{ new Date().toISOString() }}
+              {{ now.toISOString() }}
             </v-subheader>
           </v-col>
           <v-col cols="4" class="text-right">
@@ -44,7 +44,7 @@
             <v-subheader>
               parse number
               <br />
-              {{ new Date().getTime() }}
+              {{ now.getTime() }}
             </v-subheader>
           </v-col>
           <v-col cols="4" class="text-right">
@@ -68,7 +68,7 @@
             <v-subheader>
               parse Date
               <br />
-              {{ new Date() }}}
+              {{ now }}}
             </v-subheader>
           </v-col>
           <v-col cols="4" class="text-right">
@@ -86,7 +86,7 @@
             <v-subheader>
               parse Date
               <br />
-              {{ new Date() }}}
+              {{ now }}}
             </v-subheader>
           </v-col>
           <v-col cols="4" class="text-right">
@@ -179,7 +179,11 @@ export default class extends Vue {
   start3: DateType = dayjs().add(-1, "day").startOf("day").toDate();
   end3: DateType = dayjs().add(1, "day").endOf("day").toDate();
 
-  getType(val: DateType): string {
+  get now(): Date {
+    return new Date();
+  }
+
+  protected getType(val: DateType): string {
     return typeof val === "object"
       ? val instanceof Date
         ? "Date"

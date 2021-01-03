@@ -4,7 +4,7 @@
       <v-slide-y-transition appear>
         <v-card :min-width="600" width="40%" class="elevation-12">
           <v-toolbar color="primary" dark flat>
-            <v-toolbar-title>Login at {{ title }}</v-toolbar-title>
+            <v-toolbar-title>Login at demo</v-toolbar-title>
             <v-spacer />
             <template #heading>
               <div class="text-center">
@@ -102,7 +102,7 @@ export default class extends Vue {
   loading = false;
   dialog = false;
 
-  protected async beforeMount(): Promise<void> {
+  protected async created(): Promise<void> {
     this.title = await getVariableApi("title");
     this.$vuetify.theme.dark = false;
   }

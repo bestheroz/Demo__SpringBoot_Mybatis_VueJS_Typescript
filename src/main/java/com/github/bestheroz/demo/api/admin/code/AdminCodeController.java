@@ -26,18 +26,6 @@ public class AdminCodeController {
     );
   }
 
-  @GetMapping(value = "{codeGroup}/{code}")
-  ResponseEntity<ApiResult> getItem(
-    @PathVariable(value = "codeGroup") final String codeGroup,
-    @PathVariable(value = "code", required = false) final String code
-  ) {
-    return Result.ok(
-      this.tableCodeRepository.getItemByKey(
-          Map.of("codeGroup", codeGroup, "code", code)
-        )
-    );
-  }
-
   @PostMapping(value = "{codeGroup}")
   public ResponseEntity<ApiResult> post(
     @PathVariable(value = "codeGroup") final String codeGroup,
@@ -48,16 +36,16 @@ public class AdminCodeController {
     return Result.created();
   }
 
-  @PatchMapping(value = "{codeGroup}/{code}")
-  public ResponseEntity<ApiResult> patch(
+  @PutMapping(value = "{codeGroup}/{code}")
+  public ResponseEntity<ApiResult> put(
     @PathVariable(value = "codeGroup") final String codeGroup,
     @PathVariable(value = "code") final String code,
     @RequestBody final TableCodeEntity tableCodeEntity
   ) {
     this.tableCodeRepository.updateByKey(
-        tableCodeEntity,
-        Map.of("codeGroup", codeGroup, "code", code)
-      );
+      tableCodeEntity,
+      Map.of("codeGroup", codeGroup, "code", code)
+    );
     return Result.ok();
   }
 
@@ -67,8 +55,8 @@ public class AdminCodeController {
     @PathVariable(value = "code") final String code
   ) {
     this.tableCodeRepository.deleteByKey(
-        Map.of("codeGroup", codeGroup, "code", code)
-      );
+      Map.of("codeGroup", codeGroup, "code", code)
+    );
     return Result.ok();
   }
 }

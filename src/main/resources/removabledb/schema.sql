@@ -7,7 +7,6 @@ CREATE TABLE MEMBER
     LOGIN_FAIL_CNT INT(1)  DEFAULT 0        NOT NULL,
     AVAILABLE         BOOLEAN               NOT NULL,
     THEME          VARCHAR(10)              NULL,
-    TIMEOUT        INT(10) DEFAULT 7200     NOT NULL,
     TOKEN          VARCHAR(4000)            NULL,
     EXPIRED        DATETIME                 NOT NULL,
     CREATED_BY     VARCHAR(100)             NOT NULL,

@@ -17,8 +17,8 @@ public class TableMemberEntity
   private String name;
   private Integer authority;
   private Integer loginFailCnt;
-  private Instant expired;
   private boolean available;
   private String theme;
   private String token;
+  private Instant expired;
 }

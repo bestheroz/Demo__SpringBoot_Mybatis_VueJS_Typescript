@@ -179,6 +179,11 @@
           border-bottom: thin solid var(--v-table-border-base);
         }
       }
+      .v-list-group__items {
+        .v-list-item--active {
+          background-color: var(--v-table-border-base);
+        }
+      }
     }
   }
 
