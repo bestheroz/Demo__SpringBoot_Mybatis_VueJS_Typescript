@@ -140,8 +140,14 @@ const drawer = {
     clearDrawer({ commit }: ActionContext<any, any>): void {
       commit("setDrawers", null);
     },
-    setSelected({ commit }: ActionContext<any, any>, selected: number): void {
+    setMenuSelected(
+      { commit }: ActionContext<any, any>,
+      selected: number,
+    ): void {
       commit("setSelected", selected);
+    },
+    clearMenuSelected({ commit }: ActionContext<any, any>): void {
+      commit("setSelected", null);
     },
   },
 };

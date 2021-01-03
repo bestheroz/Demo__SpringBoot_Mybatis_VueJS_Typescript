@@ -95,7 +95,7 @@ export default class extends Vue {
   }
 
   protected movePage(item: DrawerItem): void {
-    this.$store.dispatch("setSelected", item.id || 0);
+    this.$store.dispatch("setMenuSelected", item.id || 0);
     if (!item.url || item.url === this.$route.fullPath) {
       return;
     }
