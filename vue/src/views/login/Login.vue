@@ -88,7 +88,6 @@ import {
   axiosInstance,
   getVariableApi,
 } from "@/utils/apis";
-import { alertError } from "@/utils/alerts";
 import NewPasswordDialog from "@/views/login/components/NewPasswordDialog.vue";
 import { ValidationObserver } from "vee-validate";
 import pbkdf2 from "pbkdf2";
@@ -154,7 +153,7 @@ export default class extends Vue {
         this.$toast.clear();
         await this.$router.push("/");
       } else {
-        alertError(response?.data?.message);
+        this.$toast.error(response?.data?.message);
       }
     } catch (e) {
       alertAxiosError(e);
