@@ -36,7 +36,7 @@ export default class extends Vue {
   selected: TableCodeGroupEntity = Object.create(null);
 
   get codeGroup(): string {
-    return this.selected?.codeGroup;
+    return this.selected?.codeGroup || "";
   }
 
   protected mounted(): void {
