@@ -1,9 +1,7 @@
 package com.github.bestheroz.standard.context.db.checker;
 
-import static com.github.bestheroz.standard.common.mybatis.SqlCommand.EXCLUDE_FIELD_SET;
-
 import com.github.bestheroz.standard.common.mybatis.SqlCommand;
-import com.google.common.base.CaseFormat;
+import com.github.bestheroz.standard.common.util.CaseUtils;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.sql.ResultSet;
@@ -42,7 +40,6 @@ public class DbTableVOCheckerContext {
   );
   public static final Set<String> NUMBER_JDBC_TYPE_SET = Set.of(
     "INTEGER",
-    "TINYINT",
     "INT",
     "INT UNSIGNED",
     "NUMBER",
@@ -56,7 +53,10 @@ public class DbTableVOCheckerContext {
     "DATE",
     "DATETIME"
   );
-  public static final Set<String> BOOLEAN_JDBC_TYPE_SET = Set.of("BOOLEAN");
+  public static final Set<String> BOOLEAN_JDBC_TYPE_SET = Set.of(
+    "BOOLEAN",
+    "TINYINT"
+  );
   public static final Set<String> BYTE_JDBC_TYPE_SET = Set.of("BLOB");
 
   private String resolveBasePackage() {
@@ -75,9 +75,9 @@ public class DbTableVOCheckerContext {
     final Set<Class<?>> candidates = new LinkedHashSet<>();
     final String packageSearchPath =
       ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX +
-      this.resolveBasePackage() +
-      "/" +
-      "**/Table*Entity.class";
+        this.resolveBasePackage() +
+        "/" +
+        "**/Table*Entity.class";
     for (final Resource resource : resourcePatternResolver.getResources(
       packageSearchPath
     )) {
@@ -128,7 +128,7 @@ public class DbTableVOCheckerContext {
             )
             .map(Field::getName)
             .distinct()
-            .filter(item -> !EXCLUDE_FIELD_SET.contains(item))
+            .filter(item -> !SqlCommand.EXCLUDE_FIELD_SET.contains(item))
             .collect(Collectors.toSet());
           final long fieldSize = fieldsSet.size();
           if (metaInfo.getColumnCount() != fieldSize) {
@@ -145,8 +145,7 @@ public class DbTableVOCheckerContext {
             // 2. VO변수 자료형 == 테이블 컬럼 자료형 체크
             for (int i = 0; i < metaInfo.getColumnCount(); i++) {
               final String columnName = metaInfo.getColumnName(i + 1);
-              final String camelColumnName = CaseFormat.LOWER_UNDERSCORE.to(
-                CaseFormat.LOWER_CAMEL,
+              final String camelColumnName = CaseUtils.getSnakeCaseToCamelCase(
                 columnName
               );
               if (fieldsSet.contains(camelColumnName)) {
@@ -168,17 +167,17 @@ public class DbTableVOCheckerContext {
                 final String columnTypeName = metaInfo.getColumnTypeName(i + 1);
                 if (
                   STRING_JDBC_TYPE_SET.contains(columnTypeName) &&
-                  !SqlCommand.VARCHAR_JAVA_TYPE_SET.contains(fieldClassName) ||
-                  NUMBER_JDBC_TYPE_SET.contains(columnTypeName) &&
-                  !SqlCommand.NUMBER_JAVA_TYPE_SET.contains(fieldClassName) ||
-                  DATETIME_JDBC_TYPE_SET.contains(columnTypeName) &&
-                  !SqlCommand.TIMESTAMP_JAVA_TYPE_SET.contains(
-                    fieldClassName
-                  ) ||
-                  BOOLEAN_JDBC_TYPE_SET.contains(columnTypeName) &&
-                  !SqlCommand.BOOLEAN_JAVA_TYPE_SET.contains(fieldClassName) ||
-                  BYTE_JDBC_TYPE_SET.contains(columnTypeName) &&
-                  !SqlCommand.BLOB_JAVA_TYPE_SET.contains(fieldClassName)
+                    !SqlCommand.VARCHAR_JAVA_TYPE_SET.contains(fieldClassName) ||
+                    NUMBER_JDBC_TYPE_SET.contains(columnTypeName) &&
+                      !SqlCommand.NUMBER_JAVA_TYPE_SET.contains(fieldClassName) ||
+                    DATETIME_JDBC_TYPE_SET.contains(columnTypeName) &&
+                      !SqlCommand.TIMESTAMP_JAVA_TYPE_SET.contains(
+                        fieldClassName
+                      ) ||
+                    BOOLEAN_JDBC_TYPE_SET.contains(columnTypeName) &&
+                      !SqlCommand.BOOLEAN_JAVA_TYPE_SET.contains(fieldClassName) ||
+                    BYTE_JDBC_TYPE_SET.contains(columnTypeName) &&
+                      !SqlCommand.BLOB_JAVA_TYPE_SET.contains(fieldClassName)
                 ) {
                   log.warn(
                     "자료형이 일치하지 않음 {}.{}({}) != {}.{}({})",
@@ -211,8 +210,7 @@ public class DbTableVOCheckerContext {
               final String fieldType;
               final String columnTypeName = metaInfo.getColumnTypeName(i + 1);
               final String columnName = metaInfo.getColumnName(i + 1);
-              final String camelColumnName = CaseFormat.LOWER_UNDERSCORE.to(
-                CaseFormat.LOWER_CAMEL,
+              final String camelColumnName = CaseUtils.getSnakeCaseToCamelCase(
                 columnName
               );
               if (STRING_JDBC_TYPE_SET.contains(columnTypeName)) {

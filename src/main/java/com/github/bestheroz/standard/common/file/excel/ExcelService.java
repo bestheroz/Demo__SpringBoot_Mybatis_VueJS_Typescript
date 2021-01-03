@@ -1,10 +1,12 @@
 package com.github.bestheroz.standard.common.file.excel;
 
-import com.github.bestheroz.standard.common.util.DateUtils;
 import com.github.bestheroz.standard.common.util.FileUtils;
 import com.github.bestheroz.standard.common.util.MapperUtils;
 import com.github.bestheroz.standard.context.abstractview.AbstractExcelXView;
-import java.util.HashMap;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
@@ -34,33 +36,32 @@ public class ExcelService extends AbstractExcelXView {
     final HttpServletRequest request,
     final HttpServletResponse response
   ) {
-    @SuppressWarnings("unchecked")
-    final List<ExcelVO> excelVOs = (List<ExcelVO>) model.get(
+    @SuppressWarnings("unchecked") final List<ExcelVO> excelVOs = (List<ExcelVO>) model.get(
       AbstractExcelXView.EXCEL_VOS
     );
-    final List<HashMap> listData = MapperUtils.toArrayList(
-      model.get(AbstractExcelXView.LIST_DATA),
-      HashMap.class
+    final JsonArray listData = MapperUtils.toJsonArray(
+      model.get(AbstractExcelXView.LIST_DATA)
     );
     final String fileName = FileUtils.getEncodedFileName(
       request,
       (String) model.get(AbstractExcelXView.FILE_NAME)
     );
 
+    final String now = Instant.now().truncatedTo(ChronoUnit.SECONDS).toString();
     response.setHeader(
       "Content-Disposition",
       "attachment;filename=" +
-      fileName +
-      "_" +
-      DateUtils.toStringNow("yyyyMMddHHmmss") +
-      AbstractExcelXView.EXTENSION +
-      ";"
+        fileName +
+        "_" +
+        now +
+        AbstractExcelXView.EXTENSION +
+        ";"
     );
 
     final SXSSFSheet sheet = workbook.createSheet("report");
     sheet.setRandomAccessWindowSize(100);
 
-    this.createColumnLabel(sheet, excelVOs);
+    this.createColumnLabel(sheet, excelVOs, now);
 
     this.addRowData(sheet, excelVOs, listData);
     this.autoSizeColumn(sheet, excelVOs);
@@ -68,7 +69,8 @@ public class ExcelService extends AbstractExcelXView {
 
   private void createColumnLabel(
     final SXSSFSheet sheet,
-    final List<ExcelVO> excelVOs
+    final List<ExcelVO> excelVOs,
+    final String now
   ) {
     final SXSSFRow row0 = sheet.createRow(0);
     final CellRangeAddress mergedRegion = new CellRangeAddress(
@@ -79,10 +81,7 @@ public class ExcelService extends AbstractExcelXView {
     );
     sheet.addMergedRegion(mergedRegion);
     final SXSSFCell cell10 = row0.createCell(0);
-    cell10.setCellValue(
-      "This report was generated at " +
-      DateUtils.toStringNow("yyyy-MM-dd HH:mm:ss")
-    );
+    cell10.setCellValue("This report was generated at " + now);
 
     final XSSFCellStyle cellStyle = (XSSFCellStyle) sheet
       .getWorkbook()
@@ -107,16 +106,18 @@ public class ExcelService extends AbstractExcelXView {
   private void addRowData(
     final SXSSFSheet sheet,
     final List<ExcelVO> excelVOs,
-    final List<HashMap> listData
+    final JsonArray listData
   ) {
     for (int i = 0; i < listData.size(); i++) {
       if (i != 0 && i % 100 == 0) {
         log.debug("[Excel]{} write {} rows", sheet.getSheetName(), i + 1);
       }
       final SXSSFRow row = sheet.createRow(3 + i);
-      final HashMap jo = listData.get(i);
+      final JsonObject jo = listData.get(i).getAsJsonObject();
       for (int j = 0; j < excelVOs.size(); j++) {
-        final String value = (String) jo.get(excelVOs.get(j).getDbColName());
+        final String value = jo
+          .get(excelVOs.get(j).getDbColName())
+          .getAsString();
         if (StringUtils.isNotEmpty(value)) {
           this.writeColumnData(excelVOs, j, row.createCell(j), value);
         }

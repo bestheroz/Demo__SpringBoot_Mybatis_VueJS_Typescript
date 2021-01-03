@@ -25,7 +25,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 @UtilityClass
 @Slf4j
 public class FileUtils {
-  private final String FILE_ROOT_PATH = "/workspace/uploadRootPath/";
+  private final String FILE_ROOT_PATH = System.getProperty("java.io.tmpdir");
   private final String STR_DOT = ".";
   private final String STR_INFO_MESSAGE = "Target for uploading file : {}";
   private final String STR_UNDERLINE = "_";
@@ -96,11 +96,11 @@ public class FileUtils {
         encodedFilename =
           URLDecoder.decode(
             "\"" +
-            new String(
-              fileName.getBytes(StandardCharsets.UTF_8),
-              StandardCharsets.ISO_8859_1
-            ) +
-            "\"",
+              new String(
+                fileName.getBytes(StandardCharsets.UTF_8),
+                StandardCharsets.ISO_8859_1
+              ) +
+              "\"",
             StandardCharsets.UTF_8.displayName()
           );
       }
@@ -113,7 +113,7 @@ public class FileUtils {
 
   public File getFile(final String filePath) {
     final String path = RegExUtils
-      .replaceAll(getFileRoot() + filePath, "\\\\", "/")
+      .replaceAll(getFileRoot() + "/" + filePath, "\\\\", "/")
       .replaceAll("//", "/");
     final File file = org.apache.commons.io.FileUtils.getFile(path);
     if (file.isDirectory() && !StringUtils.endsWith(path, "/")) {
@@ -143,7 +143,8 @@ public class FileUtils {
         ExceptionCode.ERROR_DIR_PATH_MUST_ENDS_WITH_SLASH
       );
     }
-    final File file = getFile(path);
+    log.debug(path);
+    final File file = new File(path);
     if (!NullUtils.exists(file)) {
       try {
         org.apache.commons.io.FileUtils.forceMkdir(file);
@@ -155,11 +156,7 @@ public class FileUtils {
   }
 
   private String getFileRoot() {
-    if (StringUtils.containsIgnoreCase(System.getProperty("os.name"), "win")) {
-      return "C:" + FILE_ROOT_PATH;
-    } else {
-      return FILE_ROOT_PATH;
-    }
+    return FILE_ROOT_PATH;
   }
 
   public boolean isExistsFile(final String filePath) {
@@ -210,20 +207,22 @@ public class FileUtils {
     return file;
   }
 
-  public void uploadFile(
+  public String uploadFile(
     final MultipartFile multipartFile,
     final String targetDirPath
   ) {
-    Optional
+    return Optional
       .ofNullable(multipartFile)
-      .ifPresent(
+      .map(
         item -> {
           validateFile(item);
           checkExistingDirectory(targetDirPath);
           final File file = uploadMultipartFile(targetDirPath, item);
           log.info(STR_INFO_MESSAGE, file.getAbsolutePath());
+          return file.getName();
         }
-      );
+      )
+      .orElse("error");
   }
 
   // 업로드 하려는 파일의 검증(MultipartFile 이용)
@@ -359,14 +358,14 @@ public class FileUtils {
   ) {
     return (
       fileType.extList.contains(getExtension(multipartFile)) &&
-      fileType.mimeTypeList.contains(getMimeType(multipartFile))
+        fileType.mimeTypeList.contains(getMimeType(multipartFile))
     );
   }
 
   public boolean isFileType(final File file, final FileType fileType) {
     return (
       fileType.extList.contains(getExtension(file)) &&
-      fileType.mimeTypeList.contains(getMimeType(file))
+        fileType.mimeTypeList.contains(getMimeType(file))
     );
   }
 
@@ -463,7 +462,6 @@ public class FileUtils {
         "image/bmp"
       )
     ),
-
     EXCEL(
       Set.of("xlsx", "xls"),
       Set.of(
@@ -474,7 +472,6 @@ public class FileUtils {
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
       )
     ),
-
     WORD(
       Set.of("docx", "doc", "dotx"),
       Set.of(
@@ -483,9 +480,7 @@ public class FileUtils {
         "application/vnd.openxmlformats-officedocument.wordprocessingml.template"
       )
     ),
-
     PDF(Set.of("pdf"), Set.of("application/pdf", "application/x-pdf")),
-
     ILLEGAL(
       Set.of("exe", "sh", "csh", "ai"),
       Set.of(
@@ -498,7 +493,6 @@ public class FileUtils {
         "application/postscript"
       )
     );
-
     private final Set<String> extList;
     private final Set<String> mimeTypeList;
 

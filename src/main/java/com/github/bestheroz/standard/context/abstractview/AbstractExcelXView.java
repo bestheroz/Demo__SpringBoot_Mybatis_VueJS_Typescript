@@ -3,7 +3,6 @@ package com.github.bestheroz.standard.context.abstractview;
 import com.github.bestheroz.standard.common.code.CodeVO;
 import com.github.bestheroz.standard.common.exception.BusinessException;
 import com.github.bestheroz.standard.common.file.excel.ExcelVO;
-import com.github.bestheroz.standard.common.util.DateUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -103,19 +102,6 @@ public abstract class AbstractExcelXView extends AbstractView {
     excelVOList.add(excelVO);
   }
 
-  // 엑셀 암호화 때문에 별도 구현
-  // @Override
-  // protected void writeToResponse(final HttpServletResponse response, final ByteArrayOutputStream baos) throws IOException {
-  // // Write content type and also length (determined via byte array).
-  // response.setContentType(this.getContentType());
-  // response.setContentLength(baos.size());
-  //
-  // // Flush byte array to servlet output stream.
-  // ServletOutputStream out = response.getOutputStream();
-  // baos.writeTo(out);
-  // out.flush();
-  // }
-
   @Override
   protected boolean generatesDownloadContent() {
     return true;
@@ -146,13 +132,13 @@ public abstract class AbstractExcelXView extends AbstractView {
 
       this.numberStyle = (XSSFCellStyle) workbook.createCellStyle();
       this.numberStyle.setDataFormat(
-          workbook.getCreationHelper().createDataFormat().getFormat("#,##0")
-        );
+        workbook.getCreationHelper().createDataFormat().getFormat("#,##0")
+      );
 
       this.doubleStyle = (XSSFCellStyle) workbook.createCellStyle();
       this.doubleStyle.setDataFormat(
-          workbook.getCreationHelper().createDataFormat().getFormat("#,##0.00")
-        );
+        workbook.getCreationHelper().createDataFormat().getFormat("#,##0.00")
+      );
 
       this.dateStyle = (XSSFCellStyle) workbook.createCellStyle();
       this.dateStyle.setAlignment(HorizontalAlignment.CENTER);
@@ -277,16 +263,13 @@ public abstract class AbstractExcelXView extends AbstractView {
       this.setDouble(cell, data);
     } else if (
       excelVOs.get(columnIdx).getCellType().equals(CellType.DATE) ||
-      excelVOs.get(columnIdx).getCellType().equals(CellType.DATE_YYYYMMDDHHMMSS)
+        excelVOs.get(columnIdx).getCellType().equals(CellType.DATE_YYYYMMDDHHMMSS)
     ) {
-      this.setDate(
-          cell,
-          DateUtils.toString(Instant.parse(data), "yyyy-MM-dd HH:mm:ss")
-        );
+      this.setDate(cell, Instant.parse(data).toString());
     } else if (
       excelVOs.get(columnIdx).getCellType().equals(CellType.DATE_YYYYMMDD)
     ) {
-      this.setDate(cell, DateUtils.toString(Instant.parse(data), "yyyy-MM-dd"));
+      this.setDate(cell, Instant.parse(data).toString());
     } else {
       try {
         Optional
@@ -298,7 +281,7 @@ public abstract class AbstractExcelXView extends AbstractView {
                 .filter(item -> item.getValue().equals(data))
                 .findFirst()
           )
-          .ifPresent(
+          .ifPresentOrElse(
             item -> {
               final String value = item.getText();
               if (
@@ -318,19 +301,27 @@ public abstract class AbstractExcelXView extends AbstractView {
               } else {
                 this.setString(cell, value);
               }
+            },
+            () -> {
+              if (
+                excelVOs
+                  .get(columnIdx)
+                  .getCellType()
+                  .equals(CellType.STRING_CENTER)
+              ) {
+                this.setStringCenter(cell, data);
+              } else if (
+                excelVOs
+                  .get(columnIdx)
+                  .getCellType()
+                  .equals(CellType.STRING_RIGHT)
+              ) {
+                this.setStringRight(cell, data);
+              } else {
+                this.setString(cell, data);
+              }
             }
           );
-        if (
-          excelVOs.get(columnIdx).getCellType().equals(CellType.STRING_CENTER)
-        ) {
-          this.setStringCenter(cell, data);
-        } else if (
-          excelVOs.get(columnIdx).getCellType().equals(CellType.STRING_RIGHT)
-        ) {
-          this.setStringRight(cell, data);
-        } else {
-          this.setString(cell, data);
-        }
       } catch (final Throwable e) {
         log.warn(ExceptionUtils.getStackTrace(e));
         this.setString(cell, data);

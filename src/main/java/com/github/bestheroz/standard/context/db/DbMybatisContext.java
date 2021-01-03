@@ -13,12 +13,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
 @EnableTransactionManagement
-@MapperScan(
-  basePackages = "com.github.bestheroz",
-  annotationClass = Mapper.class
-)
+@MapperScan(basePackages = "com.github.bestheroz", annotationClass = Mapper.class)
 public class DbMybatisContext {
-
   @Bean(name = "transactionManager")
   @Primary
   @Autowired

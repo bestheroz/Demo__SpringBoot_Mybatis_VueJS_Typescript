@@ -1,6 +1,6 @@
+import com.github.bestheroz.standard.common.util.CaseUtils;
 import com.github.bestheroz.standard.context.db.checker.DbTableVOCheckerContext;
 import com.github.bestheroz.standard.context.web.WebConfiguration;
-import com.google.common.base.CaseFormat;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -24,7 +24,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest(classes = {WebConfiguration.class})
 @AutoConfigureMybatis
 public class TestCreateTableEntity {
-  private final String tableName = "code_group";
+  private final String tableName = "MEMBER_MENU";
   private final String javaPackageEndPoint =
     this.tableName.replaceAll("_", ".").toLowerCase();
   private final String javaProjectRootPackageName = "com.github.bestheroz.";
@@ -49,10 +49,7 @@ public class TestCreateTableEntity {
       ) {
         final String tableEntityName =
           "Table" +
-            CaseFormat.LOWER_UNDERSCORE.to(
-              CaseFormat.UPPER_CAMEL,
-              this.tableName
-            ) +
+            CaseUtils.getSnakeCaseToCamelCase(this.tableName) +
             "Entity";
 
         final ResultSetMetaData metaInfo = rs.getMetaData();
@@ -65,8 +62,7 @@ public class TestCreateTableEntity {
           final String tsType;
           final String columnTypeName = metaInfo.getColumnTypeName(i + 1);
           final String columnName = metaInfo.getColumnName(i + 1);
-          final String camelColumnName = CaseFormat.LOWER_UNDERSCORE.to(
-            CaseFormat.LOWER_CAMEL,
+          final String camelColumnName = CaseUtils.getSnakeCaseToCamelCase(
             columnName
           );
           if (

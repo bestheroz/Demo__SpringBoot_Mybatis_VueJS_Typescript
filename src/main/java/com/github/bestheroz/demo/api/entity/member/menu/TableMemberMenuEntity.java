@@ -1,4 +1,4 @@
-package com.github.bestheroz.demo.api.entity.menu.authority;
+package com.github.bestheroz.demo.api.entity.member.menu;
 
 import com.github.bestheroz.demo.api.entity.AbstractCreatedUpdateEntity;
 import java.io.Serializable;
@@ -9,12 +9,18 @@ import lombok.NoArgsConstructor;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class TableMenuAuthorityEntity
+@AllArgsConstructor
+public class TableMemberMenuEntity
   extends AbstractCreatedUpdateEntity
   implements Serializable {
-  private static final long serialVersionUID = -3932696265402053506L;
+  private static final long serialVersionUID = 6518292219807880047L;
   private Integer authority;
-  private String menuIdList;
+  private Integer id;
+  private String name;
+  private String type;
+  private Integer parentId;
+  private Integer displayOrder;
+  private String icon;
+  private String url;
 }

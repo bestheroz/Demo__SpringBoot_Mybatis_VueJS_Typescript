@@ -13,7 +13,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 @Slf4j
 @UtilityClass
 public class AuthenticationUtils {
-
   public boolean isLoggedIn() {
     try {
       getLoginVO();
@@ -34,14 +33,12 @@ public class AuthenticationUtils {
         .getAuthentication();
       if (
         !authentication.isAuthenticated() ||
-        StringUtils.equals(authentication.getName(), "anonymousUser")
+          StringUtils.equals(authentication.getName(), "anonymousUser")
       ) {
-        log.warn(BusinessException.FAIL_TRY_LOGIN_FIRST.toString());
         throw BusinessException.FAIL_TRY_LOGIN_FIRST;
       }
       return ((UserVO) authentication.getPrincipal());
     } catch (final NullPointerException e) {
-      log.warn(BusinessException.FAIL_TRY_LOGIN_FIRST.toString());
       throw BusinessException.FAIL_TRY_LOGIN_FIRST;
     } catch (final Throwable e) {
       log.warn(ExceptionUtils.getStackTrace(e));
@@ -56,14 +53,8 @@ public class AuthenticationUtils {
           SecurityContextHolder.getContext().getAuthentication().getName()
         )
         .map(item -> StringUtils.equals(item, "anonymousUser") ? "-" : item)
-        .orElseThrow(
-          () -> {
-            log.warn(BusinessException.FAIL_TRY_LOGIN_FIRST.toString());
-            return BusinessException.FAIL_TRY_LOGIN_FIRST;
-          }
-        );
+        .orElseThrow(() -> BusinessException.FAIL_TRY_LOGIN_FIRST);
     } catch (final NullPointerException e) {
-      log.warn(BusinessException.FAIL_TRY_LOGIN_FIRST.toString());
       throw BusinessException.FAIL_TRY_LOGIN_FIRST;
     } catch (final Throwable e) {
       log.warn(ExceptionUtils.getStackTrace(e));

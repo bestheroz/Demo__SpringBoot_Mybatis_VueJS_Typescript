@@ -77,43 +77,20 @@ INTO MENU
  TYPE,
  PARENT_ID,
  DISPLAY_ORDER,
- URL,
- CREATED_BY,
- CREATED,
- UPDATED_BY,
- UPDATED)
-VALUES ('///최상위(삭제하지마세요.)',
-        'G',
-        0,
-        1,
-        '/',
-        'developer',
-        SYSDATE,
-        'developer',
-        SYSDATE);
-
-INSERT
-INTO MENU
-(NAME,
- TYPE,
- PARENT_ID,
- DISPLAY_ORDER,
  ICON,
  CREATED_BY,
  CREATED,
  UPDATED_BY,
  UPDATED)
-SELECT '관리자',
-       'G',
-       ID,
-       10,
-       'mdi-account-cog',
-       'developer',
-       SYSDATE,
-       'developer',
-       SYSDATE
-FROM MENU
-WHERE NAME = '///최상위(삭제하지마세요.)';
+VALUES ('관리자',
+        'G',
+        0,
+        1,
+        'mdi-account-cog',
+        'developer',
+        SYSDATE,
+        'developer',
+        SYSDATE);
 
 INSERT
 INTO MENU
@@ -129,7 +106,7 @@ INTO MENU
 SELECT '메뉴관리',
        'P',
        ID,
-       100,
+       2,
        '/admin/menu',
        'developer',
        SYSDATE,
@@ -150,11 +127,11 @@ INTO MENU
  CREATED,
  UPDATED_BY,
  UPDATED)
-SELECT '메뉴권한관리',
+SELECT '회원메뉴관리',
        'P',
        ID,
-       120,
-       '/admin/menuAuthority',
+       3,
+       '/admin/member/menus',
        'developer',
        SYSDATE,
        'developer',
@@ -176,7 +153,7 @@ INTO MENU
 SELECT '코드관리',
        'P',
        ID,
-       300,
+       4,
        '/admin/code',
        'developer',
        SYSDATE,
@@ -199,7 +176,7 @@ INTO MENU
 SELECT '회원관리',
        'P',
        ID,
-       500,
+       5,
        '/admin/member',
        'developer',
        SYSDATE,
@@ -219,17 +196,15 @@ INTO MENU
  CREATED,
  UPDATED_BY,
  UPDATED)
-SELECT '만든이',
-       'G',
-       ID,
-       90,
-       'mdi-account-hard-hat',
-       'developer',
-       SYSDATE,
-       'developer',
-       SYSDATE
-FROM MENU
-WHERE NAME = '///최상위(삭제하지마세요.)';
+VALUES ('만든이',
+        'G',
+        0,
+        6,
+        'mdi-account-hard-hat',
+        'developer',
+        SYSDATE,
+        'developer',
+        SYSDATE);
 
 INSERT
 INTO MENU
@@ -245,7 +220,7 @@ INTO MENU
 SELECT 'Github',
        'W',
        ID,
-       100,
+       7,
        'https://github.com/bestheroz/',
        'developer',
        SYSDATE,
@@ -269,7 +244,7 @@ INTO MENU
 SELECT 'Blog',
        'W',
        ID,
-       200,
+       8,
        'https://bestheroz.blog.me',
        'developer',
        SYSDATE,
@@ -277,6 +252,7 @@ SELECT 'Blog',
        SYSDATE
 FROM MENU
 WHERE NAME = '만든이';
+
 
 INSERT
 INTO MENU
@@ -289,17 +265,15 @@ INTO MENU
  CREATED,
  UPDATED_BY,
  UPDATED)
-SELECT '개발자',
-       'G',
-       ID,
-       30,
-       'mdi-developer-board',
-       'developer',
-       SYSDATE,
-       'developer',
-       SYSDATE
-FROM MENU
-WHERE NAME = '///최상위(삭제하지마세요.)';
+VALUES ('개발자',
+        'G',
+        0,
+        9,
+        'mdi-developer-board',
+        'developer',
+        SYSDATE,
+        'developer',
+        SYSDATE);
 
 INSERT
 INTO MENU
@@ -315,7 +289,7 @@ INTO MENU
 SELECT 'Picker',
        'P',
        ID,
-       100,
+       10,
        '/developer/picker',
        'developer',
        SYSDATE,
@@ -336,17 +310,15 @@ INTO MENU
  CREATED,
  UPDATED_BY,
  UPDATED)
-SELECT '메뉴그룹1',
-       'G',
-       ID,
-       50,
-       'mdi-numeric-1-box-outline',
-       'developer',
-       SYSDATE,
-       'developer',
-       SYSDATE
-FROM MENU
-WHERE NAME = '///최상위(삭제하지마세요.)';
+VALUES ('메뉴그룹1',
+        'G',
+        0,
+        50,
+        'mdi-numeric-1-box-outline',
+        'developer',
+        SYSDATE,
+        'developer',
+        SYSDATE);
 
 INSERT
 INTO MENU
@@ -390,6 +362,7 @@ SELECT '메뉴2',
        SYSDATE
 FROM MENU
 WHERE NAME = '메뉴그룹1';
+
 
 INSERT
 INTO MENU
@@ -402,17 +375,15 @@ INTO MENU
  CREATED,
  UPDATED_BY,
  UPDATED)
-SELECT '메뉴그룹2',
-       'G',
-       ID,
-       70,
-       'mdi-numeric-2-box-outline',
-       'developer',
-       SYSDATE,
-       'developer',
-       SYSDATE
-FROM MENU
-WHERE NAME = '///최상위(삭제하지마세요.)';
+VALUES ('메뉴그룹2',
+        'G',
+        0,
+        70,
+        'mdi-numeric-2-box-outline',
+        'developer',
+        SYSDATE,
+        'developer',
+        SYSDATE);
 
 INSERT
 INTO MENU
@@ -456,21 +427,6 @@ SELECT '메뉴2',
        SYSDATE
 FROM MENU
 WHERE NAME = '메뉴그룹2';
-
-INSERT INTO MENU_AUTHORITY
-(AUTHORITY, MENU_ID_LIST,
- CREATED_BY,
- CREATED,
- UPDATED_BY,
- UPDATED)
-SELECT 900,
-       (SELECT GROUP_CONCAT(CONCAT('^|', ID, ',') separator '') FROM MENU),
-       'developer',
-       SYSDATE,
-       'developer',
-       SYSDATE
-FROM DUAL;
-
 
 INSERT
 INTO CODE_GROUP

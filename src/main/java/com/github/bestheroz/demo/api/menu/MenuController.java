@@ -19,8 +19,8 @@ public class MenuController {
   ResponseEntity<ApiResult> getItems() {
     return Result.ok(
       this.menuService.getDrawerList(
-          AuthenticationUtils.getLoginVO().getAuthority()
-        )
+        AuthenticationUtils.getLoginVO().getAuthority()
+      )
     );
   }
 }

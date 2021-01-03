@@ -7,20 +7,21 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Optional;
 import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
 @UtilityClass
+@Slf4j
 public class DateUtils {
-
   public String toStringNow(final String pattern) {
     Assert.hasText(pattern, "pattern parameter must not be empty or null");
-    return OffsetDateTime.now().format(DateTimeFormatter.ofPattern(pattern));
+    return toString(Instant.now(), pattern);
   }
 
   public String toString(final Instant instant, final String pattern) {
     Assert.hasText(pattern, "pattern parameter must not be empty or null");
-    return toString(instant, pattern, ZoneId.of("Asia/Seoul"));
+    return toString(instant, pattern, ZoneId.of("UTC"));
   }
 
   public String toString(

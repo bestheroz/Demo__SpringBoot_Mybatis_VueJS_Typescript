@@ -100,7 +100,6 @@ public class JwtTokenProvider {
         .get("userPk")
         .asString();
     } catch (final JWTVerificationException | NullPointerException e) {
-      log.warn(BusinessException.FAIL_TRY_LOGIN_FIRST.toString());
       throw BusinessException.FAIL_TRY_LOGIN_FIRST;
     }
   }
@@ -120,7 +119,6 @@ public class JwtTokenProvider {
         UserVO.class
       );
     } catch (final JWTVerificationException | NullPointerException e) {
-      log.warn(BusinessException.FAIL_TRY_LOGIN_FIRST.toString());
       throw BusinessException.FAIL_TRY_LOGIN_FIRST;
     }
   }

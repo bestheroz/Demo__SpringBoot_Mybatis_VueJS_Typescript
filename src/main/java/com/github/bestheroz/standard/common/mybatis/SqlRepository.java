@@ -78,8 +78,20 @@ public interface SqlRepository<T extends Serializable> {
   )
   Optional<T> getItemByKey(final Map<String, Object> whereConditions);
 
+  @SelectProvider(
+    type = SqlCommand.class,
+    method = SqlCommand.SELECT_ITEMS_BY_DATATABLE
+  )
+  List<T> getItemsForDataTable(final DataTableFilterDTO dataTableFilterDTO);
+
   @SelectProvider(type = SqlCommand.class, method = SqlCommand.COUNT_ALL)
   int countAll();
+
+  @SelectProvider(
+    type = SqlCommand.class,
+    method = SqlCommand.COUNT_BY_DATATABLE
+  )
+  int countForDataTable(final DataTableFilterDTO dataTableFilterDTO);
 
   @SelectProvider(type = SqlCommand.class, method = SqlCommand.COUNT_BY_KEY)
   int countByKey(final Map<String, Object> whereConditions);

@@ -69,8 +69,8 @@ public class AbstractDownloadView extends AbstractView {
         response.setHeader(
           "Content-Disposition",
           "attachment; filename=\"" +
-          FileUtils.getEncodedFileName(request, oriFileName) +
-          "\";"
+            FileUtils.getEncodedFileName(request, oriFileName) +
+            "\";"
         );
         response.setHeader("Content-Transfer-Encoding", "binary");
       }
