@@ -79,7 +79,7 @@ jobs:
 
 
   build-and-deploy:
-    name: depoly
+    name: deploy
     runs-on: ${{ matrix.os }}
     needs: [maven-install]
 
