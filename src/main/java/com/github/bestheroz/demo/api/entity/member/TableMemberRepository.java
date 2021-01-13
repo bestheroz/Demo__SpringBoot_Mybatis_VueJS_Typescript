@@ -10,20 +10,15 @@ import org.springframework.stereotype.Repository;
 
 @Mapper
 @Repository
-public interface TableMemberRepository
-  extends SqlRepository<TableMemberEntity> {
+public interface TableMemberRepository extends SqlRepository<TableMemberEntity> {
   @Update(
-    value = "UPDATE MEMBER SET LOGIN_FAIL_CNT = LOGIN_FAIL_CNT + 1 WHERE ID = #{id, jdbcType=VARCHAR}"
-  )
+      value =
+          "UPDATE MEMBER SET LOGIN_FAIL_CNT = LOGIN_FAIL_CNT + 1 WHERE ID = #{id, jdbcType=VARCHAR}")
   void plusLoginFailCnt(String id);
 
-  @Update(
-    value = "UPDATE MEMBER SET PASSWORD = NULL WHERE ID = #{id, jdbcType=VARCHAR}"
-  )
+  @Update(value = "UPDATE MEMBER SET PASSWORD = NULL WHERE ID = #{id, jdbcType=VARCHAR}")
   void resetPassword(String id);
 
-  @Select(
-    value = "SELECT ID AS VALUE, NAME AS TEXT FROM MEMBER"
-  )
+  @Select(value = "SELECT ID AS VALUE, NAME AS TEXT FROM MEMBER")
   List<CodeVO> getCodes();
 }

@@ -10,16 +10,15 @@ public class RootController implements ErrorController {
   private static final String INDEX_HTML = "index.html";
 
   @RequestMapping(
-    value = { "/", "/login", "/error" },
-    method = {
-      RequestMethod.OPTIONS,
-      RequestMethod.GET,
-      RequestMethod.POST,
-      RequestMethod.PUT,
-      RequestMethod.PATCH,
-      RequestMethod.DELETE
-    }
-  )
+      value = {"/", "/login", "/error"},
+      method = {
+        RequestMethod.OPTIONS,
+        RequestMethod.GET,
+        RequestMethod.POST,
+        RequestMethod.PUT,
+        RequestMethod.PATCH,
+        RequestMethod.DELETE
+      })
   public String root() {
     return INDEX_HTML;
   }

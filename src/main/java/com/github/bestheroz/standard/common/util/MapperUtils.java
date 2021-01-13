@@ -20,14 +20,15 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @UtilityClass
 public class MapperUtils {
-  private final Gson GSON_INSTANCE = new GsonBuilder()
-    .registerTypeAdapter(Instant.class, new InstantDeserializerTypeAdapter())
-    .registerTypeAdapter(Instant.class, new InstantSerializerTypeAdapter())
-    .registerTypeAdapter(Map.class, new MapDeserializerTypeAdapter())
-    .registerTypeAdapter(HashMap.class, new MapDeserializerTypeAdapter())
-    .registerTypeAdapter(LinkedTreeMap.class, new MapDeserializerTypeAdapter())
-    .disableHtmlEscaping()
-    .create();
+  private final Gson GSON_INSTANCE =
+      new GsonBuilder()
+          .registerTypeAdapter(Instant.class, new InstantDeserializerTypeAdapter())
+          .registerTypeAdapter(Instant.class, new InstantSerializerTypeAdapter())
+          .registerTypeAdapter(Map.class, new MapDeserializerTypeAdapter())
+          .registerTypeAdapter(HashMap.class, new MapDeserializerTypeAdapter())
+          .registerTypeAdapter(LinkedTreeMap.class, new MapDeserializerTypeAdapter())
+          .disableHtmlEscaping()
+          .create();
 
   public <T> T toObject(final Object source, final Class<T> targetType) {
     return GSON_INSTANCE.fromJson(toJsonElement(source), targetType);
@@ -47,9 +48,8 @@ public class MapperUtils {
 
   public Map<String, Object> toHashMap(final Object source) {
     return toObject(
-      getCollectionTypeCatchException(source, JsonObject.class),
-      new TypeToken<HashMap<String, Object>>() {}.getType()
-    );
+        getCollectionTypeCatchException(source, JsonObject.class),
+        new TypeToken<HashMap<String, Object>>() {}.getType());
   }
 
   public JsonPrimitive toJsonPrimitive(final Object source) {
@@ -73,10 +73,7 @@ public class MapperUtils {
     return GSON_INSTANCE.toJson(source);
   }
 
-  public <T> List<T> toArrayList(
-    final Object source,
-    final Class<T> targetType
-  ) {
+  public <T> List<T> toArrayList(final Object source, final Class<T> targetType) {
     final JsonArray array = MapperUtils.toObject(source, JsonArray.class);
     final List<T> lst = new ArrayList<>();
     for (final JsonElement json : array) {
@@ -90,10 +87,7 @@ public class MapperUtils {
   }
 
   @SuppressWarnings("unchecked")
-  private <T> T getCollectionTypeCatchException(
-    final Object source,
-    final Class<T> targetType
-  ) {
+  private <T> T getCollectionTypeCatchException(final Object source, final Class<T> targetType) {
     final JsonElement jsonElement = toJsonElement(source);
     if (jsonElement.isJsonPrimitive()) {
       log.warn(jsonElement.toString());

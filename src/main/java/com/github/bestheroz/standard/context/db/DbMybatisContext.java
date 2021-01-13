@@ -19,8 +19,7 @@ public class DbMybatisContext {
   @Primary
   @Autowired
   public PlatformTransactionManager getPlatformTransactionManager(
-    final HikariDataSource hikariDataSource
-  ) {
+      final HikariDataSource hikariDataSource) {
     return new DataSourceTransactionManager(hikariDataSource);
   }
 }

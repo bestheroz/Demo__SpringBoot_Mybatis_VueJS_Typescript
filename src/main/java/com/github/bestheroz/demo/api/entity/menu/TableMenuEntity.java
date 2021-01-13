@@ -11,9 +11,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TableMenuEntity
-  extends AbstractCreatedUpdateEntity
-  implements Serializable {
+public class TableMenuEntity extends AbstractCreatedUpdateEntity implements Serializable {
   private static final long serialVersionUID = 2658557582464222508L;
   private Integer id;
   private String name;

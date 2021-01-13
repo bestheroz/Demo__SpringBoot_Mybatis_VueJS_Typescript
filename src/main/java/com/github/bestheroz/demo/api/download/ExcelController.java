@@ -17,68 +17,40 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("api")
-@CrossOrigin(value = {"*"}, exposedHeaders = {"Content-Disposition"})
+@CrossOrigin(
+    value = {"*"},
+    exposedHeaders = {"Content-Disposition"})
 @Slf4j
 public class ExcelController {
-  @Resource
-  private CodeService codeService;
-  @Resource
-  private TableMemberRepository tableMemberRepository;
+  @Resource private CodeService codeService;
+  @Resource private TableMemberRepository tableMemberRepository;
 
   @GetMapping(value = "admin/members/download/excel")
   public String excelAdminMembers(final Model model) {
     model.addAttribute(AbstractExcelXView.FILE_NAME, "Member_List");
 
     final List<ExcelVO> excelVOList = new ArrayList<>();
+    AbstractExcelXView.addHeader(excelVOList, "사용자 아이디", "id", ExcelService.CellType.STRING);
+    AbstractExcelXView.addHeader(excelVOList, "사용자 명", "name", ExcelService.CellType.STRING);
     AbstractExcelXView.addHeader(
-      excelVOList,
-      "사용자 아이디",
-      "id",
-      ExcelService.CellType.STRING
-    );
+        excelVOList,
+        "권한",
+        "authority",
+        ExcelService.CellType.STRING_CENTER,
+        this.codeService.getCodeVOList("AUTHORITY"));
+    AbstractExcelXView.addHeader(excelVOList, "만료일", "expired", ExcelService.CellType.DATE);
+    AbstractExcelXView.addHeader(excelVOList, "사용 가능", "available", ExcelService.CellType.STRING);
+    AbstractExcelXView.addHeader(excelVOList, "작업 일시", "updated", ExcelService.CellType.DATE);
     AbstractExcelXView.addHeader(
-      excelVOList,
-      "사용자 명",
-      "name",
-      ExcelService.CellType.STRING
-    );
-    AbstractExcelXView.addHeader(
-      excelVOList,
-      "권한",
-      "authority",
-      ExcelService.CellType.STRING_CENTER,
-      this.codeService.getCodeVOList("AUTHORITY")
-    );
-    AbstractExcelXView.addHeader(
-      excelVOList,
-      "만료일",
-      "expired",
-      ExcelService.CellType.DATE
-    );
-    AbstractExcelXView.addHeader(
-      excelVOList,
-      "사용 가능",
-      "available",
-      ExcelService.CellType.STRING
-    );
-    AbstractExcelXView.addHeader(
-      excelVOList,
-      "작업 일시",
-      "updated",
-      ExcelService.CellType.DATE
-    );
-    AbstractExcelXView.addHeader(
-      excelVOList,
-      "작업자",
-      "updatedBy",
-      ExcelService.CellType.STRING,
-      this.tableMemberRepository.getCodes()
-    );
+        excelVOList,
+        "작업자",
+        "updatedBy",
+        ExcelService.CellType.STRING,
+        this.tableMemberRepository.getCodes());
     model.addAttribute(AbstractExcelXView.EXCEL_VOS, excelVOList);
     model.addAttribute(
-      AbstractExcelXView.LIST_DATA,
-      this.tableMemberRepository.getItemsWithOrder(List.of("created"))
-    );
+        AbstractExcelXView.LIST_DATA,
+        this.tableMemberRepository.getItemsWithOrder(List.of("created")));
     return ExcelService.VIEW_NAME;
   }
 }

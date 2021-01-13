@@ -15,16 +15,12 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 @RequestMapping("api/upload")
 public class FileUploadController {
   @PostMapping(value = "/file")
-  ResponseEntity<ApiResult> uploadFile(
-    @RequestParam("file") final MultipartFile multipartFile
-  ) {
+  ResponseEntity<ApiResult> uploadFile(@RequestParam("file") final MultipartFile multipartFile) {
     return Result.ok(FileUtils.uploadFile(multipartFile, "uploaded/"));
   }
 
   @PostMapping(value = "files")
-  ResponseEntity<ApiResult> uploadFiles(
-    final MultipartHttpServletRequest mRequest
-  ) {
+  ResponseEntity<ApiResult> uploadFiles(final MultipartHttpServletRequest mRequest) {
     FileUtils.uploadAllFiles(mRequest, "uploaded/");
     return Result.ok();
   }

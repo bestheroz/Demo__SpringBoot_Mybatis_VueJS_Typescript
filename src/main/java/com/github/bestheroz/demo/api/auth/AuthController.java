@@ -15,51 +15,34 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(value = "/api/auth")
 public class AuthController {
-  @Resource
-  private AuthService authService;
-  @Resource
-  private TableMemberRepository tableMemberRepository;
+  @Resource private AuthService authService;
+  @Resource private TableMemberRepository tableMemberRepository;
 
   @PostMapping(value = "/login")
   @ResponseBody
-  ResponseEntity<ApiResult> login(
-    @RequestBody final TableMemberEntity tableMemberEntity
-  ) {
+  ResponseEntity<ApiResult> login(@RequestBody final TableMemberEntity tableMemberEntity) {
     return Result.ok(
-      this.authService.login(
-        tableMemberEntity.getId(),
-        tableMemberEntity.getPassword()
-      )
-    );
+        this.authService.login(tableMemberEntity.getId(), tableMemberEntity.getPassword()));
   }
 
   @GetMapping(value = "/me")
   public ResponseEntity<ApiResult> getMine(
-    @RequestHeader(value = "Authorization") final String token
-  ) {
+      @RequestHeader(value = "Authorization") final String token) {
     return Result.ok(
-      this.tableMemberRepository.getItemByKey(
-        Map.of("id", JwtTokenProvider.getUserPk(token))
-      )
-        .orElseThrow(() -> BusinessException.FAIL_TRY_LOGIN_FIRST)
-    );
+        this.tableMemberRepository
+            .getItemByKey(Map.of("id", JwtTokenProvider.getUserPk(token)))
+            .orElseThrow(() -> BusinessException.FAIL_TRY_LOGIN_FIRST));
   }
 
   @GetMapping(value = "/refreshToken")
   public ResponseEntity<ApiResult> refreshToken(
-    @RequestHeader(value = "AuthorizationR") final String refreshToken
-  ) {
+      @RequestHeader(value = "AuthorizationR") final String refreshToken) {
     return Result.ok(this.authService.getNewAccessToken(refreshToken));
   }
 
   @PostMapping(value = "/initPassword")
-  ResponseEntity<ApiResult> initPassword(
-    @RequestBody final TableMemberEntity tableMemberEntity
-  ) {
-    this.authService.initPassword(
-      tableMemberEntity.getId(),
-      tableMemberEntity.getPassword()
-    );
+  ResponseEntity<ApiResult> initPassword(@RequestBody final TableMemberEntity tableMemberEntity) {
+    this.authService.initPassword(tableMemberEntity.getId(), tableMemberEntity.getPassword());
     return Result.ok();
   }
 

@@ -24,21 +24,13 @@ public class DateUtils {
     return toString(instant, pattern, ZoneId.of("UTC"));
   }
 
-  public String toString(
-    final Instant instant,
-    final String pattern,
-    final ZoneId zoneId
-  ) {
+  public String toString(final Instant instant, final String pattern, final ZoneId zoneId) {
     Assert.hasText(pattern, "pattern parameter must not be empty or null");
-    return Optional
-      .ofNullable(instant)
-      .map(
-        item ->
-          OffsetDateTime
-            .ofInstant(item, zoneId)
-            .format(DateTimeFormatter.ofPattern(pattern))
-      )
-      .orElse(null);
+    return Optional.ofNullable(instant)
+        .map(
+            item ->
+                OffsetDateTime.ofInstant(item, zoneId).format(DateTimeFormatter.ofPattern(pattern)))
+        .orElse(null);
   }
 
   public String toString(final Long timestamp, final String pattern) {
@@ -46,68 +38,42 @@ public class DateUtils {
     return toString(timestamp, pattern, ZoneId.of("Asia/Seoul"));
   }
 
-  public String toString(
-    final Long timestamp,
-    final String pattern,
-    final ZoneId zoneId
-  ) {
+  public String toString(final Long timestamp, final String pattern, final ZoneId zoneId) {
     Assert.hasText(pattern, "pattern parameter must not be empty or null");
-    return Optional
-      .ofNullable(timestamp)
-      .map(
-        item ->
-          OffsetDateTime
-            .ofInstant(Instant.ofEpochMilli(item), zoneId)
-            .format(DateTimeFormatter.ofPattern(pattern))
-      )
-      .orElse(null);
+    return Optional.ofNullable(timestamp)
+        .map(
+            item ->
+                OffsetDateTime.ofInstant(Instant.ofEpochMilli(item), zoneId)
+                    .format(DateTimeFormatter.ofPattern(pattern)))
+        .orElse(null);
   }
 
   public String toString(final Date date, final String pattern) {
     Assert.hasText(pattern, "pattern parameter must not be empty or null");
-    return Optional
-      .ofNullable(date)
-      .map(item -> toString(item.getTime(), pattern, ZoneId.of("Asia/Seoul")))
-      .orElse(StringUtils.EMPTY);
+    return Optional.ofNullable(date)
+        .map(item -> toString(item.getTime(), pattern, ZoneId.of("Asia/Seoul")))
+        .orElse(StringUtils.EMPTY);
   }
 
-  public String toString(
-    final String string,
-    final String fromPattern,
-    final String toPattern
-  ) {
-    Assert.hasText(
-      fromPattern,
-      "fromPattern parameter must not be empty or null"
-    );
+  public String toString(final String string, final String fromPattern, final String toPattern) {
+    Assert.hasText(fromPattern, "fromPattern parameter must not be empty or null");
     Assert.hasText(toPattern, "toPattern parameter must not be empty or null");
-    return Optional
-      .ofNullable(string)
-      .map(
-        item ->
-          parseOffsetDateTime(item, fromPattern)
-            .format(DateTimeFormatter.ofPattern(toPattern))
-      )
-      .orElse(StringUtils.EMPTY);
+    return Optional.ofNullable(string)
+        .map(
+            item ->
+                parseOffsetDateTime(item, fromPattern)
+                    .format(DateTimeFormatter.ofPattern(toPattern)))
+        .orElse(StringUtils.EMPTY);
   }
 
-  public OffsetDateTime parseOffsetDateTime(
-    final String text,
-    final String pattern
-  ) {
+  public OffsetDateTime parseOffsetDateTime(final String text, final String pattern) {
     Assert.hasText(pattern, "pattern parameter must not be empty or null");
-    return Optional
-      .ofNullable(text)
-      .map(
-        item -> OffsetDateTime.parse(item, DateTimeFormatter.ofPattern(pattern))
-      )
-      .orElse(null);
+    return Optional.ofNullable(text)
+        .map(item -> OffsetDateTime.parse(item, DateTimeFormatter.ofPattern(pattern)))
+        .orElse(null);
   }
 
   public OffsetDateTime parseOffsetDateTimeAtUTC(final String text) {
-    return Optional
-      .ofNullable(text)
-      .map(item -> OffsetDateTime.parse(text))
-      .orElse(null);
+    return Optional.ofNullable(text).map(item -> OffsetDateTime.parse(text)).orElse(null);
   }
 }

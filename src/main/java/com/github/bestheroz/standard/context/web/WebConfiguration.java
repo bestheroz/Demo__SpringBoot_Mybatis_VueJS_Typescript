@@ -11,9 +11,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebConfiguration implements WebMvcConfigurer {
 
   @Override
-  public void configureMessageConverters(
-    final List<HttpMessageConverter<?>> converters
-  ) {
+  public void configureMessageConverters(final List<HttpMessageConverter<?>> converters) {
     converters.clear();
 
     final GsonHttpMessageConverter gsonHttpMessageConverter = new GsonHttpMessageConverter();

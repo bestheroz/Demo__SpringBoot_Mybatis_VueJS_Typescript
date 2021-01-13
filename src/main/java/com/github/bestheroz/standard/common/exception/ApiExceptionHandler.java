@@ -34,9 +34,7 @@ public class ApiExceptionHandler {
   }
 
   @ExceptionHandler({BusinessException.class})
-  public ResponseEntity<ApiResult> businessException(
-    final BusinessException e
-  ) {
+  public ResponseEntity<ApiResult> businessException(final BusinessException e) {
     if (e.isEquals(ExceptionCode.FAIL_TRY_LOGIN_FIRST)) {
       return Result.unauthenticated();
     }
@@ -44,38 +42,30 @@ public class ApiExceptionHandler {
   }
 
   @ExceptionHandler({UsernameNotFoundException.class})
-  public ResponseEntity<ApiResult> usernameNotFoundException(
-    final UsernameNotFoundException e
-  ) {
+  public ResponseEntity<ApiResult> usernameNotFoundException(final UsernameNotFoundException e) {
     return Result.unauthenticated();
   }
 
-  @ExceptionHandler(
-    {
-      BindException.class,
-      MethodArgumentTypeMismatchException.class,
-      MissingServletRequestParameterException.class
-    }
-  )
+  @ExceptionHandler({
+    BindException.class,
+    MethodArgumentTypeMismatchException.class,
+    MissingServletRequestParameterException.class
+  })
   public ResponseEntity<ApiResult> bindException(final Throwable e) {
     log.warn(ExceptionUtils.getStackTrace(e));
     return Result.error(BusinessException.FAIL_INVALID_PARAMETER);
   }
 
-  @ExceptionHandler(
-    {
-      HttpMediaTypeNotAcceptableException.class,
-      HttpMediaTypeNotSupportedException.class,
-      HttpRequestMethodNotSupportedException.class,
-      HttpClientErrorException.class
-    }
-  )
+  @ExceptionHandler({
+    HttpMediaTypeNotAcceptableException.class,
+    HttpMediaTypeNotSupportedException.class,
+    HttpRequestMethodNotSupportedException.class,
+    HttpClientErrorException.class
+  })
   public ResponseEntity<ApiResult> httpMediaTypeNotAcceptableException(
-    final Throwable e,
-    final HttpServletResponse response
-  ) {
-    if (StringUtils
-      .equals(response.getHeader("refreshToken"), "must")) { // 데이터 수정시 가끔 이곳으로 넘어와 버리네..
+      final Throwable e, final HttpServletResponse response) {
+    if (StringUtils.equals(
+        response.getHeader("refreshToken"), "must")) { // 데이터 수정시 가끔 이곳으로 넘어와 버리네..
       return Result.unauthenticated();
     }
     log.warn(ExceptionUtils.getStackTrace(e));
@@ -83,12 +73,11 @@ public class ApiExceptionHandler {
   }
 
   @ExceptionHandler({MultipartException.class})
-  public ResponseEntity<ApiResult> multipartException(
-    final MultipartException e
-  ) {
+  public ResponseEntity<ApiResult> multipartException(final MultipartException e) {
     log.warn(ExceptionUtils.getStackTrace(e));
     final ResponseEntity<ApiResult> result;
-    //        if (ExceptionUtils.getMessage(e).contains(FileUploadBase.SizeLimitExceededException.class.getSimpleName())) {
+    //        if
+    // (ExceptionUtils.getMessage(e).contains(FileUploadBase.SizeLimitExceededException.class.getSimpleName())) {
     //            result = new Response(ExceptionCode.FAIL_FILE_SIZE).getJsonObject();
     //        } else {
     result = Result.error();
@@ -97,9 +86,7 @@ public class ApiExceptionHandler {
   }
 
   @ExceptionHandler({DuplicateKeyException.class})
-  public ResponseEntity<ApiResult> duplicateKeyException(
-    final DuplicateKeyException e
-  ) {
+  public ResponseEntity<ApiResult> duplicateKeyException(final DuplicateKeyException e) {
     log.warn(ExceptionUtils.getStackTrace(e));
     return Result.error(ExceptionCode.FAIL_UNIQUE_CONSTRAINT_VIOLATED);
   }

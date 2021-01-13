@@ -13,10 +13,7 @@ public enum ExceptionCode {
 
   ERROR_TRANSFORM_DATA("E002", "데이터 변환 실패"),
 
-  ERROR_DIR_PATH_MUST_ENDS_WITH_SLASH(
-    "E003",
-    "디렉토리 경로는 항상 '/' 으로 끝나야만 합니다."
-  ),
+  ERROR_DIR_PATH_MUST_ENDS_WITH_SLASH("E003", "디렉토리 경로는 항상 '/' 으로 끝나야만 합니다."),
 
   ERROR_ILLEGAL_BLOCK_SIZE_AES("E004", "암/복호화 오류 발생"),
 

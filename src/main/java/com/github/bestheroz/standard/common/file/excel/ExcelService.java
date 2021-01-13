@@ -31,32 +31,20 @@ public class ExcelService extends AbstractExcelXView {
 
   @Override
   protected void buildExcelDocument(
-    final Map<String, Object> model,
-    final SXSSFWorkbook workbook,
-    final HttpServletRequest request,
-    final HttpServletResponse response
-  ) {
-    @SuppressWarnings("unchecked") final List<ExcelVO> excelVOs = (List<ExcelVO>) model.get(
-      AbstractExcelXView.EXCEL_VOS
-    );
-    final JsonArray listData = MapperUtils.toJsonArray(
-      model.get(AbstractExcelXView.LIST_DATA)
-    );
-    final String fileName = FileUtils.getEncodedFileName(
-      request,
-      (String) model.get(AbstractExcelXView.FILE_NAME)
-    );
+      final Map<String, Object> model,
+      final SXSSFWorkbook workbook,
+      final HttpServletRequest request,
+      final HttpServletResponse response) {
+    @SuppressWarnings("unchecked")
+    final List<ExcelVO> excelVOs = (List<ExcelVO>) model.get(AbstractExcelXView.EXCEL_VOS);
+    final JsonArray listData = MapperUtils.toJsonArray(model.get(AbstractExcelXView.LIST_DATA));
+    final String fileName =
+        FileUtils.getEncodedFileName(request, (String) model.get(AbstractExcelXView.FILE_NAME));
 
     final String now = Instant.now().truncatedTo(ChronoUnit.SECONDS).toString();
     response.setHeader(
-      "Content-Disposition",
-      "attachment;filename=" +
-        fileName +
-        "_" +
-        now +
-        AbstractExcelXView.EXTENSION +
-        ";"
-    );
+        "Content-Disposition",
+        "attachment;filename=" + fileName + "_" + now + AbstractExcelXView.EXTENSION + ";");
 
     final SXSSFSheet sheet = workbook.createSheet("report");
     sheet.setRandomAccessWindowSize(100);
@@ -68,24 +56,14 @@ public class ExcelService extends AbstractExcelXView {
   }
 
   private void createColumnLabel(
-    final SXSSFSheet sheet,
-    final List<ExcelVO> excelVOs,
-    final String now
-  ) {
+      final SXSSFSheet sheet, final List<ExcelVO> excelVOs, final String now) {
     final SXSSFRow row0 = sheet.createRow(0);
-    final CellRangeAddress mergedRegion = new CellRangeAddress(
-      0,
-      0,
-      0,
-      excelVOs.size() - 1
-    );
+    final CellRangeAddress mergedRegion = new CellRangeAddress(0, 0, 0, excelVOs.size() - 1);
     sheet.addMergedRegion(mergedRegion);
     final SXSSFCell cell10 = row0.createCell(0);
     cell10.setCellValue("This report was generated at " + now);
 
-    final XSSFCellStyle cellStyle = (XSSFCellStyle) sheet
-      .getWorkbook()
-      .createCellStyle();
+    final XSSFCellStyle cellStyle = (XSSFCellStyle) sheet.getWorkbook().createCellStyle();
     cellStyle.setAlignment(HorizontalAlignment.CENTER);
     cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
     cellStyle.setFillForegroundColor(IndexedColors.GREY_50_PERCENT.getIndex());
@@ -104,10 +82,7 @@ public class ExcelService extends AbstractExcelXView {
   }
 
   private void addRowData(
-    final SXSSFSheet sheet,
-    final List<ExcelVO> excelVOs,
-    final JsonArray listData
-  ) {
+      final SXSSFSheet sheet, final List<ExcelVO> excelVOs, final JsonArray listData) {
     for (int i = 0; i < listData.size(); i++) {
       if (i != 0 && i % 100 == 0) {
         log.debug("[Excel]{} write {} rows", sheet.getSheetName(), i + 1);
@@ -115,9 +90,7 @@ public class ExcelService extends AbstractExcelXView {
       final SXSSFRow row = sheet.createRow(3 + i);
       final JsonObject jo = listData.get(i).getAsJsonObject();
       for (int j = 0; j < excelVOs.size(); j++) {
-        final String value = jo
-          .get(excelVOs.get(j).getDbColName())
-          .getAsString();
+        final String value = jo.get(excelVOs.get(j).getDbColName()).getAsString();
         if (StringUtils.isNotEmpty(value)) {
           this.writeColumnData(excelVOs, j, row.createCell(j), value);
         }

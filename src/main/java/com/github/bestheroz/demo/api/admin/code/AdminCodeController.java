@@ -14,23 +14,17 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(value = "api/admin/codes")
 public class AdminCodeController {
-  @Resource
-  private TableCodeRepository tableCodeRepository;
+  @Resource private TableCodeRepository tableCodeRepository;
 
   @GetMapping(value = "{codeGroup}")
-  ResponseEntity<ApiResult> getItems(
-    @PathVariable(value = "codeGroup") final String codeGroup
-  ) {
-    return Result.ok(
-      this.tableCodeRepository.getItemsByKey(Map.of("codeGroup", codeGroup))
-    );
+  ResponseEntity<ApiResult> getItems(@PathVariable(value = "codeGroup") final String codeGroup) {
+    return Result.ok(this.tableCodeRepository.getItemsByKey(Map.of("codeGroup", codeGroup)));
   }
 
   @PostMapping(value = "{codeGroup}")
   public ResponseEntity<ApiResult> post(
-    @PathVariable(value = "codeGroup") final String codeGroup,
-    @RequestBody final TableCodeEntity tableCodeEntity
-  ) {
+      @PathVariable(value = "codeGroup") final String codeGroup,
+      @RequestBody final TableCodeEntity tableCodeEntity) {
     tableCodeEntity.setCodeGroup(codeGroup);
     this.tableCodeRepository.insert(tableCodeEntity);
     return Result.created();
@@ -38,25 +32,19 @@ public class AdminCodeController {
 
   @PutMapping(value = "{codeGroup}/{code}")
   public ResponseEntity<ApiResult> put(
-    @PathVariable(value = "codeGroup") final String codeGroup,
-    @PathVariable(value = "code") final String code,
-    @RequestBody final TableCodeEntity tableCodeEntity
-  ) {
+      @PathVariable(value = "codeGroup") final String codeGroup,
+      @PathVariable(value = "code") final String code,
+      @RequestBody final TableCodeEntity tableCodeEntity) {
     this.tableCodeRepository.updateByKey(
-      tableCodeEntity,
-      Map.of("codeGroup", codeGroup, "code", code)
-    );
+        tableCodeEntity, Map.of("codeGroup", codeGroup, "code", code));
     return Result.ok();
   }
 
   @DeleteMapping(value = "{codeGroup}/{code}")
   public ResponseEntity<ApiResult> delete(
-    @PathVariable(value = "codeGroup") final String codeGroup,
-    @PathVariable(value = "code") final String code
-  ) {
-    this.tableCodeRepository.deleteByKey(
-      Map.of("codeGroup", codeGroup, "code", code)
-    );
+      @PathVariable(value = "codeGroup") final String codeGroup,
+      @PathVariable(value = "code") final String code) {
+    this.tableCodeRepository.deleteByKey(Map.of("codeGroup", codeGroup, "code", code));
     return Result.ok();
   }
 }

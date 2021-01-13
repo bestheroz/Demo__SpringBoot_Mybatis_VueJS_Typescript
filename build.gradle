@@ -2,6 +2,7 @@ plugins {
     id 'org.springframework.boot' version '2.4.1'
     id 'java'
     id 'idea'
+    id "com.diffplug.spotless" version "5.9.0"
 }
 
 repositories {
@@ -46,5 +47,11 @@ tasks.withType(JavaCompile) {
 bootJar {
     from ('vue/dist') {
         into 'static'
+    }
+}
+
+spotless {
+    java {
+        googleJavaFormat('1.9')
     }
 }

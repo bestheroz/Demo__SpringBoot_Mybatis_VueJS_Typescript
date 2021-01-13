@@ -25,11 +25,7 @@ public class DataTableFilterDTO {
   }
 
   public String getOrderByLimitString() {
-    return MessageFormat.format(
-      "{0} {1}",
-      this.getOrderByString(),
-      this.getLimitString()
-    );
+    return MessageFormat.format("{0} {1}", this.getOrderByString(), this.getLimitString());
   }
 
   public String getLimitString() {
@@ -37,10 +33,8 @@ public class DataTableFilterDTO {
       return StringUtils.EMPTY;
     } else {
       return MessageFormat.format(
-        "LIMIT {0}, {1}",
-        String.valueOf(this.getStartIndex()),
-        String.valueOf(this.getEndIndex())
-      );
+          "LIMIT {0}, {1}",
+          String.valueOf(this.getStartIndex()), String.valueOf(this.getEndIndex()));
     }
   }
 
@@ -51,12 +45,10 @@ public class DataTableFilterDTO {
       final List<String> append = new ArrayList<>();
       for (final String s : this.sortBy) {
         append.add(
-          MessageFormat.format(
-            "{0} {1}",
-            CaseUtils.getSnakeCaseToCamelCase(s.replaceFirst("-", "")),
-            s.startsWith("-") ? "DESC" : "ASC"
-          )
-        );
+            MessageFormat.format(
+                "{0} {1}",
+                CaseUtils.getSnakeCaseToCamelCase(s.replaceFirst("-", "")),
+                s.startsWith("-") ? "DESC" : "ASC"));
       }
       return "ORDER BY " + StringUtils.join(append, ",");
     }

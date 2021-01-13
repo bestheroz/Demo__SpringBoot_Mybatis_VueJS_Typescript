@@ -11,11 +11,8 @@ public class ApiResult extends HashMap<String, Object> {
   public static final String CODE_KEY = "code";
   public static final String MESSAGE_KEY = "message";
   public static final String DATA_KEY = "data";
-  public static final String PAGINATION_TOTAL_LENGTH_KEY =
-    "paginationTotalLength";
-  private static final ApiResult SUCCESS_NORMAL = ApiResult.code(
-    ExceptionCode.SUCCESS_NORMAL
-  );
+  public static final String PAGINATION_TOTAL_LENGTH_KEY = "paginationTotalLength";
+  private static final ApiResult SUCCESS_NORMAL = ApiResult.code(ExceptionCode.SUCCESS_NORMAL);
   private static final long serialVersionUID = 753116906067010122L;
 
   public static ApiResult ok() {
@@ -28,10 +25,7 @@ public class ApiResult extends HashMap<String, Object> {
     return apiResult;
   }
 
-  public static ApiResult ok(
-    final Object data,
-    final Integer paginationTotalLength
-  ) {
+  public static ApiResult ok(final Object data, final Integer paginationTotalLength) {
     final ApiResult apiResult = ApiResult.code(ExceptionCode.SUCCESS_NORMAL);
     apiResult.put(DATA_KEY, MapperUtils.toJsonElement(data));
     apiResult.put(PAGINATION_TOTAL_LENGTH_KEY, paginationTotalLength);
@@ -57,12 +51,9 @@ public class ApiResult extends HashMap<String, Object> {
     final Map<String, Object> map = new HashMap<>();
     map.put(CODE_KEY, this.get(CODE_KEY));
     map.put(MESSAGE_KEY, this.get(MESSAGE_KEY));
-    Optional
-      .ofNullable(this.get(DATA_KEY))
-      .ifPresent(item -> map.put(DATA_KEY, this.get(item)));
-    Optional
-      .ofNullable(this.get(PAGINATION_TOTAL_LENGTH_KEY))
-      .ifPresent(item -> map.put(PAGINATION_TOTAL_LENGTH_KEY, this.get(item)));
+    Optional.ofNullable(this.get(DATA_KEY)).ifPresent(item -> map.put(DATA_KEY, this.get(item)));
+    Optional.ofNullable(this.get(PAGINATION_TOTAL_LENGTH_KEY))
+        .ifPresent(item -> map.put(PAGINATION_TOTAL_LENGTH_KEY, this.get(item)));
     return MapperUtils.toString(map);
   }
 }

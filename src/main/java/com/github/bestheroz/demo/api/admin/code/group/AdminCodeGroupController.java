@@ -14,10 +14,8 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(value = "api/admin/code/groups")
 public class AdminCodeGroupController {
-  @Resource
-  private TableCodeGroupRepository tableCodeGroupRepository;
-  @Resource
-  private AdminCodeGroupService adminCodeGroupService;
+  @Resource private TableCodeGroupRepository tableCodeGroupRepository;
+  @Resource private AdminCodeGroupService adminCodeGroupService;
 
   @GetMapping
   ResponseEntity<ApiResult> getItems() {
@@ -25,29 +23,21 @@ public class AdminCodeGroupController {
   }
 
   @PostMapping
-  ResponseEntity<ApiResult> post(
-    @RequestBody final TableCodeGroupEntity tableCodeGroupEntity
-  ) {
+  ResponseEntity<ApiResult> post(@RequestBody final TableCodeGroupEntity tableCodeGroupEntity) {
     this.tableCodeGroupRepository.insert(tableCodeGroupEntity);
     return Result.created();
   }
 
   @PutMapping(value = "{codeGroup}")
   ResponseEntity<ApiResult> put(
-    @PathVariable(value = "codeGroup") final String codeGroup,
-    @RequestBody final TableCodeGroupEntity tableCodeGroupEntity
-  ) {
-    this.tableCodeGroupRepository.updateByKey(
-      tableCodeGroupEntity,
-      Map.of("codeGroup", codeGroup)
-    );
+      @PathVariable(value = "codeGroup") final String codeGroup,
+      @RequestBody final TableCodeGroupEntity tableCodeGroupEntity) {
+    this.tableCodeGroupRepository.updateByKey(tableCodeGroupEntity, Map.of("codeGroup", codeGroup));
     return Result.ok();
   }
 
   @DeleteMapping(value = "{codeGroup}")
-  ResponseEntity<ApiResult> delete(
-    @PathVariable(value = "codeGroup") final String codeGroup
-  ) {
+  ResponseEntity<ApiResult> delete(@PathVariable(value = "codeGroup") final String codeGroup) {
     this.adminCodeGroupService.delete(codeGroup);
     return Result.ok();
   }

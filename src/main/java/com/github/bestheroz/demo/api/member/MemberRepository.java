@@ -11,8 +11,6 @@ import org.springframework.stereotype.Repository;
 @Mapper
 @Repository
 public interface MemberRepository extends SqlRepository<CodeVO> {
-  @Select(
-    value = "SELECT M.ID AS VALUE, M.NAME AS TEXT FROM MEMBER M ORDER BY M.NAME ASC"
-  )
+  @Select(value = "SELECT M.ID AS VALUE, M.NAME AS TEXT FROM MEMBER M ORDER BY M.NAME ASC")
   List<CodeVO> getCodes() throws BusinessException;
 }
