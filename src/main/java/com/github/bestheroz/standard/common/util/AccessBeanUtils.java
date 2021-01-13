@@ -8,8 +8,7 @@ import org.springframework.stereotype.Component;
 public class AccessBeanUtils {
   private static AccessBeanUtils instance;
 
-  @Resource
-  private ApplicationContext applicationContext;
+  @Resource private ApplicationContext applicationContext;
 
   private AccessBeanUtils() {
     if (instance == null) {

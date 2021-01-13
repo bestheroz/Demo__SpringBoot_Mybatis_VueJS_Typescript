@@ -8,13 +8,12 @@ import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfigurat
 import org.springframework.cache.annotation.EnableCaching;
 
 @SpringBootApplication(
-  scanBasePackages = "com.github.bestheroz",
-  exclude = {
-    JacksonAutoConfiguration.class,
-    JpaRepositoriesAutoConfiguration.class,
-    HibernateJpaAutoConfiguration.class
-  }
-)
+    scanBasePackages = "com.github.bestheroz",
+    exclude = {
+      JacksonAutoConfiguration.class,
+      JpaRepositoriesAutoConfiguration.class,
+      HibernateJpaAutoConfiguration.class
+    })
 @EnableCaching
 public class Application {
   public static void main(final String[] args) {

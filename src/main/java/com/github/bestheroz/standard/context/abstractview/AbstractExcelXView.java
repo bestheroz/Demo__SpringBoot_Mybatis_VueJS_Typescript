@@ -34,20 +34,18 @@ import org.springframework.web.servlet.view.AbstractView;
 
 @Slf4j
 public abstract class AbstractExcelXView extends AbstractView {
-  /**
-   * The extension to look for existing templates
-   */
+  /** The extension to look for existing templates */
   public static final String EXTENSION = ".xlsx";
+
   public static final String FILE_NAME = "fileName";
   public static final String PASSWORD = "password";
   public static final String EXCEL_VOS = "excelVOs";
   public static final String SQL = "SQL";
   public static final String LIST_DATA = "listData";
-  /**
-   * The content type for an Excel response
-   */
+  /** The content type for an Excel response */
   private static final String CONTENT_TYPE =
-    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+
   private static final String ROW_NUMBER = "ROW_NUMBER";
   private XSSFCellStyle stringRightStyle;
   private XSSFCellStyle stringCenterStyle;
@@ -55,42 +53,29 @@ public abstract class AbstractExcelXView extends AbstractView {
   private XSSFCellStyle doubleStyle;
   private XSSFCellStyle dateStyle;
 
-  /**
-   * Default Constructor. * Sets the content type of the view to "application/vnd.ms-excel".
-   */
+  /** Default Constructor. * Sets the content type of the view to "application/vnd.ms-excel". */
   public AbstractExcelXView() {
     this.setContentType(CONTENT_TYPE);
   }
 
-  public static void addHeaderOfRowNo(
-    final List<ExcelVO> excelVOList,
-    final String title
-  ) {
-    addHeader(
-      excelVOList,
-      title,
-      ROW_NUMBER,
-      AbstractExcelXView.CellType.STRING_CENTER,
-      null
-    );
+  public static void addHeaderOfRowNo(final List<ExcelVO> excelVOList, final String title) {
+    addHeader(excelVOList, title, ROW_NUMBER, AbstractExcelXView.CellType.STRING_CENTER, null);
   }
 
   public static void addHeader(
-    final List<ExcelVO> excelVOList,
-    final String title,
-    final String dbColName,
-    final CellType cellType
-  ) {
+      final List<ExcelVO> excelVOList,
+      final String title,
+      final String dbColName,
+      final CellType cellType) {
     addHeader(excelVOList, title, dbColName, cellType, null);
   }
 
   public static void addHeader(
-    final List<ExcelVO> excelVOList,
-    final String title,
-    final String dbColName,
-    final CellType cellType,
-    final List<CodeVO> codeList
-  ) {
+      final List<ExcelVO> excelVOList,
+      final String title,
+      final String dbColName,
+      final CellType cellType,
+      final List<CodeVO> codeList) {
     final ExcelVO excelVO = new ExcelVO();
     excelVO.setTitle(title);
     excelVO.setDbColName(dbColName);
@@ -107,21 +92,16 @@ public abstract class AbstractExcelXView extends AbstractView {
     return true;
   }
 
-  /**
-   * Renders the Excel view, given the specified model.
-   */
+  /** Renders the Excel view, given the specified model. */
   @Override
   protected final void renderMergedOutputModel(
-    final Map<String, Object> model,
-    final HttpServletRequest request,
-    final HttpServletResponse response
-  ) {
+      final Map<String, Object> model,
+      final HttpServletRequest request,
+      final HttpServletResponse response) {
     // java.lang.OutOfMemoryError: Java heap space 발생시...
     // -XX:PermSize=64M -XX:MaxPermSize=1000M
-    try (
-      final ByteArrayOutputStream baos = this.createTemporaryOutputStream();
-      final SXSSFWorkbook workbook = new SXSSFWorkbook(100)
-    ) {
+    try (final ByteArrayOutputStream baos = this.createTemporaryOutputStream();
+        final SXSSFWorkbook workbook = new SXSSFWorkbook(100)) {
       workbook.setCompressTempFiles(true);
 
       this.stringRightStyle = (XSSFCellStyle) workbook.createCellStyle();
@@ -132,13 +112,11 @@ public abstract class AbstractExcelXView extends AbstractView {
 
       this.numberStyle = (XSSFCellStyle) workbook.createCellStyle();
       this.numberStyle.setDataFormat(
-        workbook.getCreationHelper().createDataFormat().getFormat("#,##0")
-      );
+          workbook.getCreationHelper().createDataFormat().getFormat("#,##0"));
 
       this.doubleStyle = (XSSFCellStyle) workbook.createCellStyle();
       this.doubleStyle.setDataFormat(
-        workbook.getCreationHelper().createDataFormat().getFormat("#,##0.00")
-      );
+          workbook.getCreationHelper().createDataFormat().getFormat("#,##0.00"));
 
       this.dateStyle = (XSSFCellStyle) workbook.createCellStyle();
       this.dateStyle.setAlignment(HorizontalAlignment.CENTER);
@@ -179,29 +157,18 @@ public abstract class AbstractExcelXView extends AbstractView {
     }
   }
 
-  protected SXSSFWorkbook getTemplateSource(
-    final String url,
-    final HttpServletRequest request
-  )
-    throws Exception {
+  protected SXSSFWorkbook getTemplateSource(final String url, final HttpServletRequest request)
+      throws Exception {
     final ApplicationContext applicationContext = this.getApplicationContext();
-    Optional
-      .ofNullable(applicationContext)
-      .orElseThrow(
-        () -> {
-          log.warn("applicationContext is null");
-          return BusinessException.ERROR_SYSTEM;
-        }
-      );
-    final LocalizedResourceHelper helper = new LocalizedResourceHelper(
-      applicationContext
-    );
+    Optional.ofNullable(applicationContext)
+        .orElseThrow(
+            () -> {
+              log.warn("applicationContext is null");
+              return BusinessException.ERROR_SYSTEM;
+            });
+    final LocalizedResourceHelper helper = new LocalizedResourceHelper(applicationContext);
     final Locale userLocale = RequestContextUtils.getLocale(request);
-    final Resource inputFile = helper.findLocalizedResource(
-      url,
-      EXTENSION,
-      userLocale
-    );
+    final Resource inputFile = helper.findLocalizedResource(url, EXTENSION, userLocale);
 
     // Create the Excel document from the source.
     if (log.isDebugEnabled()) {
@@ -212,38 +179,24 @@ public abstract class AbstractExcelXView extends AbstractView {
   }
 
   protected abstract void buildExcelDocument(
-    Map<String, Object> model,
-    SXSSFWorkbook workbook,
-    HttpServletRequest request,
-    HttpServletResponse response
-  );
+      Map<String, Object> model,
+      SXSSFWorkbook workbook,
+      HttpServletRequest request,
+      HttpServletResponse response);
 
-  protected SXSSFCell getCell(
-    final SXSSFSheet sheet,
-    final int row,
-    final int col
-  ) {
-    final SXSSFRow sheetRow = Objects.requireNonNullElseGet(
-      sheet.getRow(row),
-      () -> sheet.createRow(row)
-    );
-    return Objects.requireNonNullElseGet(
-      sheetRow.getCell(col),
-      () -> sheetRow.createCell(col)
-    );
+  protected SXSSFCell getCell(final SXSSFSheet sheet, final int row, final int col) {
+    final SXSSFRow sheetRow =
+        Objects.requireNonNullElseGet(sheet.getRow(row), () -> sheet.createRow(row));
+    return Objects.requireNonNullElseGet(sheetRow.getCell(col), () -> sheetRow.createCell(col));
   }
 
-  protected void autoSizeColumn(
-    final SXSSFSheet sheet,
-    final List<ExcelVO> excelVOs
-  ) {
+  protected void autoSizeColumn(final SXSSFSheet sheet, final List<ExcelVO> excelVOs) {
     sheet.trackAllColumnsForAutoSizing();
     for (int j = 0; j < excelVOs.size(); j++) {
       sheet.autoSizeColumn(j);
-      // java.lang.IllegalArgumentException: The maximum column width for an individual cell is 255 characters. max 59999
-      int columWidth = (int) (
-        sheet.getColumnWidth(j) * excelVOs.get(j).getCharByte() + 300
-      );
+      // java.lang.IllegalArgumentException: The maximum column width for an individual cell is 255
+      // characters. max 59999
+      int columWidth = (int) (sheet.getColumnWidth(j) * excelVOs.get(j).getCharByte() + 300);
       columWidth = Math.max(columWidth, 3000);
       columWidth = Math.min(columWidth, 59999);
       sheet.setColumnWidth(j, columWidth);
@@ -252,76 +205,44 @@ public abstract class AbstractExcelXView extends AbstractView {
   }
 
   protected void writeColumnData(
-    final List<ExcelVO> excelVOs,
-    final Integer columnIdx,
-    final SXSSFCell cell,
-    final String data
-  ) {
+      final List<ExcelVO> excelVOs,
+      final Integer columnIdx,
+      final SXSSFCell cell,
+      final String data) {
     if (excelVOs.get(columnIdx).getCellType().equals(CellType.INTEGER)) {
       this.setInteger(cell, data);
     } else if (excelVOs.get(columnIdx).getCellType().equals(CellType.DOUBLE)) {
       this.setDouble(cell, data);
-    } else if (
-      excelVOs.get(columnIdx).getCellType().equals(CellType.DATE) ||
-        excelVOs.get(columnIdx).getCellType().equals(CellType.DATE_YYYYMMDDHHMMSS)
-    ) {
+    } else if (excelVOs.get(columnIdx).getCellType().equals(CellType.DATE)
+        || excelVOs.get(columnIdx).getCellType().equals(CellType.DATE_YYYYMMDDHHMMSS)) {
       this.setDate(cell, Instant.parse(data).toString());
-    } else if (
-      excelVOs.get(columnIdx).getCellType().equals(CellType.DATE_YYYYMMDD)
-    ) {
+    } else if (excelVOs.get(columnIdx).getCellType().equals(CellType.DATE_YYYYMMDD)) {
       this.setDate(cell, Instant.parse(data).toString());
     } else {
       try {
-        Optional
-          .ofNullable(excelVOs.get(columnIdx).getCodeList())
-          .flatMap(
-            items ->
-              items
-                .stream()
-                .filter(item -> item.getValue().equals(data))
-                .findFirst()
-          )
-          .ifPresentOrElse(
-            item -> {
-              final String value = item.getText();
-              if (
-                excelVOs
-                  .get(columnIdx)
-                  .getCellType()
-                  .equals(CellType.STRING_CENTER)
-              ) {
-                this.setStringCenter(cell, value);
-              } else if (
-                excelVOs
-                  .get(columnIdx)
-                  .getCellType()
-                  .equals(CellType.STRING_RIGHT)
-              ) {
-                this.setStringRight(cell, value);
-              } else {
-                this.setString(cell, value);
-              }
-            },
-            () -> {
-              if (
-                excelVOs
-                  .get(columnIdx)
-                  .getCellType()
-                  .equals(CellType.STRING_CENTER)
-              ) {
-                this.setStringCenter(cell, data);
-              } else if (
-                excelVOs
-                  .get(columnIdx)
-                  .getCellType()
-                  .equals(CellType.STRING_RIGHT)
-              ) {
-                this.setStringRight(cell, data);
-              } else {
-                this.setString(cell, data);
-              }
-            }
-          );
+        Optional.ofNullable(excelVOs.get(columnIdx).getCodeList())
+            .flatMap(
+                items -> items.stream().filter(item -> item.getValue().equals(data)).findFirst())
+            .ifPresentOrElse(
+                item -> {
+                  final String value = item.getText();
+                  if (excelVOs.get(columnIdx).getCellType().equals(CellType.STRING_CENTER)) {
+                    this.setStringCenter(cell, value);
+                  } else if (excelVOs.get(columnIdx).getCellType().equals(CellType.STRING_RIGHT)) {
+                    this.setStringRight(cell, value);
+                  } else {
+                    this.setString(cell, value);
+                  }
+                },
+                () -> {
+                  if (excelVOs.get(columnIdx).getCellType().equals(CellType.STRING_CENTER)) {
+                    this.setStringCenter(cell, data);
+                  } else if (excelVOs.get(columnIdx).getCellType().equals(CellType.STRING_RIGHT)) {
+                    this.setStringRight(cell, data);
+                  } else {
+                    this.setString(cell, data);
+                  }
+                });
       } catch (final Throwable e) {
         log.warn(ExceptionUtils.getStackTrace(e));
         this.setString(cell, data);
@@ -350,14 +271,9 @@ public abstract class AbstractExcelXView extends AbstractView {
     cell.setCellType(org.apache.poi.ss.usermodel.CellType.NUMERIC);
     cell.setCellStyle(this.numberStyle);
     try {
-      cell.setCellValue(
-        (long) Double.parseDouble(this.getSecureCellText(text))
-      );
+      cell.setCellValue((long) Double.parseDouble(this.getSecureCellText(text)));
     } catch (final Throwable e) {
-      log.warn(
-        "Excel setInteger() error\n{}.",
-        ExceptionUtils.getStackTrace(e)
-      );
+      log.warn("Excel setInteger() error\n{}.", ExceptionUtils.getStackTrace(e));
       cell.setCellValue(this.getSecureCellText(text));
     }
   }

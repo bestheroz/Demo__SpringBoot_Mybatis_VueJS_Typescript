@@ -22,22 +22,15 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Extract version info
-        id: version
-        uses: ./.github/actions/parse-version
-
       - name: Cache node
-        id: cache-node
         uses: actions/cache@main
         with:
-          path: |
-            ~/.npm
-            **/node_modules
-          key: ${{ runner.os }}-node-${{ steps.version.outputs.nodeVersion }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: ${{ runner.os }}-node-${{ steps.version.outputs.nodeVersion }}-
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
       - name: npm install
-        if: steps.cache-node.outputs.cache-hit != 'true'
         run: |
           cd vue
           npm ci

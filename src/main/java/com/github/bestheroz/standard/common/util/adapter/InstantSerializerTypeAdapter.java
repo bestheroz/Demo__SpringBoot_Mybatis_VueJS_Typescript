@@ -11,10 +11,7 @@ public class InstantSerializerTypeAdapter implements JsonSerializer<Instant> {
 
   @Override
   public JsonElement serialize(
-    final Instant date,
-    final Type typeOfSrc,
-    final JsonSerializationContext context
-  ) {
+      final Instant date, final Type typeOfSrc, final JsonSerializationContext context) {
     return new JsonPrimitive(date.toString());
   }
 }

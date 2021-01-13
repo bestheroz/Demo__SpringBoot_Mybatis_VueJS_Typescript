@@ -20,33 +20,27 @@ import org.springframework.web.util.UrlPathHelper;
 @Slf4j
 public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
   private static final String REQUEST_COMPLETE_EXECUTE_TIME =
-    "{} ....... Request Complete Execute Time ....... : {}";
+      "{} ....... Request Complete Execute Time ....... : {}";
   private static final String REQUEST_PARAMETERS = "<{}>{}";
 
-  public JwtAuthenticationFilter(
-    final AuthenticationManager authenticationManager
-  ) {
+  public JwtAuthenticationFilter(final AuthenticationManager authenticationManager) {
     super(authenticationManager);
   }
 
   @Override
   protected void doFilterInternal(
-    final HttpServletRequest request,
-    final HttpServletResponse response,
-    final FilterChain chain
-  )
-    throws IOException, ServletException {
-    final String requestURI = new UrlPathHelper()
-      .getPathWithinApplication(request);
+      final HttpServletRequest request, final HttpServletResponse response, final FilterChain chain)
+      throws IOException, ServletException {
+    final String requestURI = new UrlPathHelper().getPathWithinApplication(request);
     log.info(REQUEST_PARAMETERS, request.getMethod(), requestURI);
     final StopWatch stopWatch = new StopWatch();
     stopWatch.start();
 
-    final Optional<String> oPublicPages = Arrays
-      .stream(SecurityConfiguration.PUBLIC)
-      .map(item -> item.replace("*", ""))
-      .filter(requestURI::startsWith)
-      .findFirst();
+    final Optional<String> oPublicPages =
+        Arrays.stream(SecurityConfiguration.PUBLIC)
+            .map(item -> item.replace("*", ""))
+            .filter(requestURI::startsWith)
+            .findFirst();
     if (oPublicPages.isEmpty()) {
       final String token = JwtTokenProvider.resolveAccessToken(request);
       if (StringUtils.isEmpty(token)) {
@@ -62,9 +56,8 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
       }
 
       try {
-        SecurityContextHolder
-          .getContext()
-          .setAuthentication(JwtTokenProvider.getAuthentication(token));
+        SecurityContextHolder.getContext()
+            .setAuthentication(JwtTokenProvider.getAuthentication(token));
       } catch (final UsernameNotFoundException e) {
         log.info("invalid accessToken");
         (response).sendError(HttpServletResponse.SC_UNAUTHORIZED);

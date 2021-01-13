@@ -26,9 +26,7 @@ public class CaseUtils {
       if (ch == '_') {
         beforeUnderbar = true;
       } else {
-        result.append(
-          beforeUnderbar ? Character.toUpperCase(ch) : Character.toLowerCase(ch)
-        );
+        result.append(beforeUnderbar ? Character.toUpperCase(ch) : Character.toLowerCase(ch));
         beforeUnderbar = false;
       }
     }

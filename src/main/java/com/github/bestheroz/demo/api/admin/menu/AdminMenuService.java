@@ -11,10 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AdminMenuService {
-  @Resource
-  private TableMenuRepository tableMenuRepository;
-  @Resource
-  private TableMemberMenuRepository tableMemberMenuRepository;
+  @Resource private TableMenuRepository tableMenuRepository;
+  @Resource private TableMemberMenuRepository tableMemberMenuRepository;
 
   @Transactional
   public void put(final TableMenuEntity tableMenuEntity, final Integer id) {

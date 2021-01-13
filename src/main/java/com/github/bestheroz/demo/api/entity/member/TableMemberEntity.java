@@ -8,9 +8,7 @@ import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class TableMemberEntity
-  extends AbstractCreatedUpdateEntity
-  implements Serializable {
+public class TableMemberEntity extends AbstractCreatedUpdateEntity implements Serializable {
   private static final long serialVersionUID = 7280716056600887400L;
   private String id;
   private String password;

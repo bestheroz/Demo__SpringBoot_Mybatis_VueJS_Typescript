@@ -23,17 +23,12 @@ public class AbstractDownloadView extends AbstractView {
 
   @Override
   protected void renderMergedOutputModel(
-    final Map<String, Object> model,
-    final HttpServletRequest request,
-    final HttpServletResponse response
-  ) {
+      final Map<String, Object> model,
+      final HttpServletRequest request,
+      final HttpServletResponse response) {
     final File file = (File) model.get(DOWNLOAD_FILE);
     if (!NullUtils.exists(file)) {
-      log.warn(
-        "{} {}",
-        ExceptionCode.ERROR_FILE_NOT_FOUND.getMessage(),
-        file.getAbsolutePath()
-      );
+      log.warn("{} {}", ExceptionCode.ERROR_FILE_NOT_FOUND.getMessage(), file.getAbsolutePath());
       response.setContentType("text/html;charset=utf-8");
       try (final PrintWriter pw = response.getWriter()) {
         pw.println("<script>");
@@ -46,10 +41,8 @@ public class AbstractDownloadView extends AbstractView {
         throw new BusinessException(e);
       }
     }
-    try (
-      final OutputStream out = response.getOutputStream();
-      final FileInputStream fis = new FileInputStream(file)
-    ) {
+    try (final OutputStream out = response.getOutputStream();
+        final FileInputStream fis = new FileInputStream(file)) {
       log.info("file.getPath() : {}", file.getPath());
       log.info("file.getName() : {}", file.getName());
 
@@ -60,18 +53,13 @@ public class AbstractDownloadView extends AbstractView {
 
         response.setContentLength((int) file.length());
 
-        String oriFileName = (String) model.get(
-          AbstractDownloadView.DOWNLOAD_ORI_FILE_NAME
-        );
+        String oriFileName = (String) model.get(AbstractDownloadView.DOWNLOAD_ORI_FILE_NAME);
         if (StringUtils.isEmpty(oriFileName)) {
           oriFileName = FileUtils.getEncodedFileName(request, file.getName());
         }
         response.setHeader(
-          "Content-Disposition",
-          "attachment; filename=\"" +
-            FileUtils.getEncodedFileName(request, oriFileName) +
-            "\";"
-        );
+            "Content-Disposition",
+            "attachment; filename=\"" + FileUtils.getEncodedFileName(request, oriFileName) + "\";");
         response.setHeader("Content-Transfer-Encoding", "binary");
       }
 

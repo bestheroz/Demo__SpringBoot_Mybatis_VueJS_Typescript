@@ -17,57 +17,54 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
-  public static final String[] PUBLIC = new String[]{
-    "/login",
-    "/error",
-    "/api/auth/login",
-    "/api/variables/**",
-    "/actuator/**",
-    "/api/auth/login",
-    "/api/auth/refreshToken",
-    "/api/auth/initPassword"
-  };
+  public static final String[] PUBLIC =
+      new String[] {
+        "/login",
+        "/error",
+        "/api/auth/login",
+        "/api/variables/**",
+        "/actuator/**",
+        "/api/auth/login",
+        "/api/auth/refreshToken",
+        "/api/auth/initPassword"
+      };
 
   @Override
   protected void configure(final HttpSecurity http) throws Exception {
-    http
-      .httpBasic()
-      .disable()
-      .sessionManagement()
-      .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-      .and()
-      .authorizeRequests()
-      .antMatchers(PUBLIC)
-      .permitAll()
-      .requestMatchers(EndpointRequest.toAnyEndpoint())
-      .permitAll()
-      .anyRequest()
-      .authenticated()
-      .and()
-      .addFilterBefore(
-        new JwtAuthenticationFilter(this.authenticationManagerBean()),
-        UsernamePasswordAuthenticationFilter.class
-      )
-      .csrf()
-      .disable()
-      .cors();
+    http.httpBasic()
+        .disable()
+        .sessionManagement()
+        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        .and()
+        .authorizeRequests()
+        .antMatchers(PUBLIC)
+        .permitAll()
+        .requestMatchers(EndpointRequest.toAnyEndpoint())
+        .permitAll()
+        .anyRequest()
+        .authenticated()
+        .and()
+        .addFilterBefore(
+            new JwtAuthenticationFilter(this.authenticationManagerBean()),
+            UsernamePasswordAuthenticationFilter.class)
+        .csrf()
+        .disable()
+        .cors();
   }
 
   @Override
   public void configure(final WebSecurity web) {
-    web
-      .ignoring()
-      .antMatchers(
-        "/static/**",
-        "/**/*.js",
-        "/**/*.js.map",
-        "/**/*.css",
-        "/**/*.html",
-        "/images/**",
-        "/fonts/**",
-        "/favicon.*",
-        "/manifest.json"
-      );
+    web.ignoring()
+        .antMatchers(
+            "/static/**",
+            "/**/*.js",
+            "/**/*.js.map",
+            "/**/*.css",
+            "/**/*.html",
+            "/images/**",
+            "/fonts/**",
+            "/favicon.*",
+            "/manifest.json");
   }
 
   @Bean

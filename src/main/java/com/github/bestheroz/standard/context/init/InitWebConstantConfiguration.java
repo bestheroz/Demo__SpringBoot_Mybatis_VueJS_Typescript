@@ -11,9 +11,8 @@ public class InitWebConstantConfiguration {
   @Autowired
   public void setConstant() {
     log.info(
-      "\n{}\nThis Demo is managed by bestheroz.\nIf you have any questions, send me feedback.\nE-mail: bestheroz@gmail.com\ngithub: https://github.com/bestheroz\n{}",
-      StringUtils.repeat("=", 80),
-      StringUtils.repeat("=", 80)
-    );
+        "\n{}\nThis Demo is managed by bestheroz.\nIf you have any questions, send me feedback.\nE-mail: bestheroz@gmail.com\ngithub: https://github.com/bestheroz\n{}",
+        StringUtils.repeat("=", 80),
+        StringUtils.repeat("=", 80));
   }
 }

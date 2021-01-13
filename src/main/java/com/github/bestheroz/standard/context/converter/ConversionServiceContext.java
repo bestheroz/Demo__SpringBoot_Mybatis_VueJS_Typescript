@@ -10,9 +10,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Primary
-public class ConversionServiceContext
-  extends DefaultConversionService
-  implements ConversionService {
+public class ConversionServiceContext extends DefaultConversionService
+    implements ConversionService {
 
   @Bean(name = "conversionService")
   public ConversionService getConversionService() {

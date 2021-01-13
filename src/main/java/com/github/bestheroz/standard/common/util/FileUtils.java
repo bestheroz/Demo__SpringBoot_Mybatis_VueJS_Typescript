@@ -58,35 +58,26 @@ public class FileUtils {
     }
   }
 
-  public String getEncodedFileName(
-    final HttpServletRequest request,
-    final String fileName
-  ) {
+  public String getEncodedFileName(final HttpServletRequest request, final String fileName) {
     try {
       final String header = request.getHeader("User-Agent");
 
       final String encodedFilename;
       if (StringUtils.contains(header, "MSIE")) {
         encodedFilename =
-          URLEncoder
-            .encode(fileName, StandardCharsets.UTF_8.displayName())
-            .replaceAll("\\+", "%20");
+            URLEncoder.encode(fileName, StandardCharsets.UTF_8.displayName())
+                .replaceAll("\\+", "%20");
       } else if (StringUtils.contains(header, "Trident")) {
         encodedFilename =
-          URLEncoder
-            .encode(fileName, StandardCharsets.UTF_8.displayName())
-            .replaceAll("\\+", "%20");
+            URLEncoder.encode(fileName, StandardCharsets.UTF_8.displayName())
+                .replaceAll("\\+", "%20");
       } else if (StringUtils.contains(header, "Chrome")) {
         final StringBuilder sb = new StringBuilder();
         for (int i = 0; i < fileName.length(); i++) {
           final char c = fileName.charAt(i);
           if (c > '~') {
             sb.append(
-              URLEncoder.encode(
-                StringUtils.EMPTY + c,
-                StandardCharsets.UTF_8.displayName()
-              )
-            );
+                URLEncoder.encode(StringUtils.EMPTY + c, StandardCharsets.UTF_8.displayName()));
           } else {
             sb.append(c);
           }
@@ -94,15 +85,12 @@ public class FileUtils {
         encodedFilename = sb.toString();
       } else {
         encodedFilename =
-          URLDecoder.decode(
-            "\"" +
-              new String(
-                fileName.getBytes(StandardCharsets.UTF_8),
-                StandardCharsets.ISO_8859_1
-              ) +
-              "\"",
-            StandardCharsets.UTF_8.displayName()
-          );
+            URLDecoder.decode(
+                "\""
+                    + new String(
+                        fileName.getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1)
+                    + "\"",
+                StandardCharsets.UTF_8.displayName());
       }
       return encodedFilename;
     } catch (final UnsupportedEncodingException e) {
@@ -112,36 +100,22 @@ public class FileUtils {
   }
 
   public File getFile(final String filePath) {
-    final String path = RegExUtils
-      .replaceAll(getFileRoot() + "/" + filePath, "\\\\", "/")
-      .replaceAll("//", "/");
+    final String path =
+        RegExUtils.replaceAll(getFileRoot() + "/" + filePath, "\\\\", "/").replaceAll("//", "/");
     final File file = org.apache.commons.io.FileUtils.getFile(path);
     if (file.isDirectory() && !StringUtils.endsWith(path, "/")) {
-      log.warn(
-        "{} : {}",
-        path,
-        ExceptionCode.ERROR_DIR_PATH_MUST_ENDS_WITH_SLASH.toString()
-      );
-      throw new BusinessException(
-        ExceptionCode.ERROR_DIR_PATH_MUST_ENDS_WITH_SLASH
-      );
+      log.warn("{} : {}", path, ExceptionCode.ERROR_DIR_PATH_MUST_ENDS_WITH_SLASH.toString());
+      throw new BusinessException(ExceptionCode.ERROR_DIR_PATH_MUST_ENDS_WITH_SLASH);
     }
     return file;
   }
 
   public void checkExistingDirectory(final String dirPath) {
-    final String path = RegExUtils
-      .replaceAll(getFileRoot() + dirPath, "\\\\", "/")
-      .replaceAll("//", "/");
+    final String path =
+        RegExUtils.replaceAll(getFileRoot() + dirPath, "\\\\", "/").replaceAll("//", "/");
     if (!StringUtils.endsWith(path, "/")) {
-      log.warn(
-        "{} : {}",
-        path,
-        ExceptionCode.ERROR_DIR_PATH_MUST_ENDS_WITH_SLASH.toString()
-      );
-      throw new BusinessException(
-        ExceptionCode.ERROR_DIR_PATH_MUST_ENDS_WITH_SLASH
-      );
+      log.warn("{} : {}", path, ExceptionCode.ERROR_DIR_PATH_MUST_ENDS_WITH_SLASH.toString());
+      throw new BusinessException(ExceptionCode.ERROR_DIR_PATH_MUST_ENDS_WITH_SLASH);
     }
     log.debug(path);
     final File file = new File(path);
@@ -164,9 +138,7 @@ public class FileUtils {
   }
 
   public void uploadAllFiles(
-    final MultipartHttpServletRequest mRequest,
-    final String targetDirPath
-  ) {
+      final MultipartHttpServletRequest mRequest, final String targetDirPath) {
     final Map<String, MultipartFile> fileMap = mRequest.getFileMap();
     if (NullUtils.size(fileMap) < 1) {
       return;
@@ -181,19 +153,14 @@ public class FileUtils {
     }
   }
 
-  private File uploadMultipartFile(
-    final String targetDirPath,
-    final MultipartFile multipartFile
-  ) {
+  private File uploadMultipartFile(final String targetDirPath, final MultipartFile multipartFile) {
     final StringBuilder fileName = new StringBuilder(80);
     fileName
-      .append(DateUtils.toStringNow("yyyyMMddHHmmss"))
-      .append(STR_UNDERLINE)
-      .append(
-        DigestUtils.md5DigestAsHex(
-          Objects.requireNonNull(multipartFile.getOriginalFilename()).getBytes()
-        )
-      );
+        .append(DateUtils.toStringNow("yyyyMMddHHmmss"))
+        .append(STR_UNDERLINE)
+        .append(
+            DigestUtils.md5DigestAsHex(
+                Objects.requireNonNull(multipartFile.getOriginalFilename()).getBytes()));
     if (StringUtils.isNotEmpty(getExtension(multipartFile))) {
       fileName.append(STR_DOT).append(getExtension(multipartFile));
     }
@@ -207,40 +174,29 @@ public class FileUtils {
     return file;
   }
 
-  public String uploadFile(
-    final MultipartFile multipartFile,
-    final String targetDirPath
-  ) {
-    return Optional
-      .ofNullable(multipartFile)
-      .map(
-        item -> {
-          validateFile(item);
-          checkExistingDirectory(targetDirPath);
-          final File file = uploadMultipartFile(targetDirPath, item);
-          log.info(STR_INFO_MESSAGE, file.getAbsolutePath());
-          return file.getName();
-        }
-      )
-      .orElse("error");
+  public String uploadFile(final MultipartFile multipartFile, final String targetDirPath) {
+    return Optional.ofNullable(multipartFile)
+        .map(
+            item -> {
+              validateFile(item);
+              checkExistingDirectory(targetDirPath);
+              final File file = uploadMultipartFile(targetDirPath, item);
+              log.info(STR_INFO_MESSAGE, file.getAbsolutePath());
+              return file.getName();
+            })
+        .orElse("error");
   }
 
   // 업로드 하려는 파일의 검증(MultipartFile 이용)
   public void validateFile(final MultipartFile multipartFile) {
     if (FileType.ILLEGAL.extList.contains(getExtension(multipartFile))) {
       log.warn(
-        "{}{}",
-        ExceptionCode.FAIL_FILE_SIZE.toString(),
-        multipartFile.getOriginalFilename()
-      );
+          "{}{}", ExceptionCode.FAIL_FILE_SIZE.toString(), multipartFile.getOriginalFilename());
       throw new BusinessException(ExceptionCode.FAIL_FILE_SIZE);
     }
     if (FileType.ILLEGAL.mimeTypeList.contains(getMimeType(multipartFile))) {
       log.warn(
-        "{}{}",
-        ExceptionCode.FAIL_FILE_MIMETYPE.toString(),
-        multipartFile.getOriginalFilename()
-      );
+          "{}{}", ExceptionCode.FAIL_FILE_MIMETYPE.toString(), multipartFile.getOriginalFilename());
       throw new BusinessException(ExceptionCode.FAIL_FILE_MIMETYPE);
     }
   }
@@ -248,43 +204,28 @@ public class FileUtils {
   // 업로드된 파일의 검증(File 이용)
   public void validateFile(final File file) {
     if (FileType.ILLEGAL.extList.contains(getExtension(file))) {
-      log.warn(
-        "{}{}",
-        ExceptionCode.FAIL_FILE_SIZE.toString(),
-        file.getAbsolutePath()
-      );
+      log.warn("{}{}", ExceptionCode.FAIL_FILE_SIZE.toString(), file.getAbsolutePath());
       throw new BusinessException(ExceptionCode.FAIL_FILE_SIZE);
     }
     if (FileType.ILLEGAL.mimeTypeList.contains(getMimeType(file))) {
-      log.warn(
-        "{}{}",
-        ExceptionCode.FAIL_FILE_MIMETYPE.toString(),
-        file.getAbsolutePath()
-      );
+      log.warn("{}{}", ExceptionCode.FAIL_FILE_MIMETYPE.toString(), file.getAbsolutePath());
       throw new BusinessException(ExceptionCode.FAIL_FILE_MIMETYPE);
     }
   }
 
   // 업로드 하려는 파일의 검증(MultipartFile 이용)
-  public void validateFile(
-    final MultipartFile multipartFile,
-    final FileType fileType
-  ) {
+  public void validateFile(final MultipartFile multipartFile, final FileType fileType) {
     try {
       if (!fileType.extList.contains(getExtension(multipartFile))) {
         log.warn(
-          "{}{}",
-          ExceptionCode.FAIL_FILE_SIZE.toString(),
-          multipartFile.getOriginalFilename()
-        );
+            "{}{}", ExceptionCode.FAIL_FILE_SIZE.toString(), multipartFile.getOriginalFilename());
         throw new BusinessException(ExceptionCode.FAIL_FILE_SIZE);
       }
       if (!fileType.mimeTypeList.contains(getMimeType(multipartFile))) {
         log.warn(
-          "{}{}",
-          ExceptionCode.FAIL_FILE_MIMETYPE.toString(),
-          multipartFile.getOriginalFilename()
-        );
+            "{}{}",
+            ExceptionCode.FAIL_FILE_MIMETYPE.toString(),
+            multipartFile.getOriginalFilename());
         throw new BusinessException(ExceptionCode.FAIL_FILE_MIMETYPE);
       }
 
@@ -298,19 +239,11 @@ public class FileUtils {
   public void validateFile(final File file, final FileType fileType) {
     try {
       if (!fileType.extList.contains(getExtension(file))) {
-        log.warn(
-          "{}{}",
-          ExceptionCode.FAIL_FILE_SIZE.toString(),
-          file.getAbsolutePath()
-        );
+        log.warn("{}{}", ExceptionCode.FAIL_FILE_SIZE.toString(), file.getAbsolutePath());
         throw new BusinessException(ExceptionCode.FAIL_FILE_SIZE);
       }
       if (!fileType.mimeTypeList.contains(getMimeType(file))) {
-        log.warn(
-          "{}{}",
-          ExceptionCode.FAIL_FILE_MIMETYPE.toString(),
-          file.getAbsolutePath()
-        );
+        log.warn("{}{}", ExceptionCode.FAIL_FILE_MIMETYPE.toString(), file.getAbsolutePath());
         throw new BusinessException(ExceptionCode.FAIL_FILE_MIMETYPE);
       }
 
@@ -321,9 +254,7 @@ public class FileUtils {
   }
 
   private BusinessException setResultCodeByFileType(
-    final BusinessException e,
-    final FileType fileType
-  ) {
+      final BusinessException e, final FileType fileType) {
     if (FileType.IMAGE.equals(fileType)) {
       if (e.isEquals(ExceptionCode.FAIL_FILE_SIZE)) {
         return new BusinessException(ExceptionCode.FAIL_IMAGE_EXT);
@@ -352,21 +283,14 @@ public class FileUtils {
     return e;
   }
 
-  public boolean isFileType(
-    final MultipartFile multipartFile,
-    final FileType fileType
-  ) {
-    return (
-      fileType.extList.contains(getExtension(multipartFile)) &&
-        fileType.mimeTypeList.contains(getMimeType(multipartFile))
-    );
+  public boolean isFileType(final MultipartFile multipartFile, final FileType fileType) {
+    return (fileType.extList.contains(getExtension(multipartFile))
+        && fileType.mimeTypeList.contains(getMimeType(multipartFile)));
   }
 
   public boolean isFileType(final File file, final FileType fileType) {
-    return (
-      fileType.extList.contains(getExtension(file)) &&
-        fileType.mimeTypeList.contains(getMimeType(file))
-    );
+    return (fileType.extList.contains(getExtension(file))
+        && fileType.mimeTypeList.contains(getMimeType(file)));
   }
 
   public String getMimeType(final MultipartFile multipartFile) {
@@ -444,55 +368,45 @@ public class FileUtils {
   }
 
   public String getExtension(final String fileName) {
-    return FilenameUtils
-      .getExtension(fileName)
-      .toLowerCase(Locale.getDefault());
+    return FilenameUtils.getExtension(fileName).toLowerCase(Locale.getDefault());
   }
 
   public enum FileType {
     IMAGE(
-      Set.of("gif", "jpg", "jpeg", "tif", "tiff", "png", "bmp"),
-      Set.of(
-        "image/gif",
-        "image/jpeg",
-        "image/pjpeg",
-        "image/tiff",
-        "image/x-tiff",
-        "image/png",
-        "image/bmp"
-      )
-    ),
+        Set.of("gif", "jpg", "jpeg", "tif", "tiff", "png", "bmp"),
+        Set.of(
+            "image/gif",
+            "image/jpeg",
+            "image/pjpeg",
+            "image/tiff",
+            "image/x-tiff",
+            "image/png",
+            "image/bmp")),
     EXCEL(
-      Set.of("xlsx", "xls"),
-      Set.of(
-        "application/excel",
-        "application/vnd.ms-excel",
-        "application/x-excel",
-        "application/x-msexcel",
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-      )
-    ),
+        Set.of("xlsx", "xls"),
+        Set.of(
+            "application/excel",
+            "application/vnd.ms-excel",
+            "application/x-excel",
+            "application/x-msexcel",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")),
     WORD(
-      Set.of("docx", "doc", "dotx"),
-      Set.of(
-        "application/msword",
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.template"
-      )
-    ),
+        Set.of("docx", "doc", "dotx"),
+        Set.of(
+            "application/msword",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.template")),
     PDF(Set.of("pdf"), Set.of("application/pdf", "application/x-pdf")),
     ILLEGAL(
-      Set.of("exe", "sh", "csh", "ai"),
-      Set.of(
-        "application/octet-stream",
-        "application/x-sh",
-        "application/x-shar",
-        "text/x-script.sh",
-        "application/x-csh",
-        "text/x-script.csh",
-        "application/postscript"
-      )
-    );
+        Set.of("exe", "sh", "csh", "ai"),
+        Set.of(
+            "application/octet-stream",
+            "application/x-sh",
+            "application/x-shar",
+            "text/x-script.sh",
+            "application/x-csh",
+            "text/x-script.csh",
+            "application/postscript"));
     private final Set<String> extList;
     private final Set<String> mimeTypeList;
 

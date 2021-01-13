@@ -28,13 +28,9 @@ public class AuthenticationUtils {
 
   public UserVO getLoginVO() {
     try {
-      final Authentication authentication = SecurityContextHolder
-        .getContext()
-        .getAuthentication();
-      if (
-        !authentication.isAuthenticated() ||
-          StringUtils.equals(authentication.getName(), "anonymousUser")
-      ) {
+      final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+      if (!authentication.isAuthenticated()
+          || StringUtils.equals(authentication.getName(), "anonymousUser")) {
         throw BusinessException.FAIL_TRY_LOGIN_FIRST;
       }
       return ((UserVO) authentication.getPrincipal());
@@ -48,12 +44,9 @@ public class AuthenticationUtils {
 
   public String getUserPk() {
     try {
-      return Optional
-        .ofNullable(
-          SecurityContextHolder.getContext().getAuthentication().getName()
-        )
-        .map(item -> StringUtils.equals(item, "anonymousUser") ? "-" : item)
-        .orElseThrow(() -> BusinessException.FAIL_TRY_LOGIN_FIRST);
+      return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication().getName())
+          .map(item -> StringUtils.equals(item, "anonymousUser") ? "-" : item)
+          .orElseThrow(() -> BusinessException.FAIL_TRY_LOGIN_FIRST);
     } catch (final NullPointerException e) {
       throw BusinessException.FAIL_TRY_LOGIN_FIRST;
     } catch (final Throwable e) {

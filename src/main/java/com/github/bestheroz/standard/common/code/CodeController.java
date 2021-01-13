@@ -12,13 +12,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("api/codes")
 public class CodeController {
-  @Resource
-  private CodeService codeService;
+  @Resource private CodeService codeService;
 
   @GetMapping(value = "{codeGroup}")
   public ResponseEntity<ApiResult> getCodeVOList(
-    @PathVariable(value = "codeGroup") final String codeGroup
-  ) {
+      @PathVariable(value = "codeGroup") final String codeGroup) {
     return Result.ok(this.codeService.getCodeVOListByAuthority(codeGroup));
   }
 }

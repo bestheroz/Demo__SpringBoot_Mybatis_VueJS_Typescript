@@ -56,6 +56,7 @@ spring:
     schema: classpath:/removabledb/schema.sql
     data: classpath:/removabledb/data.sql
     sql-script-encoding: UTF-8
+    driver-class-name: org.h2.Driver
 server:
   port: 8080
 sentry:

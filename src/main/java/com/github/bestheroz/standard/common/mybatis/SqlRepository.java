@@ -13,92 +13,58 @@ public interface SqlRepository<T extends Serializable> {
   @SelectProvider(type = SqlCommand.class, method = SqlCommand.SELECT_ITEMS)
   List<T> getItems();
 
-  @SelectProvider(
-    type = SqlCommand.class,
-    method = SqlCommand.SELECT_ITEMS_WITH_ORDER
-  )
+  @SelectProvider(type = SqlCommand.class, method = SqlCommand.SELECT_ITEMS_WITH_ORDER)
   List<T> getItemsWithOrder(final List<String> orderByConditions);
 
-  @SelectProvider(
-    type = SqlCommand.class,
-    method = SqlCommand.SELECT_ITEMS_BY_KEY
-  )
+  @SelectProvider(type = SqlCommand.class, method = SqlCommand.SELECT_ITEMS_BY_KEY)
   List<T> getItemsByKey(final Map<String, Object> whereConditions);
 
-  @SelectProvider(
-    type = SqlCommand.class,
-    method = SqlCommand.SELECT_ITEMS_BY_KEY_WITH_ORDER
-  )
+  @SelectProvider(type = SqlCommand.class, method = SqlCommand.SELECT_ITEMS_BY_KEY_WITH_ORDER)
   List<T> getItemsByKeyWithOrder(
-    final Map<String, Object> whereConditions,
-    List<String> orderByConditions
-  );
+      final Map<String, Object> whereConditions, List<String> orderByConditions);
 
-  @SelectProvider(
-    type = SqlCommand.class,
-    method = SqlCommand.SELECT_TARGET_ITEMS
-  )
-    // Target 시리즈를 사용하기 위해서는 Entity에 반드시 @NoArgsConstructor 가 필요하다
+  @SelectProvider(type = SqlCommand.class, method = SqlCommand.SELECT_TARGET_ITEMS)
+  // Target 시리즈를 사용하기 위해서는 Entity에 반드시 @NoArgsConstructor 가 필요하다
   List<T> getTargetItems(final List<String> targetColumns);
 
-  @SelectProvider(
-    type = SqlCommand.class,
-    method = SqlCommand.SELECT_TARGET_ITEMS_WITH_ORDER
-  )
-    // Target 시리즈를 사용하기 위해서는 Entity에 반드시 @NoArgsConstructor 가 필요하다
+  @SelectProvider(type = SqlCommand.class, method = SqlCommand.SELECT_TARGET_ITEMS_WITH_ORDER)
+  // Target 시리즈를 사용하기 위해서는 Entity에 반드시 @NoArgsConstructor 가 필요하다
   List<T> getTargetItemsWithOrder(
-    final List<String> targetColumns,
-    final List<String> orderByConditions
-  );
+      final List<String> targetColumns, final List<String> orderByConditions);
 
-  @SelectProvider(
-    type = SqlCommand.class,
-    method = SqlCommand.SELECT_TARGET_ITEMS_BY_KEY
-  )
-    // Target 시리즈를 사용하기 위해서는 Entity에 반드시 @NoArgsConstructor 가 필요하다
+  @SelectProvider(type = SqlCommand.class, method = SqlCommand.SELECT_TARGET_ITEMS_BY_KEY)
+  // Target 시리즈를 사용하기 위해서는 Entity에 반드시 @NoArgsConstructor 가 필요하다
   List<T> getTargetItemsByKey(
-    final List<String> targetColumns,
-    final Map<String, Object> whereConditions
-  );
+      final List<String> targetColumns, final Map<String, Object> whereConditions);
 
   @SelectProvider(
-    type = SqlCommand.class,
-    method = SqlCommand.SELECT_TARGET_ITEMS_BY_KEY_WITH_ORDER
-  )
-    // Target 시리즈를 사용하기 위해서는 Entity에 반드시 @NoArgsConstructor 가 필요하다
+      type = SqlCommand.class,
+      method = SqlCommand.SELECT_TARGET_ITEMS_BY_KEY_WITH_ORDER)
+  // Target 시리즈를 사용하기 위해서는 Entity에 반드시 @NoArgsConstructor 가 필요하다
   List<T> getTargetItemsByKeyWithOrder(
-    final List<String> targetColumns,
-    final Map<String, Object> whereConditions,
-    List<String> orderByConditions
-  );
+      final List<String> targetColumns,
+      final Map<String, Object> whereConditions,
+      List<String> orderByConditions);
 
-  @SelectProvider(
-    type = SqlCommand.class,
-    method = SqlCommand.SELECT_ITEM_BY_KEY
-  )
+  @SelectProvider(type = SqlCommand.class, method = SqlCommand.SELECT_ITEM_BY_KEY)
   Optional<T> getItemByKey(final Map<String, Object> whereConditions);
 
-  @SelectProvider(
-    type = SqlCommand.class,
-    method = SqlCommand.SELECT_ITEMS_BY_DATATABLE
-  )
+  @SelectProvider(type = SqlCommand.class, method = SqlCommand.SELECT_ITEMS_BY_DATATABLE)
   List<T> getItemsForDataTable(final DataTableFilterDTO dataTableFilterDTO);
 
   @SelectProvider(type = SqlCommand.class, method = SqlCommand.COUNT_ALL)
   int countAll();
 
-  @SelectProvider(
-    type = SqlCommand.class,
-    method = SqlCommand.COUNT_BY_DATATABLE
-  )
+  @SelectProvider(type = SqlCommand.class, method = SqlCommand.COUNT_BY_DATATABLE)
   int countForDataTable(final DataTableFilterDTO dataTableFilterDTO);
 
   @SelectProvider(type = SqlCommand.class, method = SqlCommand.COUNT_BY_KEY)
   int countByKey(final Map<String, Object> whereConditions);
 
   @InsertProvider(type = SqlCommand.class, method = SqlCommand.INSERT)
-    // @SelectKey(statement = "SELECT SEQSEQSEQSEQ.NEXTVAL FROM DUAL", keyProperty = "seq", before = true, resultType = Long.class)
-    //  @Options(useGeneratedKeys = true, keyProperty = "id")
+  // @SelectKey(statement = "SELECT SEQSEQSEQSEQ.NEXTVAL FROM DUAL", keyProperty = "seq", before =
+  // true, resultType = Long.class)
+  //  @Options(useGeneratedKeys = true, keyProperty = "id")
   void insert(final T entity);
 
   @InsertProvider(type = SqlCommand.class, method = SqlCommand.INSERT_BATCH)
@@ -107,14 +73,9 @@ public interface SqlRepository<T extends Serializable> {
   @UpdateProvider(type = SqlCommand.class, method = SqlCommand.UPDATE_BY_KEY)
   void updateByKey(final T entity, final Map<String, Object> whereConditions);
 
-  @UpdateProvider(
-    type = SqlCommand.class,
-    method = SqlCommand.UPDATE_MAP_BY_KEY
-  )
+  @UpdateProvider(type = SqlCommand.class, method = SqlCommand.UPDATE_MAP_BY_KEY)
   void updateMapByKey(
-    final Map<String, Object> updateMap,
-    final Map<String, Object> whereConditions
-  );
+      final Map<String, Object> updateMap, final Map<String, Object> whereConditions);
 
   @DeleteProvider(type = SqlCommand.class, method = SqlCommand.DELETE_BY_KEY)
   void deleteByKey(final Map<String, Object> whereConditions);
