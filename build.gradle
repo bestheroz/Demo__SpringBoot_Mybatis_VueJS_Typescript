@@ -1,57 +1,73 @@
+
 plugins {
-    id 'org.springframework.boot' version '2.4.1'
-    id 'java'
-    id 'idea'
+    id "org.springframework.boot" version "2.4.2"
+    id "java"
+    id "idea"
     id "com.diffplug.spotless" version "5.9.0"
 }
 
 repositories {
-    jcenter()
+    mavenCentral()
+}
+
+ext {
+    springBootVersion = "2.4.2"
+    javaJwtVersion = "3.12.0"
+    lombokVersion = "1.18.16"
+    lang3Version = "3.11"
+    comonsIoVersion = "2.8.0"
+    tikaVersion = "1.25"
+    poiVersion = "4.1.2"
+    sentryVersion = "3.2.0"
+    gsonVersion = "2.8.6"
+    mybatisVersion = "2.1.4"
+    jdbcdslogVersion = "2.1"
+    h2Version = "1.4.200"
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-web:2.4.1'
-    implementation 'org.springframework.boot:spring-boot-starter-aop:2.4.1'
-    implementation 'org.springframework.boot:spring-boot-starter-security:2.4.1'
-    implementation 'org.springframework.boot:spring-boot-starter-actuator:2.4.1'
-    implementation 'org.springframework.boot:spring-boot-configuration-processor:2.4.1'
-    implementation 'com.auth0:java-jwt:3.12.0'
-    implementation 'org.apache.commons:commons-lang3:3.11'
-    implementation 'com.google.code.gson:gson:2.8.6'
-    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.1.4'
-    implementation 'org.jdbcdslog:jdbcdslogexp2:2.1'
-    implementation 'org.apache.tika:tika-core:1.25'
-    implementation 'commons-io:commons-io:2.8.0'
-    implementation 'org.apache.poi:poi:4.1.2'
-    implementation 'org.apache.poi:poi-ooxml:4.1.2'
-    implementation 'io.sentry:sentry-spring-boot-starter:3.2.0'
-    implementation 'io.sentry:sentry-logback:3.2.0'
-    implementation 'com.h2database:h2:1.4.200'
-    implementation 'org.projectlombok:lombok:1.18.16'
-    testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:2.1.4'
-    compileOnly 'org.springframework.boot:spring-boot-starter-tomcat:2.4.1'
-    annotationProcessor 'org.projectlombok:lombok:1.18.16'
-    testAnnotationProcessor 'org.projectlombok:lombok:1.18.16'
+    implementation "org.springframework.boot:spring-boot-starter-web:$springBootVersion"
+    implementation "org.springframework.boot:spring-boot-starter-aop:$springBootVersion"
+    implementation "org.springframework.boot:spring-boot-starter-security:$springBootVersion"
+    implementation "org.springframework.boot:spring-boot-starter-actuator:$springBootVersion"
+    implementation "org.springframework.boot:spring-boot-configuration-processor:$springBootVersion"
+    implementation "org.projectlombok:lombok:$lombokVersion"
+    implementation "com.auth0:java-jwt:$javaJwtVersion"
+    implementation "org.apache.commons:commons-lang3:$lang3Version"
+    implementation "com.google.code.gson:gson:$gsonVersion"
+    implementation "org.mybatis.spring.boot:mybatis-spring-boot-starter:$mybatisVersion"
+    implementation "org.jdbcdslog:jdbcdslogexp2:$jdbcdslogVersion"
+    implementation "org.apache.tika:tika-core:$tikaVersion"
+    implementation "commons-io:commons-io:$comonsIoVersion"
+    implementation "org.apache.poi:poi:$poiVersion"
+    implementation "org.apache.poi:poi-ooxml:$poiVersion"
+    implementation "io.sentry:sentry-spring-boot-starter:$sentryVersion"
+    implementation "io.sentry:sentry-logback:$sentryVersion"
+    implementation "com.h2database:h2:$h2Version"
+    testImplementation "org.mybatis.spring.boot:mybatis-spring-boot-starter-test:$mybatisVersion"
+    compileOnly "org.springframework.boot:spring-boot-starter-tomcat:$springBootVersion"
+    annotationProcessor "org.projectlombok:lombok:$lombokVersion"
+    testAnnotationProcessor "org.projectlombok:lombok:$lombokVersion"
 }
 
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 test {
-    exclude '**/*'
+    exclude "**/*"
 }
 
 tasks.withType(JavaCompile) {
-    options.encoding = 'UTF-8'
+    options.encoding = "UTF-8"
 }
 
 bootJar {
-    from ('vue/dist') {
-        into 'static'
+    from("vue/dist") {
+        into "static"
     }
 }
 
 spotless {
     java {
-        googleJavaFormat('1.9')
+        googleJavaFormat("1.9")
     }
 }
