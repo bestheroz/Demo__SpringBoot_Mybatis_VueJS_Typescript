@@ -67,6 +67,7 @@ import { Component, Prop, PropSync, Vue } from "vue-property-decorator";
 import { alertAxiosError, ApiDataResult, axiosInstance } from "@/utils/apis";
 import { ValidationObserver } from "vee-validate";
 import pbkdf2 from "pbkdf2";
+import { toastError, toastInfo } from "@/utils/alerts";
 
 @Component({
   name: "NewPasswordDialog",
@@ -103,10 +104,10 @@ export default class extends Vue {
         password: pbkdf2Password,
       });
       if (response?.data?.code?.startsWith("S")) {
-        this.$toast.info("패스워드 설정 완료, 재 로그인 해주세요.");
+        toastInfo("패스워드 설정 완료, 재 로그인 해주세요.");
         this.syncedDialog = false;
       } else {
-        this.$toast.error(response?.data?.message);
+        toastError(response?.data?.message);
       }
     } catch (e) {
       alertAxiosError(e);
