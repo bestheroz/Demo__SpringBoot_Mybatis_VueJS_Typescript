@@ -2,7 +2,7 @@ import axios, { AxiosError } from "axios";
 import envs from "@/constants/envs";
 import { errorPage } from "@/utils/errors";
 import store from "@/store";
-import Vue from "vue";
+import { toastError, toastSuccess } from "@/utils/alerts";
 
 export const axiosInstance = axios.create({
   baseURL: envs.API_HOST,
@@ -28,7 +28,7 @@ axiosInstance.interceptors.response.use(
   },
   async function (error: AxiosError) {
     if (error?.message === "Network Error") {
-      Vue.$toast.error("Service Unavailable");
+      toastError("Service Unavailable");
       return;
     }
     if (error?.response) {
@@ -178,9 +178,9 @@ export async function getVariableApi<T = string>(
 
 function alertResponseMessage(data: ApiDataResult<unknown>): void {
   if (data.code.startsWith("S")) {
-    Vue.$toast.success(data.message);
+    toastSuccess(data.message);
   } else {
-    Vue.$toast.error(data.message);
+    toastError(data.message);
   }
 }
 
@@ -211,7 +211,7 @@ axiosInstanceForExcel.interceptors.response.use(
   },
   async function (error: AxiosError) {
     if (error?.message === "Network Error") {
-      Vue.$toast.error("Service Unavailable");
+      toastError("Service Unavailable");
       return;
     }
     if (error?.response) {
@@ -278,5 +278,5 @@ async function apiRefreshToken(error: AxiosError) {
 }
 
 export function alertAxiosError(e: AxiosError): void {
-  e.response && Vue.$toast.error(e?.response?.data?.message || "System Error");
+  e.response && toastError(e?.response?.data?.message || "System Error");
 }

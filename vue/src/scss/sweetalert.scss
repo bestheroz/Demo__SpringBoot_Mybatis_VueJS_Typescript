@@ -1,6 +1,6 @@
 .swal2-container {
   .swal2-popup {
-    background-color: var(--v-alert-background-base)
+    background-color: var(--v-alert-background-base);
   }
 
   .swal2-title {
@@ -10,5 +10,10 @@
   .swal2-content {
     color: var(--v-alert-text-base);
     font-weight: 800;
+  }
+  .swal2-popup {
+    &.swal2-toast {
+      background-color: var(--v-alert-background-base);
+    }
   }
 }

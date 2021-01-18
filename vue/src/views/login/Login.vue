@@ -91,6 +91,7 @@ import {
 import NewPasswordDialog from "@/views/login/components/NewPasswordDialog.vue";
 import { ValidationObserver } from "vee-validate";
 import pbkdf2 from "pbkdf2";
+import { toastCloseAll, toastError } from "@/utils/alerts";
 
 @Component({ name: "Login", components: { NewPasswordDialog } })
 export default class extends Vue {
@@ -113,7 +114,7 @@ export default class extends Vue {
     await this.$store.dispatch("clearMenuSelected");
     window.localStorage.clear();
     if (this.$route.query.login === "need") {
-      this.$toast.error("로그인이 필요합니다.");
+      toastError("로그인이 필요합니다.");
     }
   }
 
@@ -150,10 +151,10 @@ export default class extends Vue {
           accessToken: response.data.data.accessToken,
           refreshToken: response.data.data.refreshToken,
         });
-        this.$toast.clear();
+        toastCloseAll();
         await this.$router.push("/");
       } else {
-        this.$toast.error(response?.data?.message);
+        toastError(response?.data?.message);
       }
     } catch (e) {
       alertAxiosError(e);
