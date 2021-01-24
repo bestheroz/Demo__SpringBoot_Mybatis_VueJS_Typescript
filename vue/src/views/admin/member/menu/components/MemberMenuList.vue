@@ -4,6 +4,7 @@
       reload-button
       @click:reload="getList"
       save-button
+      :save-disabled="!items || items.length === 0"
       @click:save="saveItems"
     />
     <v-card flat :loading="loading">
