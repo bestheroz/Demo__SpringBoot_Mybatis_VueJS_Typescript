@@ -3,7 +3,6 @@ import vuetify from "@/plugins/vuetify";
 import App from "./App.vue";
 import router from "./router";
 import store from "./store";
-import "./plugins/vue-toastification";
 import "./plugins/vee-validate";
 import "./plugins/vue-filter";
 import "./plugins/sentry";
