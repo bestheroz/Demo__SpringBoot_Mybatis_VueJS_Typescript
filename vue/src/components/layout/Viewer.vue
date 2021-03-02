@@ -12,7 +12,7 @@
       <v-icon :size="20" style="top: -1px">{{ icon }}</v-icon>
       {{ title }}
     </v-alert>
-    <v-container fluid class="pa-0 elevation-1">
+    <v-container fluid class="pa-0">
       <router-view />
     </v-container>
   </v-main>

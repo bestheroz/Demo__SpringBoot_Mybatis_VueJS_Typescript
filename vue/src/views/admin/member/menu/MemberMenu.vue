@@ -7,7 +7,7 @@
             <v-chip-group
               v-model="authority"
               column
-              active-class="primary"
+              active-class="accent"
               mandatory
               dense
             >
@@ -15,6 +15,7 @@
                 v-for="item in AUTHORITY"
                 :value="item.value"
                 filter
+                outlined
                 :key="item.value"
               >
                 {{ item.text }}

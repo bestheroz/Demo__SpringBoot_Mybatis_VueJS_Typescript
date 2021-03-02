@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-dialog v-model="syncedDialog" persistent max-width="100%" width="25vw">
+    <v-dialog v-model="syncedDialog" max-width="100%" width="25vw">
       <v-card>
         <v-card-title class="py-2 modal-header">
           비밀번호 변경

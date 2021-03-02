@@ -9,7 +9,7 @@
     />
     <v-card flat :loading="loading">
       <v-card-text class="py-0">
-        <v-row no-gutters>
+        <v-row dense>
           <v-col cols="3">
             <v-list dense>
               <draggable
@@ -32,7 +32,7 @@
                       style="display: inline-block"
                       class="py-0"
                     >
-                      <v-icon color="secondary" class="drag-handle">
+                      <v-icon color="primary" class="drag-handle">
                         mdi-sort
                       </v-icon>
                       {{ item.name }}
@@ -48,10 +48,16 @@
                 v-model="selected"
                 column
                 multiple
-                active-class="primary"
+                active-class="accent"
                 dense
               >
-                <v-chip v-for="item in menus" :value="item.id" :key="item.id">
+                <v-chip
+                  v-for="item in menus"
+                  :value="item.id"
+                  :key="item.id"
+                  filter
+                  outlined
+                >
                   <v-icon v-text="item.icon" v-if="item.icon" />
                   {{ item.name }}
                 </v-chip>

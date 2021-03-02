@@ -1,11 +1,11 @@
 .v-application {
   font-family: "Open Sans", sans-serif;
 
-  .text--anchor {
-    color: var(--v-anchor-base);
-    font-weight: bold;
-    cursor: pointer;
-  }
+  //.text--anchor {
+  //  color: var(--v-anchor-base);
+  //  font-weight: bold;
+  //  cursor: pointer;
+  //}
 
   div.v-data-table {
     div.v-data-table__wrapper {
@@ -172,20 +172,21 @@
     }
   }
 
-  .v-navigation-drawer {
-    .v-list {
-      .v-list-group--active {
-        .v-list-group__header {
-          border-bottom: thin solid var(--v-table-border-base);
-        }
-      }
-      .v-list-group__items {
-        .v-list-item--active {
-          background-color: var(--v-table-border-base);
-        }
-      }
-    }
-  }
+  //.v-navigation-drawer {
+  //  .v-list {
+  //    .v-list-group--active {
+  //      .v-list-group__header {
+  //        border-bottom: thin solid var(--v-primary-base);
+  //        //background-color: var(--v-accent-base);
+  //      }
+  //    }
+  //    .v-list-group__items {
+  //      .v-list-item--active {
+  //        //background-color: var(--v-accent-base);
+  //      }
+  //    }
+  //  }
+  //}
 
   .theme--dark.v-btn.v-btn--disabled:not(.v-btn--flat):not(.v-btn--text):not(.v-btn--outlined) {
     background-color: var(--v-button-disabled-base) !important;

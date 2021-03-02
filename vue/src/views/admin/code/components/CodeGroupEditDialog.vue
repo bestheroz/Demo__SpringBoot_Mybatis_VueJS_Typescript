@@ -1,10 +1,10 @@
 <template>
   <div>
-    <v-dialog v-model="syncedDialog" persistent max-width="100%" width="60vw">
+    <v-dialog v-model="syncedDialog" max-width="100%" width="60vw">
       <v-card>
         <v-card-title class="py-2 modal-header">
-          <v-icon v-if="isNew">mdi-pencil-plus-outline</v-icon>
-          <v-icon v-else>mdi-pencil-outline</v-icon>
+          <v-icon v-if="isNew">mdi-database-plus-outline</v-icon>
+          <v-icon v-else>mdi-database-edit-outline</v-icon>
           코드그룹 {{ isNew ? "추가" : "수정" }}
           <v-spacer />
 

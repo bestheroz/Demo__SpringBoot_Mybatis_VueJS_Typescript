@@ -49,16 +49,9 @@
                   @click:append="show1 = !show1"
                 />
               </ValidationProvider>
-              <v-divider />
-              <v-alert
-                border="top"
-                colored-border
-                color="divider"
-                dense
-                class="mb-0"
-              >
+              <v-system-bar color="secondary" class="text-center d-block" dark>
                 테스트 계정 ==> 1 / 1
-              </v-alert>
+              </v-system-bar>
               <v-btn
                 large
                 color="button-default"

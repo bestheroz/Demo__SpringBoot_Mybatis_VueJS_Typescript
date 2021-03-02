@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-dialog v-model="syncedDialog" persistent max-width="100%" width="25vw">
+    <v-dialog v-model="syncedDialog" max-width="100%" width="25vw">
       <v-card>
         <v-card-title class="py-2 modal-header">
           내 정보 수정
@@ -12,7 +12,7 @@
         </v-card-title>
         <v-card-text>
           <ValidationObserver ref="observer">
-            <v-row>
+            <v-row dense>
               <v-col cols="12">
                 <v-text-field
                   v-model="item.id"
@@ -75,13 +75,11 @@
         <v-divider />
         <v-card-actions class="py-1">
           <v-spacer />
-          <v-btn text @click="syncedDialog = false">
+          <v-btn icon @click="syncedDialog = false">
             <v-icon> mdi-window-close</v-icon>
-            닫기
           </v-btn>
-          <v-btn text :loading="loading" @click="save">
+          <v-btn icon :loading="loading" @click="save" color="warning">
             <v-icon> mdi-content-save-settings-outline</v-icon>
-            저장
           </v-btn>
         </v-card-actions>
       </v-card>
