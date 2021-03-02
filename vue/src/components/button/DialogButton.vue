@@ -11,6 +11,7 @@
         text="저장"
         icon="mdi-content-save-settings-outline"
         color="warning"
+        :loading="loading"
         @click="onClickSave"
       />
     </v-card-actions>
@@ -26,7 +27,7 @@ import ButtonIconTooltip from "@/components/button/ButtonIconTooltip.vue";
   components: { ButtonIconTooltip },
 })
 export default class extends Vue {
-  @Prop({ type: Boolean }) readonly loading: boolean;
+  @Prop({ type: Boolean }) readonly loading!: boolean;
 
   @Emit("click:close")
   protected onClickClose(): void {
