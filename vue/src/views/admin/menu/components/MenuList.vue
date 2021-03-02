@@ -30,7 +30,9 @@
                   <v-icon v-text="item.icon" />
                 </v-list-item-icon>
                 <v-list-item-content style="display: inline-block" class="py-0">
-                  <v-icon color="accent" class="drag-handle"> mdi-sort </v-icon>
+                  <v-icon color="primary" class="drag-handle">
+                    mdi-sort
+                  </v-icon>
                   {{ item.name }}
                 </v-list-item-content>
                 <v-list-item-content style="display: inline-block" class="py-0">
