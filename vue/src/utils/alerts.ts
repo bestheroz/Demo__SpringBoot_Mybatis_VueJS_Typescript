@@ -5,7 +5,7 @@ import Swal from "sweetalert2/src/sweetalert2.js";
 
 const Toast = Swal.mixin({
   toast: true,
-  position: "top-end",
+  position: "bottom-end",
   showConfirmButton: true,
   confirmButtonText: "X",
   didOpen: (toast) => {

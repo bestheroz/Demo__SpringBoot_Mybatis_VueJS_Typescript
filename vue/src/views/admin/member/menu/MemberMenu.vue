@@ -3,11 +3,11 @@
     <v-row no-gutters>
       <v-col cols="12">
         <v-card flat>
-          <v-card-text class="py-0">
+          <v-card-text>
             <v-chip-group
               v-model="authority"
               column
-              active-class="primary"
+              active-class="accent"
               mandatory
               dense
             >
@@ -15,6 +15,7 @@
                 v-for="item in AUTHORITY"
                 :value="item.value"
                 filter
+                outlined
                 :key="item.value"
               >
                 {{ item.text }}

@@ -7,15 +7,15 @@
         delete-button
         reload-button
         :delete-disabled="!selected || selected.length === 0"
-        @click:add="addItem"
+        @click:add="dialog = true"
         @click:delete="deleteItem"
         @click:reload="getList"
       />
-      <v-card-title class="datatable-title">
+      <v-system-bar class="secondary">
         <v-icon> mdi-format-list-checkbox </v-icon>
         코드 관리 - Detail
-      </v-card-title>
-      <v-card-text class="py-0">
+      </v-system-bar>
+      <v-card-text>
         <v-data-table
           v-model="selected"
           must-sort
@@ -68,7 +68,11 @@
         </v-data-table>
       </v-card-text>
     </v-card>
-    <code-edit-dialog :item="item" :dialog.sync="dialog" @finished="getList" />
+    <code-edit-dialog
+      v-model="item"
+      :dialog.sync="dialog"
+      @finished="getList"
+    />
   </div>
 </template>
 
@@ -86,6 +90,7 @@ import ButtonSet from "@/components/speeddial/ButtonSet.vue";
 import { confirmDelete } from "@/utils/alerts";
 import CodeEditDialog from "@/views/admin/code/components/CodeEditDialog.vue";
 import DataTableClientSideFilter from "@/components/datatable/DataTableClientSideFilter.vue";
+import { defaultTableCodeEntity } from "@/common/values";
 
 @Component({
   name: "CodeList",
@@ -97,7 +102,7 @@ import DataTableClientSideFilter from "@/components/datatable/DataTableClientSid
   },
 })
 export default class extends Vue {
-  @Prop({ required: true }) readonly height!: number | string;
+  @Prop() readonly height!: number | string;
   @Prop({ required: true }) readonly codeGroup!: string;
 
   readonly envs: typeof envs = envs;
@@ -111,7 +116,7 @@ export default class extends Vue {
   selected: TableCodeEntity[] = [];
 
   dialog = false;
-  item: TableCodeEntity = Object.create(null);
+  item: TableCodeEntity = defaultTableCodeEntity();
 
   get headers(): DataTableHeader[] {
     return [
@@ -168,7 +173,7 @@ export default class extends Vue {
   }
 
   @Watch("codeGroup")
-  async getList(): Promise<void> {
+  protected async getList(): Promise<void> {
     this.selected = [];
     this.items = [];
     if (!this.codeGroup) {
@@ -182,17 +187,12 @@ export default class extends Vue {
     this.items = response?.data || [];
   }
 
-  protected addItem(): void {
-    this.item = { codeGroup: this.codeGroup };
-    this.dialog = true;
-  }
-
   protected editItem(value: TableCodeEntity): void {
     this.item = { ...value };
     this.dialog = true;
   }
 
-  async deleteItem(): Promise<void> {
+  protected async deleteItem(): Promise<void> {
     const result = await confirmDelete();
     if (result.value) {
       this.loading = true;

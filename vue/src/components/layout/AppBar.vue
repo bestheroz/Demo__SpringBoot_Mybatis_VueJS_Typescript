@@ -1,17 +1,18 @@
 <template>
   <div>
-    <v-app-bar v-if="!isPopup" dense app clipped-left>
+    <v-app-bar v-if="!isPopup" dense app clipped-left color="secondary">
       <v-app-bar-nav-icon @click.stop="syncedDrawer = !syncedDrawer" />
       <v-toolbar-title>
-        <v-btn x-large text color="primary" @click="goHome">
+        <v-btn text @click="goHome">
+          <v-icon class="mr-2"> mdi-home-outline </v-icon>
           {{ title || "" }}
         </v-btn>
       </v-toolbar-title>
       <v-spacer />
       <v-menu open-on-hover bottom offset-y>
         <template #activator="{ on }">
-          <v-btn color="primary" x-large text v-on="on">
-            <v-icon> mdi-account</v-icon>
+          <v-btn x-large text v-on="on">
+            <v-icon> mdi-account-outline</v-icon>
             {{ $store.getters.user.name }}
           </v-btn>
         </template>

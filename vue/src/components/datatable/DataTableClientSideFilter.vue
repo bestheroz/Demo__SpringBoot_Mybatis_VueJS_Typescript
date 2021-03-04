@@ -13,6 +13,8 @@
         outlined
         dense
         clearable
+        small-chips
+        single-line
         hide-details
       />
       <v-select
@@ -22,6 +24,8 @@
         outlined
         dense
         clearable
+        small-chips
+        single-line
         hide-details
       />
       <v-text-field

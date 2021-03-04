@@ -1,87 +1,76 @@
 <template>
   <v-container id="login" class="fill-height" tag="section">
     <v-row justify="center">
-      <v-slide-y-transition appear>
-        <v-card :min-width="600" width="40%" class="elevation-12">
-          <v-toolbar color="primary" dark flat>
-            <v-toolbar-title>Login at demo</v-toolbar-title>
-            <v-spacer />
-            <template #heading>
-              <div class="text-center">
-                <h1 class="display-2 font-weight-bold">
-                  <v-icon>mdi-lock-outline</v-icon>
-                  Login
-                </h1>
-              </div>
-            </template>
-          </v-toolbar>
+      <v-card min-width="25vw" width="25vw" class="elevation-12">
+        <v-toolbar color="primary" dark flat>
+          <v-toolbar-title>Login at demo</v-toolbar-title>
+          <v-spacer />
+          <template #heading>
+            <div class="text-center">
+              <h1 class="display-2 font-weight-bold">
+                <v-icon>mdi-lock-outline</v-icon>
+                Login
+              </h1>
+            </div>
+          </template>
+        </v-toolbar>
 
-          <ValidationObserver ref="observer">
-            <v-card-text class="text-center">
-              <ValidationProvider
-                v-slot="{ errors, valid }"
-                name="ID"
-                rules="required"
-              >
-                <v-text-field
-                  v-model="id"
-                  label="ID..."
-                  prepend-icon="mdi-key"
-                  :error-messages="errors"
-                  :success="valid"
-                  @keyup.enter="login"
-                />
-              </ValidationProvider>
-              <ValidationProvider
-                v-slot="{ errors, valid }"
-                name="Password"
-                rules="required"
-              >
-                <v-text-field
-                  v-model="password"
-                  label="Password..."
-                  prepend-icon="mdi-lock-outline"
-                  :error-messages="errors"
-                  :success="valid"
-                  :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
-                  :type="show1 ? 'text' : 'password'"
-                  @keyup.enter="login"
-                  @click:append="show1 = !show1"
-                />
-              </ValidationProvider>
-              <v-divider />
-              <v-alert
-                border="top"
-                colored-border
-                color="divider"
-                dense
-                class="mb-0"
-              >
-                테스트 계정 ==> 1 / 1
-              </v-alert>
-              <v-btn
-                large
-                color="button-default"
-                text
-                outlined
-                rounded
-                :loading="loading"
-                @click="login"
-              >
-                <v-icon class="pr-2">mdi-login</v-icon>
-                Let's Go
-              </v-btn>
-            </v-card-text>
-          </ValidationObserver>
-        </v-card>
-      </v-slide-y-transition>
+        <ValidationObserver ref="observer">
+          <v-card-text class="text-center">
+            <ValidationProvider
+              v-slot="{ errors, valid }"
+              name="ID"
+              rules="required"
+            >
+              <v-text-field
+                v-model="id"
+                label="ID..."
+                prepend-icon="mdi-key"
+                :error-messages="errors"
+                :success="valid"
+                @keyup.enter="login"
+              />
+            </ValidationProvider>
+            <ValidationProvider
+              v-slot="{ errors, valid }"
+              name="Password"
+              rules="required"
+            >
+              <v-text-field
+                v-model="password"
+                label="Password..."
+                prepend-icon="mdi-lock-outline"
+                :error-messages="errors"
+                :success="valid"
+                :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+                :type="show1 ? 'text' : 'password'"
+                @keyup.enter="login"
+                @click:append="show1 = !show1"
+              />
+            </ValidationProvider>
+            <v-btn
+              large
+              color="primary"
+              outlined
+              :loading="loading"
+              @click="login"
+            >
+              <v-icon class="pr-2">mdi-login</v-icon>
+              Let's Go
+            </v-btn>
+          </v-card-text>
+          <v-system-bar color="secondary" class="text-center d-block" dark>
+            테스트 계정 ==> 1 / 1
+          </v-system-bar>
+        </ValidationObserver>
+      </v-card>
     </v-row>
     <new-password-dialog :id="id" :dialog.sync="dialog" v-if="dialog" />
   </v-container>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Ref, Vue } from "vue-property-decorator";
 import {
   alertAxiosError,
   ApiDataResult,
@@ -95,6 +84,8 @@ import { toastCloseAll, toastError } from "@/utils/alerts";
 
 @Component({ name: "Login", components: { NewPasswordDialog } })
 export default class extends Vue {
+  @Ref("observer") readonly observer!: InstanceType<typeof ValidationObserver>;
+
   id: string | null = null;
   password: string | null = null;
   show1 = false;
@@ -119,9 +110,7 @@ export default class extends Vue {
   }
 
   protected async login(): Promise<void> {
-    const inValid = await (this.$refs.observer as InstanceType<
-      typeof ValidationObserver
-    >).validate();
+    const inValid = await this.observer.validate();
     if (!inValid) {
       return;
     }

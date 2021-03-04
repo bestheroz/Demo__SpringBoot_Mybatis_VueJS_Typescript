@@ -1,18 +1,10 @@
 <template>
   <v-main :title="null">
-    <v-alert
-      v-if="title"
-      id="pageTitle"
-      border="bottom"
-      colored-border
-      color="divider"
-      dense
-      class="mt-1 mb-0 pl-8"
-    >
-      <v-icon :size="20" style="top: -1px">{{ icon }}</v-icon>
-      {{ title }}
-    </v-alert>
-    <v-container fluid class="pa-0 elevation-1">
+    <v-system-bar v-if="title" color="secondary" :height="40" class="pl-4">
+      <v-icon :size="28" style="top: -1px" v-text="icon" v-if="icon" />
+      <v-card-title v-text="title" />
+    </v-system-bar>
+    <v-container fluid class="pa-0">
       <router-view />
     </v-container>
   </v-main>
@@ -23,10 +15,11 @@ import { Component, Vue, Watch } from "vue-property-decorator";
 import type { DrawerItem } from "@/common/types";
 import { errorPage } from "@/utils/errors";
 import { getVariableApi } from "@/utils/apis";
+import { defaultTableMenuEntity } from "@/common/values";
 
 @Component({ name: "Viewer" })
 export default class extends Vue {
-  icon = "mdi-file-document-outline";
+  icon: string | null = null;
 
   get title(): string {
     if (this.$route.fullPath === "/index") {
@@ -46,7 +39,7 @@ export default class extends Vue {
   protected findThisPage(): DrawerItem {
     let result: DrawerItem | undefined;
     if (this.$route.name) {
-      return { id: 0, name: "" };
+      return defaultTableMenuEntity();
     }
     this.$store.getters.drawers?.forEach((drawer: DrawerItem) => {
       if (!result) {
@@ -58,9 +51,9 @@ export default class extends Vue {
     });
     if (!result) {
       errorPage(403);
-      return { id: 0, name: "" };
+      return defaultTableMenuEntity();
     }
-    return result || { id: 0, name: "" };
+    return result || defaultTableMenuEntity();
   }
 }
 </script>

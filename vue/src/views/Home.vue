@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-container class="fill-height" fluid>
+    <v-container class="fill-height" fluid style="height: 60vh">
       <v-row align="center" justify="center">
         <v-col cols="12" class="text-center">
           <h1 style="font-size: 3rem">{{ title }}</h1>

@@ -10,15 +10,8 @@
       open-on-hover
     >
       <template #activator>
-        <v-btn
-          v-model="fab"
-          color="button-default"
-          dark
-          fab
-          small
-          :loading="loading"
-        >
-          <v-icon v-if="fab" color="black">mdi-close</v-icon>
+        <v-btn v-model="fab" color="info" fab small outlined :loading="loading">
+          <v-icon v-if="fab">mdi-close-outline</v-icon>
           <v-icon v-else>mdi-function</v-icon>
         </v-btn>
       </template>
@@ -26,8 +19,7 @@
         <template #activator="{ on }">
           <v-btn
             fab
-            dark
-            color="button-reload"
+            color="primary"
             :disabled="disabled || reloadDisabled || loading"
             @click="clickReload"
             v-on="on"
@@ -41,13 +33,12 @@
         <template #activator="{ on }">
           <v-btn
             fab
-            dark
-            color="primary"
+            color="warning"
             :disabled="disabled || saveDisabled || loading"
             @click="clickSave"
             v-on="on"
           >
-            <v-icon>mdi-content-save</v-icon>
+            <v-icon>mdi-content-save-outline</v-icon>
           </v-btn>
         </template>
         <span> {{ saveText }} </span>
@@ -56,7 +47,6 @@
         <template #activator="{ on }">
           <v-btn
             fab
-            dark
             :color="excelColor"
             :disabled="disabled || excelDisabled || loading"
             @click="clickExcel"
@@ -71,13 +61,12 @@
         <template #activator="{ on }">
           <v-btn
             fab
-            dark
-            color="button-delete"
+            color="error"
             :disabled="disabled || deleteDisabled || loading"
             @click="clickDelete"
             v-on="on"
           >
-            <v-icon>mdi-delete</v-icon>
+            <v-icon>mdi-delete-outline</v-icon>
           </v-btn>
         </template>
         <span> {{ deleteText }} </span>
@@ -86,13 +75,12 @@
         <template #activator="{ on }">
           <v-btn
             fab
-            dark
-            color="button-add"
+            color="warning"
             :disabled="disabled || addDisabled || loading"
             @click="clickAdd"
             v-on="on"
           >
-            <v-icon>mdi-plus</v-icon>
+            <v-icon>mdi-plus-outline</v-icon>
           </v-btn>
         </template>
         <span> {{ addText }} </span>
@@ -101,13 +89,12 @@
         <template #activator="{ on }">
           <v-btn
             fab
-            dark
-            color="button-default"
+            color="primary"
             :disabled="disabled || inquiryDisabled || loading"
             @click="clickInquiry"
             v-on="on"
           >
-            <v-icon>mdi-magnify</v-icon>
+            <v-icon>mdi-magnify-outline</v-icon>
           </v-btn>
         </template>
         <span> {{ inquiryText }} </span>

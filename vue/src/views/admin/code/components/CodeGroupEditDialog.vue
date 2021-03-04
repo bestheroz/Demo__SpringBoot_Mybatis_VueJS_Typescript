@@ -1,17 +1,17 @@
 <template>
   <div>
-    <v-dialog v-model="syncedDialog" persistent max-width="100%" width="60vw">
+    <v-dialog v-model="syncedDialog" max-width="100%" width="60vw">
       <v-card>
-        <v-card-title class="py-2 modal-header">
-          <v-icon v-if="isNew">mdi-pencil-plus-outline</v-icon>
-          <v-icon v-else>mdi-pencil-outline</v-icon>
-          코드그룹 {{ isNew ? "추가" : "수정" }}
-          <v-spacer />
-
-          <v-btn text small @click="syncedDialog = false">
-            <v-icon> mdi-window-close</v-icon>
-          </v-btn>
-        </v-card-title>
+        <dialog-title :is-new="isNew" prefix="코드그룹">
+          <template #buttons>
+            <button-icon-tooltip
+              icon="mdi-window-close"
+              text="닫기"
+              @click="syncedDialog = false"
+              top
+            />
+          </template>
+        </dialog-title>
         <v-card-text>
           <ValidationObserver ref="observer">
             <v-row>
@@ -47,68 +47,64 @@
             </v-row>
           </ValidationObserver>
         </v-card-text>
-        <v-divider />
-        <v-card-actions class="py-1">
-          <v-spacer />
-          <v-btn text @click="syncedDialog = false">
-            <v-icon> mdi-window-close</v-icon>
-            닫기
-          </v-btn>
-          <v-btn text :loading="loading" @click="save">
-            <v-icon> mdi-content-save-settings-outline</v-icon>
-            저장
-          </v-btn>
-        </v-card-actions>
+        <dialog-action-button
+          :loading="loading"
+          @click:save="save"
+          @click:close="syncedDialog = false"
+        />
       </v-card>
     </v-dialog>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Prop, PropSync, Vue, Watch } from "vue-property-decorator";
+import {
+  Component,
+  PropSync,
+  Ref,
+  VModel,
+  Vue,
+  Watch,
+} from "vue-property-decorator";
 import type { TableCodeGroupEntity } from "@/common/types";
 import { postApi, putApi } from "@/utils/apis";
 import { ValidationObserver } from "vee-validate";
+import DialogActionButton from "@/components/button/DialogActionButton.vue";
+import ButtonIconTooltip from "@/components/button/ButtonIconTooltip.vue";
+import DialogTitle from "@/components/title/DialogTitle.vue";
+import { defaultTableCodeGroupEntity } from "@/common/values";
 
 @Component({
   name: "CodeGroupEditDialog",
+  components: { DialogTitle, ButtonIconTooltip, DialogActionButton },
 })
 export default class extends Vue {
+  @VModel({ required: true }) item!: TableCodeGroupEntity;
   @PropSync("dialog", { required: true, type: Boolean }) syncedDialog!: boolean;
-  @Prop({ required: true }) readonly item!: TableCodeGroupEntity;
+  @Ref("observer") readonly observer!: InstanceType<typeof ValidationObserver>;
 
   loading = false;
   isNew = false;
 
-  beforeDestroy(): void {
-    this.syncedDialog = false;
-    this.$nextTick(() => {
-      this.syncedDialog = false;
-    });
-  }
-
-  @Watch("syncedDialog", { immediate: true })
-  watchDialog(val: boolean): void {
+  @Watch("syncedDialog")
+  protected watchDialog(val: boolean): void {
     if (val) {
       this.isNew = !this.item.codeGroup;
-      this.$refs.observer &&
-        (this.$refs.observer as InstanceType<
-          typeof ValidationObserver
-        >).reset();
+    } else {
+      this.observer.reset();
+      this.item = defaultTableCodeGroupEntity();
     }
   }
 
-  async save(): Promise<void> {
-    const isValid = await (this.$refs.observer as InstanceType<
-      typeof ValidationObserver
-    >).validate();
+  protected async save(): Promise<void> {
+    const isValid = await this.observer.validate();
     if (!isValid) {
       return;
     }
     this.isNew ? await this.create() : await this.put();
   }
 
-  async create(): Promise<void> {
+  protected async create(): Promise<void> {
     this.loading = true;
     const response = await postApi<TableCodeGroupEntity>(
       "admin/code/groups/",
@@ -121,7 +117,7 @@ export default class extends Vue {
     }
   }
 
-  async put(): Promise<void> {
+  protected async put(): Promise<void> {
     this.loading = true;
     const response = await putApi<TableCodeGroupEntity>(
       `admin/code/groups/${this.item.codeGroup}/`,

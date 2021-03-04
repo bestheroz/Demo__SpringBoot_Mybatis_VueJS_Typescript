@@ -4,18 +4,14 @@
       <button-set
         :loading="saving"
         add-button
-        @click:add="addItem"
+        @click:add="dialog = true"
         delete-button
         :delete-disabled="!selected || selected.length === 0"
         @click:delete="deleteItem"
         reload-button
         @click:reload="getList"
       />
-      <v-card-title class="datatable-title">
-        <v-icon> mdi-format-list-checkbox </v-icon>
-        코드 관리 - Master
-      </v-card-title>
-      <v-card-text class="py-0">
+      <v-card-text>
         <v-data-table
           v-model="selected"
           must-sort
@@ -52,7 +48,7 @@
       </v-card-text>
     </v-card>
     <code-group-edit-dialog
-      :item="item"
+      v-model="item"
       :dialog.sync="dialog"
       @finished="getList"
     />
@@ -70,6 +66,7 @@ import ButtonSet from "@/components/speeddial/ButtonSet.vue";
 import CodeGroupEditDialog from "@/views/admin/code/components/CodeGroupEditDialog.vue";
 import { confirmDelete } from "@/utils/alerts";
 import qs from "qs";
+import { defaultTableCodeGroupEntity } from "@/common/values";
 
 @Component({
   name: "CodeGroupList",
@@ -80,7 +77,7 @@ import qs from "qs";
   },
 })
 export default class extends Vue {
-  @Prop({ required: true }) readonly height!: number | string;
+  @Prop() readonly height!: number | string;
   readonly envs: typeof envs = envs;
   selected: TableCodeGroupEntity[] = [];
   pagination: Pagination = {
@@ -94,7 +91,7 @@ export default class extends Vue {
   saving = false;
   dialog = false;
   datatableFilter: { [p: string]: string | number } = {};
-  item: TableCodeGroupEntity = Object.create(null);
+  item: TableCodeGroupEntity = defaultTableCodeGroupEntity();
 
   get headers(): DataTableHeader[] {
     return [
@@ -135,7 +132,7 @@ export default class extends Vue {
   @Watch("selected")
   @Emit()
   selectRow(val: TableCodeGroupEntity[]): TableCodeGroupEntity {
-    return val && val.length > 0 ? val[0] : {};
+    return val && val.length > 0 ? val[0] : defaultTableCodeGroupEntity();
   }
 
   @Watch("queryString")
@@ -146,11 +143,6 @@ export default class extends Vue {
     const response = await getApi<TableCodeGroupEntity[]>("admin/code/groups/");
     this.loading = false;
     this.items = response?.data || [];
-  }
-
-  protected addItem(): void {
-    this.item = Object.create(null);
-    this.dialog = true;
   }
 
   protected editItem(value: TableCodeGroupEntity): void {
