@@ -1,6 +1,6 @@
 <template>
   <v-main :title="null">
-    <v-system-bar v-if="title" color="secondary" :height="40" class="pl-4">
+    <v-system-bar v-if="title" color="white" :height="40" class="pt-4 pl-4">
       <v-icon :size="28" style="top: -1px" v-text="icon" v-if="icon" />
       <v-card-title v-text="title" />
     </v-system-bar>

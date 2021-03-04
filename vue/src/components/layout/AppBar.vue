@@ -1,26 +1,23 @@
 <template>
   <div>
-    <v-app-bar v-if="!isPopup" dense app clipped-left color="secondary">
+    <v-system-bar app>
       <v-app-bar-nav-icon @click.stop="syncedDrawer = !syncedDrawer" />
-      <v-toolbar-title>
-        <v-btn text @click="goHome">
-          <v-icon class="mr-2"> mdi-home-outline </v-icon>
-          {{ title || "" }}
-        </v-btn>
-      </v-toolbar-title>
+      <v-btn text @click="goHome" small>
+        <v-icon class="mr-2"> mdi-home-outline </v-icon>
+        {{ title || "" }}
+      </v-btn>
       <v-spacer />
       <v-menu open-on-hover bottom offset-y>
         <template #activator="{ on }">
-          <v-btn x-large text v-on="on">
+          <v-btn small text v-on="on">
             <v-icon> mdi-account-outline</v-icon>
             {{ $store.getters.user.name }}
           </v-btn>
         </template>
-
         <v-list dense>
           <v-list-item>
             <v-list-item-title>
-              <v-btn block text @click="editMeDialog = true">
+              <v-btn small block text @click="editMeDialog = true">
                 <v-icon>mdi-account-edit-outline</v-icon>
                 내 정보수정
               </v-btn>
@@ -28,7 +25,7 @@
           </v-list-item>
           <v-list-item>
             <v-list-item-title>
-              <v-btn block text @click="$store.dispatch('logout')">
+              <v-btn small block text @click="$store.dispatch('logout')">
                 <v-icon>mdi-logout</v-icon>
                 Logout
               </v-btn>
@@ -36,7 +33,7 @@
           </v-list-item>
         </v-list>
       </v-menu>
-    </v-app-bar>
+    </v-system-bar>
     <edit-me-dialog :dialog.sync="editMeDialog" v-if="editMeDialog" />
   </div>
 </template>
@@ -54,10 +51,6 @@ export default class extends Vue {
   @PropSync("drawer", { required: true, default: true }) syncedDrawer!: boolean;
   title: string | null = null;
   editMeDialog = false;
-
-  get isPopup(): boolean {
-    return !window.toolbar.visible;
-  }
 
   protected async created(): Promise<void> {
     this.title = await getVariableApi("title");
