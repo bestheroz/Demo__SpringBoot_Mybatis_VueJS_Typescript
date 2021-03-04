@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-system-bar app>
+    <v-system-bar app color="dark" dark>
       <v-subheader>
         <v-app-bar-nav-icon @click.stop="syncedDrawer = !syncedDrawer" />
         {{ title || "" }}

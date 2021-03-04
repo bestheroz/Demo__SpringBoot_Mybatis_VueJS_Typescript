@@ -10,7 +10,7 @@
         <dialog-title text="비밀번호 초기화" />
         <v-card-text>
           <ValidationObserver ref="observer">
-            <v-row>
+            <v-row dense>
               <v-col cols="12">
                 <ValidationProvider
                   v-slot="{ errors }"
