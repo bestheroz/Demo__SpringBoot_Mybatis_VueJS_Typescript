@@ -2,7 +2,7 @@
   font-family: "Open Sans", sans-serif;
 
   .text--anchor {
-    color: var(--v-anchor-base);
+    color: var(--v-primary-base);
     font-weight: bold;
     cursor: pointer;
   }
@@ -12,9 +12,8 @@
       table {
         thead {
           th {
-            background-color: var(--v-table-header-base);
-            border-top: thin solid var(--v-table-border-base);
-            border-left: thin solid var(--v-table-border-base);
+            border-top: thin solid var(--v-secondary-base);
+            border-left: thin solid var(--v-secondary-base);
             max-width: 20rem;
 
             span {
@@ -24,10 +23,9 @@
           }
 
           th:last-child {
-            background-color: var(--v-table-header-base);
-            border-top: thin solid var(--v-table-border-base);
-            border-left: thin solid var(--v-table-border-base);
-            border-right: thin solid var(--v-table-border-base);
+            border-top: thin solid var(--v-secondary-base);
+            border-left: thin solid var(--v-secondary-base);
+            border-right: thin solid var(--v-secondary-base);
           }
 
           .v-data-table__progress {
@@ -44,8 +42,8 @@
             height: 1.5rem;
             padding-right: 2px;
             padding-left: 2px;
-            border-bottom: thin solid var(--v-table-border-base);
-            border-left: thin solid var(--v-table-border-base);
+            border-bottom: thin solid var(--v-secondary-base);
+            border-left: thin solid var(--v-secondary-base);
 
             div.v-input {
               div.v-input__append-inner {
@@ -100,27 +98,36 @@
                     padding-top: 0;
                     padding-bottom: 0;
                   }
+                  .v-select__selections {
+                    display: contents;
+
+                    .v-chip {
+                      max-height: 1.2rem;
+                      min-height: 1.2rem;
+                      height: 1.2rem;
+                    }
+                  }
                 }
               }
             }
           }
 
           td:last-child {
-            border-right: thin solid var(--v-table-border-base);
+            border-right: thin solid var(--v-secondary-base);
           }
         }
 
         tbody {
           td {
-            border-bottom: thin solid var(--v-table-border-base);
-            border-left: thin solid var(--v-table-border-base);
+            border-bottom: thin solid var(--v-secondary-base);
+            border-left: thin solid var(--v-secondary-base);
             word-break: break-all;
           }
 
           td:last-child {
-            border-bottom: thin solid var(--v-table-border-base);
-            border-left: thin solid var(--v-table-border-base);
-            border-right: thin solid var(--v-table-border-base);
+            border-bottom: thin solid var(--v-secondary-base);
+            border-left: thin solid var(--v-secondary-base);
+            border-right: thin solid var(--v-secondary-base);
             word-break: break-all;
           }
         }
@@ -163,7 +170,7 @@
   }
 
   .v-dialog {
-    border: 3px solid var(--v-modal-border-base);
+    border: 4px solid var(--v-secondary-base);
   }
 
   .v-toolbar {
@@ -172,34 +179,15 @@
     }
   }
 
-  .v-navigation-drawer {
-    .v-list {
-      .v-list-group--active {
-        .v-list-group__header {
-          border-bottom: thin solid var(--v-table-border-base);
-        }
-      }
-      .v-list-group__items {
-        .v-list-item--active {
-          background-color: var(--v-table-border-base);
-        }
-      }
-    }
-  }
-
-  .theme--dark.v-btn.v-btn--disabled:not(.v-btn--flat):not(.v-btn--text):not(.v-btn--outlined) {
-    background-color: var(--v-button-disabled-base) !important;
-  }
-
   .v-card__title.datatable-title {
     font-size: 1rem !important;
     padding: 4px 0 0 !important;
     margin-top: 8px !important;
     margin-left: 16px !important;
     margin-right: 16px !important;
-    border-top: thin solid var(--v-table-border-base);
-    border-left: thin solid var(--v-table-border-base);
-    border-right: thin solid var(--v-table-border-base);
+    border-top: thin solid var(--v-secondary-base);
+    border-left: thin solid var(--v-secondary-base);
+    border-right: thin solid var(--v-secondary-base);
     i.v-icon {
       font-size: 18px;
       padding-left: 4px !important;

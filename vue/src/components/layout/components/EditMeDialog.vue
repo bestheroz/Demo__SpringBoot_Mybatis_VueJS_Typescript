@@ -1,18 +1,20 @@
 <template>
   <div>
-    <v-dialog v-model="syncedDialog" persistent max-width="100%" width="25vw">
+    <v-dialog v-model="syncedDialog" max-width="100%" width="25vw">
       <v-card>
-        <v-card-title class="py-2 modal-header">
-          내 정보 수정
-          <v-spacer />
-
-          <v-btn text small @click="syncedDialog = false">
-            <v-icon> mdi-window-close</v-icon>
-          </v-btn>
-        </v-card-title>
+        <dialog-title text="내 정보 변경">
+          <template #buttons>
+            <button-icon-tooltip
+              icon="mdi-window-close"
+              text="닫기"
+              @click="syncedDialog = false"
+              top
+            />
+          </template>
+        </dialog-title>
         <v-card-text>
           <ValidationObserver ref="observer">
-            <v-row>
+            <v-row dense>
               <v-col cols="12">
                 <v-text-field
                   v-model="item.id"
@@ -54,7 +56,7 @@
               </v-col>
               <v-col cols="5" class="text-right pt-7">
                 <v-btn
-                  color="button-edit"
+                  color="warning"
                   outlined
                   small
                   @click="newPasswordDialog = true"
@@ -72,18 +74,11 @@
             </v-row>
           </ValidationObserver>
         </v-card-text>
-        <v-divider />
-        <v-card-actions class="py-1">
-          <v-spacer />
-          <v-btn text @click="syncedDialog = false">
-            <v-icon> mdi-window-close</v-icon>
-            닫기
-          </v-btn>
-          <v-btn text :loading="loading" @click="save">
-            <v-icon> mdi-content-save-settings-outline</v-icon>
-            저장
-          </v-btn>
-        </v-card-actions>
+        <dialog-action-button
+          :loading="loading"
+          @click:save="save"
+          @click:close="syncedDialog = false"
+        />
       </v-card>
     </v-dialog>
     <change-password-dialog
@@ -94,43 +89,48 @@
 </template>
 
 <script lang="ts">
-import { Component, PropSync, Vue, Watch } from "vue-property-decorator";
+import { Component, PropSync, Ref, Vue, Watch } from "vue-property-decorator";
 import type { TableMemberEntity } from "@/common/types";
 import { getApi, patchApi } from "@/utils/apis";
 import DatetimePicker from "@/components/picker/DatetimePicker.vue";
 import ChangePasswordDialog from "@/components/layout/components/ChangePasswordDialog.vue";
 import { ValidationObserver } from "vee-validate";
 import pbkdf2 from "pbkdf2";
+import ButtonIconTooltip from "@/components/button/ButtonIconTooltip.vue";
+import DialogTitle from "@/components/title/DialogTitle.vue";
+import DialogActionButton from "@/components/button/DialogActionButton.vue";
+import { defaultTableMemberEntity } from "@/common/values";
 
 @Component({
   name: "EditMeDialog",
-  components: { ChangePasswordDialog, DatetimePicker },
+  components: {
+    DialogActionButton,
+    DialogTitle,
+    ButtonIconTooltip,
+    ChangePasswordDialog,
+    DatetimePicker,
+  },
 })
 export default class extends Vue {
   @PropSync("dialog", { required: true, type: Boolean }) syncedDialog!: boolean;
+  @Ref("observer") readonly observer!: InstanceType<typeof ValidationObserver>;
 
-  item: TableMemberEntity = Object.create(null);
+  item: TableMemberEntity = defaultTableMemberEntity();
   loading = false;
   show1 = false;
   newPasswordDialog = false;
 
-  @Watch("syncedDialog", { immediate: true })
+  @Watch("syncedDialog")
   protected async watchDialog(val: boolean): Promise<void> {
     if (val) {
       this.show1 = false;
       const response = await getApi<TableMemberEntity>("members/mine");
-      this.item = response?.data || Object.create(null);
-      this.$refs.observer &&
-        (this.$refs.observer as InstanceType<
-          typeof ValidationObserver
-        >).reset();
+      this.item = response?.data || defaultTableMemberEntity();
     }
   }
 
   protected async save(): Promise<void> {
-    const isValid = await (this.$refs.observer as InstanceType<
-      typeof ValidationObserver
-    >).validate();
+    const isValid = await this.observer.validate();
     if (!isValid) {
       return;
     }

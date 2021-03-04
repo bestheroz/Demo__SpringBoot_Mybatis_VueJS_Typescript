@@ -2,7 +2,7 @@
   <tr class="datatable-header-filter">
     <td v-if="!filterFirstColumn" />
     <td v-for="(header, index) in headers" :key="header.value">
-      <v-select
+      <v-autocomplete
         v-if="
           header.filterable !== false &&
           header.filterType === 'select' &&
@@ -15,9 +15,11 @@
         clearable
         hide-details
         multiple
+        small-chips
+        single-line
         style="width: 95%"
       />
-      <v-select
+      <v-autocomplete
         v-else-if="
           header.filterable !== false && header.filterType === 'switch'
         "
@@ -27,6 +29,8 @@
         dense
         clearable
         hide-details
+        small-chips
+        single-line
         style="width: 95%"
       />
       <v-text-field

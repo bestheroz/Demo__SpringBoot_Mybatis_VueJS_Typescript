@@ -1,20 +1,20 @@
 <template>
   <div>
-    <v-dialog v-model="syncedDialog" persistent max-width="100%" width="60vw">
+    <v-dialog v-model="syncedDialog" max-width="100%" width="60vw">
       <v-card>
-        <v-card-title class="py-2 modal-header">
-          <v-icon v-if="isNew">mdi-pencil-plus-outline</v-icon>
-          <v-icon v-else>mdi-pencil-outline</v-icon>
-          메뉴 {{ isNew ? "추가" : "수정" }}
-          <v-spacer />
-
-          <v-btn text small @click="syncedDialog = false">
-            <v-icon> mdi-window-close</v-icon>
-          </v-btn>
-        </v-card-title>
+        <dialog-title :is-new="isNew" prefix="메뉴">
+          <template #buttons>
+            <button-icon-tooltip
+              icon="mdi-window-close"
+              text="닫기"
+              @click="syncedDialog = false"
+              top
+            />
+          </template>
+        </dialog-title>
         <v-card-text>
           <ValidationObserver ref="observer">
-            <v-row>
+            <v-row dense>
               <v-col cols="12" md="3">
                 <ValidationProvider
                   v-slot="{ errors }"
@@ -67,44 +67,46 @@
                 />
               </v-col>
               <v-col v-if="item.type === 'G'" cols="12" md="1">
-                <v-icon> {{ item.icon }}</v-icon>
+                <v-icon v-text="item.icon" size="3.5rem" />
               </v-col>
             </v-row>
           </ValidationObserver>
         </v-card-text>
-        <v-divider />
-        <v-card-actions class="py-1">
-          <v-spacer />
-          <v-btn text @click="syncedDialog = false">
-            <v-icon> mdi-window-close</v-icon>
-            닫기
-          </v-btn>
-          <v-btn text :saving="saving" @click="save">
-            <v-icon> mdi-content-save-settings-outline</v-icon>
-            저장
-          </v-btn>
-        </v-card-actions>
+        <dialog-action-button
+          :loading="saving"
+          @click:save="save"
+          @click:close="syncedDialog = false"
+        />
       </v-card>
     </v-dialog>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Prop, PropSync, Vue, Watch } from "vue-property-decorator";
+import {
+  Component,
+  PropSync,
+  Ref,
+  VModel,
+  Vue,
+  Watch,
+} from "vue-property-decorator";
 import type { SelectItem, TableMenuEntity } from "@/common/types";
-import { getCodesApi, putApi, postApi } from "@/utils/apis";
+import { getCodesApi, postApi, putApi } from "@/utils/apis";
 import { ValidationObserver } from "vee-validate";
-
-interface MenuVO extends TableMenuEntity {
-  level: number;
-}
+import ButtonIconTooltip from "@/components/button/ButtonIconTooltip.vue";
+import DialogTitle from "@/components/title/DialogTitle.vue";
+import DialogActionButton from "@/components/button/DialogActionButton.vue";
+import { defaultTableMenuEntity } from "@/common/values";
 
 @Component({
   name: "MenuEditDialog",
+  components: { DialogActionButton, DialogTitle, ButtonIconTooltip },
 })
 export default class extends Vue {
+  @VModel({ required: true }) item!: TableMenuEntity;
   @PropSync("dialog", { required: true, type: Boolean }) syncedDialog!: boolean;
-  @Prop({ required: true }) readonly item!: MenuVO;
+  @Ref("observer") readonly observer!: InstanceType<typeof ValidationObserver>;
 
   readonly ENDPOINT_URL = "admin/menus/";
   saving = false;
@@ -115,21 +117,18 @@ export default class extends Vue {
     this.MENU_TYPE = await getCodesApi("MENU_TYPE");
   }
 
-  @Watch("syncedDialog", { immediate: true })
+  @Watch("syncedDialog")
   protected watchDialog(val: boolean): void {
     if (val) {
       this.isNew = !this.item.id;
-      this.$refs.observer &&
-        (this.$refs.observer as InstanceType<
-          typeof ValidationObserver
-        >).reset();
+    } else {
+      this.observer.reset();
+      this.item = defaultTableMenuEntity();
     }
   }
 
   protected async save(): Promise<void> {
-    const isValid = await (this.$refs.observer as InstanceType<
-      typeof ValidationObserver
-    >).validate();
+    const isValid = await this.observer.validate();
     if (!isValid) {
       return;
     }

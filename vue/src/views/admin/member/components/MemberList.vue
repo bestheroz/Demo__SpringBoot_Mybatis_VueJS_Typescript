@@ -3,7 +3,7 @@
     <button-set
       :loading="saving"
       add-button
-      @click:add="addItem"
+      @click:add="dialog = true"
       delete-button
       :delete-disabled="!selected || selected.length === 0"
       @click:delete="deleteItem"
@@ -71,11 +71,9 @@
       </v-card-text>
     </v-card>
     <member-edit-dialog
-      ref="refEditDialog"
-      :item="item"
+      v-model="item"
       :dialog.sync="dialog"
       @finished="getList"
-      v-if="dialog"
     />
   </div>
 </template>
@@ -92,10 +90,10 @@ import { deleteApi, getApi, getCodesApi, getExcelApi } from "@/utils/apis";
 import envs from "@/constants/envs";
 import ButtonSet from "@/components/speeddial/ButtonSet.vue";
 import MemberEditDialog from "@/views/admin/member/components/MemberEditDialog.vue";
-import dayjs from "dayjs";
 import { confirmDelete } from "@/utils/alerts";
 import DataTableFilter from "@/components/datatable/DataTableFilter.vue";
 import qs from "qs";
+import { defaultTableMemberEntity } from "@/common/values";
 
 @Component({
   name: "MemberList",
@@ -106,7 +104,7 @@ import qs from "qs";
   },
 })
 export default class extends Vue {
-  @Prop({ required: true }) readonly height!: number | string;
+  @Prop() readonly height!: number | string;
   readonly envs: typeof envs = envs;
   selected: TableMemberEntity[] = [];
   pagination: Pagination = {
@@ -119,7 +117,7 @@ export default class extends Vue {
   items: TableMemberEntity[] = [];
   loading = false;
   saving = false;
-  item: TableMemberEntity = { expired: null };
+  item: TableMemberEntity = defaultTableMemberEntity();
   AUTHORITY: SelectItem[] = [];
   dialog = false;
   datatableFilter: { [p: string]: string | number } = {};
@@ -195,13 +193,6 @@ export default class extends Vue {
     );
     this.loading = false;
     this.items = response?.data || [];
-  }
-
-  protected addItem(): void {
-    this.item = {
-      expired: dayjs().add(1, "year").toDate(),
-    };
-    this.dialog = true;
   }
 
   protected editItem(value: TableMemberEntity): void {
