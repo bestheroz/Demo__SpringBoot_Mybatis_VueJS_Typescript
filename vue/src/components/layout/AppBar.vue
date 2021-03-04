@@ -1,8 +1,10 @@
 <template>
   <div>
     <v-system-bar app>
-      <v-app-bar-nav-icon @click.stop="syncedDrawer = !syncedDrawer" />
-      {{ title || "" }}
+      <v-subheader>
+        <v-app-bar-nav-icon @click.stop="syncedDrawer = !syncedDrawer" />
+        {{ title || "" }}
+      </v-subheader>
       <button-icon-tooltip
         text="홈으로"
         icon="mdi-home-outline"

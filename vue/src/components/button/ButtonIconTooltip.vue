@@ -15,6 +15,10 @@
           v-on="on"
           :disabled="disabled"
           :loading="loading"
+          :small="small"
+          :x-small="xSmall"
+          :large="large"
+          :x-large="xLarge"
         >
           <v-icon :size="size" v-text="icon" />
         </v-btn>
@@ -41,6 +45,10 @@ export default class extends Vue {
   @Prop({ type: Boolean }) readonly left!: boolean;
   @Prop({ type: Boolean }) readonly top!: boolean;
   @Prop({ type: Boolean }) readonly right!: boolean;
+  @Prop({ type: Boolean }) readonly small!: boolean;
+  @Prop({ type: Boolean }) readonly xSmall!: boolean;
+  @Prop({ type: Boolean }) readonly large!: boolean;
+  @Prop({ type: Boolean }) readonly xLarge!: boolean;
   @Prop({}) readonly size!: number | string;
 
   get defaultPosition(): boolean {
