@@ -7,15 +7,15 @@
         delete-button
         reload-button
         :delete-disabled="!selected || selected.length === 0"
-        @click:add="addItem"
+        @click:add="dialog = true"
         @click:delete="deleteItem"
         @click:reload="getList"
       />
-      <v-card-title class="datatable-title">
+      <v-system-bar class="secondary">
         <v-icon> mdi-format-list-checkbox </v-icon>
         코드 관리 - Detail
-      </v-card-title>
-      <v-card-text class="py-0">
+      </v-system-bar>
+      <v-card-text>
         <v-data-table
           v-model="selected"
           must-sort
@@ -68,7 +68,11 @@
         </v-data-table>
       </v-card-text>
     </v-card>
-    <code-edit-dialog :item="item" :dialog.sync="dialog" @finished="getList" />
+    <code-edit-dialog
+      v-model="item"
+      :dialog.sync="dialog"
+      @finished="getList"
+    />
   </div>
 </template>
 
@@ -97,7 +101,7 @@ import DataTableClientSideFilter from "@/components/datatable/DataTableClientSid
   },
 })
 export default class extends Vue {
-  @Prop({ required: true }) readonly height!: number | string;
+  @Prop() readonly height!: number | string;
   @Prop({ required: true }) readonly codeGroup!: string;
 
   readonly envs: typeof envs = envs;
@@ -180,11 +184,6 @@ export default class extends Vue {
     );
     this.loading = false;
     this.items = response?.data || [];
-  }
-
-  protected addItem(): void {
-    this.item = { codeGroup: this.codeGroup };
-    this.dialog = true;
   }
 
   protected editItem(value: TableCodeEntity): void {

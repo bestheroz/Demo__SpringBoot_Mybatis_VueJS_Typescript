@@ -1,17 +1,9 @@
 <template>
   <v-main :title="null">
-    <v-alert
-      v-if="title"
-      id="pageTitle"
-      border="bottom"
-      colored-border
-      color="divider"
-      dense
-      class="mt-1 mb-0 pl-8"
-    >
-      <v-icon :size="20" style="top: -1px">{{ icon }}</v-icon>
-      {{ title }}
-    </v-alert>
+    <v-system-bar v-if="title" color="secondary" :height="40" class="pl-4">
+      <v-icon :size="28" style="top: -1px" v-text="icon" v-if="icon" />
+      <v-card-title v-text="title" />
+    </v-system-bar>
     <v-container fluid class="pa-0">
       <router-view />
     </v-container>
@@ -26,7 +18,7 @@ import { getVariableApi } from "@/utils/apis";
 
 @Component({ name: "Viewer" })
 export default class extends Vue {
-  icon = "mdi-file-document-outline";
+  icon: string | null = null;
 
   get title(): string {
     if (this.$route.fullPath === "/index") {

@@ -60,9 +60,9 @@
 <script lang="ts">
 import {
   Component,
-  Prop,
   PropSync,
   Ref,
+  VModel,
   Vue,
   Watch,
 } from "vue-property-decorator";
@@ -72,25 +72,27 @@ import { ValidationObserver } from "vee-validate";
 import DialogActionButton from "@/components/button/DialogActionButton.vue";
 import ButtonIconTooltip from "@/components/button/ButtonIconTooltip.vue";
 import DialogTitle from "@/components/title/DialogTitle.vue";
+import { defaultTableCodeGroupEntity } from "@/common/values";
 
 @Component({
   name: "CodeGroupEditDialog",
   components: { DialogTitle, ButtonIconTooltip, DialogActionButton },
 })
 export default class extends Vue {
+  @VModel({ required: true }) item!: TableCodeGroupEntity;
   @PropSync("dialog", { required: true, type: Boolean }) syncedDialog!: boolean;
-  @Prop({ required: true }) readonly item!: TableCodeGroupEntity;
   @Ref("observer") readonly observer!: InstanceType<typeof ValidationObserver>;
 
   loading = false;
   isNew = false;
 
-  @Watch("syncedDialog", { immediate: true })
+  @Watch("syncedDialog")
   protected watchDialog(val: boolean): void {
     if (val) {
       this.isNew = !this.item.codeGroup;
     } else {
       this.observer.reset();
+      this.item = defaultTableCodeGroupEntity();
     }
   }
 

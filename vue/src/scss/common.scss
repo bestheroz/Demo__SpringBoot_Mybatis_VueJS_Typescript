@@ -1,20 +1,19 @@
 .v-application {
   font-family: "Open Sans", sans-serif;
 
-  //.text--anchor {
-  //  color: var(--v-anchor-base);
-  //  font-weight: bold;
-  //  cursor: pointer;
-  //}
+  .text--anchor {
+    color: var(--v-primary-base);
+    font-weight: bold;
+    cursor: pointer;
+  }
 
   div.v-data-table {
     div.v-data-table__wrapper {
       table {
         thead {
           th {
-            background-color: var(--v-table-header-base);
-            border-top: thin solid var(--v-table-border-base);
-            border-left: thin solid var(--v-table-border-base);
+            border-top: thin solid var(--v-secondary-base);
+            border-left: thin solid var(--v-secondary-base);
             max-width: 20rem;
 
             span {
@@ -24,10 +23,9 @@
           }
 
           th:last-child {
-            background-color: var(--v-table-header-base);
-            border-top: thin solid var(--v-table-border-base);
-            border-left: thin solid var(--v-table-border-base);
-            border-right: thin solid var(--v-table-border-base);
+            border-top: thin solid var(--v-secondary-base);
+            border-left: thin solid var(--v-secondary-base);
+            border-right: thin solid var(--v-secondary-base);
           }
 
           .v-data-table__progress {
@@ -44,8 +42,8 @@
             height: 1.5rem;
             padding-right: 2px;
             padding-left: 2px;
-            border-bottom: thin solid var(--v-table-border-base);
-            border-left: thin solid var(--v-table-border-base);
+            border-bottom: thin solid var(--v-secondary-base);
+            border-left: thin solid var(--v-secondary-base);
 
             div.v-input {
               div.v-input__append-inner {
@@ -106,21 +104,21 @@
           }
 
           td:last-child {
-            border-right: thin solid var(--v-table-border-base);
+            border-right: thin solid var(--v-secondary-base);
           }
         }
 
         tbody {
           td {
-            border-bottom: thin solid var(--v-table-border-base);
-            border-left: thin solid var(--v-table-border-base);
+            border-bottom: thin solid var(--v-secondary-base);
+            border-left: thin solid var(--v-secondary-base);
             word-break: break-all;
           }
 
           td:last-child {
-            border-bottom: thin solid var(--v-table-border-base);
-            border-left: thin solid var(--v-table-border-base);
-            border-right: thin solid var(--v-table-border-base);
+            border-bottom: thin solid var(--v-secondary-base);
+            border-left: thin solid var(--v-secondary-base);
+            border-right: thin solid var(--v-secondary-base);
             word-break: break-all;
           }
         }
@@ -162,34 +160,10 @@
     padding-right: 0.5rem !important;
   }
 
-  .v-dialog {
-    border: 3px solid var(--v-modal-border-base);
-  }
-
   .v-toolbar {
     .v-btn__content {
       font-weight: 600;
     }
-  }
-
-  //.v-navigation-drawer {
-  //  .v-list {
-  //    .v-list-group--active {
-  //      .v-list-group__header {
-  //        border-bottom: thin solid var(--v-primary-base);
-  //        //background-color: var(--v-accent-base);
-  //      }
-  //    }
-  //    .v-list-group__items {
-  //      .v-list-item--active {
-  //        //background-color: var(--v-accent-base);
-  //      }
-  //    }
-  //  }
-  //}
-
-  .theme--dark.v-btn.v-btn--disabled:not(.v-btn--flat):not(.v-btn--text):not(.v-btn--outlined) {
-    background-color: var(--v-button-disabled-base) !important;
   }
 
   .v-card__title.datatable-title {
@@ -198,9 +172,9 @@
     margin-top: 8px !important;
     margin-left: 16px !important;
     margin-right: 16px !important;
-    border-top: thin solid var(--v-table-border-base);
-    border-left: thin solid var(--v-table-border-base);
-    border-right: thin solid var(--v-table-border-base);
+    border-top: thin solid var(--v-secondary-base);
+    border-left: thin solid var(--v-secondary-base);
+    border-right: thin solid var(--v-secondary-base);
     i.v-icon {
       font-size: 18px;
       padding-left: 4px !important;

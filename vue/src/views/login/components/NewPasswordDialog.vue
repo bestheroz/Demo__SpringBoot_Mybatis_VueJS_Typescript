@@ -7,7 +7,7 @@
       class="elevation-12"
     >
       <v-card>
-        <v-card-title class="py-2 modal-header"> 비밀번호 초기화</v-card-title>
+        <dialog-title text="비밀번호 초기화" />
         <v-card-text>
           <ValidationObserver ref="observer">
             <v-row>
@@ -74,10 +74,11 @@ import { ValidationObserver } from "vee-validate";
 import pbkdf2 from "pbkdf2";
 import { toastError, toastInfo } from "@/utils/alerts";
 import ButtonIconTooltip from "@/components/button/ButtonIconTooltip.vue";
+import DialogTitle from "@/components/title/DialogTitle.vue";
 
 @Component({
   name: "NewPasswordDialog",
-  components: { ButtonIconTooltip },
+  components: { DialogTitle, ButtonIconTooltip },
 })
 export default class extends Vue {
   @PropSync("dialog", { required: true, type: Boolean }) syncedDialog!: boolean;

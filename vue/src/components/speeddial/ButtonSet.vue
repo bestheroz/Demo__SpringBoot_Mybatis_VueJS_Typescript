@@ -19,7 +19,6 @@
         <template #activator="{ on }">
           <v-btn
             fab
-            outlined
             color="primary"
             :disabled="disabled || reloadDisabled || loading"
             @click="clickReload"
@@ -37,7 +36,6 @@
             color="warning"
             :disabled="disabled || saveDisabled || loading"
             @click="clickSave"
-            outlined
             v-on="on"
           >
             <v-icon>mdi-content-save-outline</v-icon>
@@ -77,7 +75,6 @@
         <template #activator="{ on }">
           <v-btn
             fab
-            outlined
             color="warning"
             :disabled="disabled || addDisabled || loading"
             @click="clickAdd"

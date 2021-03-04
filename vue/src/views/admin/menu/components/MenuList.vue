@@ -4,7 +4,7 @@
       reload-button
       @click:reload="getList"
       add-button
-      @click:add="onAdd"
+      @click:add="dialog = true"
       save-button
       save-text="순서저장"
       @click:save="saveItems"
@@ -39,7 +39,7 @@
                   {{ item.url }}
                 </v-list-item-content>
                 <v-list-item-action style="display: inline-block" class="my-0">
-                  <v-icon color="button-delete" @click="onDelete(item)">
+                  <v-icon color="error" @click="onDelete(item)">
                     mdi-minus
                   </v-icon>
                 </v-list-item-action>
@@ -50,10 +50,9 @@
       </v-card-text>
     </v-card>
     <menu-edit-dialog
-      :item="editItem"
+      v-model="editItem"
       :dialog.sync="dialog"
       @finished="getList"
-      v-if="dialog"
     />
   </div>
 </template>
@@ -66,6 +65,7 @@ import { confirmDelete } from "@/utils/alerts";
 import MenuEditDialog from "@/views/admin/menu/components/MenuEditDialog.vue";
 import ButtonSet from "@/components/speeddial/ButtonSet.vue";
 import draggable from "vuedraggable";
+import { defaultTableMenuEntity } from "@/common/values";
 
 interface MenuVO extends TableMenuEntity {
   children: TableMenuEntity[];
@@ -76,13 +76,13 @@ interface MenuVO extends TableMenuEntity {
   components: { ButtonSet, MenuEditDialog, draggable },
 })
 export default class extends Vue {
-  @Prop({ required: true }) readonly height!: number | string;
+  @Prop() readonly height!: number | string;
   items: TableMenuEntity[] = [];
   loading = false;
   saving = false;
   drag = false;
 
-  editItem: TableMenuEntity = Object.create(null);
+  editItem: TableMenuEntity = defaultTableMenuEntity();
   dialog = false;
 
   get dragOptions(): { animation: number } {
@@ -101,11 +101,6 @@ export default class extends Vue {
     const response = await getApi<MenuVO[]>("admin/menus/");
     this.loading = false;
     this.items = response?.data || [];
-  }
-
-  protected onAdd(): void {
-    this.editItem = { parentId: 0, displayOrder: 0 };
-    this.dialog = true;
   }
 
   protected onEdit(value: TableMenuEntity): void {

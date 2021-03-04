@@ -3,7 +3,7 @@
     <v-row no-gutters>
       <v-col cols="12">
         <v-card flat>
-          <v-card-text class="py-0">
+          <v-card-text>
             <v-chip-group
               v-model="authority"
               column

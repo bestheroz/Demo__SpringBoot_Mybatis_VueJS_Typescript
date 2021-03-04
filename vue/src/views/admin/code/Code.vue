@@ -12,7 +12,7 @@
         <v-divider />
       </v-col>
       <v-col cols="12">
-        <code-list :code-group="codeGroup" height="36vh" />
+        <code-list :code-group="codeGroup" />
       </v-col>
     </v-row>
   </div>

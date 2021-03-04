@@ -136,7 +136,14 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, PropSync, Vue, Watch } from "vue-property-decorator";
+import {
+  Component,
+  PropSync,
+  Ref,
+  VModel,
+  Vue,
+  Watch,
+} from "vue-property-decorator";
 import type { SelectItem, TableMemberEntity } from "@/common/types";
 import { getCodesApi, patchApi, postApi } from "@/utils/apis";
 import DatetimePicker from "@/components/picker/DatetimePicker.vue";
@@ -145,6 +152,7 @@ import pbkdf2 from "pbkdf2";
 import ButtonIconTooltip from "@/components/button/ButtonIconTooltip.vue";
 import DialogTitle from "@/components/title/DialogTitle.vue";
 import DialogActionButton from "@/components/button/DialogActionButton.vue";
+import { defaultTableMemberEntity } from "@/common/values";
 
 @Component({
   name: "MemberEditDialog",
@@ -156,8 +164,9 @@ import DialogActionButton from "@/components/button/DialogActionButton.vue";
   },
 })
 export default class extends Vue {
+  @VModel({ required: true }) item!: TableMemberEntity;
   @PropSync("dialog", { required: true, type: Boolean }) syncedDialog!: boolean;
-  @Prop({ required: true }) readonly item!: TableMemberEntity;
+  @Ref("observer") readonly observer!: InstanceType<typeof ValidationObserver>;
 
   loading = false;
   AUTHORITY: SelectItem[] = [];
@@ -170,24 +179,21 @@ export default class extends Vue {
     this.AUTHORITY = await getCodesApi("AUTHORITY");
   }
 
-  @Watch("syncedDialog", { immediate: true })
+  @Watch("syncedDialog")
   protected watchDialog(val: boolean): void {
     if (val) {
       this.password2 = "";
       this.show1 = false;
       this.show2 = false;
       this.isNew = !this.item.id;
-      this.$refs.observer &&
-        (this.$refs.observer as InstanceType<
-          typeof ValidationObserver
-        >).reset();
+    } else {
+      this.item = defaultTableMemberEntity();
+      this.observer.reset();
     }
   }
 
   protected async save(): Promise<void> {
-    const isValid = await (this.$refs.observer as InstanceType<
-      typeof ValidationObserver
-    >).validate();
+    const isValid = await this.observer.validate();
     if (!isValid) {
       return;
     }

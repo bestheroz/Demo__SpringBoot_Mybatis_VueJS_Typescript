@@ -8,7 +8,7 @@
       @click:save="saveItems"
     />
     <v-card flat :loading="loading">
-      <v-card-text class="py-0">
+      <v-card-text>
         <v-row dense>
           <v-col cols="3">
             <v-list dense>
@@ -82,7 +82,7 @@ import draggable from "vuedraggable";
   components: { ButtonSet, draggable },
 })
 export default class extends Vue {
-  @Prop({ required: true }) readonly height!: number | string;
+  @Prop() readonly height!: number | string;
   @Prop({ required: true }) readonly authority!: number;
   menus: TableMenuEntity[] = [];
   items: TableMemberMenuEntity[] = [];

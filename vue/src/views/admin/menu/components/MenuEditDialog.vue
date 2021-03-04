@@ -85,30 +85,27 @@
 <script lang="ts">
 import {
   Component,
-  Prop,
   PropSync,
   Ref,
+  VModel,
   Vue,
   Watch,
 } from "vue-property-decorator";
 import type { SelectItem, TableMenuEntity } from "@/common/types";
-import { getCodesApi, putApi, postApi } from "@/utils/apis";
+import { getCodesApi, postApi, putApi } from "@/utils/apis";
 import { ValidationObserver } from "vee-validate";
 import ButtonIconTooltip from "@/components/button/ButtonIconTooltip.vue";
 import DialogTitle from "@/components/title/DialogTitle.vue";
 import DialogActionButton from "@/components/button/DialogActionButton.vue";
-
-interface MenuVO extends TableMenuEntity {
-  level: number;
-}
+import { defaultTableMenuEntity } from "@/common/values";
 
 @Component({
   name: "MenuEditDialog",
   components: { DialogActionButton, DialogTitle, ButtonIconTooltip },
 })
 export default class extends Vue {
+  @VModel({ required: true }) item!: TableMenuEntity;
   @PropSync("dialog", { required: true, type: Boolean }) syncedDialog!: boolean;
-  @Prop({ required: true }) readonly item!: MenuVO;
   @Ref("observer") readonly observer!: InstanceType<typeof ValidationObserver>;
 
   readonly ENDPOINT_URL = "admin/menus/";
@@ -120,11 +117,13 @@ export default class extends Vue {
     this.MENU_TYPE = await getCodesApi("MENU_TYPE");
   }
 
-  @Watch("syncedDialog", { immediate: true })
+  @Watch("syncedDialog")
   protected watchDialog(val: boolean): void {
     if (val) {
       this.isNew = !this.item.id;
+    } else {
       this.observer.reset();
+      this.item = defaultTableMenuEntity();
     }
   }
 

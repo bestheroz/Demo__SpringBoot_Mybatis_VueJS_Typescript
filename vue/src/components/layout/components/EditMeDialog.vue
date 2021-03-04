@@ -56,7 +56,7 @@
               </v-col>
               <v-col cols="5" class="text-right pt-7">
                 <v-btn
-                  color="button-edit"
+                  color="warning"
                   outlined
                   small
                   @click="newPasswordDialog = true"
@@ -99,6 +99,7 @@ import pbkdf2 from "pbkdf2";
 import ButtonIconTooltip from "@/components/button/ButtonIconTooltip.vue";
 import DialogTitle from "@/components/title/DialogTitle.vue";
 import DialogActionButton from "@/components/button/DialogActionButton.vue";
+import { defaultTableMenuEntity } from "@/common/values";
 
 @Component({
   name: "EditMeDialog",
@@ -114,18 +115,17 @@ export default class extends Vue {
   @PropSync("dialog", { required: true, type: Boolean }) syncedDialog!: boolean;
   @Ref("observer") readonly observer!: InstanceType<typeof ValidationObserver>;
 
-  item: TableMemberEntity = Object.create(null);
+  item: TableMemberEntity = defaultTableMenuEntity();
   loading = false;
   show1 = false;
   newPasswordDialog = false;
 
-  @Watch("syncedDialog", { immediate: true })
+  @Watch("syncedDialog")
   protected async watchDialog(val: boolean): Promise<void> {
     if (val) {
       this.show1 = false;
       const response = await getApi<TableMemberEntity>("members/mine");
-      this.item = response?.data || Object.create(null);
-      this.observer.reset();
+      this.item = response?.data;
     }
   }
 

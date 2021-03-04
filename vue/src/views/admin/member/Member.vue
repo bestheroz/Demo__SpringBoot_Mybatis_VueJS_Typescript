@@ -2,7 +2,7 @@
   <div>
     <v-row no-gutters>
       <v-col cols="12">
-        <member-list ref="memberList" height="76vh" />
+        <member-list ref="memberList" />
       </v-col>
     </v-row>
   </div>
