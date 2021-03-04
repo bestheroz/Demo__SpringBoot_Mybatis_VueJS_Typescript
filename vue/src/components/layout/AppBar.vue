@@ -4,7 +4,7 @@
       <v-app-bar-nav-icon @click.stop="syncedDrawer = !syncedDrawer" />
       <v-toolbar-title>
         <v-btn text @click="goHome">
-          <v-icon class="mr-2"> mdi-home </v-icon>
+          <v-icon class="mr-2"> mdi-home-outline </v-icon>
           {{ title || "" }}
         </v-btn>
       </v-toolbar-title>
@@ -12,7 +12,7 @@
       <v-menu open-on-hover bottom offset-y>
         <template #activator="{ on }">
           <v-btn x-large text v-on="on">
-            <v-icon> mdi-account</v-icon>
+            <v-icon> mdi-account-outline</v-icon>
             {{ $store.getters.user.name }}
           </v-btn>
         </template>

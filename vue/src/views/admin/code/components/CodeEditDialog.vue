@@ -2,16 +2,16 @@
   <div>
     <v-dialog v-model="syncedDialog" max-width="100%" width="60vw">
       <v-card>
-        <v-card-title class="py-2 modal-header">
-          <v-icon v-if="isNew">mdi-database-plus-outline</v-icon>
-          <v-icon v-else>mdi-database-edit-outline</v-icon>
-          코드 {{ isNew ? "추가" : "수정" }}
-          <v-spacer />
-
-          <v-btn text small @click="syncedDialog = false">
-            <v-icon> mdi-window-close</v-icon>
-          </v-btn>
-        </v-card-title>
+        <dialog-title :is-new="isNew" prefix="코드">
+          <template #buttons>
+            <button-icon-tooltip
+              icon="mdi-window-close"
+              text="닫기"
+              @click="syncedDialog = false"
+              top
+            />
+          </template>
+        </dialog-title>
         <v-card-text>
           <ValidationObserver ref="observer">
             <v-row>
@@ -76,8 +76,8 @@
                     v-if="AUTHORITY"
                     v-model.number="item.authority"
                     :items="
-                      AUTHORITY.map((item) => {
-                        return { value: parseInt(item.value), text: item.text };
+                      AUTHORITY.map((code) => {
+                        return { value: parseInt(code.value), text: code.text };
                       })
                     "
                     label="*권한"
@@ -101,46 +101,44 @@
             </v-row>
           </ValidationObserver>
         </v-card-text>
-        <v-divider />
-        <v-card-actions class="py-1">
-          <v-spacer />
-          <v-btn text @click="syncedDialog = false">
-            <v-icon> mdi-window-close</v-icon>
-            닫기
-          </v-btn>
-          <v-btn text :loading="loading" @click="save">
-            <v-icon> mdi-content-save-settings-outline</v-icon>
-            저장
-          </v-btn>
-        </v-card-actions>
+        <dialog-action-button
+          :loading="loading"
+          @click:save="save"
+          @click:close="syncedDialog = false"
+        />
       </v-card>
     </v-dialog>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Prop, PropSync, Vue, Watch } from "vue-property-decorator";
+import {
+  Component,
+  Prop,
+  PropSync,
+  Ref,
+  Vue,
+  Watch,
+} from "vue-property-decorator";
 import type { SelectItem, TableCodeEntity } from "@/common/types";
 import { getCodesApi, putApi, postApi } from "@/utils/apis";
 import { ValidationObserver } from "vee-validate";
+import ButtonIconTooltip from "@/components/button/ButtonIconTooltip.vue";
+import DialogTitle from "@/components/title/DialogTitle.vue";
+import DialogActionButton from "@/components/button/DialogActionButton.vue";
 
 @Component({
   name: "CodeEditDialog",
+  components: { DialogActionButton, DialogTitle, ButtonIconTooltip },
 })
 export default class extends Vue {
   @PropSync("dialog", { required: true, type: Boolean }) syncedDialog!: boolean;
   @Prop({ required: true }) readonly item!: TableCodeEntity;
+  @Ref("observer") readonly observer!: InstanceType<typeof ValidationObserver>;
 
   AUTHORITY: SelectItem[] = [];
   isNew = false;
   loading = false;
-
-  beforeDestroy(): void {
-    this.syncedDialog = false;
-    this.$nextTick(() => {
-      this.syncedDialog = false;
-    });
-  }
 
   async created(): Promise<void> {
     this.AUTHORITY = await getCodesApi("AUTHORITY");
@@ -150,17 +148,12 @@ export default class extends Vue {
   watchDialog(val: boolean): void {
     if (val) {
       this.isNew = !this.item.code;
-      this.$refs.observer &&
-        (this.$refs.observer as InstanceType<
-          typeof ValidationObserver
-        >).reset();
+      this.observer.reset();
     }
   }
 
   async save(): Promise<void> {
-    const isValid = await (this.$refs.observer as InstanceType<
-      typeof ValidationObserver
-    >).validate();
+    const isValid = this.observer.validate();
     if (!isValid) {
       return;
     }

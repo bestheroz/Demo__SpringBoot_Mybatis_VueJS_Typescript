@@ -2,16 +2,16 @@
   <div>
     <v-dialog v-model="syncedDialog" max-width="100%" width="60vw">
       <v-card>
-        <v-card-title class="py-2 modal-header">
-          <v-icon v-if="isNew">mdi-database-plus-outline</v-icon>
-          <v-icon v-else>mdi-database-edit-outline</v-icon>
-          사용자 {{ isNew ? "추가" : "수정" }}
-          <v-spacer />
-
-          <v-btn text small @click="syncedDialog = false">
-            <v-icon> mdi-window-close</v-icon>
-          </v-btn>
-        </v-card-title>
+        <dialog-title :is-new="isNew" prefix="사용자">
+          <template #buttons>
+            <button-icon-tooltip
+              icon="mdi-window-close"
+              text="닫기"
+              @click="syncedDialog = false"
+              top
+            />
+          </template>
+        </dialog-title>
         <v-card-text>
           <ValidationObserver ref="observer">
             <v-row>
@@ -125,18 +125,11 @@
             </v-row>
           </ValidationObserver>
         </v-card-text>
-        <v-divider />
-        <v-card-actions class="py-1">
-          <v-spacer />
-          <v-btn text @click="syncedDialog = false">
-            <v-icon> mdi-window-close</v-icon>
-            닫기
-          </v-btn>
-          <v-btn text :loading="loading" @click="save">
-            <v-icon> mdi-content-save-settings-outline</v-icon>
-            저장
-          </v-btn>
-        </v-card-actions>
+        <dialog-action-button
+          :loading="loading"
+          @click:save="save"
+          @click:close="syncedDialog = false"
+        />
       </v-card>
     </v-dialog>
   </div>
@@ -149,10 +142,18 @@ import { getCodesApi, patchApi, postApi } from "@/utils/apis";
 import DatetimePicker from "@/components/picker/DatetimePicker.vue";
 import { ValidationObserver } from "vee-validate";
 import pbkdf2 from "pbkdf2";
+import ButtonIconTooltip from "@/components/button/ButtonIconTooltip.vue";
+import DialogTitle from "@/components/title/DialogTitle.vue";
+import DialogActionButton from "@/components/button/DialogActionButton.vue";
 
 @Component({
   name: "MemberEditDialog",
-  components: { DatetimePicker },
+  components: {
+    DialogActionButton,
+    DialogTitle,
+    ButtonIconTooltip,
+    DatetimePicker,
+  },
 })
 export default class extends Vue {
   @PropSync("dialog", { required: true, type: Boolean }) syncedDialog!: boolean;

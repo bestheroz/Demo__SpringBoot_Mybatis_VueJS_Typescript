@@ -2,14 +2,16 @@
   <div>
     <v-dialog v-model="syncedDialog" max-width="100%" width="25vw">
       <v-card>
-        <v-card-title class="py-2 modal-header">
-          내 정보 수정
-          <v-spacer />
-
-          <v-btn text small @click="syncedDialog = false">
-            <v-icon> mdi-window-close</v-icon>
-          </v-btn>
-        </v-card-title>
+        <dialog-title text="내 정보 변경">
+          <template #buttons>
+            <button-icon-tooltip
+              icon="mdi-window-close"
+              text="닫기"
+              @click="syncedDialog = false"
+              top
+            />
+          </template>
+        </dialog-title>
         <v-card-text>
           <ValidationObserver ref="observer">
             <v-row dense>
@@ -72,16 +74,11 @@
             </v-row>
           </ValidationObserver>
         </v-card-text>
-        <v-divider />
-        <v-card-actions class="py-1">
-          <v-spacer />
-          <v-btn icon @click="syncedDialog = false">
-            <v-icon> mdi-window-close</v-icon>
-          </v-btn>
-          <v-btn icon :loading="loading" @click="save" color="warning">
-            <v-icon> mdi-content-save-settings-outline</v-icon>
-          </v-btn>
-        </v-card-actions>
+        <dialog-action-button
+          :loading="loading"
+          @click:save="save"
+          @click:close="syncedDialog = false"
+        />
       </v-card>
     </v-dialog>
     <change-password-dialog
@@ -92,20 +89,30 @@
 </template>
 
 <script lang="ts">
-import { Component, PropSync, Vue, Watch } from "vue-property-decorator";
+import { Component, PropSync, Ref, Vue, Watch } from "vue-property-decorator";
 import type { TableMemberEntity } from "@/common/types";
 import { getApi, patchApi } from "@/utils/apis";
 import DatetimePicker from "@/components/picker/DatetimePicker.vue";
 import ChangePasswordDialog from "@/components/layout/components/ChangePasswordDialog.vue";
 import { ValidationObserver } from "vee-validate";
 import pbkdf2 from "pbkdf2";
+import ButtonIconTooltip from "@/components/button/ButtonIconTooltip.vue";
+import DialogTitle from "@/components/title/DialogTitle.vue";
+import DialogActionButton from "@/components/button/DialogActionButton.vue";
 
 @Component({
   name: "EditMeDialog",
-  components: { ChangePasswordDialog, DatetimePicker },
+  components: {
+    DialogActionButton,
+    DialogTitle,
+    ButtonIconTooltip,
+    ChangePasswordDialog,
+    DatetimePicker,
+  },
 })
 export default class extends Vue {
   @PropSync("dialog", { required: true, type: Boolean }) syncedDialog!: boolean;
+  @Ref("observer") readonly observer!: InstanceType<typeof ValidationObserver>;
 
   item: TableMemberEntity = Object.create(null);
   loading = false;
@@ -118,17 +125,12 @@ export default class extends Vue {
       this.show1 = false;
       const response = await getApi<TableMemberEntity>("members/mine");
       this.item = response?.data || Object.create(null);
-      this.$refs.observer &&
-        (this.$refs.observer as InstanceType<
-          typeof ValidationObserver
-        >).reset();
+      this.observer.reset();
     }
   }
 
   protected async save(): Promise<void> {
-    const isValid = await (this.$refs.observer as InstanceType<
-      typeof ValidationObserver
-    >).validate();
+    const isValid = await this.observer.validate();
     if (!isValid) {
       return;
     }

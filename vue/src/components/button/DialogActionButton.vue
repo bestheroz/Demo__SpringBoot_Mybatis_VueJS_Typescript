@@ -1,5 +1,6 @@
 <template>
   <div>
+    <v-divider />
     <v-card-actions>
       <v-spacer />
       <button-icon-tooltip
@@ -23,7 +24,7 @@ import { Component, Emit, Prop, Vue } from "vue-property-decorator";
 import ButtonIconTooltip from "@/components/button/ButtonIconTooltip.vue";
 
 @Component({
-  name: "DialogButton",
+  name: "DialogActionButton",
   components: { ButtonIconTooltip },
 })
 export default class extends Vue {

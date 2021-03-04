@@ -53,9 +53,14 @@
         <v-divider />
         <v-card-actions>
           <v-spacer />
-          <v-btn color="button-default" text :loading="loading" @click="save">
-            저장
-          </v-btn>
+          <button-icon-tooltip
+            icon="mdi-content-save-settings-outline"
+            text="저장"
+            color="warning"
+            :loading="loading"
+            @click="save"
+            top
+          />
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -63,18 +68,21 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, PropSync, Vue } from "vue-property-decorator";
+import { Component, Prop, PropSync, Ref, Vue } from "vue-property-decorator";
 import { alertAxiosError, ApiDataResult, axiosInstance } from "@/utils/apis";
 import { ValidationObserver } from "vee-validate";
 import pbkdf2 from "pbkdf2";
 import { toastError, toastInfo } from "@/utils/alerts";
+import ButtonIconTooltip from "@/components/button/ButtonIconTooltip.vue";
 
 @Component({
   name: "NewPasswordDialog",
+  components: { ButtonIconTooltip },
 })
 export default class extends Vue {
   @PropSync("dialog", { required: true, type: Boolean }) syncedDialog!: boolean;
   @Prop({ required: true }) readonly id!: string;
+  @Ref("observer") readonly observer!: InstanceType<typeof ValidationObserver>;
 
   loading = false;
   password: string | null = null;
@@ -83,9 +91,7 @@ export default class extends Vue {
   show2 = false;
 
   protected async save(): Promise<void> {
-    const inValid = await (this.$refs.observer as InstanceType<
-      typeof ValidationObserver
-    >).validate();
+    const inValid = await this.observer.validate();
     if (!inValid) {
       return;
     }

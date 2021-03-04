@@ -8,10 +8,11 @@
         :size="28"
         class="mr-2"
       />
-      {{ text }} {{ isNew ? "추가" : "수정" }}
+      {{ title }}
       <v-spacer />
       <slot name="buttons" />
     </v-card-title>
+    <v-system-bar height="10" color="secondary" class="mb-4" />
   </div>
 </template>
 
@@ -23,7 +24,18 @@ import { Component, Prop, Vue } from "vue-property-decorator";
   components: {},
 })
 export default class extends Vue {
-  @Prop({ required: true }) readonly text: string;
-  @Prop({ required: true }) readonly isNew: string;
+  @Prop({}) readonly prefix!: string;
+  @Prop({}) readonly text!: string;
+  @Prop({}) readonly isNew!: string;
+
+  get title(): string {
+    if (this.text) {
+      return this.text;
+    } else if (this.prefix) {
+      return `${this.prefix} ${this.isNew ? "추가" : "수정"} `;
+    } else {
+      return "";
+    }
+  }
 }
 </script>
