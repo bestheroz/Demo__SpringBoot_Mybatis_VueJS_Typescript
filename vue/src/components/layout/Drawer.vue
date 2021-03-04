@@ -41,25 +41,6 @@
         </v-list-item>
       </template>
     </v-list>
-
-    <template #append>
-      <div class="ma-2">
-        <v-row no-gutters>
-          <v-col cols="10">
-            <v-btn outlined class="px-10" @click="$store.dispatch('logout')">
-              <v-icon>mdi-logout</v-icon>
-              Logout
-            </v-btn>
-          </v-col>
-          <v-col cols="2" class="text-right">
-            <v-btn icon outlined @click="$store.dispatch('toggleTheme')">
-              <v-icon v-if="$vuetify.theme.dark"> mdi-weather-night</v-icon>
-              <v-icon v-else> mdi-weather-sunny</v-icon>
-            </v-btn>
-          </v-col>
-        </v-row>
-      </div>
-    </template>
   </v-navigation-drawer>
 </template>
 
