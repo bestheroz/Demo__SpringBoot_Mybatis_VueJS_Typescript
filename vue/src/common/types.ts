@@ -92,7 +92,7 @@ export interface TableCodeEntity {
 }
 export interface TableMemberMenuEntity {
   authority: number | null;
-  id: number | null;
+  id?: number | null;
   name: string | null;
   type: string | null;
   parentId: number | null;

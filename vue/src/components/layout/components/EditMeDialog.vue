@@ -99,7 +99,7 @@ import pbkdf2 from "pbkdf2";
 import ButtonIconTooltip from "@/components/button/ButtonIconTooltip.vue";
 import DialogTitle from "@/components/title/DialogTitle.vue";
 import DialogActionButton from "@/components/button/DialogActionButton.vue";
-import { defaultTableMenuEntity } from "@/common/values";
+import { defaultTableMemberEntity } from "@/common/values";
 
 @Component({
   name: "EditMeDialog",
@@ -115,7 +115,7 @@ export default class extends Vue {
   @PropSync("dialog", { required: true, type: Boolean }) syncedDialog!: boolean;
   @Ref("observer") readonly observer!: InstanceType<typeof ValidationObserver>;
 
-  item: TableMemberEntity = defaultTableMenuEntity();
+  item: TableMemberEntity = defaultTableMemberEntity();
   loading = false;
   show1 = false;
   newPasswordDialog = false;
@@ -125,7 +125,7 @@ export default class extends Vue {
     if (val) {
       this.show1 = false;
       const response = await getApi<TableMemberEntity>("members/mine");
-      this.item = response?.data;
+      this.item = response?.data || defaultTableMemberEntity();
     }
   }
 

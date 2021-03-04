@@ -90,6 +90,7 @@ import ButtonSet from "@/components/speeddial/ButtonSet.vue";
 import { confirmDelete } from "@/utils/alerts";
 import CodeEditDialog from "@/views/admin/code/components/CodeEditDialog.vue";
 import DataTableClientSideFilter from "@/components/datatable/DataTableClientSideFilter.vue";
+import { defaultTableCodeEntity } from "@/common/values";
 
 @Component({
   name: "CodeList",
@@ -115,7 +116,7 @@ export default class extends Vue {
   selected: TableCodeEntity[] = [];
 
   dialog = false;
-  item: TableCodeEntity = Object.create(null);
+  item: TableCodeEntity = defaultTableCodeEntity();
 
   get headers(): DataTableHeader[] {
     return [
@@ -172,7 +173,7 @@ export default class extends Vue {
   }
 
   @Watch("codeGroup")
-  async getList(): Promise<void> {
+  protected async getList(): Promise<void> {
     this.selected = [];
     this.items = [];
     if (!this.codeGroup) {
@@ -191,7 +192,7 @@ export default class extends Vue {
     this.dialog = true;
   }
 
-  async deleteItem(): Promise<void> {
+  protected async deleteItem(): Promise<void> {
     const result = await confirmDelete();
     if (result.value) {
       this.loading = true;

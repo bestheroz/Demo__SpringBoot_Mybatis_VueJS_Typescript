@@ -132,7 +132,7 @@ export default class extends Vue {
   @Watch("selected")
   @Emit()
   selectRow(val: TableCodeGroupEntity[]): TableCodeGroupEntity {
-    return val && val.length > 0 ? val[0] : {};
+    return val && val.length > 0 ? val[0] : defaultTableCodeGroupEntity();
   }
 
   @Watch("queryString")
