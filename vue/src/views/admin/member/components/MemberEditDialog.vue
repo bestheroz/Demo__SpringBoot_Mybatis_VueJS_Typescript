@@ -14,7 +14,7 @@
         </dialog-title>
         <v-card-text>
           <ValidationObserver ref="observer">
-            <v-row>
+            <v-row dense>
               <v-col cols="12" md="4">
                 <ValidationProvider
                   v-slot="{ errors }"
@@ -48,6 +48,7 @@
                 <v-switch
                   v-model="item.available"
                   :label="item.available | getSwitchLabel"
+                  inset
                 />
               </v-col>
               <v-col cols="12" md="4">

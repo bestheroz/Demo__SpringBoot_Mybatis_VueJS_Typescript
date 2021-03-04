@@ -14,7 +14,7 @@
         </dialog-title>
         <v-card-text>
           <ValidationObserver ref="observer">
-            <v-row>
+            <v-row dense>
               <v-col cols="12" md="4">
                 <ValidationProvider
                   v-slot="{ errors }"
