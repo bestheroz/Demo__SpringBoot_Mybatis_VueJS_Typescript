@@ -4,7 +4,7 @@
       <template v-for="item in $store.getters.drawers">
         <v-list-group
           v-if="item.children"
-          :key="item.name"
+          :key="item.id"
           :prepend-icon="item.icon"
         >
           <template #activator>
@@ -12,7 +12,7 @@
           </template>
           <v-list-item
             v-for="child in item.children"
-            :key="child.name"
+            :key="child.id"
             @click="movePage(child)"
             :class="selected === child.id ? 'v-list-item--active' : undefined"
             link
@@ -29,7 +29,7 @@
 
         <v-list-item
           v-else
-          :key="item.name"
+          :key="item.id"
           @click="movePage(item)"
           :class="selected === item.id ? 'v-list-item--active' : undefined"
           link
