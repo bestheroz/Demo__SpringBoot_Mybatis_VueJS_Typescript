@@ -9,29 +9,31 @@ import jwt_decode from "jwt-decode";
 import axios from "axios";
 import envs from "@/constants/envs";
 import router from "@/router";
+import { defaultUser } from "@/common/values";
 
 Vue.use(Vuex);
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const user = {
   state: {
-    user: null,
+    user: defaultUser(),
     accessToken: null,
     refreshToken: null,
   },
   getters: {
     user: (state: any) => {
       return {
-        id: state.user?.id,
-        name: state.user?.name,
-        authority: state.user?.authority,
-        theme: state.user?.theme,
+        id: state.user.id,
+        name: state.user.name,
+        authority: state.user.authority,
+        theme: state.user.theme,
       };
     },
     loggedIn: (state: any): boolean => {
-      return !!state.user?.id && !!state.accessToken && !!state.refreshToken;
+      return !!state.user.id && !!state.accessToken && !!state.refreshToken;
     },
     theme: (state: any): string => {
-      return state.user?.theme || "light";
+      return state.user.theme || "light";
     },
     accessToken: (state: any): string | null => {
       return state.accessToken;
@@ -83,7 +85,7 @@ const user = {
       commit("setTheme", theme);
     },
     clearUser({ commit }: ActionContext<any, any>): void {
-      commit("setUser", null);
+      commit("setUser", defaultUser());
     },
     saveToken(
       { commit }: ActionContext<any, any>,

@@ -6,6 +6,14 @@ import {
   TableMenuEntity,
 } from "@/common/types";
 import dayjs from "dayjs";
+export function defaultUser(): {
+  id: string | null;
+  name: string | null;
+  authority: string | null;
+  theme: string;
+} {
+  return { id: null, name: null, authority: null, theme: "light" };
+}
 
 export function defaultTableMemberEntity(): TableMemberEntity {
   return {
