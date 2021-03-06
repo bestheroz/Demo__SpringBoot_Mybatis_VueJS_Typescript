@@ -25,7 +25,6 @@
               <v-text-field
                 v-model="id"
                 label="ID..."
-                prepend-icon="mdi-key"
                 :error-messages="errors"
                 :success="valid"
                 @keyup.enter="login"
@@ -39,7 +38,6 @@
               <v-text-field
                 v-model="password"
                 label="Password..."
-                prepend-icon="mdi-lock-outline"
                 :error-messages="errors"
                 :success="valid"
                 :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
