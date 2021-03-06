@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-card-title class="pb-2">
+    <v-system-bar color="secondary" window class="mb-4 text-h6">
       <v-icon
         v-text="
           isNew ? 'mdi-database-plus-outline' : 'mdi-database-edit-outline'
@@ -11,8 +11,7 @@
       {{ title }}
       <v-spacer />
       <slot name="buttons" />
-    </v-card-title>
-    <v-system-bar height="10" color="secondary" class="mb-4" />
+    </v-system-bar>
   </div>
 </template>
 

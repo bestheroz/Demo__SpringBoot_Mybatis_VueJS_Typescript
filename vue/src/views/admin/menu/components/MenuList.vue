@@ -1,6 +1,7 @@
 <template>
   <div>
     <button-set
+      :loading="saving"
       reload-button
       @click:reload="getList"
       add-button

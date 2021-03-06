@@ -1,13 +1,13 @@
 <template>
   <div>
     <v-speed-dial
-      class="button-set"
       v-model="fab"
       absolute
       top
       right
       direction="left"
       open-on-hover
+      style="right: 1rem; top: 0.75rem"
     >
       <template #activator>
         <v-btn v-model="fab" color="info" fab small outlined :loading="loading">
@@ -15,6 +15,7 @@
           <v-icon v-else>mdi-function</v-icon>
         </v-btn>
       </template>
+      <slot name="afterReloadButton" />
       <v-tooltip v-if="reloadButton" top>
         <template #activator="{ on }">
           <v-btn
@@ -29,6 +30,7 @@
         </template>
         <span> {{ reloadText }} </span>
       </v-tooltip>
+      <slot name="afterSaveButton" />
       <v-tooltip v-if="saveButton" top>
         <template #activator="{ on }">
           <v-btn
@@ -43,6 +45,7 @@
         </template>
         <span> {{ saveText }} </span>
       </v-tooltip>
+      <slot name="afterExcelButton" />
       <v-tooltip v-if="excelButton" top>
         <template #activator="{ on }">
           <v-btn
@@ -57,6 +60,7 @@
         </template>
         <span> {{ excelText }} </span>
       </v-tooltip>
+      <slot name="afterDeleteButton" />
       <v-tooltip v-if="deleteButton" top>
         <template #activator="{ on }">
           <v-btn
@@ -71,6 +75,7 @@
         </template>
         <span> {{ deleteText }} </span>
       </v-tooltip>
+      <slot name="afterAddButton" />
       <v-tooltip v-if="addButton" top>
         <template #activator="{ on }">
           <v-btn
@@ -85,6 +90,7 @@
         </template>
         <span> {{ addText }} </span>
       </v-tooltip>
+      <slot name="afterInquiryButton" />
       <v-tooltip v-if="inquiryButton" top>
         <template #activator="{ on }">
           <v-btn
@@ -99,6 +105,7 @@
         </template>
         <span> {{ inquiryText }} </span>
       </v-tooltip>
+      <slot name="beforeInquiryButton" />
     </v-speed-dial>
   </div>
 </template>
@@ -151,9 +158,3 @@ export default class extends Vue {
   /* eslint-enable @typescript-eslint/no-empty-function */
 }
 </script>
-<style lang="scss" scoped>
-.button-set {
-  right: 8px;
-  top: 12px;
-}
-</style>
