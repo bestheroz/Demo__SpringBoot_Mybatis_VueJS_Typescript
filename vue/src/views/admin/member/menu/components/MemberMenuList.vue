@@ -76,7 +76,7 @@ import type { TableMemberMenuEntity, TableMenuEntity } from "@/common/types";
 import { getApi, postApi } from "@/utils/apis";
 import ButtonSet from "@/components/speeddial/ButtonSet.vue";
 import draggable from "vuedraggable";
-import { defaultTableMenuEntity } from "@/common/values";
+import { defaultTableMemberMenuEntity } from "@/common/values";
 
 @Component({
   name: "MemberMenuList",
@@ -109,7 +109,7 @@ export default class extends Vue {
     this.items = val.map((item) => {
       return {
         ...(this.menus.find((menu) => menu.id === item) ||
-          defaultTableMenuEntity()),
+          defaultTableMemberMenuEntity()),
         authority: this.authority,
       };
     });

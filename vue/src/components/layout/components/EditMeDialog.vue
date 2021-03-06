@@ -89,7 +89,7 @@
 </template>
 
 <script lang="ts">
-import { Component, PropSync, Ref, Vue, Watch } from "vue-property-decorator";
+import { Component, PropSync, Ref, Vue } from "vue-property-decorator";
 import type { TableMemberEntity } from "@/common/types";
 import { getApi, patchApi } from "@/utils/apis";
 import DatetimePicker from "@/components/picker/DatetimePicker.vue";
@@ -120,13 +120,9 @@ export default class extends Vue {
   show1 = false;
   newPasswordDialog = false;
 
-  @Watch("syncedDialog")
-  protected async watchDialog(val: boolean): Promise<void> {
-    if (val) {
-      this.show1 = false;
-      const response = await getApi<TableMemberEntity>("members/mine");
-      this.item = response?.data || defaultTableMemberEntity();
-    }
+  protected async created(): Promise<void> {
+    const response = await getApi<TableMemberEntity>("members/mine");
+    this.item = response?.data || defaultTableMemberEntity();
   }
 
   protected async save(): Promise<void> {

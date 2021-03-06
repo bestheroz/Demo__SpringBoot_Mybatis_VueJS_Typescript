@@ -1,22 +1,37 @@
 <template>
   <div>
     <div
-      class="text-ellipsis-target"
-      :style="`max-width: ${maxWidth} !important;`"
+      :class="textEllipsisTargetId"
+      :style="{
+        'text-overflow': 'ellipsis',
+        overflow: 'hidden',
+        'white-space': 'nowrap',
+        'word-break': 'break-all',
+        cursor: 'help',
+      }"
     >
       <v-tooltip
-        v-if="value && $store.getters.finishTextEllipsis"
-        v-model="show"
         top
+        v-model="show"
+        v-if="value"
         color="secondary"
         :max-width="tooltipWidth"
         open-on-click
         :open-on-hover="false"
       >
         <template #activator="{ on, attrs }">
-          <span v-bind="attrs" v-on="on" @click="show = !show">
+          <div
+            v-on="on"
+            v-bind="attrs"
+            @click="show = !show"
+            :style="{
+              'max-width': maxWidth + '!important',
+              'text-overflow': 'ellipsis',
+              overflow: 'hidden',
+            }"
+          >
             {{ value }}
-          </span>
+          </div>
         </template>
         <div @click="show = !show">{{ value }}</div>
       </v-tooltip>
@@ -26,7 +41,8 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+import { Component, Prop, Vue, Watch } from "vue-property-decorator";
+import _, { DebouncedFunc } from "lodash";
 
 @Component({ name: "DataTableColumnEllipsis" })
 export default class extends Vue {
@@ -35,11 +51,38 @@ export default class extends Vue {
   @Prop({ required: false, default: "25rem" }) readonly tooltipWidth!:
     | string
     | number;
-
   show = false;
+
+  readonly textEllipsisTargetId = _.uniqueId("text-ellipsis-target-");
+  readonly debounce: DebouncedFunc<() => Record<string, never>> = _.debounce(
+    this.debounceTextEllipsis,
+    100,
+  );
 
   get maxWidth(): string {
     return typeof this.width === "string" ? this.width : `${this.width}px`;
+  }
+
+  @Watch("value", { immediate: true })
+  watchValue(): void {
+    this.debounce && this.debounce();
+  }
+
+  debounceTextEllipsis(): void {
+    Promise.resolve()
+      .then(() => {
+        document
+          .querySelectorAll<HTMLElement>(`.${this.textEllipsisTargetId}`)
+          .forEach((item) => item.classList.remove("text-ellipsis"));
+      })
+      .then(() => {
+        document
+          .querySelectorAll<HTMLElement>(`.${this.textEllipsisTargetId}`)
+          .forEach((item) => {
+            item.style.maxWidth = item.offsetWidth + "px";
+            item.classList.add("text-ellipsis");
+          });
+      });
   }
 }
 </script>
@@ -49,15 +92,8 @@ export default class extends Vue {
     td,
     th {
       white-space: nowrap;
-      .text-ellipsis {
-        text-overflow: ellipsis;
-        overflow: hidden;
-        white-space: nowrap;
-        word-break: break-all;
-      }
     }
   }
-
   .v-tooltip__content {
     pointer-events: initial;
     span {

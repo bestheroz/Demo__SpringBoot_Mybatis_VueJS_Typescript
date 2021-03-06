@@ -155,7 +155,7 @@ import dayjs from "dayjs";
 import DatetimePicker from "@/components/picker/DatetimePicker.vue";
 import DateStartEndPicker from "@/components/picker/DateStartEndPicker.vue";
 import DatetimeStartEndPicker from "@/components/picker/DatetimeStartEndPicker.vue";
-import { DateType } from "@/common/types";
+import { DateTime } from "@/common/types";
 
 @Component({
   name: "Picker",
@@ -167,23 +167,23 @@ import { DateType } from "@/common/types";
   },
 })
 export default class extends Vue {
-  date: DateType = new Date();
+  date: DateTime = new Date();
   dateParseISOString: string = dayjs().toISOString();
   dateParseNumber: number = dayjs().toDate().getTime();
-  date2: DateType = new Date();
-  date3: DateType = new Date();
-  start1: DateType = dayjs().add(-1, "day").toDate();
-  end1: DateType = dayjs().add(1, "day").toDate();
-  start2: DateType = dayjs().add(-1, "day").startOf("day").toDate();
-  end2: DateType = dayjs().add(1, "day").endOf("day").toDate();
-  start3: DateType = dayjs().add(-1, "day").startOf("day").toDate();
-  end3: DateType = dayjs().add(1, "day").endOf("day").toDate();
+  date2: DateTime = new Date();
+  date3: DateTime = new Date();
+  start1: DateTime = dayjs().add(-1, "day").toDate();
+  end1: DateTime = dayjs().add(1, "day").toDate();
+  start2: DateTime = dayjs().add(-1, "day").startOf("day").toDate();
+  end2: DateTime = dayjs().add(1, "day").endOf("day").toDate();
+  start3: DateTime = dayjs().add(-1, "day").startOf("day").toDate();
+  end3: DateTime = dayjs().add(1, "day").endOf("day").toDate();
 
   get now(): Date {
     return new Date();
   }
 
-  protected getType(val: DateType): string {
+  protected getType(val: DateTime): string {
     return typeof val === "object"
       ? val instanceof Date
         ? "Date"

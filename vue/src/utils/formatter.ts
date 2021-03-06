@@ -43,31 +43,3 @@ export function getEllipseText(
 export function getSwitchLabel(yn: boolean, prefix?: string): string {
   return (prefix?.trim() || "") + (yn ? " 사용" : " 사용안함");
 }
-
-const debounceTextEllipsis = () => {
-  store.dispatch("setFinishTextEllipsis", false).then(() => {
-    Promise.resolve()
-      .then(() => {
-        document
-          .querySelectorAll<HTMLElement>(".text-ellipsis-target")
-          .forEach((item) => item.classList.remove("text-ellipsis"));
-      })
-      .then(() => {
-        document
-          .querySelectorAll<HTMLElement>(".text-ellipsis-target")
-          .forEach((item) => {
-            item.style.maxWidth = item.offsetWidth + "px";
-            item.classList.add("text-ellipsis");
-          });
-      })
-      .then(() => {
-        store.dispatch("setFinishTextEllipsis", true).then();
-      });
-  });
-};
-
-const debounce = _.debounce(debounceTextEllipsis, 100);
-
-export function textEllipsis(): void {
-  debounce && debounce();
-}

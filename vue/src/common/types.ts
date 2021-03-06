@@ -1,7 +1,5 @@
 import dayjs from "dayjs";
 
-export type DateType = dayjs.ConfigType;
-
 export interface SelectItem {
   value: string;
   text: string;
@@ -32,7 +30,7 @@ export interface Pagination {
   itemsPerPage: number; // -1 for All
 }
 
-export type DateTime = DateType;
+export type DateTime = dayjs.ConfigType;
 
 export interface TableMemberEntity {
   id?: string | null;

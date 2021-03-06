@@ -183,12 +183,12 @@ export default class extends Vue {
   @Watch("syncedDialog")
   protected watchDialog(val: boolean): void {
     if (val) {
-      this.password2 = "";
-      this.show1 = false;
-      this.show2 = false;
       this.isNew = !this.item.id;
     } else {
       this.item = defaultTableMemberEntity();
+      this.password2 = "";
+      this.show1 = false;
+      this.show2 = false;
       this.observer.reset();
     }
   }

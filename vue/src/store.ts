@@ -195,29 +195,6 @@ const command = {
     },
   },
 };
-const temp = {
-  state: {
-    finishTextEllipsis: false,
-  },
-  getters: {
-    finishTextEllipsis(state: any) {
-      return state.finishTextEllipsis;
-    },
-  },
-  mutations: {
-    setFinishTextEllipsis(state: any, isFinishTextEllipsis: boolean): void {
-      state.finishTextEllipsis = isFinishTextEllipsis;
-    },
-  },
-  actions: {
-    setFinishTextEllipsis(
-      { commit }: ActionContext<any, any>,
-      isFinishTextEllipsis: boolean,
-    ) {
-      commit("setFinishTextEllipsis", isFinishTextEllipsis);
-    },
-  },
-};
 /* eslint-enable @typescript-eslint/no-explicit-any */
 export default new Vuex.Store({
   strict: true,
@@ -226,7 +203,6 @@ export default new Vuex.Store({
     drawer,
     codes,
     command,
-    temp,
   },
   plugins: [createPersistedState()],
 });
