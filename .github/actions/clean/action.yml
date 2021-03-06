@@ -1,5 +1,5 @@
-name: 'Build Maven'
-description: 'Build gradle'
+name: 'Clean'
+description: 'Clean the previous build'
 
 runs:
   using: 'composite'
