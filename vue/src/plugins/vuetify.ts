@@ -25,8 +25,8 @@ export default new Vuetify({
         info: colors.blue.lighten1,
         success: colors.green.lighten1,
         warning: colors.amber.lighten1,
-        "alert-background": colors.grey.lighten5,
-        "alert-text": colors.grey.darken4,
+        background: colors.grey.lighten5,
+        text: colors.grey.darken4,
       },
       dark: {
         primary: colors.blue.darken1,
@@ -36,8 +36,8 @@ export default new Vuetify({
         info: colors.blue.darken1,
         success: colors.green.darken1,
         warning: colors.amber.darken3,
-        "alert-background": colors.grey.darken4,
-        "alert-text": colors.grey.lighten5,
+        background: colors.grey.darken4,
+        text: colors.grey.lighten5,
       },
     },
     options: {
