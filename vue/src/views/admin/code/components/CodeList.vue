@@ -34,7 +34,7 @@
         >
           <template #header>
             <data-table-client-side-filter
-              :header="headers"
+              :headers="headers"
               :output.sync="filteredItems"
               :input="items"
             />
