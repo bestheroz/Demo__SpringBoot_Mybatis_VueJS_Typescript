@@ -219,15 +219,11 @@ div.v-data-table {
                 padding-bottom: 0;
               }
               .v-select__selections {
-                //display: contents;
+                display: contents;
 
                 .v-select__selection--comma:not(:first-child) {
                   display: none;
                 }
-
-                //.v-chip:not(:first-child) {
-                //  display: none;
-                //}
 
                 .v-chip {
                   :not(:first-child) {
