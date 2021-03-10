@@ -1,4 +1,4 @@
-name: 'Build Maven'
+name: 'Build Gradle'
 description: 'Build gradle'
 
 runs:
