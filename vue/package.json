@@ -1,6 +1,6 @@
 {
   "name": "vue",
-  "version": "21.01.18",
+  "version": "21.03.10",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve --port 8081 --skip-plugins prettier",
@@ -17,7 +17,7 @@
     "vue": "2.6.12",
     "vue-router": "3.5.1",
     "vuedraggable": "2.24.3",
-    "vuetify": "2.4.5",
+    "vuetify": "2.4.6",
     "vuex": "3.6.2",
     "vuex-persistedstate": "3.2.0"
   },
@@ -28,8 +28,8 @@
     "@sentry/tracing": "6.2.1",
     "@types/lodash": "4.14.168",
     "@types/pbkdf2": "3.1.0",
-    "@typescript-eslint/eslint-plugin": "4.16.1",
-    "@typescript-eslint/parser": "4.16.1",
+    "@typescript-eslint/eslint-plugin": "4.17.0",
+    "@typescript-eslint/parser": "4.17.0",
     "@vue/cli-plugin-babel": "4.5.11",
     "@vue/cli-plugin-eslint": "4.5.11",
     "@vue/cli-plugin-typescript": "4.5.11",
