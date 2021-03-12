@@ -1,6 +1,6 @@
 {
   "name": "demo",
-  "version": "21.03.10",
+  "version": "21.03.12",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve --port 8081 --skip-plugins prettier",
@@ -23,9 +23,9 @@
   },
   "devDependencies": {
     "@mdi/font": "5.9.55",
-    "@sentry/browser": "6.2.1",
-    "@sentry/integrations": "6.2.1",
-    "@sentry/tracing": "6.2.1",
+    "@sentry/browser": "6.2.2",
+    "@sentry/integrations": "6.2.2",
+    "@sentry/tracing": "6.2.2",
     "@types/lodash": "4.14.168",
     "@types/pbkdf2": "3.1.0",
     "@typescript-eslint/eslint-plugin": "4.17.0",
