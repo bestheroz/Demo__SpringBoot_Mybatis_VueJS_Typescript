@@ -83,21 +83,13 @@
 </template>
 
 <script lang="ts">
-import {
-  Component,
-  PropSync,
-  Ref,
-  VModel,
-  Vue,
-  Watch,
-} from "vue-property-decorator";
+import { Component, PropSync, Ref, VModel, Vue } from "vue-property-decorator";
 import type { SelectItem, TableMenuEntity } from "@/common/types";
 import { getCodesApi, postApi, putApi } from "@/utils/apis";
 import { ValidationObserver } from "vee-validate";
 import ButtonIconTooltip from "@/components/button/ButtonIconTooltip.vue";
 import DialogTitle from "@/components/title/DialogTitle.vue";
 import DialogActionButton from "@/components/button/DialogActionButton.vue";
-import { defaultTableMenuEntity } from "@/common/values";
 
 @Component({
   name: "MenuEditDialog",
@@ -111,20 +103,13 @@ export default class extends Vue {
   readonly ENDPOINT_URL = "admin/menus/";
   saving = false;
   MENU_TYPE: SelectItem[] = [];
-  isNew = false;
 
   protected async created(): Promise<void> {
     this.MENU_TYPE = await getCodesApi("MENU_TYPE");
   }
 
-  @Watch("syncedDialog")
-  protected watchDialog(val: boolean): void {
-    if (val) {
-      this.isNew = !this.item.id;
-    } else {
-      this.observer.reset();
-      this.item = defaultTableMenuEntity();
-    }
+  get isNew(): boolean {
+    return !this.item.id;
   }
 
   protected async save(): Promise<void> {

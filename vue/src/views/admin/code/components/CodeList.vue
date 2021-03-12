@@ -72,6 +72,7 @@
       v-model="item"
       :dialog.sync="dialog"
       @finished="getList"
+      v-if="dialog"
     />
   </div>
 </template>

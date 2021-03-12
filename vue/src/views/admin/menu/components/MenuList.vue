@@ -54,6 +54,7 @@
       v-model="editItem"
       :dialog.sync="dialog"
       @finished="getList"
+      v-if="editItem"
     />
   </div>
 </template>

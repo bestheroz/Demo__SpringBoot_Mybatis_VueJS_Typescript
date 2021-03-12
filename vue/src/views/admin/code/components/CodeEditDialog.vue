@@ -112,21 +112,13 @@
 </template>
 
 <script lang="ts">
-import {
-  Component,
-  PropSync,
-  Ref,
-  VModel,
-  Vue,
-  Watch,
-} from "vue-property-decorator";
+import { Component, PropSync, Ref, VModel, Vue } from "vue-property-decorator";
 import type { SelectItem, TableCodeEntity } from "@/common/types";
 import { getCodesApi, postApi, putApi } from "@/utils/apis";
 import { ValidationObserver } from "vee-validate";
 import ButtonIconTooltip from "@/components/button/ButtonIconTooltip.vue";
 import DialogTitle from "@/components/title/DialogTitle.vue";
 import DialogActionButton from "@/components/button/DialogActionButton.vue";
-import { defaultTableCodeEntity } from "@/common/values";
 
 @Component({
   name: "CodeEditDialog",
@@ -138,21 +130,14 @@ export default class extends Vue {
   @Ref("observer") readonly observer!: InstanceType<typeof ValidationObserver>;
 
   AUTHORITY: SelectItem[] = [];
-  isNew = false;
   loading = false;
 
   async created(): Promise<void> {
     this.AUTHORITY = await getCodesApi("AUTHORITY");
   }
 
-  @Watch("syncedDialog")
-  watchDialog(val: boolean): void {
-    if (val) {
-      this.isNew = !this.item.code;
-    } else {
-      this.observer.reset();
-      this.item = defaultTableCodeEntity();
-    }
+  get isNew(): boolean {
+    return !this.item.code;
   }
 
   async save(): Promise<void> {

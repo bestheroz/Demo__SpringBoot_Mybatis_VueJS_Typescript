@@ -58,21 +58,13 @@
 </template>
 
 <script lang="ts">
-import {
-  Component,
-  PropSync,
-  Ref,
-  VModel,
-  Vue,
-  Watch,
-} from "vue-property-decorator";
+import { Component, PropSync, Ref, VModel, Vue } from "vue-property-decorator";
 import type { TableCodeGroupEntity } from "@/common/types";
 import { postApi, putApi } from "@/utils/apis";
 import { ValidationObserver } from "vee-validate";
 import DialogActionButton from "@/components/button/DialogActionButton.vue";
 import ButtonIconTooltip from "@/components/button/ButtonIconTooltip.vue";
 import DialogTitle from "@/components/title/DialogTitle.vue";
-import { defaultTableCodeGroupEntity } from "@/common/values";
 
 @Component({
   name: "CodeGroupEditDialog",
@@ -84,16 +76,9 @@ export default class extends Vue {
   @Ref("observer") readonly observer!: InstanceType<typeof ValidationObserver>;
 
   loading = false;
-  isNew = false;
 
-  @Watch("syncedDialog")
-  protected watchDialog(val: boolean): void {
-    if (val) {
-      this.isNew = !this.item.codeGroup;
-    } else {
-      this.observer.reset();
-      this.item = defaultTableCodeGroupEntity();
-    }
+  get isNew(): boolean {
+    return !this.item.codeGroup;
   }
 
   protected async save(): Promise<void> {

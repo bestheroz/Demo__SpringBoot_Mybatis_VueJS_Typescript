@@ -137,14 +137,7 @@
 </template>
 
 <script lang="ts">
-import {
-  Component,
-  PropSync,
-  Ref,
-  VModel,
-  Vue,
-  Watch,
-} from "vue-property-decorator";
+import { Component, PropSync, Ref, VModel, Vue } from "vue-property-decorator";
 import type { SelectItem, TableMemberEntity } from "@/common/types";
 import { getCodesApi, patchApi, postApi } from "@/utils/apis";
 import DatetimePicker from "@/components/picker/DatetimePicker.vue";
@@ -153,7 +146,6 @@ import pbkdf2 from "pbkdf2";
 import ButtonIconTooltip from "@/components/button/ButtonIconTooltip.vue";
 import DialogTitle from "@/components/title/DialogTitle.vue";
 import DialogActionButton from "@/components/button/DialogActionButton.vue";
-import { defaultTableMemberEntity } from "@/common/values";
 
 @Component({
   name: "MemberEditDialog",
@@ -174,23 +166,13 @@ export default class extends Vue {
   password2: string | null = null;
   show1 = false;
   show2 = false;
-  isNew = false;
 
   protected async created(): Promise<void> {
     this.AUTHORITY = await getCodesApi("AUTHORITY");
   }
 
-  @Watch("syncedDialog")
-  protected watchDialog(val: boolean): void {
-    if (val) {
-      this.isNew = !this.item.id;
-    } else {
-      this.item = defaultTableMemberEntity();
-      this.password2 = "";
-      this.show1 = false;
-      this.show2 = false;
-      this.observer.reset();
-    }
+  get isNew(): boolean {
+    return !this.item.id;
   }
 
   protected async save(): Promise<void> {
