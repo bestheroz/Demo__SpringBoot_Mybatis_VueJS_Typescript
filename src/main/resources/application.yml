@@ -70,7 +70,7 @@ management:
     enabled-by-default: false
 variable:
   app:
-    title: Demo Of SpringBoot + Mybatis + VueJs + Typescript
+    title: Demo of (SpringBoot + Mybatis + VueJs + Typescript)
 ---
 spring:
   config:
