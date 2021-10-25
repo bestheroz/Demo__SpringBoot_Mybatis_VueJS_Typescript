@@ -66,6 +66,6 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
     }
     chain.doFilter(request, response);
     stopWatch.stop();
-    log.info(REQUEST_COMPLETE_EXECUTE_TIME, requestURI, stopWatch.toString());
+    log.info(REQUEST_COMPLETE_EXECUTE_TIME, requestURI, stopWatch);
   }
 }

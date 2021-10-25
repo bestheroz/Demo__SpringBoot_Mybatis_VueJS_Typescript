@@ -1,54 +1,71 @@
 package com.github.bestheroz.demo.api.menu;
 
-import com.github.bestheroz.demo.api.entity.member.menu.TableMemberMenuEntity;
-import com.github.bestheroz.demo.api.entity.member.menu.TableMemberMenuRepository;
-import com.github.bestheroz.demo.api.entity.menu.TableMenuRepository;
-import com.github.bestheroz.standard.common.util.MapperUtils;
+import com.github.bestheroz.demo.api.internal.role.menu.RoleMenuChildrenDTO;
+import com.github.bestheroz.demo.domain.Menu;
+import com.github.bestheroz.demo.repository.MenuRepository;
+import com.github.bestheroz.demo.type.MenuType;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
-import javax.annotation.Resource;
+import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.IterableUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
+@RequiredArgsConstructor
 public class MenuService {
-  @Resource private TableMenuRepository tableMenuRepository;
-  @Resource private TableMemberMenuRepository tableMemberMenuRepository;
+  private final MenuRepository menuRepository;
 
-  public List<MenuVO> getDrawerList(final Integer authority) {
-    final List<MenuVO> parents;
-    final List<TableMemberMenuEntity> items;
-    if (authority.equals(999)) {
-      items =
-          MapperUtils.toArrayList(
-              this.tableMenuRepository.getItemsWithOrder(List.of("displayOrder", "name")),
-              TableMemberMenuEntity.class);
-      parents =
-          MapperUtils.toArrayList(
-              items.stream()
-                  .filter(menu -> menu.getParentId().equals(0))
-                  .collect(Collectors.toList()),
-              MenuVO.class);
-    } else {
-      items =
-          this.tableMemberMenuRepository.getItemsByKeyWithOrder(
-              Map.of("authority", authority), List.of("displayOrder", "name"));
-      parents =
-          MapperUtils.toArrayList(
-              items.stream()
-                  .filter(menu -> menu.getParentId().equals(0))
-                  .collect(Collectors.toList()),
-              MenuVO.class);
+  @Transactional(readOnly = true)
+  public List<MenuChildrenDTO> getItems() {
+    return this.menuRepository.findAllByParentIdNullOrderByDisplayOrderAsc().stream()
+        .map(MenuChildrenDTO::new)
+        .collect(Collectors.toList());
+  }
+
+  public void deleteById(final Long id) {
+    this.menuRepository.deleteById(id);
+  }
+
+  public List<MenuChildrenDTO> saveAll(final List<MenuChildrenDTO> payload) {
+    return IterableUtils.toList(
+            this.menuRepository.saveAll(this.getMenuWithRecursiveChildren(payload, null)))
+        .stream()
+        .map(MenuChildrenDTO::new)
+        .collect(Collectors.toList());
+  }
+
+  public List<Menu> getMenuWithRecursiveChildren(
+      final List<MenuChildrenDTO> menuChildrenDTOS, final Menu parent) {
+    int displayOrder = 1;
+    final List<Menu> result = new ArrayList<>();
+    for (final MenuChildrenDTO menuChildrenDTO : menuChildrenDTOS) {
+      final Menu menu = menuChildrenDTO.toMenu(parent, displayOrder++);
+      if (menuChildrenDTO.getType().equals(MenuType.GROUP)) {
+        menu.getChildren()
+            .addAll(this.getMenuWithRecursiveChildren(menuChildrenDTO.getChildren(), menu));
+      }
+      result.add(menu);
     }
+    return result;
+  }
 
-    parents.forEach(
-        parent ->
-            parent.setChildren(
-                MapperUtils.toArrayList(
-                    items.stream()
-                        .filter(menu -> menu.getParentId().equals(parent.getId()))
-                        .collect(Collectors.toList()),
-                    MenuVO.class)));
-    return parents;
+  public static List<MenuChildrenDTO> getMenuChildrenDTOWithRecursiveChildren(
+      final List<RoleMenuChildrenDTO> roleMenuChildrenDTOs) {
+    final List<MenuChildrenDTO> result = new ArrayList<>();
+    for (final RoleMenuChildrenDTO roleMenuChildrenDTO : roleMenuChildrenDTOs) {
+      final MenuChildrenDTO menuChildrenDTO = roleMenuChildrenDTO.getMenu().toMenuChildrenDTO();
+      if (menuChildrenDTO.getType().equals(MenuType.GROUP)) {
+        menuChildrenDTO
+            .getChildren()
+            .addAll(
+                MenuService.getMenuChildrenDTOWithRecursiveChildren(
+                    roleMenuChildrenDTO.getChildren()));
+      }
+      result.add(menuChildrenDTO);
+    }
+    return result;
   }
 }

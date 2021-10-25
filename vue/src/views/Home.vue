@@ -1,29 +1,24 @@
 <template>
-  <div>
-    <v-container class="fill-height" fluid style="height: 60vh">
-      <v-row align="center" justify="center">
-        <v-col cols="12" class="text-center">
-          <h1 style="font-size: 3rem">{{ title }}</h1>
-        </v-col>
-        <v-col cols="12" class="text-center">
-          <h1 :style="`color: ${color}`">{{ now }}</h1>
-        </v-col>
-      </v-row>
-    </v-container>
+  <div class="flex-grow-1 align-center justify-center d-flex flex-column">
+    <h1
+      style="font-size: 3rem"
+      v-text="envs.PRODUCT_TITLE"
+      class="primary--text"
+    />
+    <h1 :style="`color: ${color}`" v-text="now" />
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { getVariableApi } from "@/utils/apis";
 import dayjs from "dayjs";
+import envs from "@/constants/envs";
 
-@Component({
-  name: "Home",
-})
+@Component({})
 export default class extends Vue {
-  title: string | null = null;
+  readonly envs = envs;
   interval: number | null = null;
+  interval2: number | null = null;
   now = "";
   color = "";
 
@@ -34,16 +29,23 @@ export default class extends Vue {
       this.interval && clearInterval(this.interval);
       this.interval = null;
     });
+    this.interval2 && clearInterval(this.interval2);
+    this.interval2 = null;
+    this.$nextTick(() => {
+      this.interval2 && clearInterval(this.interval2);
+      this.interval2 = null;
+    });
   }
 
   protected async created(): Promise<void> {
-    this.title = await getVariableApi("title");
     this.now = dayjs().format("YYYY년 MM월 DD일 HH시 mm분 ss초");
     this.color = this.getRandomColor();
     this.interval = window.setInterval(() => {
       this.now = dayjs().format("YYYY년 MM월 DD일 HH시 mm분 ss초");
-      this.color = this.getRandomColor();
     }, 1000);
+    this.interval2 = window.setInterval(() => {
+      this.color = this.getRandomColor();
+    }, 10000);
   }
 
   protected getRandomColor(): string {

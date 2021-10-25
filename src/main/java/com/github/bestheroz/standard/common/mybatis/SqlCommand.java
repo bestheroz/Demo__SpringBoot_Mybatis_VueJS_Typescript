@@ -8,7 +8,12 @@ import com.github.bestheroz.standard.common.util.NullUtils;
 import java.lang.reflect.Field;
 import java.text.MessageFormat;
 import java.time.Instant;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
@@ -20,22 +25,27 @@ import org.springframework.lang.NonNull;
 public class SqlCommand {
   public static final String SELECT_ITEMS = "getItems";
   public static final String SELECT_ITEMS_WITH_ORDER = "getItemsWithOrder";
-  public static final String SELECT_ITEMS_BY_KEY = "getItemsByKey";
-  public static final String SELECT_ITEMS_BY_KEY_WITH_ORDER = "getItemsByKeyWithOrder";
+  public static final String SELECT_ITEMS_BY_MAP = "getItemsByMap";
+  public static final String SELECT_ITEMS_BY_MAP_WITH_ORDER = "getItemsByMapWithOrder";
   public static final String SELECT_TARGET_ITEMS = "getTargetItems";
   public static final String SELECT_TARGET_ITEMS_WITH_ORDER = "getTargetItemsWithOrder";
-  public static final String SELECT_TARGET_ITEMS_BY_KEY = "getTargetItemsByKey";
-  public static final String SELECT_TARGET_ITEMS_BY_KEY_WITH_ORDER = "getTargetItemsByKeyWithOrder";
+  public static final String SELECT_TARGET_ITEMS_BY_MAP = "getTargetItemsByMap";
+  public static final String SELECT_TARGET_ITEMS_BY_MAP_WITH_ORDER = "getTargetItemsByMapWithOrder";
   public static final String SELECT_ITEMS_BY_DATATABLE = "getItemsForDataTable";
-  public static final String SELECT_ITEM_BY_KEY = "getItemByKey";
+  public static final String SELECT_ITEMS_BY_SEARCH_AND_DATATABLE = "getItemsForSearchAndDataTable";
+  public static final String SELECT_ITEM_BY_MAP = "getItemByMap";
+  public static final String SELECT_ITEM_BY_ID = "getItemById";
   public static final String COUNT_ALL = "countAll";
   public static final String COUNT_BY_DATATABLE = "countForDataTable";
-  public static final String COUNT_BY_KEY = "countByKey";
+  public static final String COUNT_BY_SEARCH_AND_DATATABLE = "countForSearchAndDataTable";
+  public static final String COUNT_BY_MAP = "countByMap";
   public static final String INSERT = "insert";
   public static final String INSERT_BATCH = "insertBatch";
-  public static final String UPDATE_BY_KEY = "updateByKey";
-  public static final String UPDATE_MAP_BY_KEY = "updateMapByKey";
-  public static final String DELETE_BY_KEY = "deleteByKey";
+  public static final String UPDATE_BY_MAP = "updateByMap";
+  public static final String UPDATE_BY_ID = "updateById";
+  public static final String UPDATE_MAP_BY_MAP = "updateMapByMap";
+  public static final String DELETE_BY_MAP = "deleteByMap";
+  public static final String DELETE_BY_ID = "deleteById";
   public static final Set<String> VARCHAR_JAVA_TYPE_SET = Set.of("String", "Char");
   public static final Set<String> SHORT_JAVA_TYPE_SET = Set.of("Short");
   public static final Set<String> INTEGER_JAVA_TYPE_SET = Set.of("Integer");
@@ -140,7 +150,8 @@ public class SqlCommand {
                         : whereString,
                     CaseUtils.getCamelCaseToSnakeCase(columnName),
                     columnName,
-                    this.getJdbcType(value)));
+                    this.getJdbcType(
+                        value instanceof String && value.equals("@NULL") ? null : value)));
           }
         });
   }
@@ -190,10 +201,10 @@ public class SqlCommand {
   }
 
   public String countAll() {
-    return this.countByKey(Map.of());
+    return this.countByMap(Map.of());
   }
 
-  public String countByKey(final Map<String, Object> whereConditions) {
+  public String countByMap(final Map<String, Object> whereConditions) {
     final SQL sql = new SQL();
     sql.SELECT("COUNT(1) AS CNT").FROM(this.getTableName());
     this.getWhereSql(sql, whereConditions);
@@ -212,21 +223,21 @@ public class SqlCommand {
                         && List.of(
                                 SELECT_ITEMS,
                                 SELECT_ITEMS_WITH_ORDER,
-                                SELECT_ITEMS_BY_KEY,
-                                SELECT_ITEMS_BY_KEY_WITH_ORDER,
+                                SELECT_ITEMS_BY_MAP,
+                                SELECT_ITEMS_BY_MAP_WITH_ORDER,
                                 SELECT_TARGET_ITEMS,
                                 SELECT_TARGET_ITEMS_WITH_ORDER,
-                                SELECT_TARGET_ITEMS_BY_KEY,
-                                SELECT_TARGET_ITEMS_BY_KEY_WITH_ORDER,
+                                SELECT_TARGET_ITEMS_BY_MAP,
+                                SELECT_TARGET_ITEMS_BY_MAP_WITH_ORDER,
                                 SELECT_ITEMS_BY_DATATABLE,
-                                SELECT_ITEM_BY_KEY,
+                                SELECT_ITEM_BY_MAP,
                                 COUNT_ALL,
-                                COUNT_BY_KEY,
+                                COUNT_BY_MAP,
                                 COUNT_BY_DATATABLE,
                                 INSERT,
-                                UPDATE_BY_KEY,
-                                UPDATE_MAP_BY_KEY,
-                                DELETE_BY_KEY)
+                                UPDATE_BY_MAP,
+                                UPDATE_MAP_BY_MAP,
+                                DELETE_BY_MAP)
                             .contains(item.getMethodName())
                         && Class.forName(item.getClassName()).getInterfaces().length > 0
                         && Class.forName(item.getClassName())
@@ -265,21 +276,21 @@ public class SqlCommand {
                         && List.of(
                                 SELECT_ITEMS,
                                 SELECT_ITEMS_WITH_ORDER,
-                                SELECT_ITEMS_BY_KEY,
-                                SELECT_ITEMS_BY_KEY_WITH_ORDER,
+                                SELECT_ITEMS_BY_MAP,
+                                SELECT_ITEMS_BY_MAP_WITH_ORDER,
                                 SELECT_TARGET_ITEMS,
                                 SELECT_TARGET_ITEMS_WITH_ORDER,
-                                SELECT_TARGET_ITEMS_BY_KEY,
-                                SELECT_TARGET_ITEMS_BY_KEY_WITH_ORDER,
+                                SELECT_TARGET_ITEMS_BY_MAP,
+                                SELECT_TARGET_ITEMS_BY_MAP_WITH_ORDER,
                                 SELECT_ITEMS_BY_DATATABLE,
-                                SELECT_ITEM_BY_KEY,
+                                SELECT_ITEM_BY_MAP,
                                 COUNT_ALL,
-                                COUNT_BY_KEY,
+                                COUNT_BY_MAP,
                                 COUNT_BY_DATATABLE,
                                 INSERT,
-                                UPDATE_BY_KEY,
-                                UPDATE_MAP_BY_KEY,
-                                DELETE_BY_KEY)
+                                UPDATE_BY_MAP,
+                                UPDATE_MAP_BY_MAP,
+                                DELETE_BY_MAP)
                             .contains(item.getMethodName())))
             .findFirst();
     if (getItems.isEmpty()) {
@@ -306,11 +317,11 @@ public class SqlCommand {
     return this.select(Map.of(), orderByConditions);
   }
 
-  public String getItemsByKey(final Map<String, Object> whereConditions) {
+  public String getItemsByMap(final Map<String, Object> whereConditions) {
     return this.select(whereConditions, List.of());
   }
 
-  public String getItemsByKeyWithOrder(
+  public String getItemsByMapWithOrder(
       final Map<String, Object> whereConditions, final List<String> orderByConditions) {
     return this.select(whereConditions, orderByConditions);
   }
@@ -324,12 +335,12 @@ public class SqlCommand {
     return this.select(targetColumns, Map.of(), orderByConditions);
   }
 
-  public String getTargetItemsByKey(
+  public String getTargetItemsByMap(
       final List<String> targetColumns, final Map<String, Object> whereConditions) {
     return this.select(targetColumns, whereConditions, List.of());
   }
 
-  public String getTargetItemsByKeyWithOrder(
+  public String getTargetItemsByMapWithOrder(
       final List<String> targetColumns,
       final Map<String, Object> whereConditions,
       final List<String> orderByConditions) {
@@ -375,13 +386,17 @@ public class SqlCommand {
     return sql.toString();
   }
 
-  public String getItemByKey(@NonNull final Map<String, Object> whereConditions) {
+  public String getItemByMap(@NonNull final Map<String, Object> whereConditions) {
     this.verifyWhereKey(whereConditions);
     return this.select(whereConditions, List.of());
   }
 
+  public String getItemById(@NonNull final Long id) {
+    return this.select(Map.of("id", id), List.of());
+  }
+
   public <T> String insert(@NonNull final T entity) {
-    final Map<String, Object> param = MapperUtils.toHashMap(entity);
+    final Map<String, Object> param = MapperUtils.toMap(entity);
     final SQL sql = new SQL();
     sql.INSERT_INTO(getTableName(entity.getClass().getSimpleName()));
     param.entrySet().stream()
@@ -409,10 +424,10 @@ public class SqlCommand {
       sql.VALUES(TABLE_COLUMN_NAME_UPDATED, SYSDATE);
     }
     if (fieldNames.contains(VARIABLE_NAME_CREATED_BY)) {
-      sql.VALUES(TABLE_COLUMN_NAME_CREATED_BY, "'" + AuthenticationUtils.getUserPk() + "'");
+      sql.VALUES(TABLE_COLUMN_NAME_CREATED_BY, "'" + AuthenticationUtils.getId() + "'");
     }
     if (fieldNames.contains(VARIABLE_NAME_UPDATED_BY)) {
-      sql.VALUES(TABLE_COLUMN_NAME_UPDATED_BY, "'" + AuthenticationUtils.getUserPk() + "'");
+      sql.VALUES(TABLE_COLUMN_NAME_UPDATED_BY, "'" + AuthenticationUtils.getId() + "'");
     }
 
     log.debug(sql.toString());
@@ -437,7 +452,7 @@ public class SqlCommand {
 
     final List<List<Object>> valuesList = new ArrayList<>();
     entities.stream()
-        .map(MapperUtils::toHashMap)
+        .map(MapperUtils::toMap)
         .forEach(
             entity -> {
               final List<Object> values = new ArrayList<>();
@@ -448,7 +463,7 @@ public class SqlCommand {
                       values.add(SYSDATE);
                     } else if (StringUtils.equalsAny(
                         column, VARIABLE_NAME_CREATED_BY, VARIABLE_NAME_UPDATED_BY)) {
-                      values.add("'" + AuthenticationUtils.getUserPk() + "'");
+                      values.add("'" + AuthenticationUtils.getId() + "'");
                     } else {
                       final Object o = entity.get(column);
                       values.add(
@@ -466,7 +481,7 @@ public class SqlCommand {
                   values.add(SYSDATE);
                 } else if (StringUtils.containsAny(
                     intoColumns, VARIABLE_NAME_CREATED_BY, VARIABLE_NAME_UPDATED_BY)) {
-                  values.add("'" + AuthenticationUtils.getUserPk() + "'");
+                  values.add("'" + AuthenticationUtils.getId() + "'");
                 }
               }
               valuesList.add(values);
@@ -479,12 +494,16 @@ public class SqlCommand {
     return sql.toString();
   }
 
-  public <T> String updateByKey(final T entity, final Map<String, Object> whereConditions) {
+  public <T> String updateById(final T entity, final Long id) {
+    return this.updateByMap(entity, Map.of("id", id));
+  }
+
+  public <T> String updateByMap(final T entity, final Map<String, Object> whereConditions) {
     this.verifyWhereKey(whereConditions);
 
     final SQL sql = new SQL();
     sql.UPDATE(getTableName(entity.getClass().getSimpleName()));
-    final Map<String, Object> param = MapperUtils.toHashMap(entity);
+    final Map<String, Object> param = MapperUtils.toMap(entity);
     this.getEntityFields(entity).stream()
         .filter(
             fieldName ->
@@ -524,7 +543,7 @@ public class SqlCommand {
     return sql.toString();
   }
 
-  public String updateMapByKey(
+  public String updateMapByMap(
       final Map<String, Object> updateMap, final Map<String, Object> whereConditions) {
     this.verifyWhereKey(whereConditions);
 
@@ -566,13 +585,15 @@ public class SqlCommand {
     if (fieldNames.contains(VARIABLE_NAME_UPDATED_BY)) {
       sql.SET(
           MessageFormat.format(
-              SET_UPDATED_BY_STRING,
-              TABLE_COLUMN_NAME_UPDATED_BY,
-              AuthenticationUtils.getUserPk()));
+              SET_UPDATED_BY_STRING, TABLE_COLUMN_NAME_UPDATED_BY, AuthenticationUtils.getId()));
     }
   }
 
-  public String deleteByKey(final Map<String, Object> whereConditions) {
+  public String deleteById(final Long id) {
+    return this.deleteByMap(Map.of("id", id));
+  }
+
+  public String deleteByMap(final Map<String, Object> whereConditions) {
     this.verifyWhereKey(whereConditions);
     final SQL sql = new SQL();
     sql.DELETE_FROM(this.getTableName());
@@ -589,6 +610,16 @@ public class SqlCommand {
         .ifPresent(item -> this.getWhereBoundSql(sql, item));
     log.debug(sql.toString());
     return sql.toString();
+  }
+
+  public String countForSearchAndDataTable(
+      final String search,
+      final List<String> targetColumns,
+      final DataTableFilterDTO dataTableFilterDTO) {
+    for (final String targetColumn : targetColumns) {
+      dataTableFilterDTO.getFilter().put(MessageFormat.format("{}:contains", targetColumn), search);
+    }
+    return this.countForDataTable(dataTableFilterDTO);
   }
 
   public String getItemsForDataTable(final DataTableFilterDTO dataTableFilterDTO) {
@@ -615,6 +646,16 @@ public class SqlCommand {
     }
     log.debug(sql.toString());
     return sql.toString();
+  }
+
+  public String getItemsForSearchAndDataTable(
+      final String search,
+      final List<String> targetColumns,
+      final DataTableFilterDTO dataTableFilterDTO) {
+    for (final String targetColumn : targetColumns) {
+      dataTableFilterDTO.getFilter().put(MessageFormat.format("{}:contains", targetColumn), search);
+    }
+    return this.getItemsForDataTable(dataTableFilterDTO);
   }
 
   private void requiredWhereConditions(final SQL sql) {

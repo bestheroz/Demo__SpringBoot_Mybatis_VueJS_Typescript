@@ -16,11 +16,11 @@ public interface SqlRepository<T extends Serializable> {
   @SelectProvider(type = SqlCommand.class, method = SqlCommand.SELECT_ITEMS_WITH_ORDER)
   List<T> getItemsWithOrder(final List<String> orderByConditions);
 
-  @SelectProvider(type = SqlCommand.class, method = SqlCommand.SELECT_ITEMS_BY_KEY)
-  List<T> getItemsByKey(final Map<String, Object> whereConditions);
+  @SelectProvider(type = SqlCommand.class, method = SqlCommand.SELECT_ITEMS_BY_MAP)
+  List<T> getItemsByMap(final Map<String, Object> whereConditions);
 
-  @SelectProvider(type = SqlCommand.class, method = SqlCommand.SELECT_ITEMS_BY_KEY_WITH_ORDER)
-  List<T> getItemsByKeyWithOrder(
+  @SelectProvider(type = SqlCommand.class, method = SqlCommand.SELECT_ITEMS_BY_MAP_WITH_ORDER)
+  List<T> getItemsByMapWithOrder(
       final Map<String, Object> whereConditions, List<String> orderByConditions);
 
   @SelectProvider(type = SqlCommand.class, method = SqlCommand.SELECT_TARGET_ITEMS)
@@ -32,25 +32,32 @@ public interface SqlRepository<T extends Serializable> {
   List<T> getTargetItemsWithOrder(
       final List<String> targetColumns, final List<String> orderByConditions);
 
-  @SelectProvider(type = SqlCommand.class, method = SqlCommand.SELECT_TARGET_ITEMS_BY_KEY)
+  @SelectProvider(type = SqlCommand.class, method = SqlCommand.SELECT_TARGET_ITEMS_BY_MAP)
   // Target 시리즈를 사용하기 위해서는 Entity에 반드시 @NoArgsConstructor 가 필요하다
-  List<T> getTargetItemsByKey(
+  List<T> getTargetItemsByMap(
       final List<String> targetColumns, final Map<String, Object> whereConditions);
 
   @SelectProvider(
       type = SqlCommand.class,
-      method = SqlCommand.SELECT_TARGET_ITEMS_BY_KEY_WITH_ORDER)
+      method = SqlCommand.SELECT_TARGET_ITEMS_BY_MAP_WITH_ORDER)
   // Target 시리즈를 사용하기 위해서는 Entity에 반드시 @NoArgsConstructor 가 필요하다
-  List<T> getTargetItemsByKeyWithOrder(
+  List<T> getTargetItemsByMapWithOrder(
       final List<String> targetColumns,
       final Map<String, Object> whereConditions,
       List<String> orderByConditions);
 
-  @SelectProvider(type = SqlCommand.class, method = SqlCommand.SELECT_ITEM_BY_KEY)
-  Optional<T> getItemByKey(final Map<String, Object> whereConditions);
+  @SelectProvider(type = SqlCommand.class, method = SqlCommand.SELECT_ITEM_BY_MAP)
+  Optional<T> getItemByMap(final Map<String, Object> whereConditions);
+
+  @SelectProvider(type = SqlCommand.class, method = SqlCommand.SELECT_ITEM_BY_ID)
+  Optional<T> getItemById(final Long id);
 
   @SelectProvider(type = SqlCommand.class, method = SqlCommand.SELECT_ITEMS_BY_DATATABLE)
   List<T> getItemsForDataTable(final DataTableFilterDTO dataTableFilterDTO);
+
+  @SelectProvider(type = SqlCommand.class, method = SqlCommand.SELECT_ITEMS_BY_SEARCH_AND_DATATABLE)
+  List<T> getItemsForSearchAndDataTable(
+      String search, List<String> targetColumns, final DataTableFilterDTO dataTableFilterDTO);
 
   @SelectProvider(type = SqlCommand.class, method = SqlCommand.COUNT_ALL)
   int countAll();
@@ -58,8 +65,12 @@ public interface SqlRepository<T extends Serializable> {
   @SelectProvider(type = SqlCommand.class, method = SqlCommand.COUNT_BY_DATATABLE)
   int countForDataTable(final DataTableFilterDTO dataTableFilterDTO);
 
-  @SelectProvider(type = SqlCommand.class, method = SqlCommand.COUNT_BY_KEY)
-  int countByKey(final Map<String, Object> whereConditions);
+  @SelectProvider(type = SqlCommand.class, method = SqlCommand.COUNT_BY_SEARCH_AND_DATATABLE)
+  int countForSearchAndDataTable(
+      String search, List<String> targetColumns, final DataTableFilterDTO dataTableFilterDTO);
+
+  @SelectProvider(type = SqlCommand.class, method = SqlCommand.COUNT_BY_MAP)
+  int countByMap(final Map<String, Object> whereConditions);
 
   @InsertProvider(type = SqlCommand.class, method = SqlCommand.INSERT)
   // @SelectKey(statement = "SELECT SEQSEQSEQSEQ.NEXTVAL FROM DUAL", keyProperty = "seq", before =
@@ -70,13 +81,19 @@ public interface SqlRepository<T extends Serializable> {
   @InsertProvider(type = SqlCommand.class, method = SqlCommand.INSERT_BATCH)
   void insertBatch(final List<T> entities);
 
-  @UpdateProvider(type = SqlCommand.class, method = SqlCommand.UPDATE_BY_KEY)
-  void updateByKey(final T entity, final Map<String, Object> whereConditions);
+  @UpdateProvider(type = SqlCommand.class, method = SqlCommand.UPDATE_BY_ID)
+  void updateById(final T entity, final Long id);
 
-  @UpdateProvider(type = SqlCommand.class, method = SqlCommand.UPDATE_MAP_BY_KEY)
-  void updateMapByKey(
+  @UpdateProvider(type = SqlCommand.class, method = SqlCommand.UPDATE_BY_MAP)
+  void updateByMap(final T entity, final Map<String, Object> whereConditions);
+
+  @UpdateProvider(type = SqlCommand.class, method = SqlCommand.UPDATE_MAP_BY_MAP)
+  void updateMapByMap(
       final Map<String, Object> updateMap, final Map<String, Object> whereConditions);
 
-  @DeleteProvider(type = SqlCommand.class, method = SqlCommand.DELETE_BY_KEY)
-  void deleteByKey(final Map<String, Object> whereConditions);
+  @DeleteProvider(type = SqlCommand.class, method = SqlCommand.DELETE_BY_MAP)
+  void deleteByMap(final Map<String, Object> whereConditions);
+
+  @DeleteProvider(type = SqlCommand.class, method = SqlCommand.DELETE_BY_ID)
+  void deleteById(final Long id);
 }

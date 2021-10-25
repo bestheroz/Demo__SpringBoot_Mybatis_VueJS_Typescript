@@ -1,61 +1,75 @@
 package com.github.bestheroz.standard.common.util;
 
-import com.github.bestheroz.standard.common.authenticate.UserVO;
 import com.github.bestheroz.standard.common.exception.BusinessException;
+import com.github.bestheroz.standard.common.exception.ExceptionCode;
 import java.util.Optional;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 @Slf4j
 @UtilityClass
 public class AuthenticationUtils {
-  public boolean isLoggedIn() {
-    try {
-      getLoginVO();
-      return true;
-    } catch (final Throwable e) {
-      return false;
-    }
+  public boolean isSigned() {
+    final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    return authentication.isAuthenticated()
+        && !StringUtils.equals(authentication.getName(), "anonymousUser");
   }
 
-  public boolean isNotLoggedIn() {
-    return !isLoggedIn();
+  public boolean isNotSigned() {
+    return !isSigned();
   }
 
-  public UserVO getLoginVO() {
+  public CustomUserDetails getSignInVO() {
     try {
-      final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-      if (!authentication.isAuthenticated()
-          || StringUtils.equals(authentication.getName(), "anonymousUser")) {
-        throw BusinessException.FAIL_TRY_LOGIN_FIRST;
+      if (isNotSigned()) {
+        throw new BusinessException(ExceptionCode.FAIL_TRY_SIGN_IN_FIRST);
       }
-      return ((UserVO) authentication.getPrincipal());
+      return ((CustomUserDetails)
+          SecurityContextHolder.getContext().getAuthentication().getPrincipal());
     } catch (final NullPointerException e) {
-      throw BusinessException.FAIL_TRY_LOGIN_FIRST;
+      throw new BusinessException(ExceptionCode.FAIL_TRY_SIGN_IN_FIRST);
     } catch (final Throwable e) {
-      log.warn(ExceptionUtils.getStackTrace(e));
+      log.warn(LogUtils.getStackTrace(e));
       throw e;
     }
   }
 
-  public String getUserPk() {
+  public Long getId() {
+    return getSignInVO().getId();
+  }
+
+  public Long getRoleId() {
     try {
-      return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication().getName())
-          .map(item -> StringUtils.equals(item, "anonymousUser") ? "-" : item)
-          .orElseThrow(() -> BusinessException.FAIL_TRY_LOGIN_FIRST);
+      return Optional.ofNullable(AuthenticationUtils.getSignInVO())
+          .map(CustomUserDetails::getRoleId)
+          .orElseThrow(() -> new BusinessException(ExceptionCode.FAIL_TRY_SIGN_IN_FIRST));
     } catch (final NullPointerException e) {
-      throw BusinessException.FAIL_TRY_LOGIN_FIRST;
+      throw new BusinessException(ExceptionCode.FAIL_TRY_SIGN_IN_FIRST);
     } catch (final Throwable e) {
-      log.warn(ExceptionUtils.getStackTrace(e));
+      log.warn(LogUtils.getStackTrace(e));
       throw e;
     }
   }
 
-  public void logout() {
+  public boolean isSuperAdmin() {
+    try {
+      return getRoleId().equals(1L);
+    } catch (final NullPointerException e) {
+      throw new BusinessException(ExceptionCode.FAIL_TRY_SIGN_IN_FIRST);
+    } catch (final Throwable e) {
+      log.warn(LogUtils.getStackTrace(e));
+      throw e;
+    }
+  }
+
+  public boolean isNotSuperAdmin() {
+    return !isSuperAdmin();
+  }
+
+  public void signOut() {
     SecurityContextHolder.clearContext();
   }
 }

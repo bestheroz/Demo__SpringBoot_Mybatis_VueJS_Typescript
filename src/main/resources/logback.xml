@@ -1,20 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE configuration>
 <configuration>
-  <springProfile name="dev">
-    <property name="LOG_DIR" value="/home/javaapp/WAS/logs"/>
+  <springProfile name="dev, prod">
+    <property name="LOG_DIR" value="/logs"/>
     <appender name="SENTRY" class="io.sentry.logback.SentryAppender"/>
     <appender name="DEBUG_FILE_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
       <file>${LOG_DIR}/debuglog.log</file>
       <append>true</append>
       <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-        <fileNamePattern>${LOG_DIR}/debuglog-%d{yyyy-MM-dd}.log</fileNamePattern>
+        <fileNamePattern>${LOG_DIR}/debug-%d{yyyyMMdd}.log</fileNamePattern>
         <maxHistory>10</maxHistory>
       </rollingPolicy>
       <withJansi>true</withJansi>
       <encoder>
         <pattern>
-          %d{HH:mm:ss.SSS} [%thread] %highlight(%-5level) %cyan(%logger.%method\(%line\)) %msg%n
+          <!-- @formatter:off -->
+          %d{HH:mm:ss.SSS} %highlight(%-5level) %magenta([%t]) %-75.75cyan(%c{1}.%M\(%L\)) %m%n
+          <!-- @formatter:on -->
         </pattern>
       </encoder>
     </appender>
@@ -25,13 +27,15 @@
       <file>${LOG_DIR}/errlog.log</file>
       <append>true</append>
       <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-        <fileNamePattern>${LOG_DIR}/errlog-%d{yyyy-MM-dd}.log</fileNamePattern>
+        <fileNamePattern>${LOG_DIR}/error-%d{yyyyMMdd}.log</fileNamePattern>
         <maxHistory>10</maxHistory>
       </rollingPolicy>
       <withJansi>true</withJansi>
       <encoder>
         <pattern>
-          %d{HH:mm:ss.SSS} [%thread] %highlight(%-5level) %cyan(%logger.%method\(%line\)) %msg%n
+          <!-- @formatter:off -->
+          %d{HH:mm:ss.SSS} %highlight(%-5level) %magenta([%t]) %-75.75cyan(%c{1}.%M\(%L\)) %m%n
+          <!-- @formatter:on -->
         </pattern>
       </encoder>
     </appender>
@@ -41,7 +45,9 @@
       <withJansi>true</withJansi>
       <encoder>
         <pattern>
-          %d{HH:mm:ss.SSS} [%thread] %highlight(%-5level) %cyan(%logger.%method\(%line\)) %msg%n
+          <!-- @formatter:off -->
+          %d{HH:mm:ss.SSS} %highlight(%-5level) %magenta([%t]) %-75.75cyan(%c{1}.%M\(%L\)) %m%n
+          <!-- @formatter:on -->
         </pattern>
       </encoder>
     </appender>

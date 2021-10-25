@@ -31,7 +31,7 @@
               @click:clear="pickerString = null"
               :error-messages="errors"
               :append-outer-icon="startType ? 'mdi-tilde' : undefined"
-              :class="endType ? 'ml-3' : undefined"
+              :class="classSet"
               :style="style"
               v-on="on"
             />
@@ -61,7 +61,14 @@
 </template>
 
 <script lang="ts">
-import { Component, Model, Prop, Vue, Watch } from "vue-property-decorator";
+import {
+  Component,
+  Model,
+  Prop,
+  Ref,
+  Vue,
+  Watch,
+} from "vue-property-decorator";
 import envs from "@/constants/envs";
 import dayjs from "dayjs";
 import { ValidationObserver } from "vee-validate";
@@ -87,6 +94,7 @@ export default class extends Vue {
   @Prop({ type: Boolean, default: false }) readonly hideHint!: boolean;
   @Prop({ type: String }) readonly max!: string;
   @Prop({ type: String }) readonly min!: string;
+  @Ref("observer") readonly observer!: InstanceType<typeof ValidationObserver>;
 
   readonly envs: typeof envs = envs;
   readonly DATEPICKER_FORMAT = "YYYY-MM-DD";
@@ -106,6 +114,17 @@ export default class extends Vue {
     let defaultWidth = 9.5;
     this.startType && (defaultWidth += 2);
     return `max-width: ${defaultWidth}rem;`;
+  }
+
+  get classSet(): string | undefined {
+    let result = "";
+    if (this.endType) {
+      result += " ml-3";
+    }
+    if (this.required) {
+      result += " required";
+    }
+    return result;
   }
 
   get hint(): string | undefined {
@@ -172,9 +191,7 @@ export default class extends Vue {
   }
 
   async validate(): Promise<boolean> {
-    return await (this.$refs.observer as InstanceType<
-      typeof ValidationObserver
-    >).validate();
+    return await this.observer.validate();
   }
 }
 </script>

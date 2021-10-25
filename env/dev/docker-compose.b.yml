@@ -1,0 +1,9 @@
+version: "3"
+services:
+  b:
+    build: .
+    restart: on-failure
+    ports:
+      - 8081:80
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev

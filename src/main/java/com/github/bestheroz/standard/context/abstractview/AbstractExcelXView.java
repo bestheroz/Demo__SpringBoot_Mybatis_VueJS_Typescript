@@ -1,20 +1,25 @@
 package com.github.bestheroz.standard.context.abstractview;
 
-import com.github.bestheroz.standard.common.code.CodeVO;
+import com.github.bestheroz.demo.api.internal.code.CodeVO;
 import com.github.bestheroz.standard.common.exception.BusinessException;
+import com.github.bestheroz.standard.common.exception.ExceptionCode;
 import com.github.bestheroz.standard.common.file.excel.ExcelVO;
+import com.github.bestheroz.standard.common.util.LogUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.time.Instant;
-import java.util.*;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.crypt.EncryptionMode;
 import org.apache.poi.poifs.crypt.Encryptor;
@@ -59,32 +64,31 @@ public abstract class AbstractExcelXView extends AbstractView {
   }
 
   public static void addHeaderOfRowNo(final List<ExcelVO> excelVOList, final String title) {
-    addHeader(excelVOList, title, ROW_NUMBER, AbstractExcelXView.CellType.STRING_CENTER, null);
+    addHeader(excelVOList, title, ROW_NUMBER, CellType.STRING_CENTER, null);
   }
 
   public static void addHeader(
       final List<ExcelVO> excelVOList,
       final String title,
-      final String dbColName,
+      final String cellKey,
       final CellType cellType) {
-    addHeader(excelVOList, title, dbColName, cellType, null);
+    addHeader(excelVOList, title, cellKey, cellType, null);
   }
 
   public static void addHeader(
       final List<ExcelVO> excelVOList,
       final String title,
-      final String dbColName,
+      final String cellKey,
       final CellType cellType,
-      final List<CodeVO> codeList) {
-    final ExcelVO excelVO = new ExcelVO();
-    excelVO.setTitle(title);
-    excelVO.setDbColName(dbColName);
-    excelVO.setCellType(cellType);
-    excelVO.setCodeList(codeList);
-    if (cellType.equals(CellType.STRING)) {
-      excelVO.setCharByte(1.2D);
-    }
-    excelVOList.add(excelVO);
+      final List<CodeVO<String>> codeList) {
+    excelVOList.add(
+        ExcelVO.builder()
+            .title(title)
+            .cellKey(cellKey)
+            .cellType(cellType)
+            .codeList(codeList)
+            .charByte(cellType.equals(CellType.STRING) ? 1.2D : 1.0D)
+            .build());
   }
 
   @Override
@@ -143,7 +147,7 @@ public abstract class AbstractExcelXView extends AbstractView {
         this.writeToResponse(response, baos);
       }
     } catch (final Throwable e) {
-      log.warn(ExceptionUtils.getStackTrace(e));
+      log.warn(LogUtils.getStackTrace(e));
       response.setContentType("text/html;charset=utf-8");
       try (final PrintWriter pw = response.getWriter()) {
         pw.println("<script>");
@@ -151,7 +155,7 @@ public abstract class AbstractExcelXView extends AbstractView {
         pw.println("history.back();");
         pw.println("</script>");
       } catch (final IOException e1) {
-        log.warn(ExceptionUtils.getStackTrace(e1));
+        log.warn(LogUtils.getStackTrace(e1));
         throw new BusinessException(e1);
       }
     }
@@ -164,7 +168,7 @@ public abstract class AbstractExcelXView extends AbstractView {
         .orElseThrow(
             () -> {
               log.warn("applicationContext is null");
-              return BusinessException.ERROR_SYSTEM;
+              return new BusinessException(ExceptionCode.ERROR_SYSTEM);
             });
     final LocalizedResourceHelper helper = new LocalizedResourceHelper(applicationContext);
     final Locale userLocale = RequestContextUtils.getLocale(request);
@@ -225,13 +229,13 @@ public abstract class AbstractExcelXView extends AbstractView {
                 items -> items.stream().filter(item -> item.getValue().equals(data)).findFirst())
             .ifPresentOrElse(
                 item -> {
-                  final String value = item.getText();
+                  final String text = item.getText();
                   if (excelVOs.get(columnIdx).getCellType().equals(CellType.STRING_CENTER)) {
-                    this.setStringCenter(cell, value);
+                    this.setStringCenter(cell, text);
                   } else if (excelVOs.get(columnIdx).getCellType().equals(CellType.STRING_RIGHT)) {
-                    this.setStringRight(cell, value);
+                    this.setStringRight(cell, text);
                   } else {
-                    this.setString(cell, value);
+                    this.setString(cell, text);
                   }
                 },
                 () -> {
@@ -244,7 +248,7 @@ public abstract class AbstractExcelXView extends AbstractView {
                   }
                 });
       } catch (final Throwable e) {
-        log.warn(ExceptionUtils.getStackTrace(e));
+        log.warn(LogUtils.getStackTrace(e));
         this.setString(cell, data);
       }
     }
@@ -273,7 +277,7 @@ public abstract class AbstractExcelXView extends AbstractView {
     try {
       cell.setCellValue((long) Double.parseDouble(this.getSecureCellText(text)));
     } catch (final Throwable e) {
-      log.warn("Excel setInteger() error\n{}.", ExceptionUtils.getStackTrace(e));
+      log.warn("Excel setInteger() error\n{}.", LogUtils.getStackTrace(e));
       cell.setCellValue(this.getSecureCellText(text));
     }
   }
@@ -284,7 +288,7 @@ public abstract class AbstractExcelXView extends AbstractView {
     try {
       cell.setCellValue(Double.parseDouble(this.getSecureCellText(text)));
     } catch (final Throwable e) {
-      log.warn("Excel setDouble() error\n{}.", ExceptionUtils.getStackTrace(e));
+      log.warn("Excel setDouble() error\n{}.", LogUtils.getStackTrace(e));
       cell.setCellValue(this.getSecureCellText(text));
     }
   }
@@ -295,7 +299,7 @@ public abstract class AbstractExcelXView extends AbstractView {
     try {
       cell.setCellValue(this.getSecureCellText(text));
     } catch (final Throwable e) {
-      log.warn("Excel setDate() error\n{}.", ExceptionUtils.getStackTrace(e));
+      log.warn("Excel setDate() error\n{}.", LogUtils.getStackTrace(e));
     }
   }
 

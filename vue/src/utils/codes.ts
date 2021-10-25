@@ -1,21 +1,14 @@
-import { SelectItem } from "@/common/types";
+import { SelectItem } from "@/definitions/types";
 
-export function getCodes(
-  codes: SelectItem[],
-): {
-  text: string;
-  value: string;
-}[] {
-  return Object.values(codes);
-}
-
-export function getText(
-  codes: SelectItem[] | null,
-  value?: string | null,
-  defaultText?: string,
+export function getTextOfSelectItem<T = string>(
+  codes: SelectItem<T>[] | null,
+  value: T,
+  defaultLabel?: string,
 ): string {
-  const filterElement = (codes || []).find(
-    (item) => item.value === (value || "").toString(),
+  return (
+    (codes || []).find((item) => item.value === value)?.text ||
+    defaultLabel ||
+    value + "" ||
+    ""
   );
-  return filterElement?.text || value || defaultText || "";
 }

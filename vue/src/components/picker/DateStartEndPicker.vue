@@ -77,7 +77,6 @@ import DatePicker from "@/components/picker/DatePicker.vue";
 import dayjs from "dayjs";
 
 @Component({
-  name: "DateStartEndPicker",
   components: { DatePicker },
 })
 export default class extends Vue {

@@ -81,7 +81,6 @@ import DatetimePicker from "@/components/picker/DatetimePicker.vue";
 import dayjs from "dayjs";
 
 @Component({
-  name: "DatetimeStartEndPicker",
   components: { DatetimePicker },
 })
 export default class extends Vue {
@@ -122,11 +121,11 @@ export default class extends Vue {
   readonly TIMEPICKER_FORMAT = "HH:mm:ss";
 
   get defaultLabelForStart(): string {
-    return this.startLabel || "시작 날짜";
+    return this.startLabel || "시작 시각";
   }
 
   get defaultLabelForEnd(): string {
-    return this.endLabel || "종료 날짜";
+    return this.endLabel || "종료 시각";
   }
 
   get minDate(): string[] | undefined {
