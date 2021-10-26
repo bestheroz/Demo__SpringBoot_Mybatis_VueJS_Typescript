@@ -21,7 +21,7 @@ import envs from "@/constants/envs";
 // eslint-disable-next-line camelcase
 import jwt_decode from "jwt-decode";
 import dayjs from "dayjs";
-import { signOut } from "@/utils/commands";
+import { goSignInPage, signOut } from "@/utils/commands";
 import type { RoleMenuMap } from "@/definitions/models";
 
 @Component({
@@ -58,19 +58,19 @@ export default class extends Vue {
   }
 
   @Watch("$store.getters.accessToken", { immediate: true })
-  watchAccessToken(val: string): void {
+  async watchAccessToken(val: string): Promise<void> {
     if (!val) {
-      signOut();
+      await goSignInPage();
       return;
     }
     try {
       if (
         dayjs((jwt_decode(val) as { exp: number }).exp * 1000).isBefore(dayjs())
       ) {
-        this.$store.dispatch("reIssueAccessToken");
+        await this.$store.dispatch("reIssueAccessToken");
       }
     } catch (e: unknown) {
-      signOut();
+      await signOut();
     }
   }
 

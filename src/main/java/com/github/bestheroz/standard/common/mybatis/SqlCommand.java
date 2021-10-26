@@ -34,7 +34,6 @@ public class SqlCommand {
   public static final String SELECT_ITEMS_BY_DATATABLE = "getItemsForDataTable";
   public static final String SELECT_ITEMS_BY_SEARCH_AND_DATATABLE = "getItemsForSearchAndDataTable";
   public static final String SELECT_ITEM_BY_MAP = "getItemByMap";
-  public static final String SELECT_ITEM_BY_ID = "getItemById";
   public static final String COUNT_ALL = "countAll";
   public static final String COUNT_BY_DATATABLE = "countForDataTable";
   public static final String COUNT_BY_SEARCH_AND_DATATABLE = "countForSearchAndDataTable";
@@ -42,10 +41,8 @@ public class SqlCommand {
   public static final String INSERT = "insert";
   public static final String INSERT_BATCH = "insertBatch";
   public static final String UPDATE_BY_MAP = "updateByMap";
-  public static final String UPDATE_BY_ID = "updateById";
   public static final String UPDATE_MAP_BY_MAP = "updateMapByMap";
   public static final String DELETE_BY_MAP = "deleteByMap";
-  public static final String DELETE_BY_ID = "deleteById";
   public static final Set<String> VARCHAR_JAVA_TYPE_SET = Set.of("String", "Char");
   public static final Set<String> SHORT_JAVA_TYPE_SET = Set.of("Short");
   public static final Set<String> INTEGER_JAVA_TYPE_SET = Set.of("Integer");
@@ -95,9 +92,7 @@ public class SqlCommand {
   }
 
   public static String getTableName(final String javaClassName) {
-    return StringUtils.upperCase(
-        CaseUtils.getCamelCaseToSnakeCase(
-            StringUtils.substringBetween(javaClassName, "Table", "Entity")));
+    return StringUtils.lowerCase(CaseUtils.getCamelCaseToSnakeCase(javaClassName));
   }
 
   private void getSelectSql(final SQL sql, final Set<String> columns) {
@@ -141,6 +136,9 @@ public class SqlCommand {
                             .map(item -> "'" + item + "'")
                             .collect(Collectors.joining(",")),
                         "''")));
+          } else if (value instanceof String && value.equals("@NULL")) {
+            sql.WHERE(
+                MessageFormat.format("{0} = null", CaseUtils.getCamelCaseToSnakeCase(columnName)));
           } else {
             final String whereString = this.getWhereString(conditionType);
             sql.WHERE(
@@ -150,8 +148,7 @@ public class SqlCommand {
                         : whereString,
                     CaseUtils.getCamelCaseToSnakeCase(columnName),
                     columnName,
-                    this.getJdbcType(
-                        value instanceof String && value.equals("@NULL") ? null : value)));
+                    this.getJdbcType(value)));
           }
         });
   }
@@ -391,10 +388,6 @@ public class SqlCommand {
     return this.select(whereConditions, List.of());
   }
 
-  public String getItemById(@NonNull final Long id) {
-    return this.select(Map.of("id", id), List.of());
-  }
-
   public <T> String insert(@NonNull final T entity) {
     final Map<String, Object> param = MapperUtils.toMap(entity);
     final SQL sql = new SQL();
@@ -494,10 +487,6 @@ public class SqlCommand {
     return sql.toString();
   }
 
-  public <T> String updateById(final T entity, final Long id) {
-    return this.updateByMap(entity, Map.of("id", id));
-  }
-
   public <T> String updateByMap(final T entity, final Map<String, Object> whereConditions) {
     this.verifyWhereKey(whereConditions);
 
@@ -587,10 +576,6 @@ public class SqlCommand {
           MessageFormat.format(
               SET_UPDATED_BY_STRING, TABLE_COLUMN_NAME_UPDATED_BY, AuthenticationUtils.getId()));
     }
-  }
-
-  public String deleteById(final Long id) {
-    return this.deleteByMap(Map.of("id", id));
   }
 
   public String deleteByMap(final Map<String, Object> whereConditions) {

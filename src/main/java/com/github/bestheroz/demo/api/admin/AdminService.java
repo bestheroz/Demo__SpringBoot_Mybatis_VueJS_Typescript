@@ -102,7 +102,7 @@ public class AdminService {
         .getItemById(id)
         .map(
             (item) -> {
-              item.setPassword(password);
+              item.changePassword(password);
               this.adminRepository.updateById(item, item.getId());
               return this.getAdmin(id);
             })

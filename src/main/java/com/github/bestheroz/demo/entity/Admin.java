@@ -45,14 +45,14 @@ public class Admin extends AbstractCreatedUpdate implements Serializable {
     this.token = null;
   }
 
-  public void setPassword(final String password) {
+  public void changePassword(final String password) {
     this.password = password;
     this.updated = Instant.now();
     this.updatedBy = AuthenticationUtils.getId();
     this.resetSignInFailCnt();
   }
 
-  public void setName(final String name) {
+  public void changeName(final String name) {
     this.name = name;
     this.updated = Instant.now();
     this.updatedBy = AuthenticationUtils.getId();

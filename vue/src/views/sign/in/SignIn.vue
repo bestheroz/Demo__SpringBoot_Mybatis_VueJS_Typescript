@@ -71,7 +71,7 @@ import pbkdf2 from "pbkdf2";
 import { ApiDataResult, axiosInstance } from "@/utils/apis";
 import { toastCloseAll } from "@/utils/alerts";
 import { defaultAdminConfig, defaultAdmin } from "@/definitions/defaults";
-import { getYourConfig } from "@/utils/commands";
+import { getYourConfig, routerReplace } from "@/utils/commands";
 import { AxiosResponse } from "axios";
 
 @Component({
@@ -140,7 +140,7 @@ export default class extends Vue {
       );
       await this.$store.dispatch("reloadAdminCodes");
       toastCloseAll();
-      await this.$router.push("/");
+      await routerReplace("/");
     } else {
       this.errorProvider = true;
       this.errorProviderMessages = response.data.message;

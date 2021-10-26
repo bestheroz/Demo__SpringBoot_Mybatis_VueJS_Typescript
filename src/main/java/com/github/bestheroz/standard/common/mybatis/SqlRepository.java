@@ -50,8 +50,9 @@ public interface SqlRepository<T extends Serializable> {
   @SelectProvider(type = SqlCommand.class, method = SqlCommand.SELECT_ITEM_BY_MAP)
   Optional<T> getItemByMap(final Map<String, Object> whereConditions);
 
-  @SelectProvider(type = SqlCommand.class, method = SqlCommand.SELECT_ITEM_BY_ID)
-  Optional<T> getItemById(final Long id);
+  default Optional<T> getItemById(final Long id) {
+    return this.getItemByMap(Map.of("id", id));
+  }
 
   @SelectProvider(type = SqlCommand.class, method = SqlCommand.SELECT_ITEMS_BY_DATATABLE)
   List<T> getItemsForDataTable(final DataTableFilterDTO dataTableFilterDTO);
@@ -82,8 +83,9 @@ public interface SqlRepository<T extends Serializable> {
   @InsertProvider(type = SqlCommand.class, method = SqlCommand.INSERT_BATCH)
   void insertBatch(final List<T> entities);
 
-  @UpdateProvider(type = SqlCommand.class, method = SqlCommand.UPDATE_BY_ID)
-  void updateById(final T entity, final Long id);
+  default void updateById(final T entity, final Long id) {
+    this.updateByMap(entity, Map.of("id", id));
+  }
 
   @UpdateProvider(type = SqlCommand.class, method = SqlCommand.UPDATE_BY_MAP)
   void updateByMap(final T entity, final Map<String, Object> whereConditions);
@@ -95,6 +97,7 @@ public interface SqlRepository<T extends Serializable> {
   @DeleteProvider(type = SqlCommand.class, method = SqlCommand.DELETE_BY_MAP)
   void deleteByMap(final Map<String, Object> whereConditions);
 
-  @DeleteProvider(type = SqlCommand.class, method = SqlCommand.DELETE_BY_ID)
-  void deleteById(final Long id);
+  default void deleteById(final Long id) {
+    this.deleteByMap(Map.of("id", id));
+  }
 }

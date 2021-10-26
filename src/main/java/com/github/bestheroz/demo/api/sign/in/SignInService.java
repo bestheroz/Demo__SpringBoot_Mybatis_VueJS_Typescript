@@ -68,7 +68,7 @@ public class SignInService implements UserDetailsService {
               if (!pbkdf2PasswordEncoder.matches(
                   admin.getPassword(), pbkdf2PasswordEncoder.encode(password))) {
                 admin.plusSignInFailCnt();
-                this.adminRepository.plusLoginFailCnt(admin.getId());
+                this.adminRepository.plusSignInFailCnt(admin.getId());
                 throw new BusinessException(ExceptionCode.FAIL_NOT_ALLOWED_ADMIN);
               }
 
@@ -90,10 +90,10 @@ public class SignInService implements UserDetailsService {
   private Map<String, String> signedSuccess(final Admin admin, final Role role) {
     admin.resetSignInFailCnt();
     final CustomUserDetails customUserDetails = new CustomUserDetails(admin, role);
-    final String accessToken = JwtTokenProvider.createAccessToken(customUserDetails);
     final String refreshToken = JwtTokenProvider.createRefreshToken(customUserDetails);
     admin.signedSuccess(refreshToken);
-    this.adminRepository.updateById(admin, admin.getId());
+    this.adminRepository.updateTokenAndSignInFailCnt(admin.getId(), refreshToken);
+    final String accessToken = JwtTokenProvider.createAccessToken(customUserDetails);
     return Map.of("accessToken", accessToken, "refreshToken", refreshToken);
   }
 

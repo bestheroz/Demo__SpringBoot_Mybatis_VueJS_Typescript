@@ -58,7 +58,7 @@ public class MineController {
         .map(
             admin -> {
               this.verifyPassword(admin.getPassword(), payload.getPassword());
-              admin.setName(payload.getName());
+              admin.changeName(payload.getName());
               this.adminRepository.updateById(admin, admin.getId());
               return Result.ok(
                   new EditMeDTO(
@@ -90,7 +90,7 @@ public class MineController {
         .map(
             admin -> {
               this.verifyPassword(admin.getPassword(), payload.getOldPassword());
-              admin.setPassword(payload.getNewPassword());
+              admin.changePassword(payload.getNewPassword());
               this.adminRepository.updateById(admin, admin.getId());
               return Result.ok();
             })

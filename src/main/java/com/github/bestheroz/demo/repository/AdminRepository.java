@@ -14,8 +14,13 @@ import org.springframework.stereotype.Repository;
 public interface AdminRepository extends SqlRepository<Admin> {
   @Update(
       value =
-          "UPDATE ADMIN SET LOGIN_FAIL_CNT = LOGIN_FAIL_CNT + 1 WHERE ID = #{id, jdbcType=BIGINT}")
-  void plusLoginFailCnt(Long id);
+          "UPDATE ADMIN SET SIGN_IN_FAIL_CNT = SIGN_IN_FAIL_CNT + 1 WHERE ID = #{id, jdbcType=BIGINT}")
+  void plusSignInFailCnt(Long id);
+
+  @Update(
+      value =
+          "UPDATE ADMIN SET SIGN_IN_FAIL_CNT = 0, TOKEN = #{token, jdbcType=VARCHAR} WHERE ID = #{id, jdbcType=BIGINT}")
+  void updateTokenAndSignInFailCnt(Long id, String token);
 
   @Select(value = "SELECT ID AS VALUE, NAME AS TEXT FROM ADMIN")
   List<CodeVO<Long>> getCodes();

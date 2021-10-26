@@ -8,15 +8,13 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class RoleMenuMap extends AbstractCreatedUpdate implements Serializable {
+public class RoleMenuMap implements Serializable {
   private static final long serialVersionUID = -4753709861734048435L;
 
   private Long id;

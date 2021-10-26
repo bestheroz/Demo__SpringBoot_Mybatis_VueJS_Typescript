@@ -9,10 +9,20 @@ import { cloneDeep, debounce } from "lodash-es";
 import store from "@/store";
 import { toastError } from "@/utils/alerts";
 
-export async function goSignInPage(): Promise<void> {
-  if (router.currentRoute.path !== "/sign-in") {
-    await router.replace("/sign-in");
+export async function routerReplace(path: string): Promise<void> {
+  if (router.currentRoute.path !== path) {
+    await router.replace(path);
   }
+}
+
+export async function routerPush(path: string): Promise<void> {
+  if (router.currentRoute.path !== path) {
+    await router.push(path);
+  }
+}
+
+export async function goSignInPage(): Promise<void> {
+  await routerReplace("/sign-in");
 }
 
 export async function getAccessToken(
@@ -71,13 +81,13 @@ export async function getAdminCodes(): Promise<SelectItem<number>[]> {
   return response.data || [];
 }
 
-export function signOut(): void {
+export async function signOut(): Promise<void> {
   try {
-    deleteApi("sign-out", false).then();
+    await deleteApi("sign-out", false);
   } catch (e) {
     console.error(e);
   }
-  router.replace("/sign-in").then();
+  await goSignInPage();
 }
 
 export function getCurrentAuthority(
