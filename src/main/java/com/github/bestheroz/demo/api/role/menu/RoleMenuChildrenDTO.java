@@ -2,6 +2,7 @@ package com.github.bestheroz.demo.api.role.menu;
 
 import com.github.bestheroz.demo.api.menu.MenuChildrenDTO;
 import com.github.bestheroz.demo.api.menu.MenuSimpleDTO;
+import com.github.bestheroz.demo.entity.Menu;
 import com.github.bestheroz.demo.entity.RoleMenuMap;
 import com.github.bestheroz.demo.type.RoleAuthorityType;
 import com.github.bestheroz.standard.common.util.NullUtils;
@@ -41,11 +42,9 @@ public class RoleMenuChildrenDTO {
   }
 
   public RoleMenuChildrenDTO(
-      final RoleMenuMap roleMenuMap,
-      final MenuSimpleDTO menu,
-      final List<RoleMenuChildrenDTO> children) {
+      final RoleMenuMap roleMenuMap, final Menu menu, final List<RoleMenuChildrenDTO> children) {
     this.id = roleMenuMap.getId();
-    this.menu = menu;
+    this.menu = new MenuSimpleDTO(menu);
     this.authoritiesJson = roleMenuMap.getAuthoritiesJson();
     this.children = children;
   }

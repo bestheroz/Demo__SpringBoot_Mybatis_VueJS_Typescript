@@ -97,8 +97,8 @@ public class MapperUtils {
     final JsonElement jsonElement = toJsonElement(source);
     if (jsonElement.isJsonPrimitive()) {
       log.warn(jsonElement.toString());
-      log.warn(ExceptionCode.ERROR_TRANSFORM_DATA.toString());
-      throw new BusinessException(ExceptionCode.ERROR_TRANSFORM_DATA);
+      log.warn(ExceptionCode.ERROR_SYSTEM.toString());
+      throw BusinessException.ERROR_SYSTEM;
     } else if (jsonElement.isJsonNull()) {
       if (targetType == JsonObject.class) {
         return (T) new JsonObject();

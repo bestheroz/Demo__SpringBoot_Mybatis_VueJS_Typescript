@@ -57,7 +57,10 @@ public class RoleController {
                 (item) -> {
                   item.change(payload);
                   this.roleRepository.updateById(item, id);
-                  return this.roleService.getItem(id);
+                  return new RoleSimpleDTO(
+                      this.roleRepository
+                          .getItemById(id)
+                          .orElseThrow(() -> BusinessException.FAIL_NO_DATA_SUCCESS));
                 })
             .orElseThrow(() -> new BusinessException(ExceptionCode.FAIL_NO_DATA_SUCCESS)));
   }

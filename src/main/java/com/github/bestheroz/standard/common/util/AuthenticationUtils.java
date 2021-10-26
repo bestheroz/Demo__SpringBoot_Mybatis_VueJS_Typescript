@@ -1,5 +1,6 @@
 package com.github.bestheroz.standard.common.util;
 
+import com.github.bestheroz.standard.common.authenticate.CustomUserDetails;
 import com.github.bestheroz.standard.common.exception.BusinessException;
 import com.github.bestheroz.standard.common.exception.ExceptionCode;
 import java.util.Optional;

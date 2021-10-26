@@ -30,8 +30,8 @@ public class RoleService {
         .collect(Collectors.toList());
   }
 
-  private List<RoleChildrenDTO> getChildren(final Long id) {
-    return this.roleRepository.getItemsByMap(Map.of("parentId", id)).stream()
+  public List<RoleChildrenDTO> getChildren(final Long parentId) {
+    return this.roleRepository.getItemsByMap(Map.of("parentId", parentId)).stream()
         .map(r -> new RoleChildrenDTO(r, this.getChildren(r.getId())))
         .collect(Collectors.toList());
   }
@@ -65,11 +65,7 @@ public class RoleService {
     }
     final List<Role> roles = new ArrayList<>();
     this.getFlatRoleWithRecursiveChildren(roles, payload, null);
-    this.roleRepository.insertBatch(
-        roles.stream().filter(r -> r.getId() == null).collect(Collectors.toList()));
-    roles.stream()
-        .filter(r -> r.getId() != null)
-        .forEach(r -> this.roleRepository.updateById(r, r.getId()));
+    roles.forEach(r -> this.roleRepository.updateById(r, r.getId()));
     return this.getItems();
   }
 

@@ -13,6 +13,7 @@ import com.github.bestheroz.standard.common.util.AuthenticationUtils;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -40,14 +41,14 @@ public class AdminService {
     }
     final int count =
         this.adminRepository.countForSearchAndDataTable(
-            search, List.of("adminId", "name"), dataTableFilterDTO);
+            search, Set.of("adminId", "name"), dataTableFilterDTO);
     if (count == 0) {
       return new Page<>(count);
     }
 
     final List<Admin> items =
         this.adminRepository.getItemsForSearchAndDataTable(
-            search, List.of("adminId", "name"), dataTableFilterDTO);
+            search, Set.of("adminId", "name"), dataTableFilterDTO);
     final List<Role> roles =
         this.roleRepository.getItemsByMap(
             Map.of(

@@ -1,6 +1,6 @@
 package com.github.bestheroz.demo.api.sign.out;
 
-import com.github.bestheroz.demo.domain.Admin;
+import com.github.bestheroz.demo.entity.Admin;
 import com.github.bestheroz.demo.repository.AdminRepository;
 import com.github.bestheroz.standard.common.util.AuthenticationUtils;
 import lombok.RequiredArgsConstructor;

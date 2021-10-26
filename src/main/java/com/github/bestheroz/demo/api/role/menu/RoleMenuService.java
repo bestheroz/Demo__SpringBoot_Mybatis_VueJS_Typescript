@@ -1,6 +1,5 @@
 package com.github.bestheroz.demo.api.role.menu;
 
-import com.github.bestheroz.demo.api.menu.MenuSimpleDTO;
 import com.github.bestheroz.demo.entity.Menu;
 import com.github.bestheroz.demo.entity.RoleMenuMap;
 import com.github.bestheroz.demo.repository.MenuRepository;
@@ -43,18 +42,17 @@ public class RoleMenuService {
             r ->
                 new RoleMenuChildrenDTO(
                     r,
-                    new MenuSimpleDTO(
-                        menus.stream()
-                            .filter(m -> m.getId().equals(r.getMenuId()))
-                            .findFirst()
-                            .orElseThrow(() -> BusinessException.FAIL_NO_DATA_SUCCESS)),
+                    menus.stream()
+                        .filter(m -> m.getId().equals(r.getMenuId()))
+                        .findFirst()
+                        .orElseThrow(() -> BusinessException.FAIL_NO_DATA_SUCCESS),
                     this.getChildren(r.getId())))
         .collect(Collectors.toList());
   }
 
-  private List<RoleMenuChildrenDTO> getChildren(final Long id) {
+  private List<RoleMenuChildrenDTO> getChildren(final Long parentId) {
     final List<RoleMenuMap> roleMenuMaps =
-        this.roleMenuMapRepository.getItemsByMap(Map.of("parentId", id));
+        this.roleMenuMapRepository.getItemsByMap(Map.of("parentId", parentId));
     final List<Menu> menus =
         this.menuRepository.getItemsByMap(
             Map.of(
@@ -68,11 +66,10 @@ public class RoleMenuService {
             r ->
                 new RoleMenuChildrenDTO(
                     r,
-                    new MenuSimpleDTO(
-                        menus.stream()
-                            .filter(m -> m.getId().equals(r.getMenuId()))
-                            .findFirst()
-                            .orElseThrow(() -> BusinessException.FAIL_NO_DATA_SUCCESS)),
+                    menus.stream()
+                        .filter(m -> m.getId().equals(r.getMenuId()))
+                        .findFirst()
+                        .orElseThrow(() -> BusinessException.FAIL_NO_DATA_SUCCESS),
                     this.getChildren(r.getId())))
         .collect(Collectors.toList());
   }

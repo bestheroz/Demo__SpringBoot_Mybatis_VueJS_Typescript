@@ -1,19 +1,17 @@
 package com.github.bestheroz.demo.api.download;
 
-import com.github.bestheroz.demo.api.internal.admin.AdminFilter;
-import com.github.bestheroz.demo.api.internal.admin.AdminService;
-import com.github.bestheroz.demo.api.internal.code.CodeVO;
+import com.github.bestheroz.demo.api.admin.AdminService;
+import com.github.bestheroz.demo.api.code.CodeVO;
 import com.github.bestheroz.demo.repository.AdminRepository;
 import com.github.bestheroz.standard.common.file.excel.ExcelService;
 import com.github.bestheroz.standard.common.file.excel.ExcelVO;
-import com.github.bestheroz.standard.common.filter.DataTableSortRequest;
+import com.github.bestheroz.standard.common.mybatis.DataTableFilterDTO;
 import com.github.bestheroz.standard.context.abstractview.AbstractExcelXView;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -31,14 +29,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class ExcelController {
   private final AdminRepository adminRepository;
   private final AdminService adminService;
-  private final Sort.Direction DEFAULT_SORT = Sort.DEFAULT_DIRECTION;
 
   @GetMapping(value = "admins")
   public String excelAdmins(
       final Model model,
       @RequestParam(required = false) final String search,
-      final DataTableSortRequest dataTableSortRequest,
-      final AdminFilter adminFilter) {
+      final DataTableFilterDTO dataTableFilterDTO) {
     final List<ExcelVO> excelVOList = new ArrayList<>();
 
     // header
@@ -54,7 +50,7 @@ public class ExcelController {
         model,
         "Admin_List",
         excelVOList,
-        this.adminService.getAdmins(search, dataTableSortRequest, adminFilter).getContent());
+        this.adminService.getAdmins(search, dataTableFilterDTO).getContents());
 
     return ExcelService.VIEW_NAME;
   }

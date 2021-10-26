@@ -15,10 +15,7 @@ public interface AdminRepository extends SqlRepository<Admin> {
   @Update(
       value =
           "UPDATE ADMIN SET LOGIN_FAIL_CNT = LOGIN_FAIL_CNT + 1 WHERE ID = #{id, jdbcType=BIGINT}")
-  void plusLoginFailCnt(String id);
-
-  @Update(value = "UPDATE ADMIN SET PASSWORD = NULL WHERE ID = #{id, jdbcType=BIGINT}")
-  void resetPassword(String id);
+  void plusLoginFailCnt(Long id);
 
   @Select(value = "SELECT ID AS VALUE, NAME AS TEXT FROM ADMIN")
   List<CodeVO<Long>> getCodes();

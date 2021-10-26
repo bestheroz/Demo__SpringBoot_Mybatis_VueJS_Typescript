@@ -1,6 +1,6 @@
 package com.github.bestheroz.demo.api.sign.in;
 
-import com.github.bestheroz.demo.api.internal.admin.AdminPasswordDTO;
+import com.github.bestheroz.demo.api.admin.AdminPasswordDTO;
 import com.github.bestheroz.standard.common.response.ApiResult;
 import com.github.bestheroz.standard.common.response.Result;
 import java.util.Map;

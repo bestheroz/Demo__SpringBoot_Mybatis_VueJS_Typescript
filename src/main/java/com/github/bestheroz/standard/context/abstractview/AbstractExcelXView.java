@@ -1,6 +1,6 @@
 package com.github.bestheroz.standard.context.abstractview;
 
-import com.github.bestheroz.demo.api.internal.code.CodeVO;
+import com.github.bestheroz.demo.api.code.CodeVO;
 import com.github.bestheroz.standard.common.exception.BusinessException;
 import com.github.bestheroz.standard.common.exception.ExceptionCode;
 import com.github.bestheroz.standard.common.file.excel.ExcelVO;

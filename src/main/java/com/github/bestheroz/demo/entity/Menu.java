@@ -1,5 +1,6 @@
 package com.github.bestheroz.demo.entity;
 
+import com.github.bestheroz.demo.api.menu.MenuSimpleDTO;
 import com.github.bestheroz.demo.type.MenuType;
 import java.io.Serializable;
 import lombok.AccessLevel;
@@ -28,4 +29,12 @@ public class Menu extends AbstractCreatedUpdate implements Serializable {
   private Integer displayOrder;
   private String url;
   private String icon;
+
+  public void changeMenu(final MenuSimpleDTO dto) {
+    this.id = dto.getId();
+    this.name = dto.getName();
+    this.type = dto.getType();
+    this.url = dto.getUrl();
+    this.icon = dto.getIcon();
+  }
 }

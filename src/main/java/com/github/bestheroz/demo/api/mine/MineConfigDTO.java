@@ -1,7 +1,7 @@
 package com.github.bestheroz.demo.api.mine;
 
-import com.github.bestheroz.demo.domain.Admin;
-import com.github.bestheroz.demo.domain.AdminConfig;
+import com.github.bestheroz.demo.entity.Admin;
+import com.github.bestheroz.demo.entity.AdminConfig;
 import javax.validation.constraints.NotEmpty;
 import lombok.AccessLevel;
 import lombok.Data;
@@ -28,7 +28,7 @@ public class MineConfigDTO {
 
   public AdminConfig toAdminConfig(final Admin admin) {
     return AdminConfig.builder()
-        .admin(admin)
+        .adminId(admin.getId())
         .globalTheme(this.globalTheme)
         .toolbarTheme(this.toolbarTheme)
         .menuTheme(this.menuTheme)

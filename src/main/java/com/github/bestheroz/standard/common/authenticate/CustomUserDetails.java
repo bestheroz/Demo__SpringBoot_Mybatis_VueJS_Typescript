@@ -1,6 +1,8 @@
 package com.github.bestheroz.standard.common.authenticate;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.github.bestheroz.demo.entity.Admin;
+import com.github.bestheroz.demo.entity.Role;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
@@ -20,11 +22,11 @@ public class CustomUserDetails implements UserDetails, Serializable {
   private String name;
   private Long roleId;
 
-  public CustomUserDetails(final Admin admin) {
+  public CustomUserDetails(final Admin admin, final Role role) {
     this.id = admin.getId();
     this.name = admin.getName();
     this.adminId = admin.getAdminId();
-    this.roleId = admin.getRole().getId();
+    this.roleId = role.getId();
   }
 
   @Override

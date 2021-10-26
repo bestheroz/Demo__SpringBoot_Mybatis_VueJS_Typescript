@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import org.apache.ibatis.annotations.DeleteProvider;
 import org.apache.ibatis.annotations.InsertProvider;
 import org.apache.ibatis.annotations.SelectProvider;
@@ -25,24 +26,24 @@ public interface SqlRepository<T extends Serializable> {
 
   @SelectProvider(type = SqlCommand.class, method = SqlCommand.SELECT_TARGET_ITEMS)
   // Target 시리즈를 사용하기 위해서는 Entity에 반드시 @NoArgsConstructor 가 필요하다
-  List<T> getTargetItems(final List<String> targetColumns);
+  List<T> getTargetItems(final Set<String> targetColumns);
 
   @SelectProvider(type = SqlCommand.class, method = SqlCommand.SELECT_TARGET_ITEMS_WITH_ORDER)
   // Target 시리즈를 사용하기 위해서는 Entity에 반드시 @NoArgsConstructor 가 필요하다
   List<T> getTargetItemsWithOrder(
-      final List<String> targetColumns, final List<String> orderByConditions);
+      final Set<String> targetColumns, final List<String> orderByConditions);
 
   @SelectProvider(type = SqlCommand.class, method = SqlCommand.SELECT_TARGET_ITEMS_BY_MAP)
   // Target 시리즈를 사용하기 위해서는 Entity에 반드시 @NoArgsConstructor 가 필요하다
   List<T> getTargetItemsByMap(
-      final List<String> targetColumns, final Map<String, Object> whereConditions);
+      final Set<String> targetColumns, final Map<String, Object> whereConditions);
 
   @SelectProvider(
       type = SqlCommand.class,
       method = SqlCommand.SELECT_TARGET_ITEMS_BY_MAP_WITH_ORDER)
   // Target 시리즈를 사용하기 위해서는 Entity에 반드시 @NoArgsConstructor 가 필요하다
   List<T> getTargetItemsByMapWithOrder(
-      final List<String> targetColumns,
+      final Set<String> targetColumns,
       final Map<String, Object> whereConditions,
       List<String> orderByConditions);
 
@@ -57,7 +58,7 @@ public interface SqlRepository<T extends Serializable> {
 
   @SelectProvider(type = SqlCommand.class, method = SqlCommand.SELECT_ITEMS_BY_SEARCH_AND_DATATABLE)
   List<T> getItemsForSearchAndDataTable(
-      String search, List<String> targetColumns, final DataTableFilterDTO dataTableFilterDTO);
+      String search, Set<String> targetColumns, final DataTableFilterDTO dataTableFilterDTO);
 
   @SelectProvider(type = SqlCommand.class, method = SqlCommand.COUNT_ALL)
   int countAll();
@@ -67,7 +68,7 @@ public interface SqlRepository<T extends Serializable> {
 
   @SelectProvider(type = SqlCommand.class, method = SqlCommand.COUNT_BY_SEARCH_AND_DATATABLE)
   int countForSearchAndDataTable(
-      String search, List<String> targetColumns, final DataTableFilterDTO dataTableFilterDTO);
+      String search, Set<String> targetColumns, final DataTableFilterDTO dataTableFilterDTO);
 
   @SelectProvider(type = SqlCommand.class, method = SqlCommand.COUNT_BY_MAP)
   int countByMap(final Map<String, Object> whereConditions);

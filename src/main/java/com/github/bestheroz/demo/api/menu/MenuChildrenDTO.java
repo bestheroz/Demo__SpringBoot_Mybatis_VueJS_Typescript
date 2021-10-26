@@ -1,6 +1,7 @@
 package com.github.bestheroz.demo.api.menu;
 
 import com.github.bestheroz.demo.entity.Menu;
+import com.github.bestheroz.demo.entity.Menu.MenuBuilder;
 import com.github.bestheroz.demo.type.MenuType;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -47,14 +48,17 @@ public class MenuChildrenDTO {
   }
 
   public Menu toMenu(final Menu parent, final Integer displayOrder) {
-    return Menu.builder()
-        .id(this.id)
-        .name(this.name)
-        .type(this.type)
-        .parentId(parent.getId())
-        .displayOrder(displayOrder)
-        .url(this.url)
-        .icon(this.icon)
-        .build();
+    final MenuBuilder menuBuilder =
+        Menu.builder()
+            .id(this.id)
+            .name(this.name)
+            .type(this.type)
+            .displayOrder(displayOrder)
+            .url(this.url)
+            .icon(this.icon);
+    if (parent != null) {
+      menuBuilder.parentId(parent.getId());
+    }
+    return menuBuilder.build();
   }
 }

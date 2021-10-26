@@ -100,7 +100,7 @@ public class SqlCommand {
             StringUtils.substringBetween(javaClassName, "Table", "Entity")));
   }
 
-  private void getSelectSql(final SQL sql, final List<String> columns) {
+  private void getSelectSql(final SQL sql, final Set<String> columns) {
     columns.forEach(
         column -> {
           final String dbColumnName = CaseUtils.getCamelCaseToSnakeCase(column);
@@ -326,22 +326,22 @@ public class SqlCommand {
     return this.select(whereConditions, orderByConditions);
   }
 
-  public String getTargetItems(final List<String> targetColumns) {
+  public String getTargetItems(final Set<String> targetColumns) {
     return this.select(targetColumns, Map.of(), List.of());
   }
 
   public String getTargetItemsWithOrder(
-      final List<String> targetColumns, final List<String> orderByConditions) {
+      final Set<String> targetColumns, final List<String> orderByConditions) {
     return this.select(targetColumns, Map.of(), orderByConditions);
   }
 
   public String getTargetItemsByMap(
-      final List<String> targetColumns, final Map<String, Object> whereConditions) {
+      final Set<String> targetColumns, final Map<String, Object> whereConditions) {
     return this.select(targetColumns, whereConditions, List.of());
   }
 
   public String getTargetItemsByMapWithOrder(
-      final List<String> targetColumns,
+      final Set<String> targetColumns,
       final Map<String, Object> whereConditions,
       final List<String> orderByConditions) {
     return this.select(targetColumns, whereConditions, orderByConditions);
@@ -353,28 +353,28 @@ public class SqlCommand {
   }
 
   // ordered list required
-  private <T> List<String> getEntityFields(final T entity) {
+  private <T> Set<String> getEntityFields(final T entity) {
     return Stream.concat(
             Arrays.stream(entity.getClass().getDeclaredFields()).map(Field::getName),
             Arrays.stream(entity.getClass().getSuperclass().getDeclaredFields())
                 .map(Field::getName))
         .distinct()
         .filter(fieldName -> !EXCLUDE_FIELD_SET.contains(fieldName))
-        .collect(Collectors.toList());
+        .collect(Collectors.toSet());
   }
 
-  private List<String> getEntityFields() {
+  private Set<String> getEntityFields() {
     final Class<?> tClass = this.getEntityClass();
     return Stream.concat(
             Arrays.stream(tClass.getDeclaredFields()).map(Field::getName),
             Arrays.stream(tClass.getSuperclass().getDeclaredFields()).map(Field::getName))
         .distinct()
         .filter(fieldName -> !EXCLUDE_FIELD_SET.contains(fieldName))
-        .collect(Collectors.toList());
+        .collect(Collectors.toSet());
   }
 
   private String select(
-      final List<String> targetColumns,
+      final Set<String> targetColumns,
       final Map<String, Object> whereConditions,
       final List<String> orderByConditions) {
     final SQL sql = new SQL();
@@ -415,7 +415,7 @@ public class SqlCommand {
                     MessageFormat.format(
                         INSERT_STRING, item.getKey(), this.getJdbcType(item.getValue()))));
 
-    final List<String> fieldNames = this.getEntityFields(entity);
+    final Set<String> fieldNames = this.getEntityFields(entity);
 
     if (fieldNames.contains(VARIABLE_NAME_CREATED)) {
       sql.VALUES(TABLE_COLUMN_NAME_CREATED, SYSDATE);
@@ -441,7 +441,7 @@ public class SqlCommand {
     }
     final SQL sql = new SQL();
     sql.INSERT_INTO(getTableName(entities.get(0).getClass().getSimpleName()));
-    final List<String> columns = this.getEntityFields(entities.get(0));
+    final Set<String> columns = this.getEntityFields(entities.get(0));
 
     final String intoColumns =
         StringUtils.join(
@@ -578,7 +578,7 @@ public class SqlCommand {
     return sql.toString();
   }
 
-  private void getUpdateSetSql(final SQL sql, final List<String> fieldNames) {
+  private void getUpdateSetSql(final SQL sql, final Set<String> fieldNames) {
     if (fieldNames.contains(VARIABLE_NAME_UPDATED)) {
       sql.SET(TABLE_COLUMN_NAME_UPDATED + " = " + SYSDATE);
     }

@@ -3,7 +3,6 @@ package com.github.bestheroz.standard.common.authenticate;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.bestheroz.standard.common.exception.BusinessException;
 import com.github.bestheroz.standard.common.exception.ExceptionCode;
 import com.github.bestheroz.standard.common.util.LogUtils;
@@ -76,17 +75,16 @@ public class JwtTokenProvider {
   public CustomUserDetails getCustomUserDetails(final String token) {
     Assert.hasText(token, "token parameter must not be empty or null");
     try {
-      return MapperUtils.getObjectMapper()
-          .readValue(
-              JWT.require(ALGORITHM)
-                  .acceptExpiresAt(expiresAtAccessToken)
-                  .build()
-                  .verify(token)
-                  .getClaims()
-                  .get("admin")
-                  .asString(),
-              CustomUserDetails.class);
-    } catch (final JWTVerificationException | NullPointerException | JsonProcessingException e) {
+      return MapperUtils.toObject(
+          JWT.require(ALGORITHM)
+              .acceptExpiresAt(expiresAtAccessToken)
+              .build()
+              .verify(token)
+              .getClaims()
+              .get("admin")
+              .asString(),
+          CustomUserDetails.class);
+    } catch (final JWTVerificationException | NullPointerException e) {
       log.warn(LogUtils.getStackTrace(e));
       throw new BusinessException(ExceptionCode.FAIL_TRY_SIGN_IN_FIRST);
     }

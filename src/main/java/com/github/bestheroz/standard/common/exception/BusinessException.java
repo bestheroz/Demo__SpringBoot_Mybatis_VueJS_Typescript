@@ -23,8 +23,6 @@ public class BusinessException extends RuntimeException {
       new BusinessException(ExceptionCode.FAIL_INVALID_REQUEST);
   public static final BusinessException FAIL_INVALID_PARAMETER =
       new BusinessException(ExceptionCode.FAIL_INVALID_PARAMETER);
-  public static final BusinessException FAIL_TRY_LOGIN_FIRST =
-      new BusinessException(ExceptionCode.FAIL_TRY_LOGIN_FIRST);
   public static final BusinessException FAIL_NO_DATA_SUCCESS =
       new BusinessException(ExceptionCode.FAIL_NO_DATA_SUCCESS);
   private ApiResult<?> apiResult = Result.ok().getBody();

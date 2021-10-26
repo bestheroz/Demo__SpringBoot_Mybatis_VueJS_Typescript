@@ -1,6 +1,7 @@
 package com.github.bestheroz.demo.api.menu;
 
 import com.github.bestheroz.demo.api.role.menu.RoleMenuService;
+import com.github.bestheroz.demo.entity.Menu;
 import com.github.bestheroz.demo.repository.MenuRepository;
 import com.github.bestheroz.demo.repository.RoleRepository;
 import com.github.bestheroz.standard.common.exception.BusinessException;
@@ -44,11 +45,11 @@ public class MenuController {
               .getItemById(childRoleId)
               .map(
                   r -> {
-                    if (r.getParent() == null) {
+                    if (r.getParentId() == null) {
                       return this.menuService.getItems();
                     } else {
                       return MenuService.getMenuChildrenDTOWithRecursiveChildren(
-                          this.roleMenuService.getItems(r.getParent().getId()));
+                          this.roleMenuService.getItems(r.getParentId()));
                     }
                   })
               .orElseThrow(() -> new BusinessException(ExceptionCode.FAIL_NO_DATA_SUCCESS)));
@@ -58,22 +59,31 @@ public class MenuController {
 
   @PostMapping
   public ResponseEntity<ApiResult<MenuChildrenDTO>> post(
-      @RequestBody @Valid final MenuChildrenDTO payload) {
+      @RequestBody @Valid final MenuSimpleDTO payload) {
+    final Menu menu = payload.toMenu(1000);
+    this.menuRepository.insert(menu);
     return Result.created(
-        new MenuChildrenDTO(this.menuRepository.save(payload.toMenu(null, 1000))));
+        new MenuChildrenDTO(
+            this.menuRepository
+                .getItemById(menu.getId())
+                .orElseThrow(() -> BusinessException.FAIL_NO_DATA_SUCCESS),
+            List.of()));
   }
 
   @PutMapping(value = "{id}")
   public ResponseEntity<ApiResult<MenuChildrenDTO>> put(
-      @PathVariable(value = "id") final Long id,
-      @RequestBody @Valid final MenuChildrenDTO payload) {
+      @PathVariable(value = "id") final Long id, @RequestBody @Valid final MenuSimpleDTO payload) {
     return Result.ok(
         this.menuRepository
             .getItemById(id)
             .map(
-                (item) -> {
-                  item.changeMenu(payload);
-                  return new MenuChildrenDTO(this.menuRepository.save(item));
+                (menu) -> {
+                  menu.changeMenu(payload);
+                  this.menuRepository.updateById(menu, menu.getId());
+                  return this.menuRepository
+                      .getItemById(menu.getId())
+                      .map(r -> new MenuChildrenDTO(r, this.menuService.getChildren(r.getId())))
+                      .orElseThrow(() -> BusinessException.FAIL_NO_DATA_SUCCESS);
                 })
             .orElseThrow(() -> new BusinessException(ExceptionCode.FAIL_NO_DATA_SUCCESS)));
   }

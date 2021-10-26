@@ -38,13 +38,14 @@ public class MenuSimpleDTO {
     this.icon = dto.getIcon();
   }
 
-  public Menu toMenu() {
+  public Menu toMenu(final Integer displayOrder) {
     return Menu.builder()
         .id(this.id)
         .name(this.name)
         .type(this.type)
         .url(this.url)
         .icon(this.icon)
+        .displayOrder(displayOrder)
         .build();
   }
 

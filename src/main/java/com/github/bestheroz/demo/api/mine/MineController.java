@@ -1,8 +1,13 @@
 package com.github.bestheroz.demo.api.mine;
 
+import com.github.bestheroz.demo.api.menu.MenuChildrenDTO;
 import com.github.bestheroz.demo.api.menu.MenuService;
+import com.github.bestheroz.demo.api.role.RoleChildrenDTO;
+import com.github.bestheroz.demo.api.role.RoleMapsDTO;
+import com.github.bestheroz.demo.api.role.RoleSimpleDTO;
 import com.github.bestheroz.demo.api.role.menu.RoleMenuService;
 import com.github.bestheroz.demo.entity.Admin;
+import com.github.bestheroz.demo.entity.AdminConfig;
 import com.github.bestheroz.demo.repository.AdminConfigRepository;
 import com.github.bestheroz.demo.repository.AdminRepository;
 import com.github.bestheroz.standard.common.exception.BusinessException;
@@ -13,6 +18,7 @@ import com.github.bestheroz.standard.common.util.AuthenticationUtils;
 import com.github.bestheroz.standard.common.util.NullUtils;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import lombok.AccessLevel;
@@ -53,7 +59,12 @@ public class MineController {
             admin -> {
               this.verifyPassword(admin.getPassword(), payload.getPassword());
               admin.setName(payload.getName());
-              return Result.ok(new EditMeDTO(this.adminRepository.save(admin)));
+              this.adminRepository.updateById(admin, admin.getId());
+              return Result.ok(
+                  new EditMeDTO(
+                      this.adminRepository
+                          .getItemById(admin.getId())
+                          .orElseThrow(() -> BusinessException.FAIL_NO_DATA_SUCCESS)));
             })
         .orElseThrow(() -> new BusinessException(ExceptionCode.FAIL_NOT_ALLOWED_ADMIN));
   }
@@ -80,10 +91,10 @@ public class MineController {
             admin -> {
               this.verifyPassword(admin.getPassword(), payload.getOldPassword());
               admin.setPassword(payload.getNewPassword());
-              this.adminRepository.save(admin);
+              this.adminRepository.updateById(admin, admin.getId());
               return Result.ok();
             })
-        .orElseThrow(() -> new BusinessException(ExceptionCode.FAIL_NOT_ALLOWED_ADMIN));
+        .orElseThrow(() -> BusinessException.FAIL_NO_DATA_SUCCESS);
   }
 
   @Data
@@ -99,24 +110,30 @@ public class MineController {
     return Result.ok(
         new MineConfigDTO(
             this.adminConfigRepository
-                .findByAdminId(AuthenticationUtils.getId())
+                .getItemByMap(Map.of("adminId", AuthenticationUtils.getId()))
                 .map(
                     adminConfig -> {
                       adminConfig.change(payload);
-                      return this.adminConfigRepository.save(adminConfig);
+                      this.adminConfigRepository.updateByMap(
+                          adminConfig, Map.of("adminId", AuthenticationUtils.getId()));
+                      return this.adminConfigRepository.getItemById(adminConfig.getId());
                     })
                 .orElseGet(
-                    () ->
-                        this.adminConfigRepository.save(
-                            payload.toAdminConfig(
-                                Admin.builder().id(AuthenticationUtils.getId()).build())))));
+                    () -> {
+                      final AdminConfig adminConfig =
+                          payload.toAdminConfig(
+                              Admin.builder().id(AuthenticationUtils.getId()).build());
+                      this.adminConfigRepository.insert(adminConfig);
+                      return this.adminConfigRepository.getItemById(adminConfig.getId());
+                    })
+                .orElseThrow(() -> BusinessException.FAIL_NO_DATA_SUCCESS)));
   }
 
   @GetMapping(value = "config")
   public ResponseEntity<ApiResult<MineConfigDTO>> getConfig() {
     return Result.ok(
         this.adminConfigRepository
-            .findByAdminId(AuthenticationUtils.getId())
+            .getItemByMap(Map.of("adminId", AuthenticationUtils.getId()))
             .map(MineConfigDTO::new)
             .orElseGet(MineConfigDTO::new));
   }
