@@ -50,50 +50,45 @@ public class MineService {
 
   @Transactional(readOnly = true)
   public RoleMapsDTO getRole() {
-    final RoleMapsDTO result =
-        this.roleRepository
-            .getItemById(AuthenticationUtils.getRoleId())
-            .map(r -> new RoleMapsDTO(r, this.getChildren(r, null)))
-            .orElseThrow(() -> new BusinessException(ExceptionCode.FAIL_NO_DATA_SUCCESS));
-    if (AuthenticationUtils.isSuperAdmin()) {
-      result
-          .getMaps()
-          .addAll(
-              this.menuService.getItems().stream()
-                  .map(RoleMenuChildrenDTO::new)
-                  .collect(Collectors.toList()));
-    }
-    return result;
+    return this.roleRepository
+        .getItemById(AuthenticationUtils.getRoleId())
+        .map(r -> new RoleMapsDTO(r, this.getChildren(r, null)))
+        .orElseThrow(() -> new BusinessException(ExceptionCode.FAIL_NO_DATA_SUCCESS));
   }
 
   private List<RoleMenuChildrenDTO> getChildren(final Role role, final Long parentId) {
-    final Map<String, Object> params = new HashMap<>();
-    if (AuthenticationUtils.isNotSuperAdmin()) {
+    if (AuthenticationUtils.isSuperAdmin()) {
+      return this.menuService.getItems().stream()
+          .map(RoleMenuChildrenDTO::new)
+          .collect(Collectors.toList());
+    } else {
+      final Map<String, Object> params = new HashMap<>();
       params.put("roleId", role.getId());
-    }
-    params.put("parentId", parentId == null ? "@NULL" : parentId);
+      params.put("parentId", parentId == null ? "@NULL" : parentId);
 
-    final List<RoleMenuMap> items = this.roleMenuMapRepository.getItemsByMap(params);
-    if (items.size() == 0) {
-      return List.of();
-    }
-    final List<Menu> menus =
-        this.menuRepository.getItemsByMap(
-            Map.of(
-                "id:in", items.stream().map(RoleMenuMap::getMenuId).collect(Collectors.toList())));
+      final List<RoleMenuMap> items = this.roleMenuMapRepository.getItemsByMap(params);
+      if (items.isEmpty()) {
+        return List.of();
+      }
+      final List<Menu> menus =
+          this.menuRepository.getItemsByMap(
+              Map.of(
+                  "id:in",
+                  items.stream().map(RoleMenuMap::getMenuId).collect(Collectors.toList())));
 
-    return items.stream()
-        .map(
-            m ->
-                new RoleMenuChildrenDTO(
-                    m,
-                    menus.stream()
-                        .filter(menu -> menu.getId().equals(m.getMenuId()))
-                        .findFirst()
-                        .orElseThrow(
-                            () -> new BusinessException(ExceptionCode.FAIL_NO_DATA_SUCCESS)),
-                    this.getChildren(role, m.getId())))
-        .collect(Collectors.toList());
+      return items.stream()
+          .map(
+              m ->
+                  new RoleMenuChildrenDTO(
+                      m,
+                      menus.stream()
+                          .filter(menu -> menu.getId().equals(m.getMenuId()))
+                          .findFirst()
+                          .orElseThrow(
+                              () -> new BusinessException(ExceptionCode.FAIL_NO_DATA_SUCCESS)),
+                      this.getChildren(role, m.getId())))
+          .collect(Collectors.toList());
+    }
   }
 
   @Transactional(readOnly = true)

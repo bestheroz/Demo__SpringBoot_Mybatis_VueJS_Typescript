@@ -109,7 +109,7 @@ public class SqlCommand {
               StringUtils.defaultString(StringUtils.substringAfter(key, ":"), "equals");
           if (StringUtils.equalsAny(conditionType, "in", "notIn")) {
             final ArrayList value1 = (ArrayList) value;
-            if (value1.size() > 0) {
+            if (!value1.isEmpty()) {
               final String str;
               if (value1.get(0) instanceof String) {
                 str =
@@ -386,7 +386,7 @@ public class SqlCommand {
 
   public <T> String insertBatch(@NonNull final List<T> entities) {
     if (NullUtils.isEmpty(entities)) {
-      log.warn("entities size() : 0");
+      log.warn("entities empty");
       throw BusinessException.ERROR_SYSTEM;
     }
     final SQL sql = new SQL();
@@ -546,6 +546,15 @@ public class SqlCommand {
   }
 
   public String countForDataTable(final DataTableFilterDTO dataTableFilterDTO) {
+    if (StringUtils.isNotEmpty(dataTableFilterDTO.getSearch())) {
+      for (final String searchColumn : dataTableFilterDTO.getSearchColumns()) {
+        dataTableFilterDTO
+            .getFilter()
+            .put(
+                MessageFormat.format("{0}:contains", searchColumn), dataTableFilterDTO.getSearch());
+      }
+    }
+
     final SQL sql = new SQL();
     sql.SELECT("COUNT(1) AS CNT").FROM(this.getTableName());
     Optional.ofNullable(dataTableFilterDTO.getFilter())
@@ -555,6 +564,15 @@ public class SqlCommand {
   }
 
   public String getItemsForDataTable(final DataTableFilterDTO dataTableFilterDTO) {
+    if (StringUtils.isNotEmpty(dataTableFilterDTO.getSearch())) {
+      for (final String searchColumn : dataTableFilterDTO.getSearchColumns()) {
+        dataTableFilterDTO
+            .getFilter()
+            .put(
+                MessageFormat.format("{0}:contains", searchColumn), dataTableFilterDTO.getSearch());
+      }
+    }
+
     final SQL sql = new SQL();
     this.getSelectSql(sql, this.getEntityFields());
     sql.FROM(this.getTableName());
@@ -620,26 +638,39 @@ public class SqlCommand {
           final String columnName = StringUtils.substringBefore(key, ":");
           final String conditionType =
               StringUtils.defaultString(StringUtils.substringAfter(key, ":"), "equals");
-          if (conditionType.equals("set")) {
-            sql.WHERE(
-                MessageFormat.format(
-                    WHERE_IN_STRING,
-                    CaseUtils.getCamelCaseToSnakeCase(columnName),
+          if (StringUtils.equalsAny(conditionType, "in", "notIn")) {
+            final ArrayList value1 = (ArrayList) value;
+            if (!value1.isEmpty()) {
+              final String str;
+              if (value1.get(0) instanceof String) {
+                str =
                     StringUtils.defaultIfEmpty(
                         MapperUtils.toArrayList(value, String.class).stream()
                             .map(item -> "'" + item + "'")
                             .collect(Collectors.joining(",")),
-                        "''")));
-          } else if (conditionType.equals("notSet")) {
+                        "''");
+              } else {
+                str =
+                    StringUtils.defaultIfEmpty(
+                        String.join(",", MapperUtils.toArrayList(value, String.class)), "");
+              }
+              if (conditionType.equals("in")) {
+                sql.WHERE(
+                    MessageFormat.format(
+                        WHERE_IN_STRING, CaseUtils.getCamelCaseToSnakeCase(columnName), str));
+              } else if (conditionType.equals("notIn")) {
+                sql.WHERE(
+                    MessageFormat.format(
+                        WHERE_NOT_IN_STRING, CaseUtils.getCamelCaseToSnakeCase(columnName), str));
+              }
+            }
+          } else if (value instanceof String && value.equals("@NULL")) {
+            sql.WHERE(
+                MessageFormat.format("{0} is null", CaseUtils.getCamelCaseToSnakeCase(columnName)));
+          } else if (value instanceof String && value.equals("@NOTNULL")) {
             sql.WHERE(
                 MessageFormat.format(
-                    WHERE_NOT_IN_STRING,
-                    CaseUtils.getCamelCaseToSnakeCase(columnName),
-                    StringUtils.defaultIfEmpty(
-                        MapperUtils.toArrayList(value, String.class).stream()
-                            .map(item -> "'" + item + "'")
-                            .collect(Collectors.joining(",")),
-                        "''")));
+                    "{0} is not null", CaseUtils.getCamelCaseToSnakeCase(columnName)));
           } else {
             String whereString = this.getWhereString(conditionType);
             whereString = whereString.replace("whereConditions.", "");

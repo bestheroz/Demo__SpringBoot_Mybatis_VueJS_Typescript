@@ -16,7 +16,7 @@ public class CodeService {
     payload.stream()
         .map(CodeDTO::toCode)
         .forEach(c -> this.codeRepository.updateById(c, c.getId()));
-    if (payload.size() > 0) {
+    if (!payload.isEmpty()) {
       return this.codeRepository
           .getItemsByMapWithOrder(Map.of("type", payload.get(0).getType()), List.of("displayOrder"))
           .stream()

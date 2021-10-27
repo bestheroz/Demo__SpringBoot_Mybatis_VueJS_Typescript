@@ -2,18 +2,15 @@ package com.github.bestheroz.demo.api.admin;
 
 import com.github.bestheroz.demo.api.role.RoleService;
 import com.github.bestheroz.demo.entity.Admin;
-import com.github.bestheroz.demo.entity.Role;
 import com.github.bestheroz.demo.repository.AdminRepository;
 import com.github.bestheroz.demo.repository.RoleRepository;
 import com.github.bestheroz.demo.type.Page;
 import com.github.bestheroz.standard.common.exception.BusinessException;
 import com.github.bestheroz.standard.common.exception.ExceptionCode;
-import com.github.bestheroz.standard.common.mybatis.DataTableFilterDTO;
 import com.github.bestheroz.standard.common.util.AuthenticationUtils;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,44 +25,38 @@ public class AdminService {
   private final RoleService roleService;
 
   @Transactional(readOnly = true)
-  public Page<AdminDTO> getAdmins(
-      final String search, final DataTableFilterDTO dataTableFilterDTO) {
-    if (dataTableFilterDTO.getFilter().get("roleId:in") == null
-        && AuthenticationUtils.isNotSuperAdmin()) {
-      dataTableFilterDTO
+  public Page<AdminDTO> getAdmins(final AdminFilter adminFilter) {
+    if (adminFilter.getRoleId().isEmpty() && AuthenticationUtils.isNotSuperAdmin()) {
+      adminFilter
           .getFilter()
           .put(
               "roleId:in",
               this.roleService.getFlatRoleIdsByIdWithRecursiveChildren(
                   AuthenticationUtils.getRoleId()));
     }
-    final int count =
-        this.adminRepository.countForSearchAndDataTable(
-            search, Set.of("adminId", "name"), dataTableFilterDTO);
+    final int count = this.adminRepository.countForDataTable(adminFilter);
     if (count == 0) {
       return new Page<>(count);
     }
 
-    final List<Admin> items =
-        this.adminRepository.getItemsForSearchAndDataTable(
-            search, Set.of("adminId", "name"), dataTableFilterDTO);
-    final List<Role> roles =
-        this.roleRepository.getItemsByMap(
-            Map.of(
-                "id:in",
-                items.stream()
-                    .filter(Objects::nonNull)
-                    .map(Admin::getRoleId)
-                    .collect(Collectors.toList())));
+    final List<Admin> admins = this.adminRepository.getItemsForDataTable(adminFilter);
     return new Page<>(
         count,
-        items.stream()
+        admins.stream()
             .map(
-                data ->
+                admin ->
                     new AdminDTO(
-                        data,
-                        roles.stream()
-                            .filter(r -> r.getId().equals(data.getRoleId()))
+                        admin,
+                        this.roleRepository
+                            .getItemsByMap(
+                                Map.of(
+                                    "id:in",
+                                    admins.stream()
+                                        .filter(Objects::nonNull)
+                                        .map(Admin::getRoleId)
+                                        .collect(Collectors.toList())))
+                            .stream()
+                            .filter(r -> r.getId().equals(admin.getRoleId()))
                             .findFirst()
                             .orElseThrow(
                                 () -> new BusinessException(ExceptionCode.FAIL_NO_DATA_SUCCESS))))

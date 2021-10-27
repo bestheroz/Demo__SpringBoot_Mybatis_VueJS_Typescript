@@ -6,10 +6,9 @@ import com.github.bestheroz.standard.common.exception.BusinessException;
 import com.github.bestheroz.standard.common.exception.ExceptionCode;
 import com.github.bestheroz.standard.common.response.ApiResult;
 import com.github.bestheroz.standard.common.response.Result;
-import java.util.HashMap;
+import com.github.bestheroz.standard.common.util.MapperUtils;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -34,16 +33,8 @@ public class CodeController {
   private final CodeService codeService;
 
   @GetMapping("types/")
-  ResponseEntity<ApiResult<List<String>>> getTypes(
-      @RequestParam(required = false) final Boolean available) {
-    final Map<String, Object> whereConditions = new HashMap<>();
-    whereConditions.put("available", available);
-    return Result.ok(
-        this.codeRepository
-            .getTargetItemsByMapWithOrder(Set.of("type"), whereConditions, List.of("type"))
-            .stream()
-            .map(Code::getType)
-            .collect(Collectors.toList()));
+  ResponseEntity<ApiResult<List<String>>> getTypes() {
+    return Result.ok(this.codeRepository.getTypes());
   }
 
   @GetMapping
@@ -61,6 +52,7 @@ public class CodeController {
   public ResponseEntity<ApiResult<CodeDTO>> post(@RequestBody @Valid final CodeDTO payload) {
     final Code code = payload.toCode();
     this.codeRepository.insert(code);
+    log.debug("code: {}", MapperUtils.toString(code));
     return Result.created(
         new CodeDTO(
             this.codeRepository

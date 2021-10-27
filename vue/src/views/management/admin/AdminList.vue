@@ -147,7 +147,7 @@ export default class AdminList extends Vue {
       {
         type: "checkbox",
         text: "역할",
-        key: "roleId:in",
+        key: "roleId",
         items: this.roles.map((v) => {
           return { ...v, checked: false };
         }),

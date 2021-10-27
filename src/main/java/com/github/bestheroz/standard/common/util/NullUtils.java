@@ -59,7 +59,7 @@ public class NullUtils {
       if (json.isJsonObject()) {
         return json.isJsonNull() || json.getAsJsonObject().entrySet().isEmpty();
       } else if (json.isJsonArray()) {
-        return json.isJsonNull() || json.getAsJsonArray().size() == 0;
+        return json.isJsonNull() || json.getAsJsonArray().isEmpty();
       } else {
         return json.isJsonNull();
       }

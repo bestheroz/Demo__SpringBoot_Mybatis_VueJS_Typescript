@@ -4,17 +4,24 @@ import com.github.bestheroz.standard.common.util.CaseUtils;
 import com.github.bestheroz.standard.common.util.NullUtils;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
 @Data
 public class DataTableFilterDTO {
-  private Map<String, Object> filter;
+  private Map<String, Object> filter = new HashMap<>();
   private long page;
-  private List<String> sortBy;
+  private List<String> sortBy = new ArrayList<>();
   private short itemsPerPage;
+
+  private String search;
+
+  private Set<String> searchColumns = new HashSet<>();
 
   public long getStartIndex() {
     return (this.page - 1) * this.itemsPerPage;

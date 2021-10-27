@@ -1,13 +1,13 @@
 package com.github.bestheroz.standard.common.mybatis;
 
 import java.io.Serializable;
-import java.text.MessageFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import org.apache.ibatis.annotations.DeleteProvider;
 import org.apache.ibatis.annotations.InsertProvider;
+import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.SelectProvider;
 import org.apache.ibatis.annotations.UpdateProvider;
 
@@ -71,7 +71,7 @@ public interface SqlRepository<T extends Serializable> {
   @InsertProvider(type = SqlCommand.class, method = SqlCommand.INSERT)
   // @SelectKey(statement = "SELECT SEQSEQSEQSEQ.NEXTVAL FROM DUAL", keyProperty = "seq", before =
   // true, resultType = Long.class)
-  //  @Options(useGeneratedKeys = true, keyProperty = "id")
+  @Options(useGeneratedKeys = true, keyProperty = "id")
   void insert(final T entity);
 
   @InsertProvider(type = SqlCommand.class, method = SqlCommand.INSERT_BATCH)
@@ -99,30 +99,6 @@ public interface SqlRepository<T extends Serializable> {
   @SelectProvider(type = SqlCommand.class, method = SqlCommand.SELECT_ITEMS_BY_DATATABLE)
   List<T> getItemsForDataTable(final DataTableFilterDTO dataTableFilterDTO);
 
-  default List<T> getItemsForSearchAndDataTable(
-      final String search,
-      final Set<String> searchColumns,
-      final DataTableFilterDTO dataTableFilterDTO) {
-    for (final String searchColumn : searchColumns) {
-      dataTableFilterDTO
-          .getFilter()
-          .put(MessageFormat.format("{0}:contains", searchColumn), search);
-    }
-    return this.getItemsForDataTable(dataTableFilterDTO);
-  }
-
   @SelectProvider(type = SqlCommand.class, method = SqlCommand.COUNT_BY_DATATABLE)
   int countForDataTable(final DataTableFilterDTO dataTableFilterDTO);
-
-  default int countForSearchAndDataTable(
-      final String search,
-      final Set<String> searchColumns,
-      final DataTableFilterDTO dataTableFilterDTO) {
-    for (final String searchColumn : searchColumns) {
-      dataTableFilterDTO
-          .getFilter()
-          .put(MessageFormat.format("{0}:contains", searchColumn), search);
-    }
-    return this.countForDataTable(dataTableFilterDTO);
-  }
 }

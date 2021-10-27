@@ -4,7 +4,6 @@ import com.github.bestheroz.demo.api.code.CodeVO;
 import com.github.bestheroz.demo.entity.Admin;
 import com.github.bestheroz.demo.repository.AdminRepository;
 import com.github.bestheroz.demo.type.Page;
-import com.github.bestheroz.standard.common.mybatis.DataTableFilterDTO;
 import com.github.bestheroz.standard.common.response.ApiResult;
 import com.github.bestheroz.standard.common.response.Result;
 import java.util.List;
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -35,10 +33,8 @@ public class AdminController {
   }
 
   @GetMapping
-  public ResponseEntity<ApiResult<Page<AdminDTO>>> getItems(
-      @RequestParam(required = false) final String search,
-      final DataTableFilterDTO dataTableFilterDTO) {
-    return Result.ok(this.adminService.getAdmins(search, dataTableFilterDTO));
+  public ResponseEntity<ApiResult<Page<AdminDTO>>> getItems(final AdminFilter adminFilter) {
+    return Result.ok(this.adminService.getAdmins(adminFilter));
   }
 
   @PostMapping

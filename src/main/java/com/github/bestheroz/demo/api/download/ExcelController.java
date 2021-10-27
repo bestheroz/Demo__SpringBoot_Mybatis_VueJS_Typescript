@@ -1,11 +1,11 @@
 package com.github.bestheroz.demo.api.download;
 
+import com.github.bestheroz.demo.api.admin.AdminFilter;
 import com.github.bestheroz.demo.api.admin.AdminService;
 import com.github.bestheroz.demo.api.code.CodeVO;
 import com.github.bestheroz.demo.repository.AdminRepository;
 import com.github.bestheroz.standard.common.file.excel.ExcelService;
 import com.github.bestheroz.standard.common.file.excel.ExcelVO;
-import com.github.bestheroz.standard.common.mybatis.DataTableFilterDTO;
 import com.github.bestheroz.standard.context.abstractview.AbstractExcelXView;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +17,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("api/excel/")
@@ -31,10 +30,7 @@ public class ExcelController {
   private final AdminService adminService;
 
   @GetMapping(value = "admins")
-  public String excelAdmins(
-      final Model model,
-      @RequestParam(required = false) final String search,
-      final DataTableFilterDTO dataTableFilterDTO) {
+  public String excelAdmins(final Model model, final AdminFilter adminFilter) {
     final List<ExcelVO> excelVOList = new ArrayList<>();
 
     // header
@@ -47,10 +43,7 @@ public class ExcelController {
 
     // excel maker
     this.excelMaker(
-        model,
-        "Admin_List",
-        excelVOList,
-        this.adminService.getAdmins(search, dataTableFilterDTO).getContents());
+        model, "Admin_List", excelVOList, this.adminService.getAdmins(adminFilter).getContents());
 
     return ExcelService.VIEW_NAME;
   }
