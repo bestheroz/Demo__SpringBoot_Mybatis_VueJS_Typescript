@@ -1,6 +1,7 @@
 package com.github.bestheroz.standard.common.mybatis;
 
 import java.io.Serializable;
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -11,32 +12,38 @@ import org.apache.ibatis.annotations.SelectProvider;
 import org.apache.ibatis.annotations.UpdateProvider;
 
 public interface SqlRepository<T extends Serializable> {
-  @SelectProvider(type = SqlCommand.class, method = SqlCommand.SELECT_ITEMS)
-  List<T> getItems();
+  default List<T> getItems() {
+    return this.getItemsByMapWithOrder(Map.of(), List.of());
+  }
 
-  @SelectProvider(type = SqlCommand.class, method = SqlCommand.SELECT_ITEMS_WITH_ORDER)
-  List<T> getItemsWithOrder(final List<String> orderByConditions);
+  default List<T> getItemsWithOrder(final List<String> orderByConditions) {
+    return this.getItemsByMapWithOrder(Map.of(), orderByConditions);
+  }
 
-  @SelectProvider(type = SqlCommand.class, method = SqlCommand.SELECT_ITEMS_BY_MAP)
-  List<T> getItemsByMap(final Map<String, Object> whereConditions);
+  default List<T> getItemsByMap(final Map<String, Object> whereConditions) {
+    return this.getItemsByMapWithOrder(whereConditions, List.of());
+  }
 
   @SelectProvider(type = SqlCommand.class, method = SqlCommand.SELECT_ITEMS_BY_MAP_WITH_ORDER)
   List<T> getItemsByMapWithOrder(
       final Map<String, Object> whereConditions, List<String> orderByConditions);
 
-  @SelectProvider(type = SqlCommand.class, method = SqlCommand.SELECT_TARGET_ITEMS)
   // Target 시리즈를 사용하기 위해서는 Entity에 반드시 @NoArgsConstructor 가 필요하다
-  List<T> getTargetItems(final Set<String> targetColumns);
+  default List<T> getTargetItems(final Set<String> targetColumns) {
+    return this.getTargetItemsByMapWithOrder(targetColumns, Map.of(), List.of());
+  }
 
-  @SelectProvider(type = SqlCommand.class, method = SqlCommand.SELECT_TARGET_ITEMS_WITH_ORDER)
   // Target 시리즈를 사용하기 위해서는 Entity에 반드시 @NoArgsConstructor 가 필요하다
-  List<T> getTargetItemsWithOrder(
-      final Set<String> targetColumns, final List<String> orderByConditions);
+  default List<T> getTargetItemsWithOrder(
+      final Set<String> targetColumns, final List<String> orderByConditions) {
+    return this.getTargetItemsByMapWithOrder(targetColumns, Map.of(), orderByConditions);
+  }
 
-  @SelectProvider(type = SqlCommand.class, method = SqlCommand.SELECT_TARGET_ITEMS_BY_MAP)
   // Target 시리즈를 사용하기 위해서는 Entity에 반드시 @NoArgsConstructor 가 필요하다
-  List<T> getTargetItemsByMap(
-      final Set<String> targetColumns, final Map<String, Object> whereConditions);
+  default List<T> getTargetItemsByMap(
+      final Set<String> targetColumns, final Map<String, Object> whereConditions) {
+    return this.getTargetItemsByMapWithOrder(targetColumns, whereConditions, List.of());
+  }
 
   @SelectProvider(
       type = SqlCommand.class,
@@ -54,22 +61,9 @@ public interface SqlRepository<T extends Serializable> {
     return this.getItemByMap(Map.of("id", id));
   }
 
-  @SelectProvider(type = SqlCommand.class, method = SqlCommand.SELECT_ITEMS_BY_DATATABLE)
-  List<T> getItemsForDataTable(final DataTableFilterDTO dataTableFilterDTO);
-
-  @SelectProvider(type = SqlCommand.class, method = SqlCommand.SELECT_ITEMS_BY_SEARCH_AND_DATATABLE)
-  List<T> getItemsForSearchAndDataTable(
-      String search, Set<String> targetColumns, final DataTableFilterDTO dataTableFilterDTO);
-
-  @SelectProvider(type = SqlCommand.class, method = SqlCommand.COUNT_ALL)
-  int countAll();
-
-  @SelectProvider(type = SqlCommand.class, method = SqlCommand.COUNT_BY_DATATABLE)
-  int countForDataTable(final DataTableFilterDTO dataTableFilterDTO);
-
-  @SelectProvider(type = SqlCommand.class, method = SqlCommand.COUNT_BY_SEARCH_AND_DATATABLE)
-  int countForSearchAndDataTable(
-      String search, Set<String> targetColumns, final DataTableFilterDTO dataTableFilterDTO);
+  default int countAll() {
+    return this.countByMap(Map.of());
+  }
 
   @SelectProvider(type = SqlCommand.class, method = SqlCommand.COUNT_BY_MAP)
   int countByMap(final Map<String, Object> whereConditions);
@@ -99,5 +93,36 @@ public interface SqlRepository<T extends Serializable> {
 
   default void deleteById(final Long id) {
     this.deleteByMap(Map.of("id", id));
+  }
+
+  // vuetify DataTable 규격에 맞춰진 스펙
+  @SelectProvider(type = SqlCommand.class, method = SqlCommand.SELECT_ITEMS_BY_DATATABLE)
+  List<T> getItemsForDataTable(final DataTableFilterDTO dataTableFilterDTO);
+
+  default List<T> getItemsForSearchAndDataTable(
+      final String search,
+      final Set<String> searchColumns,
+      final DataTableFilterDTO dataTableFilterDTO) {
+    for (final String searchColumn : searchColumns) {
+      dataTableFilterDTO
+          .getFilter()
+          .put(MessageFormat.format("{0}:contains", searchColumn), search);
+    }
+    return this.getItemsForDataTable(dataTableFilterDTO);
+  }
+
+  @SelectProvider(type = SqlCommand.class, method = SqlCommand.COUNT_BY_DATATABLE)
+  int countForDataTable(final DataTableFilterDTO dataTableFilterDTO);
+
+  default int countForSearchAndDataTable(
+      final String search,
+      final Set<String> searchColumns,
+      final DataTableFilterDTO dataTableFilterDTO) {
+    for (final String searchColumn : searchColumns) {
+      dataTableFilterDTO
+          .getFilter()
+          .put(MessageFormat.format("{0}:contains", searchColumn), search);
+    }
+    return this.countForDataTable(dataTableFilterDTO);
   }
 }

@@ -18,7 +18,6 @@ import com.github.bestheroz.standard.common.util.AuthenticationUtils;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -69,18 +68,19 @@ public class MineService {
 
   private List<RoleMenuChildrenDTO> getChildren(final Role role, final Long parentId) {
     final Map<String, Object> params = new HashMap<>();
-    params.put("roleId", role.getId());
+    if (AuthenticationUtils.isNotSuperAdmin()) {
+      params.put("roleId", role.getId());
+    }
     params.put("parentId", parentId == null ? "@NULL" : parentId);
 
     final List<RoleMenuMap> items = this.roleMenuMapRepository.getItemsByMap(params);
+    if (items.size() == 0) {
+      return List.of();
+    }
     final List<Menu> menus =
         this.menuRepository.getItemsByMap(
             Map.of(
-                "id:in",
-                items.stream()
-                    .filter(Objects::nonNull)
-                    .map(RoleMenuMap::getMenuId)
-                    .collect(Collectors.toList())));
+                "id:in", items.stream().map(RoleMenuMap::getMenuId).collect(Collectors.toList())));
 
     return items.stream()
         .map(

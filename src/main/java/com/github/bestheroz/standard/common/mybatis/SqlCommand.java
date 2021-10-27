@@ -23,20 +23,11 @@ import org.springframework.lang.NonNull;
 
 @Slf4j
 public class SqlCommand {
-  public static final String SELECT_ITEMS = "getItems";
-  public static final String SELECT_ITEMS_WITH_ORDER = "getItemsWithOrder";
-  public static final String SELECT_ITEMS_BY_MAP = "getItemsByMap";
   public static final String SELECT_ITEMS_BY_MAP_WITH_ORDER = "getItemsByMapWithOrder";
-  public static final String SELECT_TARGET_ITEMS = "getTargetItems";
-  public static final String SELECT_TARGET_ITEMS_WITH_ORDER = "getTargetItemsWithOrder";
-  public static final String SELECT_TARGET_ITEMS_BY_MAP = "getTargetItemsByMap";
   public static final String SELECT_TARGET_ITEMS_BY_MAP_WITH_ORDER = "getTargetItemsByMapWithOrder";
   public static final String SELECT_ITEMS_BY_DATATABLE = "getItemsForDataTable";
-  public static final String SELECT_ITEMS_BY_SEARCH_AND_DATATABLE = "getItemsForSearchAndDataTable";
   public static final String SELECT_ITEM_BY_MAP = "getItemByMap";
-  public static final String COUNT_ALL = "countAll";
   public static final String COUNT_BY_DATATABLE = "countForDataTable";
-  public static final String COUNT_BY_SEARCH_AND_DATATABLE = "countForSearchAndDataTable";
   public static final String COUNT_BY_MAP = "countByMap";
   public static final String INSERT = "insert";
   public static final String INSERT_BATCH = "insertBatch";
@@ -116,29 +107,39 @@ public class SqlCommand {
           final String columnName = StringUtils.substringBefore(key, ":");
           final String conditionType =
               StringUtils.defaultString(StringUtils.substringAfter(key, ":"), "equals");
-          if (StringUtils.equals(conditionType, "in")) {
-            sql.WHERE(
-                MessageFormat.format(
-                    WHERE_IN_STRING,
-                    CaseUtils.getCamelCaseToSnakeCase(columnName),
+          if (StringUtils.equalsAny(conditionType, "in", "notIn")) {
+            final ArrayList value1 = (ArrayList) value;
+            if (value1.size() > 0) {
+              final String str;
+              if (value1.get(0) instanceof String) {
+                str =
                     StringUtils.defaultIfEmpty(
                         MapperUtils.toArrayList(value, String.class).stream()
                             .map(item -> "'" + item + "'")
                             .collect(Collectors.joining(",")),
-                        "''")));
-          } else if (conditionType.equals("notIn")) {
-            sql.WHERE(
-                MessageFormat.format(
-                    WHERE_NOT_IN_STRING,
-                    CaseUtils.getCamelCaseToSnakeCase(columnName),
+                        "''");
+              } else {
+                str =
                     StringUtils.defaultIfEmpty(
-                        MapperUtils.toArrayList(value, String.class).stream()
-                            .map(item -> "'" + item + "'")
-                            .collect(Collectors.joining(",")),
-                        "''")));
+                        String.join(",", MapperUtils.toArrayList(value, String.class)), "");
+              }
+              if (StringUtils.equals(conditionType, "in")) {
+                sql.WHERE(
+                    MessageFormat.format(
+                        WHERE_IN_STRING, CaseUtils.getCamelCaseToSnakeCase(columnName), str));
+              } else if (StringUtils.equals(conditionType, "notIn")) {
+                sql.WHERE(
+                    MessageFormat.format(
+                        WHERE_NOT_IN_STRING, CaseUtils.getCamelCaseToSnakeCase(columnName), str));
+              }
+            }
           } else if (value instanceof String && value.equals("@NULL")) {
             sql.WHERE(
-                MessageFormat.format("{0} = null", CaseUtils.getCamelCaseToSnakeCase(columnName)));
+                MessageFormat.format("{0} is null", CaseUtils.getCamelCaseToSnakeCase(columnName)));
+          } else if (value instanceof String && value.equals("@NOTNULL")) {
+            sql.WHERE(
+                MessageFormat.format(
+                    "{0} is not null", CaseUtils.getCamelCaseToSnakeCase(columnName)));
           } else {
             final String whereString = this.getWhereString(conditionType);
             sql.WHERE(
@@ -197,10 +198,6 @@ public class SqlCommand {
     return whereString;
   }
 
-  public String countAll() {
-    return this.countByMap(Map.of());
-  }
-
   public String countByMap(final Map<String, Object> whereConditions) {
     final SQL sql = new SQL();
     sql.SELECT("COUNT(1) AS CNT").FROM(this.getTableName());
@@ -218,17 +215,10 @@ public class SqlCommand {
                   try {
                     return (item.getClassName().startsWith("com.sun.proxy.$Proxy")
                         && List.of(
-                                SELECT_ITEMS,
-                                SELECT_ITEMS_WITH_ORDER,
-                                SELECT_ITEMS_BY_MAP,
                                 SELECT_ITEMS_BY_MAP_WITH_ORDER,
-                                SELECT_TARGET_ITEMS,
-                                SELECT_TARGET_ITEMS_WITH_ORDER,
-                                SELECT_TARGET_ITEMS_BY_MAP,
                                 SELECT_TARGET_ITEMS_BY_MAP_WITH_ORDER,
                                 SELECT_ITEMS_BY_DATATABLE,
                                 SELECT_ITEM_BY_MAP,
-                                COUNT_ALL,
                                 COUNT_BY_MAP,
                                 COUNT_BY_DATATABLE,
                                 INSERT,
@@ -271,17 +261,10 @@ public class SqlCommand {
                 item ->
                     (item.getClassName().startsWith("com.sun.proxy.$Proxy")
                         && List.of(
-                                SELECT_ITEMS,
-                                SELECT_ITEMS_WITH_ORDER,
-                                SELECT_ITEMS_BY_MAP,
                                 SELECT_ITEMS_BY_MAP_WITH_ORDER,
-                                SELECT_TARGET_ITEMS,
-                                SELECT_TARGET_ITEMS_WITH_ORDER,
-                                SELECT_TARGET_ITEMS_BY_MAP,
                                 SELECT_TARGET_ITEMS_BY_MAP_WITH_ORDER,
                                 SELECT_ITEMS_BY_DATATABLE,
                                 SELECT_ITEM_BY_MAP,
-                                COUNT_ALL,
                                 COUNT_BY_MAP,
                                 COUNT_BY_DATATABLE,
                                 INSERT,
@@ -306,35 +289,9 @@ public class SqlCommand {
     }
   }
 
-  public String getItems() {
-    return this.select(Map.of(), List.of());
-  }
-
-  public String getItemsWithOrder(final List<String> orderByConditions) {
-    return this.select(Map.of(), orderByConditions);
-  }
-
-  public String getItemsByMap(final Map<String, Object> whereConditions) {
-    return this.select(whereConditions, List.of());
-  }
-
   public String getItemsByMapWithOrder(
       final Map<String, Object> whereConditions, final List<String> orderByConditions) {
     return this.select(whereConditions, orderByConditions);
-  }
-
-  public String getTargetItems(final Set<String> targetColumns) {
-    return this.select(targetColumns, Map.of(), List.of());
-  }
-
-  public String getTargetItemsWithOrder(
-      final Set<String> targetColumns, final List<String> orderByConditions) {
-    return this.select(targetColumns, Map.of(), orderByConditions);
-  }
-
-  public String getTargetItemsByMap(
-      final Set<String> targetColumns, final Map<String, Object> whereConditions) {
-    return this.select(targetColumns, whereConditions, List.of());
   }
 
   public String getTargetItemsByMapWithOrder(
@@ -597,16 +554,6 @@ public class SqlCommand {
     return sql.toString();
   }
 
-  public String countForSearchAndDataTable(
-      final String search,
-      final List<String> targetColumns,
-      final DataTableFilterDTO dataTableFilterDTO) {
-    for (final String targetColumn : targetColumns) {
-      dataTableFilterDTO.getFilter().put(MessageFormat.format("{}:contains", targetColumn), search);
-    }
-    return this.countForDataTable(dataTableFilterDTO);
-  }
-
   public String getItemsForDataTable(final DataTableFilterDTO dataTableFilterDTO) {
     final SQL sql = new SQL();
     this.getSelectSql(sql, this.getEntityFields());
@@ -631,16 +578,6 @@ public class SqlCommand {
     }
     log.debug(sql.toString());
     return sql.toString();
-  }
-
-  public String getItemsForSearchAndDataTable(
-      final String search,
-      final List<String> targetColumns,
-      final DataTableFilterDTO dataTableFilterDTO) {
-    for (final String targetColumn : targetColumns) {
-      dataTableFilterDTO.getFilter().put(MessageFormat.format("{}:contains", targetColumn), search);
-    }
-    return this.getItemsForDataTable(dataTableFilterDTO);
   }
 
   private void requiredWhereConditions(final SQL sql) {
