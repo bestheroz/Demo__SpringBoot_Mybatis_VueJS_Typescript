@@ -5,11 +5,13 @@ import com.github.bestheroz.demo.entity.RoleMenuMap;
 import com.github.bestheroz.demo.repository.MenuRepository;
 import com.github.bestheroz.demo.repository.RoleMenuMapRepository;
 import com.github.bestheroz.standard.common.exception.BusinessException;
+import com.github.bestheroz.standard.common.util.MapperUtils;
 import com.github.bestheroz.standard.common.util.NullUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +38,7 @@ public class RoleMenuService {
                 roleMenuMaps.stream()
                     .filter(Objects::nonNull)
                     .map(RoleMenuMap::getMenuId)
-                    .collect(Collectors.toList())));
+                    .collect(Collectors.toSet())));
     return roleMenuMaps.stream()
         .map(
             r ->
@@ -53,14 +55,19 @@ public class RoleMenuService {
   private List<RoleMenuChildrenDTO> getChildren(final Long parentId) {
     final List<RoleMenuMap> roleMenuMaps =
         this.roleMenuMapRepository.getItemsByMap(Map.of("parentId", parentId));
-    final List<Menu> menus =
-        this.menuRepository.getItemsByMap(
-            Map.of(
-                "id:in",
-                roleMenuMaps.stream()
-                    .filter(Objects::nonNull)
-                    .map(RoleMenuMap::getMenuId)
-                    .collect(Collectors.toList())));
+    final Set<Long> menuSet =
+        roleMenuMaps.stream()
+            .filter(Objects::nonNull)
+            .map(RoleMenuMap::getMenuId)
+            .collect(Collectors.toSet());
+
+    final List<Menu> menus;
+    if (menuSet.isEmpty()) {
+      menus = List.of();
+    } else {
+      menus = this.menuRepository.getItemsByMap(Map.of("id:in", menuSet));
+    }
+
     return roleMenuMaps.stream()
         .map(
             r ->
@@ -76,6 +83,7 @@ public class RoleMenuService {
 
   public List<RoleMenuChildrenDTO> saveAll(
       final Long roleId, final List<RoleMenuChildrenDTO> payload) {
+    log.debug("payload: {}", MapperUtils.toString(payload));
     if (NullUtils.isEmpty(payload)) {
       this.roleMenuMapRepository.deleteByMap(Map.of("roleId", roleId));
     } else {
@@ -89,7 +97,7 @@ public class RoleMenuService {
                   payload.stream()
                       .map(RoleMenuChildrenDTO::getId)
                       .filter(Objects::nonNull)
-                      .collect(Collectors.toList()),
+                      .collect(Collectors.toSet()),
                   "parentId",
                   "@NULL"))
           .forEach(
@@ -100,11 +108,14 @@ public class RoleMenuService {
     }
     final List<RoleMenuMap> roleMenuMaps = new ArrayList<>();
     this.getFlatRoleMenuMapWithRecursiveChildren(roleMenuMaps, roleId, payload, null);
-    this.roleMenuMapRepository.insertBatch(
-        roleMenuMaps.stream().filter(r -> r.getId() == null).collect(Collectors.toList()));
+    final List<RoleMenuMap> entitiesForInsertBatch =
+        roleMenuMaps.stream().filter(r -> r.getId() == null).collect(Collectors.toList());
+    if (!entitiesForInsertBatch.isEmpty()) {
+      this.roleMenuMapRepository.insertBatch(entitiesForInsertBatch);
+    }
     roleMenuMaps.stream()
         .filter(r -> r.getId() != null)
-        .forEach(r -> this.roleMenuMapRepository.updateById(r, r.getId()));
+        .forEach(r -> this.roleMenuMapRepository.updateMapById(MapperUtils.toMap(r), r.getId()));
     return this.getItems(roleId);
   }
 

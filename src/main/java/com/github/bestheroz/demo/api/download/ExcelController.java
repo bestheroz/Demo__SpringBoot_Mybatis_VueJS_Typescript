@@ -43,7 +43,7 @@ public class ExcelController {
 
     // excel maker
     this.excelMaker(
-        model, "Admin_List", excelVOList, this.adminService.getAdmins(adminFilter).getContents());
+        model, "Admin_List", excelVOList, this.adminService.getAdmins(adminFilter).getContent());
 
     return ExcelService.VIEW_NAME;
   }

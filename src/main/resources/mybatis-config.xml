@@ -7,4 +7,9 @@
         <setting name="logImpl" value="SLF4J"/>
     </settings>
 
+    <typeHandlers>
+        <typeHandler handler="com.github.bestheroz.standard.common.mybatis.typehandler.ListTypeHandler"/>
+        <typeHandler handler="com.github.bestheroz.standard.common.mybatis.typehandler.SetTypeHandler"/>
+    </typeHandlers>
+
 </configuration>

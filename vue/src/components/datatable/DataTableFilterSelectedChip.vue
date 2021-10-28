@@ -23,6 +23,7 @@
           v-model="filter"
           from-chip
           @closed="isOpen = false"
+          @change="$emit('change')"
         />
       </v-card>
     </v-menu>

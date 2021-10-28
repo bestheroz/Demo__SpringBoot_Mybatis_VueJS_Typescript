@@ -8,10 +8,10 @@ import lombok.Data;
 @AllArgsConstructor
 public class Page<T> {
   private int totalElements;
-  private List<T> contents;
+  private List<T> content;
 
   public Page(final int totalElements) {
     this.totalElements = totalElements;
-    this.contents = List.of();
+    this.content = List.of();
   }
 }

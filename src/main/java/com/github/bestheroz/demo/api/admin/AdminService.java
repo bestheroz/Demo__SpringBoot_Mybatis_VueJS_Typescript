@@ -26,6 +26,7 @@ public class AdminService {
 
   @Transactional(readOnly = true)
   public Page<AdminDTO> getAdmins(final AdminFilter adminFilter) {
+    adminFilter.getFilter().put("roleId:notEqual", 1);
     if (adminFilter.getRoleId().isEmpty() && AuthenticationUtils.isNotSuperAdmin()) {
       adminFilter
           .getFilter()
@@ -54,7 +55,7 @@ public class AdminService {
                                     admins.stream()
                                         .filter(Objects::nonNull)
                                         .map(Admin::getRoleId)
-                                        .collect(Collectors.toList())))
+                                        .collect(Collectors.toSet())))
                             .stream()
                             .filter(r -> r.getId().equals(admin.getRoleId()))
                             .findFirst()

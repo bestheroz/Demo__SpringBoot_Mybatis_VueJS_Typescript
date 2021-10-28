@@ -94,9 +94,7 @@ public class ExcelService extends AbstractExcelXView {
       for (int j = 0; j < excelVOs.size(); j++) {
         Object value = data;
         for (final String key : StringUtils.split(excelVOs.get(j).getCellKey(), ".")) {
-          log.debug("getSimpleName: {}", value.getClass().getSimpleName());
           if (Objects.nonNull(value)) {
-            log.debug("value: {}", value);
             if (value instanceof HashMap) {
               value = ((Map<String, Object>) value).get(key);
             } else if (!value.getClass().isPrimitive()
@@ -104,7 +102,6 @@ public class ExcelService extends AbstractExcelXView {
                 && !(value instanceof ArrayList)) {
               value = (MapperUtils.toMap(value)).get(key);
             }
-            log.debug("value2: {}", value);
           }
         }
         if (Objects.nonNull(value)) {

@@ -73,8 +73,7 @@ public class MineService {
       final List<Menu> menus =
           this.menuRepository.getItemsByMap(
               Map.of(
-                  "id:in",
-                  items.stream().map(RoleMenuMap::getMenuId).collect(Collectors.toList())));
+                  "id:in", items.stream().map(RoleMenuMap::getMenuId).collect(Collectors.toSet())));
 
       return items.stream()
           .map(

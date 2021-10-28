@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
@@ -99,103 +100,6 @@ public class SqlCommand {
       log.warn("whereConditions is empty");
       throw BusinessException.FAIL_NO_DATA_SUCCESS;
     }
-  }
-
-  private void getWhereSql(final SQL sql, final Map<String, Object> whereConditions) {
-    whereConditions.forEach(
-        (key, value) -> {
-          final String columnName = StringUtils.substringBefore(key, ":");
-          final String conditionType =
-              StringUtils.defaultString(StringUtils.substringAfter(key, ":"), "equals");
-          if (StringUtils.equalsAny(conditionType, "in", "notIn")) {
-            final ArrayList value1 = (ArrayList) value;
-            if (!value1.isEmpty()) {
-              final String str;
-              if (value1.get(0) instanceof String) {
-                str =
-                    StringUtils.defaultIfEmpty(
-                        MapperUtils.toArrayList(value, String.class).stream()
-                            .map(item -> "'" + item + "'")
-                            .collect(Collectors.joining(",")),
-                        "''");
-              } else {
-                str =
-                    StringUtils.defaultIfEmpty(
-                        String.join(",", MapperUtils.toArrayList(value, String.class)), "");
-              }
-              if (StringUtils.equals(conditionType, "in")) {
-                sql.WHERE(
-                    MessageFormat.format(
-                        WHERE_IN_STRING, CaseUtils.getCamelCaseToSnakeCase(columnName), str));
-              } else if (StringUtils.equals(conditionType, "notIn")) {
-                sql.WHERE(
-                    MessageFormat.format(
-                        WHERE_NOT_IN_STRING, CaseUtils.getCamelCaseToSnakeCase(columnName), str));
-              }
-            }
-          } else if (value instanceof String && value.equals("@NULL")) {
-            sql.WHERE(
-                MessageFormat.format("{0} is null", CaseUtils.getCamelCaseToSnakeCase(columnName)));
-          } else if (value instanceof String && value.equals("@NOTNULL")) {
-            sql.WHERE(
-                MessageFormat.format(
-                    "{0} is not null", CaseUtils.getCamelCaseToSnakeCase(columnName)));
-          } else {
-            final String whereString = this.getWhereString(conditionType);
-            sql.WHERE(
-                MessageFormat.format(
-                    this.getRepositoryMethodParamLength() == 1
-                        ? whereString.replace("whereConditions.", "")
-                        : whereString,
-                    CaseUtils.getCamelCaseToSnakeCase(columnName),
-                    columnName,
-                    this.getJdbcType(value)));
-          }
-        });
-  }
-
-  private String getWhereString(final String conditionType) {
-    final String whereString;
-    switch (conditionType) {
-      case "contains":
-        whereString = WHERE_CONTAINS_STRING;
-        break;
-      case "notEqual":
-      case "booleanNotEqual":
-        whereString = WHERE_NOT_EQUALS_STRING;
-        break;
-      case "notContains":
-        whereString = WHERE_NOT_CONTAINS_STRING;
-        break;
-      case "startsWith":
-        whereString = WHERE_STARTS_WITH_STRING;
-        break;
-      case "endsWith":
-        whereString = WHERE_ENDS_WITH_STRING;
-        break;
-      case "lessThan":
-        whereString = WHERE_LESS_THAN_STRING;
-        break;
-      case "lessThanOrEqual":
-        whereString = WHERE_LESS_THAN_EQUALS_STRING;
-        break;
-      case "greaterThan":
-        whereString = WHERE_GREATER_THAN_STRING;
-        break;
-      case "greaterThanOrEqual":
-        whereString = WHERE_GREATER_THAN_EQUALS_STRING;
-        break;
-      case "in":
-        whereString = WHERE_IN_STRING;
-        break;
-      case "notIn":
-        whereString = WHERE_NOT_IN_STRING;
-        break;
-      default:
-        whereString = WHERE_EQUALS_STRING;
-        break;
-    }
-    return whereString;
   }
 
   public String countByMap(final Map<String, Object> whereConditions) {
@@ -416,10 +320,17 @@ public class SqlCommand {
                       values.add("'" + AuthenticationUtils.getId() + "'");
                     } else {
                       final Object o = entity.get(column);
-                      values.add(
-                          o == null
-                              ? "null"
-                              : o instanceof String ? MessageFormat.format("''{0}''", o) : o);
+                      final String value;
+                      if (o == null) {
+                        value = "null";
+                      } else if (o instanceof String) {
+                        value = MessageFormat.format("''{0}''", o);
+                      } else if (o instanceof Set || o instanceof List) {
+                        value = MapperUtils.toJsonArray(o).toString();
+                      } else {
+                        value = o.toString();
+                      }
+                      values.add(value);
                     }
                   });
               if (!values.contains(VARIABLE_NAME_CREATED)
@@ -485,8 +396,28 @@ public class SqlCommand {
       log.warn("whereConditions is empty");
       throw BusinessException.ERROR_SYSTEM;
     }
+    // jdbcType=JSON 보정
     log.debug(sql.toString());
-    return sql.toString();
+    String sqlStr = sql.toString();
+    final String[] splits = StringUtils.split(sqlStr, "jdbcType=JSON}");
+    final int length = splits.length;
+    if (length > 0) {
+      final AtomicInteger index = new AtomicInteger(0);
+      sqlStr =
+          Arrays.stream(splits)
+              .map(
+                  s -> {
+                    if (index.get() < length) {
+                      index.getAndIncrement();
+                      return StringUtils.substringBeforeLast(s, "#{param1.");
+                    } else {
+                      return s;
+                    }
+                  })
+              .collect(Collectors.joining());
+    }
+    log.debug(sqlStr);
+    return sqlStr;
   }
 
   public String updateMapByMap(
@@ -496,14 +427,61 @@ public class SqlCommand {
     final SQL sql = new SQL();
     sql.UPDATE(this.getTableName());
     updateMap.forEach(
-        (javaFieldName, value) ->
+        (javaFieldName, value) -> {
+          final String dbColumnName = CaseUtils.getCamelCaseToSnakeCase(javaFieldName);
+          log.debug("typeof: {}", value.getClass());
+          log.debug("value instanceof Set: {}", value instanceof Set);
+          log.debug("value instanceof List: {}", value instanceof List);
+          if (value instanceof Set) {
+            final Set<?> value1 = (Set<?>) value;
+            if (value1.isEmpty()) {
+              sql.SET(MessageFormat.format("{0} = []", dbColumnName));
+            } else {
+              sql.SET(
+                  MessageFormat.format(
+                      "{0} = ''{1}''",
+                      dbColumnName,
+                      "["
+                          + value1.stream()
+                              .map(
+                                  v -> {
+                                    if (v instanceof String) {
+                                      return MessageFormat.format("\"{0}\"", v);
+                                    } else {
+                                      return v.toString();
+                                    }
+                                  })
+                              .collect(Collectors.joining(","))
+                          + "]"));
+            }
+          } else if (value instanceof List) {
+            final List<?> value1 = (List<?>) value;
+            if (value1.isEmpty()) {
+              sql.SET(MessageFormat.format("{0} = []", dbColumnName));
+            } else {
+              sql.SET(
+                  MessageFormat.format(
+                      "{0} = ''{1}''",
+                      dbColumnName,
+                      "["
+                          + value1.stream()
+                              .map(
+                                  v -> {
+                                    if (v instanceof String) {
+                                      return MessageFormat.format("\"{0}\"", v);
+                                    } else {
+                                      return v.toString();
+                                    }
+                                  })
+                              .collect(Collectors.joining(","))
+                          + "]"));
+            }
+          } else {
             sql.SET(
                 MessageFormat.format(
-                    SET_STRING,
-                    CaseUtils.getCamelCaseToSnakeCase(javaFieldName),
-                    javaFieldName,
-                    this.getJdbcType(value),
-                    1)));
+                    SET_STRING, dbColumnName, javaFieldName, this.getJdbcType(value), 1));
+          }
+        });
 
     whereConditions.forEach(
         (key, value) ->
@@ -520,6 +498,7 @@ public class SqlCommand {
       log.warn("whereConditions is empty");
       throw BusinessException.ERROR_SYSTEM;
     }
+    // jdbcType=JSON 보정
     log.debug(sql.toString());
     return sql.toString();
   }
@@ -623,6 +602,8 @@ public class SqlCommand {
       jdbcType = ", jdbcType=BOOLEAN";
     } else if (object instanceof Byte[]) {
       jdbcType = ", jdbcType=BLOB";
+    } else if (object instanceof Set || object instanceof List) {
+      jdbcType = ", jdbcType=JSON";
     } else if (object == null) {
       jdbcType = ", jdbcType=NULL";
     } else {
@@ -632,6 +613,102 @@ public class SqlCommand {
     return jdbcType;
   }
 
+  private String getWhereString(final String conditionType) {
+    final String whereString;
+    switch (conditionType) {
+      case "contains":
+        whereString = WHERE_CONTAINS_STRING;
+        break;
+      case "notEqual":
+      case "booleanNotEqual":
+        whereString = WHERE_NOT_EQUALS_STRING;
+        break;
+      case "notContains":
+        whereString = WHERE_NOT_CONTAINS_STRING;
+        break;
+      case "startsWith":
+        whereString = WHERE_STARTS_WITH_STRING;
+        break;
+      case "endsWith":
+        whereString = WHERE_ENDS_WITH_STRING;
+        break;
+      case "lessThan":
+        whereString = WHERE_LESS_THAN_STRING;
+        break;
+      case "lessThanOrEqual":
+        whereString = WHERE_LESS_THAN_EQUALS_STRING;
+        break;
+      case "greaterThan":
+        whereString = WHERE_GREATER_THAN_STRING;
+        break;
+      case "greaterThanOrEqual":
+        whereString = WHERE_GREATER_THAN_EQUALS_STRING;
+        break;
+      case "in":
+        whereString = WHERE_IN_STRING;
+        break;
+      case "notIn":
+        whereString = WHERE_NOT_IN_STRING;
+        break;
+      default:
+        whereString = WHERE_EQUALS_STRING;
+        break;
+    }
+    return whereString;
+  }
+
+  private void getWhereSql(final SQL sql, final Map<String, Object> whereConditions) {
+    whereConditions.forEach(
+        (key, value) -> {
+          final String columnName = StringUtils.substringBefore(key, ":");
+          final String conditionType =
+              StringUtils.defaultString(StringUtils.substringAfter(key, ":"), "equals");
+          if (StringUtils.equalsAny(conditionType, "in", "notIn")) {
+            final Set<?> value1 = (Set<?>) value;
+            if (!value1.isEmpty()) {
+              final String str;
+              final Object[] toArray = value1.toArray();
+              if (toArray[0] instanceof String) {
+                str =
+                    StringUtils.defaultIfEmpty(
+                        Arrays.stream(toArray)
+                            .map(item -> "'" + item + "'")
+                            .collect(Collectors.joining(",")),
+                        "''");
+              } else {
+                str = StringUtils.defaultIfEmpty(StringUtils.join(toArray, ","), "");
+              }
+              if (StringUtils.equals(conditionType, "in")) {
+                sql.WHERE(
+                    MessageFormat.format(
+                        WHERE_IN_STRING, CaseUtils.getCamelCaseToSnakeCase(columnName), str));
+              } else if (StringUtils.equals(conditionType, "notIn")) {
+                sql.WHERE(
+                    MessageFormat.format(
+                        WHERE_NOT_IN_STRING, CaseUtils.getCamelCaseToSnakeCase(columnName), str));
+              }
+            }
+          } else if (value instanceof String && value.equals("@NULL")) {
+            sql.WHERE(
+                MessageFormat.format("{0} is null", CaseUtils.getCamelCaseToSnakeCase(columnName)));
+          } else if (value instanceof String && value.equals("@NOTNULL")) {
+            sql.WHERE(
+                MessageFormat.format(
+                    "{0} is not null", CaseUtils.getCamelCaseToSnakeCase(columnName)));
+          } else {
+            final String whereString = this.getWhereString(conditionType);
+            sql.WHERE(
+                MessageFormat.format(
+                    this.getRepositoryMethodParamLength() == 1
+                        ? whereString.replace("whereConditions.", "")
+                        : whereString,
+                    CaseUtils.getCamelCaseToSnakeCase(columnName),
+                    columnName,
+                    this.getJdbcType(value)));
+          }
+        });
+  }
+
   private void getWhereBoundSql(final SQL sql, final Map<String, Object> whereConditions) {
     whereConditions.forEach(
         (key, value) -> {
@@ -639,20 +716,19 @@ public class SqlCommand {
           final String conditionType =
               StringUtils.defaultString(StringUtils.substringAfter(key, ":"), "equals");
           if (StringUtils.equalsAny(conditionType, "in", "notIn")) {
-            final ArrayList value1 = (ArrayList) value;
+            final Set<?> value1 = (Set<?>) value;
             if (!value1.isEmpty()) {
               final String str;
-              if (value1.get(0) instanceof String) {
+              final Object[] toArray = value1.toArray();
+              if (toArray[0] instanceof String) {
                 str =
                     StringUtils.defaultIfEmpty(
-                        MapperUtils.toArrayList(value, String.class).stream()
+                        Arrays.stream(toArray)
                             .map(item -> "'" + item + "'")
                             .collect(Collectors.joining(",")),
                         "''");
               } else {
-                str =
-                    StringUtils.defaultIfEmpty(
-                        String.join(",", MapperUtils.toArrayList(value, String.class)), "");
+                str = StringUtils.defaultIfEmpty(StringUtils.join(toArray, ","), "");
               }
               if (conditionType.equals("in")) {
                 sql.WHERE(
@@ -675,7 +751,8 @@ public class SqlCommand {
             String whereString = this.getWhereString(conditionType);
             whereString = whereString.replace("whereConditions.", "");
             whereString = whereString.replace("{0}", CaseUtils.getCamelCaseToSnakeCase(columnName));
-            if (StringUtils.countMatches(((String) value), '-') == 2
+            if (value instanceof String
+                && StringUtils.countMatches(((String) value), '-') == 2
                 && StringUtils.countMatches(((String) value), ':') == 2
                 && StringUtils.countMatches(((String) value), 'T') == 1
                 && StringUtils.endsWith(((String) value), "Z")) {
@@ -687,10 +764,10 @@ public class SqlCommand {
                               String.valueOf(Instant.parse((String) value).toEpochMilli() / 1000))
                           + ")");
             } else {
-              if (conditionType.startsWith("boolean")) {
-                whereString = whereString.replace("#'{'{1}{2}'}'", (String) value);
-              } else {
+              if (value instanceof String) {
                 whereString = whereString.replace("#'{'{1}{2}'}'", "'" + value + "'");
+              } else {
+                whereString = whereString.replace("#'{'{1}{2}'}'", value.toString());
               }
             }
             sql.WHERE(whereString);

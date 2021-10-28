@@ -17,7 +17,7 @@ public class DataTableFilterDTO {
   private Map<String, Object> filter = new HashMap<>();
   private long page;
   private List<String> sortBy = new ArrayList<>();
-  private short itemsPerPage;
+  private int itemsPerPage;
 
   private String search;
 

@@ -24,10 +24,10 @@ public class AdminFilter extends DataTableFilterDTO {
   @Override
   public Map<String, Object> getFilter() {
     if (!this.available.isEmpty()) {
-      super.getFilter().put("available:in", this.available);
+      super.getFilter().put("available:in", Set.copyOf(this.available));
     }
     if (!this.roleId.isEmpty()) {
-      super.getFilter().put("roleId:in", this.roleId);
+      super.getFilter().put("roleId:in", Set.copyOf(this.roleId));
     }
     return super.getFilter();
   }

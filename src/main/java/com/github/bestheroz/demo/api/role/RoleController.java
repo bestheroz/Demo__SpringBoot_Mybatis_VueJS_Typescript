@@ -41,7 +41,7 @@ public class RoleController {
   public ResponseEntity<ApiResult<RoleChildrenDTO>> post(
       @RequestParam(required = false) final Long parentId,
       @RequestBody @Valid final RoleSimpleDTO payload) {
-    final Role role = payload.toRole();
+    final Role role = payload.toRole(9_999_999);
     role.setParentId(parentId);
     this.roleRepository.insert(role);
     return Result.created(this.roleService.getItem(role.getId()));

@@ -88,6 +88,10 @@ public interface SqlRepository<T extends Serializable> {
   void updateMapByMap(
       final Map<String, Object> updateMap, final Map<String, Object> whereConditions);
 
+  default void updateMapById(final Map<String, Object> updateMap, final Long id) {
+    this.updateMapByMap(updateMap, Map.of("id", id));
+  }
+
   @DeleteProvider(type = SqlCommand.class, method = SqlCommand.DELETE_BY_MAP)
   void deleteByMap(final Map<String, Object> whereConditions);
 

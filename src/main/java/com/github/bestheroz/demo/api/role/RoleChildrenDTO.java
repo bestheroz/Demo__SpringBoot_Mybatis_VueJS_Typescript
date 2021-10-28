@@ -1,6 +1,7 @@
 package com.github.bestheroz.demo.api.role;
 
 import com.github.bestheroz.demo.entity.Role;
+import com.github.bestheroz.demo.entity.Role.RoleBuilder;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,12 +40,15 @@ public class RoleChildrenDTO {
   }
 
   public Role toRole(final Role parent, final Integer displayOrder) {
-    return Role.builder()
-        .id(this.id)
-        .name(this.name)
-        .available(this.available)
-        .parentId(parent.getId())
-        .displayOrder(displayOrder)
-        .build();
+    final RoleBuilder roleBuilder =
+        Role.builder()
+            .id(this.id)
+            .name(this.name)
+            .available(this.available)
+            .displayOrder(displayOrder);
+    if (parent != null) {
+      roleBuilder.parentId(parent.getId());
+    }
+    return roleBuilder.build();
   }
 }

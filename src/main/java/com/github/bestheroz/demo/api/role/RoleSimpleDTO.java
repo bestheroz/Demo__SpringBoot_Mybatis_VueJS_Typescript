@@ -44,8 +44,13 @@ public class RoleSimpleDTO {
     this.updatedBy = dto.getUpdatedBy();
   }
 
-  public Role toRole() {
-    return Role.builder().id(this.id).name(this.name).available(this.available).build();
+  public Role toRole(final Integer displayOrder) {
+    return Role.builder()
+        .id(this.id)
+        .name(this.name)
+        .available(this.available)
+        .displayOrder(displayOrder)
+        .build();
   }
 
   public Role toRole(final Long parentId, final Integer displayOrder) {

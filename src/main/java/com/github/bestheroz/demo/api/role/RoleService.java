@@ -7,9 +7,11 @@ import com.github.bestheroz.standard.common.util.AuthenticationUtils;
 import com.github.bestheroz.standard.common.util.NullUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -54,7 +56,7 @@ public class RoleService {
                   payload.stream()
                       .map(RoleChildrenDTO::getId)
                       .filter(Objects::nonNull)
-                      .collect(Collectors.toList()),
+                      .collect(Collectors.toSet()),
                   "parentId",
                   "@NULL"))
           .forEach(
@@ -91,8 +93,8 @@ public class RoleService {
     }
   }
 
-  public List<Long> getFlatRoleIdsByIdWithRecursiveChildren(final Long id) {
-    final List<Long> roleIdList = new ArrayList<>();
+  public Set<Long> getFlatRoleIdsByIdWithRecursiveChildren(final Long id) {
+    final Set<Long> roleIdList = new HashSet<>();
     this.roleRepository
         .getItemById(id)
         .ifPresent(
@@ -103,7 +105,7 @@ public class RoleService {
     return roleIdList;
   }
 
-  private void getFlatRoleIdsWithRecursiveChildren(final List<Long> result, final Long parentId) {
+  private void getFlatRoleIdsWithRecursiveChildren(final Set<Long> result, final Long parentId) {
     for (final Role child : this.roleRepository.getItemsByMap(Map.of("parentId", parentId))) {
       result.add(child.getId());
       this.getFlatRoleIdsWithRecursiveChildren(result, child.getId());
@@ -112,7 +114,7 @@ public class RoleService {
 
   @Transactional(readOnly = true)
   public List<RoleSimpleDTO> getSelections(final Boolean available) {
-    final List<Long> ids;
+    final Set<Long> ids;
     if (AuthenticationUtils.isSuperAdmin()) {
       ids = null;
     } else {
