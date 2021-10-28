@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +31,6 @@ public class SqlCommand {
   public static final String COUNT_BY_MAP = "countByMap";
   public static final String INSERT = "insert";
   public static final String INSERT_BATCH = "insertBatch";
-  public static final String UPDATE_BY_MAP = "updateByMap";
   public static final String UPDATE_MAP_BY_MAP = "updateMapByMap";
   public static final String DELETE_BY_MAP = "deleteByMap";
   public static final Set<String> VARCHAR_JAVA_TYPE_SET = Set.of("String", "Char");
@@ -126,7 +124,6 @@ public class SqlCommand {
                                 COUNT_BY_MAP,
                                 COUNT_BY_DATATABLE,
                                 INSERT,
-                                UPDATE_BY_MAP,
                                 UPDATE_MAP_BY_MAP,
                                 DELETE_BY_MAP)
                             .contains(item.getMethodName())
@@ -172,7 +169,6 @@ public class SqlCommand {
                                 COUNT_BY_MAP,
                                 COUNT_BY_DATATABLE,
                                 INSERT,
-                                UPDATE_BY_MAP,
                                 UPDATE_MAP_BY_MAP,
                                 DELETE_BY_MAP)
                             .contains(item.getMethodName())))
@@ -353,71 +349,6 @@ public class SqlCommand {
             .collect(Collectors.joining("), (")));
     log.debug(sql.toString());
     return sql.toString();
-  }
-
-  public <T> String updateByMap(final T entity, final Map<String, Object> whereConditions) {
-    this.verifyWhereKey(whereConditions);
-
-    final SQL sql = new SQL();
-    sql.UPDATE(getTableName(entity.getClass().getSimpleName()));
-    final Map<String, Object> param = MapperUtils.toMap(entity);
-    this.getEntityFields(entity).stream()
-        .filter(
-            fieldName ->
-                !StringUtils.equalsAny(
-                    fieldName,
-                    VARIABLE_NAME_CREATED_BY,
-                    VARIABLE_NAME_CREATED,
-                    VARIABLE_NAME_UPDATED,
-                    VARIABLE_NAME_UPDATED_BY))
-        .filter(fieldName -> !whereConditions.containsKey(fieldName))
-        .forEach(
-            javaFieldName ->
-                sql.SET(
-                    MessageFormat.format(
-                        SET_STRING,
-                        CaseUtils.getCamelCaseToSnakeCase(javaFieldName),
-                        javaFieldName,
-                        this.getJdbcType(param.get(javaFieldName)),
-                        1)));
-
-    whereConditions.forEach(
-        (key, value) ->
-            sql.WHERE(
-                MessageFormat.format(
-                    WHERE_EQUALS_STRING,
-                    CaseUtils.getCamelCaseToSnakeCase(key),
-                    key,
-                    this.getJdbcType(value),
-                    2)));
-
-    this.getUpdateSetSql(sql, this.getEntityFields(entity));
-    if (!StringUtils.containsIgnoreCase(sql.toString(), "WHERE ")) {
-      log.warn("whereConditions is empty");
-      throw BusinessException.ERROR_SYSTEM;
-    }
-    // jdbcType=JSON 보정
-    log.debug(sql.toString());
-    String sqlStr = sql.toString();
-    final String[] splits = StringUtils.split(sqlStr, "jdbcType=JSON}");
-    final int length = splits.length;
-    if (length > 0) {
-      final AtomicInteger index = new AtomicInteger(0);
-      sqlStr =
-          Arrays.stream(splits)
-              .map(
-                  s -> {
-                    if (index.get() < length) {
-                      index.getAndIncrement();
-                      return StringUtils.substringBeforeLast(s, "#{param1.");
-                    } else {
-                      return s;
-                    }
-                  })
-              .collect(Collectors.joining());
-    }
-    log.debug(sqlStr);
-    return sqlStr;
   }
 
   public String updateMapByMap(

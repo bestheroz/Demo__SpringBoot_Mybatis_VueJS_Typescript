@@ -1,5 +1,6 @@
 package com.github.bestheroz.standard.common.mybatis;
 
+import com.github.bestheroz.standard.common.util.MapperUtils;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
@@ -78,11 +79,12 @@ public interface SqlRepository<T extends Serializable> {
   void insertBatch(final List<T> entities);
 
   default void updateById(final T entity, final Long id) {
-    this.updateByMap(entity, Map.of("id", id));
+    this.updateMapByMap(MapperUtils.toMap(entity), Map.of("id", id));
   }
 
-  @UpdateProvider(type = SqlCommand.class, method = SqlCommand.UPDATE_BY_MAP)
-  void updateByMap(final T entity, final Map<String, Object> whereConditions);
+  default void updateByMap(final T entity, final Map<String, Object> whereConditions) {
+    this.updateMapByMap(MapperUtils.toMap(entity), whereConditions);
+  }
 
   @UpdateProvider(type = SqlCommand.class, method = SqlCommand.UPDATE_MAP_BY_MAP)
   void updateMapByMap(

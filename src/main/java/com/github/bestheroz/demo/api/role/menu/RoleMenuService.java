@@ -115,7 +115,7 @@ public class RoleMenuService {
     }
     roleMenuMaps.stream()
         .filter(r -> r.getId() != null)
-        .forEach(r -> this.roleMenuMapRepository.updateMapById(MapperUtils.toMap(r), r.getId()));
+        .forEach(r -> this.roleMenuMapRepository.updateById(r, r.getId()));
     return this.getItems(roleId);
   }
 
