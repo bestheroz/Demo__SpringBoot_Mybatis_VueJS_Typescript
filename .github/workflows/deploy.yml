@@ -12,7 +12,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [ ubuntu-20.04 ]
+        os: [ ubuntu-latest ]
         node-version: [ 14 ]
         java-version: [ 11 ]
 
@@ -48,6 +48,7 @@ jobs:
       - name: Set up JDK ${{ matrix.java-version }}
         uses: actions/setup-java@main
         with:
+          distribution: 'adopt'
           java-version: ${{ matrix.java-version }}
 
       - name: Cache Gradle
