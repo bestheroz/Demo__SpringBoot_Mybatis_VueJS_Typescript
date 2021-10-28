@@ -5,9 +5,9 @@ import com.github.bestheroz.demo.entity.RoleMenuMap;
 import com.github.bestheroz.demo.repository.MenuRepository;
 import com.github.bestheroz.demo.repository.RoleMenuMapRepository;
 import com.github.bestheroz.standard.common.exception.BusinessException;
-import com.github.bestheroz.standard.common.util.MapperUtils;
 import com.github.bestheroz.standard.common.util.NullUtils;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -83,28 +83,18 @@ public class RoleMenuService {
 
   public List<RoleMenuChildrenDTO> saveAll(
       final Long roleId, final List<RoleMenuChildrenDTO> payload) {
-    log.debug("payload: {}", MapperUtils.toString(payload));
     if (NullUtils.isEmpty(payload)) {
       this.roleMenuMapRepository.deleteByMap(Map.of("roleId", roleId));
     } else {
-      final List<Long> delete_ids = new ArrayList<>();
-      this.roleMenuMapRepository
-          .getItemsByMap(
-              Map.of(
-                  "roleId",
-                  roleId,
-                  "id:notIn",
-                  payload.stream()
-                      .map(RoleMenuChildrenDTO::getId)
-                      .filter(Objects::nonNull)
-                      .collect(Collectors.toSet()),
-                  "parentId",
-                  "@NULL"))
+      final Set<Long> exist_ids = new HashSet<>();
+      payload.stream()
+          .filter(r -> r.getId() != null)
           .forEach(
               r -> {
-                delete_ids.add(r.getId());
-                this.getDeleteIds(delete_ids, r.getId());
+                exist_ids.add(r.getId());
+                this.getExistIds(exist_ids, r.getChildren());
               });
+      this.roleMenuMapRepository.deleteByMap(Map.of("roleId", roleId, "id:notIn", exist_ids));
     }
     final List<RoleMenuMap> roleMenuMaps = new ArrayList<>();
     this.getFlatRoleMenuMapWithRecursiveChildren(roleMenuMaps, roleId, payload, null);
@@ -119,14 +109,12 @@ public class RoleMenuService {
     return this.getItems(roleId);
   }
 
-  private void getDeleteIds(final List<Long> delete_ids, final Long id) {
-    this.roleMenuMapRepository
-        .getItemsByMap(Map.of("parentId", id))
-        .forEach(
-            r -> {
-              delete_ids.add(r.getId());
-              this.getDeleteIds(delete_ids, r.getId());
-            });
+  private void getExistIds(final Set<Long> exist_ids, final List<RoleMenuChildrenDTO> children) {
+    children.forEach(
+        r -> {
+          exist_ids.add(r.getId());
+          this.getExistIds(exist_ids, r.getChildren());
+        });
   }
 
   public void getFlatRoleMenuMapWithRecursiveChildren(

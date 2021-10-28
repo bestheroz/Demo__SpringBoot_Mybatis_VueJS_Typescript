@@ -322,7 +322,7 @@ public class SqlCommand {
                       } else if (o instanceof String) {
                         value = MessageFormat.format("''{0}''", o);
                       } else if (o instanceof Set || o instanceof List) {
-                        value = MapperUtils.toJsonArray(o).toString();
+                        value = "'" + MapperUtils.toJsonArray(o).toString() + "'";
                       } else {
                         value = o.toString();
                       }
@@ -359,10 +359,15 @@ public class SqlCommand {
     sql.UPDATE(this.getTableName());
     updateMap.forEach(
         (javaFieldName, value) -> {
+          if (StringUtils.equalsAny(
+              javaFieldName,
+              VARIABLE_NAME_CREATED_BY,
+              VARIABLE_NAME_CREATED,
+              VARIABLE_NAME_UPDATED,
+              VARIABLE_NAME_UPDATED_BY)) {
+            return;
+          }
           final String dbColumnName = CaseUtils.getCamelCaseToSnakeCase(javaFieldName);
-          log.debug("typeof: {}", value.getClass());
-          log.debug("value instanceof Set: {}", value instanceof Set);
-          log.debug("value instanceof List: {}", value instanceof List);
           if (value instanceof Set) {
             final Set<?> value1 = (Set<?>) value;
             if (value1.isEmpty()) {

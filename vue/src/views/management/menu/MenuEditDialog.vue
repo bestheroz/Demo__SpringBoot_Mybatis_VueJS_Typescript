@@ -139,7 +139,7 @@ export default class extends Vue {
     const response = await postApi<Menu>("menus/", this.vModel);
     this.loading = false;
     if (response.code.startsWith("S")) {
-      await this.$store.dispatch("reloadRole");
+      this.$store.dispatch("reloadRole").then();
       this.syncedDialog = false;
       this.$emit("created", response.data);
     }
@@ -150,7 +150,7 @@ export default class extends Vue {
     const response = await putApi<Menu>(`menus/${this.vModel.id}`, this.vModel);
     this.loading = false;
     if (response.code.startsWith("S")) {
-      await this.$store.dispatch("reloadRole");
+      this.$store.dispatch("reloadRole").then();
       this.syncedDialog = false;
       this.$emit("updated", response.data);
     }

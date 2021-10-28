@@ -113,13 +113,23 @@ export default class extends Vue {
     const result = await confirmDelete(`메뉴명: ${value.name}`);
     if (result.value) {
       this.saving = true;
+
       const response = await deleteApi<Menu>(`menus/${value.id}`);
       this.saving = false;
       if (response.code.startsWith("S")) {
-        await this.$store.dispatch("reloadRole");
-        this.items = this.items.filter((item) => item.id !== value.id);
+        this.$store.dispatch("reloadRole").then();
+        this.items = this.deleteWithRecursiveChildren(this.items, value);
       }
     }
+  }
+
+  protected deleteWithRecursiveChildren(menus: Menu[], menu: Menu): Menu[] {
+    return menus
+      .filter((item) => item.id !== menu.id)
+      .map((m) => {
+        m.children = this.deleteWithRecursiveChildren(m.children, menu);
+        return m;
+      });
   }
 
   public async saveAll(): Promise<void> {
@@ -127,7 +137,7 @@ export default class extends Vue {
     const response = await postApi<Menu[]>("menus/save-all/", this.items);
     this.saving = false;
     if (response.code.startsWith("S")) {
-      await this.$store.dispatch("reloadRole");
+      this.$store.dispatch("reloadRole").then();
       this.items = response.data || [];
     }
   }
