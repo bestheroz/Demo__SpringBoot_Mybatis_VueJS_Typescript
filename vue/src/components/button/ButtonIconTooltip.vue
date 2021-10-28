@@ -9,8 +9,7 @@
       <template #activator="{ on, attrs }">
         <v-btn
           :color="color"
-          icon
-          @click="onClick"
+          @click="$emit('click')"
           v-bind="attrs"
           v-on="on"
           :disabled="disabled"
@@ -19,8 +18,16 @@
           :x-small="xSmall"
           :large="large"
           :x-large="xLarge"
+          :block="block"
         >
-          <v-icon :size="size" v-text="icon" />
+          <v-icon
+            v-text="icon"
+            :size="size"
+            :small="small"
+            :x-small="xSmall"
+            :large="large"
+            :x-large="xLarge"
+          />
         </v-btn>
       </template>
       <span v-text="text" />
@@ -29,16 +36,15 @@
 </template>
 
 <script lang="ts">
-import { Component, Emit, Prop, Vue } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-property-decorator";
 
 @Component({
-  name: "ButtonIconTooltip",
   components: {},
 })
 export default class extends Vue {
   @Prop({ required: true }) readonly icon!: string;
   @Prop({ required: true }) readonly text!: string;
-  @Prop({}) readonly color!: string;
+  @Prop({ default: "primary" }) readonly color!: string;
   @Prop({ type: Boolean }) readonly disabled!: boolean;
   @Prop({ type: Boolean }) readonly loading!: boolean;
   @Prop({ type: Boolean }) readonly bottom!: boolean;
@@ -49,15 +55,11 @@ export default class extends Vue {
   @Prop({ type: Boolean }) readonly xSmall!: boolean;
   @Prop({ type: Boolean }) readonly large!: boolean;
   @Prop({ type: Boolean }) readonly xLarge!: boolean;
+  @Prop({ type: Boolean }) readonly block!: boolean;
   @Prop({}) readonly size!: number | string;
 
   get defaultPosition(): boolean {
     return !this.top && !this.bottom && !this.right && !this.left;
-  }
-
-  @Emit("click")
-  protected onClick(): void {
-    // pass
   }
 }
 </script>

@@ -1,39 +1,51 @@
 import Vue from "vue";
 import Vuex, { ActionContext } from "vuex";
 import createPersistedState from "vuex-persistedstate";
-import { DrawerItem, SelectItem, TableMemberEntity } from "@/common/types";
-import { axiosInstance, getApi, postApi } from "@/utils/apis";
-/* eslint-disable camelcase */
+import { Drawer, SelectItem } from "@/definitions/types";
+// eslint-disable-next-line camelcase
 import jwt_decode from "jwt-decode";
-/* eslint-enable camelcase */
-import axios from "axios";
-import envs from "@/constants/envs";
-import router from "@/router";
-import { defaultUser } from "@/common/values";
+import type { AdminConfig, Role, RoleMenuMap } from "@/definitions/models";
+import Vuetify from "./plugins/vuetify";
+import { ROLE_AUTHORITY_TYPE } from "@/definitions/selections";
+import config from "./configs";
+import {
+  getAccessToken,
+  getAdminCodes,
+  getCurrentAuthority,
+  getDrawersFromRoleMenuMaps,
+  getFlatRoleMenuMaps,
+  signOut,
+  uploadConfig,
+} from "@/utils/commands";
+import { defaultAdminConfig } from "@/definitions/defaults";
+import { getApi } from "@/utils/apis";
 
 Vue.use(Vuex);
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-const user = {
+const admin = {
   state: {
-    user: defaultUser(),
+    id: 0,
+    adminId: "",
+    name: "",
+    roleId: 0,
     accessToken: null,
     refreshToken: null,
   },
   getters: {
-    user: (state: any) => {
+    roleId: (state: any) => {
+      return state.roleId;
+    },
+    admin: (state: any) => {
       return {
-        id: state.user.id,
-        name: state.user.name,
-        authority: state.user.authority,
-        theme: state.user.theme,
+        id: state.id,
+        adminId: state.adminId,
+        name: state.name,
+        roleId: state.roleId,
       };
     },
     loggedIn: (state: any): boolean => {
-      return !!state.user.id && !!state.accessToken && !!state.refreshToken;
-    },
-    theme: (state: any): string => {
-      return state.user.theme || "light";
+      return !!state.id && !!state.accessToken && !!state.refreshToken;
     },
     accessToken: (state: any): string | null => {
       return state.accessToken;
@@ -43,50 +55,44 @@ const user = {
     },
   },
   mutations: {
-    setUser(state: any, user: TableMemberEntity): void {
-      state.user = user;
-    },
-    setTheme(state: any, theme: string): void {
-      state.user.theme = theme;
-    },
     setAccessToken(state: any, accessToken: string): void {
-      const jwt = jwt_decode<{
-        exp: number;
-        userPk: string;
-        userVO: string;
-      }>(accessToken);
-      state.user = JSON.parse(jwt.userVO);
-      state.accessToken = accessToken;
+      try {
+        const jwt = jwt_decode<{
+          exp: number;
+          adminId: string;
+          admin: string;
+        }>(accessToken);
+        const admin = JSON.parse(jwt.admin);
+        state.id = admin.id;
+        state.adminId = admin.adminId;
+        state.name = admin.name;
+        state.roleId = admin.roleId;
+        state.accessToken = accessToken;
+      } catch (e: unknown) {
+        signOut();
+      }
     },
     setRefreshToken(state: any, refreshToken: string): void {
       state.refreshToken = refreshToken;
     },
+    setAdmin: (
+      state: any,
+      admin: {
+        id: number;
+        adminId: string;
+        name: string;
+        roleId: number;
+      },
+    ) => {
+      state.id = admin.id;
+      state.adminId = admin.adminId;
+      state.name = admin.name;
+      state.roleId = admin.roleId;
+      state.accessToken = null;
+      state.refreshToken = null;
+    },
   },
   actions: {
-    toggleTheme: async function ({
-      commit,
-      getters,
-    }: ActionContext<any, any>): Promise<void> {
-      let theme;
-      if (getters.theme === "dark") {
-        theme = "light";
-      } else {
-        theme = "dark";
-      }
-      await postApi<{
-        theme: string;
-      }>(
-        "members/mine/changeTheme/",
-        {
-          theme: theme,
-        },
-        false,
-      );
-      commit("setTheme", theme);
-    },
-    clearUser({ commit }: ActionContext<any, any>): void {
-      commit("setUser", defaultUser());
-    },
     saveToken(
       { commit }: ActionContext<any, any>,
       payload: { accessToken: string; refreshToken: string },
@@ -94,106 +100,215 @@ const user = {
       commit("setAccessToken", payload.accessToken);
       commit("setRefreshToken", payload.refreshToken);
     },
-    async reissueAccessToken({
+    async reIssueAccessToken({
       commit,
       getters,
     }: ActionContext<any, any>): Promise<void> {
-      const response = await axios
-        .create({
-          baseURL: envs.API_HOST,
-          headers: {
-            contentType: "application/json",
-            Authorization: getters.accessToken,
-            AuthorizationR: getters.refreshToken,
-          },
-        })
-        .get("api/auth/refreshToken");
-      await commit("setAccessToken", response?.data?.data);
+      await commit(
+        "setAccessToken",
+        await getAccessToken(getters.accessToken, getters.refreshToken),
+      );
     },
   },
 };
 
-const drawer = {
+const config1 = {
   state: {
-    drawers: null,
-    selected: null,
+    globalTheme: config.theme.globalTheme as "light" | "dark",
+    toolbarTheme: config.theme.toolbarTheme as "global" | "light" | "dark",
+    menuTheme: config.theme.menuTheme as "global" | "light" | "dark",
+    toolbarDetached: config.theme.isToolbarDetached,
+    contentBoxed: config.theme.isContentBoxed,
+    primaryColor: config.theme.light.primary,
   },
   getters: {
-    drawers: (state: any): DrawerItem[] => {
-      return state.drawers || [];
+    config: (state: AdminConfig): AdminConfig => {
+      return {
+        ...state,
+      };
     },
-    selected: (state: any): number | null => {
-      return state.selected || null;
+    globalTheme: (state: AdminConfig): "light" | "dark" => {
+      Vuetify.framework.theme.dark = state.globalTheme === "dark";
+      return state.globalTheme;
+    },
+    menuTheme: (state: AdminConfig): "global" | "light" | "dark" => {
+      return state.menuTheme;
+    },
+    toolbarTheme: (state: AdminConfig): "global" | "light" | "dark" => {
+      return state.toolbarTheme;
+    },
+    isToolbarDetached: (state: AdminConfig): boolean => {
+      return state.toolbarDetached;
+    },
+    isContentBoxed: (state: AdminConfig): boolean => {
+      return state.contentBoxed;
+    },
+    primaryColor: (state: AdminConfig): string => {
+      return state.primaryColor;
     },
   },
   mutations: {
-    setDrawers(state: any, drawers: DrawerItem[]): void {
-      state.drawers = drawers;
+    setGlobalTheme: (state: AdminConfig, globalTheme: "light" | "dark") => {
+      state.globalTheme = globalTheme;
     },
-    setSelected(state: any, selected: number): void {
-      state.selected = selected;
+    setContentBoxed: (state: AdminConfig, isContentBoxed: boolean) => {
+      state.contentBoxed = isContentBoxed;
+    },
+    setMenuTheme: (state: any, menuTheme: "global" | "light" | "dark") => {
+      state.menuTheme = menuTheme;
+    },
+    setToolbarTheme: (
+      state: AdminConfig,
+      toolbarTheme: "global" | "light" | "dark",
+    ) => {
+      state.toolbarTheme = toolbarTheme;
+    },
+    setToolbarDetached: (state: AdminConfig, isToolbarDetached: boolean) => {
+      state.toolbarDetached = isToolbarDetached;
+    },
+    setPrimaryColor: (state: AdminConfig, primaryColor: string) => {
+      state.primaryColor = primaryColor;
+    },
+    setConfig: (state: AdminConfig, config: AdminConfig) => {
+      state.globalTheme = config.globalTheme;
+      state.contentBoxed = config.contentBoxed;
+      state.menuTheme = config.menuTheme;
+      state.toolbarTheme = config.toolbarTheme;
+      state.toolbarDetached = config.toolbarDetached;
+      state.primaryColor = config.primaryColor;
     },
   },
   actions: {
-    async initDrawers({ commit }: ActionContext<any, any>): Promise<void> {
-      const response = await getApi<DrawerItem[]>("menus/drawer");
-      commit("setDrawers", response?.data);
+    setGlobalTheme: async (
+      { commit, getters }: ActionContext<any, any>,
+      globalTheme: "light" | "dark",
+    ) => {
+      commit("setGlobalTheme", globalTheme);
+      uploadConfig(getters.config);
     },
-    clearDrawer({ commit }: ActionContext<any, any>): void {
-      commit("setDrawers", null);
+    setContentBoxed: async (
+      { commit, getters }: ActionContext<any, any>,
+      isContentBoxed: boolean,
+    ) => {
+      commit("setContentBoxed", isContentBoxed);
+      uploadConfig(getters.config);
     },
-    setMenuSelected(
-      { commit }: ActionContext<any, any>,
-      selected: number,
-    ): void {
-      commit("setSelected", selected);
+    setMenuTheme: async (
+      { commit, getters }: ActionContext<any, any>,
+      menuTheme: "global" | "light" | "dark",
+    ) => {
+      commit("setMenuTheme", menuTheme);
+      uploadConfig(getters.config);
     },
-    clearMenuSelected({ commit }: ActionContext<any, any>): void {
-      commit("setSelected", null);
+    setToolbarTheme: async (
+      { commit, getters }: ActionContext<any, any>,
+      toolbarTheme: "global" | "light" | "dark",
+    ) => {
+      commit("setToolbarTheme", toolbarTheme);
+      uploadConfig(getters.config);
+    },
+    setToolbarDetached: async (
+      { commit, getters }: ActionContext<any, any>,
+      isToolbarDetached: boolean,
+    ) => {
+      commit("setToolbarDetached", isToolbarDetached);
+      uploadConfig(getters.config);
+    },
+    setPrimaryColor: async (
+      { commit, getters }: ActionContext<any, any>,
+      primaryColor: string,
+    ) => {
+      commit("setPrimaryColor", primaryColor);
+      uploadConfig(getters.config);
+    },
+    reloadConfig: ({ commit, getters }: ActionContext<any, any>) => {
+      commit("setConfig", defaultAdminConfig());
+      if (getters.loggedIn) {
+        uploadConfig(getters.config);
+      }
     },
   },
 };
-
+const authority = {
+  state: {
+    superAdminFlag: false,
+    drawers: [],
+    flatAuthorities: [],
+    currentAuthority: null,
+    writeAuthority: false,
+    deleteAuthority: false,
+    excelAuthority: false,
+  },
+  getters: {
+    drawers: (state: any): Drawer[] => {
+      return state.drawers;
+    },
+    currentAuthority: (state: any): RoleMenuMap => {
+      return state.currentAuthority;
+    },
+    flatAuthorities: (state: any): RoleMenuMap[] => {
+      return state.flatAuthorities;
+    },
+    isSuperAdmin: (state: any): boolean => {
+      return state.superAdminFlag;
+    },
+    writeAuthority: (state: any): boolean => {
+      return state.writeAuthority || state.superAdminFlag;
+    },
+    deleteAuthority: (state: any): boolean => {
+      return state.deleteAuthority || state.superAdminFlag;
+    },
+    excelAuthority: (state: any): boolean => {
+      return state.excelAuthority || state.superAdminFlag;
+    },
+  },
+  mutations: {
+    setRole(state: any, role: Role): void {
+      if (role) {
+        state.superAdminFlag = role.id === 1;
+        state.drawers = getDrawersFromRoleMenuMaps(role.maps);
+        state.flatAuthorities = getFlatRoleMenuMaps(role.maps);
+      }
+    },
+    reloadCurrentAuthority(state: any, path: string): void {
+      state.currentAuthority = getCurrentAuthority(path);
+      const authoritiesJson = state.currentAuthority?.authoritiesJson || [];
+      state.writeAuthority = authoritiesJson.includes(
+        ROLE_AUTHORITY_TYPE.WRITE,
+      );
+      state.deleteAuthority = authoritiesJson.includes(
+        ROLE_AUTHORITY_TYPE.DELETE,
+      );
+      state.excelAuthority = authoritiesJson.includes(
+        ROLE_AUTHORITY_TYPE.EXCEL,
+      );
+    },
+  },
+  actions: {
+    async reloadRole({ commit }: ActionContext<any, any>): Promise<void> {
+      // eslint-disable-next-line no-undef
+      const response = await getApi<Role>("mine/role");
+      commit("setRole", response.data);
+    },
+  },
+};
 const codes = {
   state: {
-    memberCodes: null,
+    adminCodes: null,
   },
   getters: {
-    memberCodes: (state: any): SelectItem[] => {
-      return state.memberCodes || [];
+    adminCodes: (state: any): SelectItem<number>[] => {
+      return state.adminCodes || [];
     },
   },
   mutations: {
-    setMemberCodes(state: any, memberCodes: SelectItem[]): void {
-      state.memberCodes = memberCodes;
+    setAdminCodes(state: any, adminCodes: SelectItem<number>[]): void {
+      state.adminCodes = adminCodes;
     },
   },
   actions: {
-    async initMemberCodes({ commit }: ActionContext<any, any>): Promise<void> {
-      const response = await getApi<SelectItem[]>("members/codes");
-      commit("setMemberCodes", response?.data);
-    },
-    clearCache({ commit }: ActionContext<any, any>): void {
-      commit("setMemberCodes", null);
-    },
-  },
-};
-const command = {
-  state: {},
-  mutations: {},
-  actions: {
-    async needLogin(): Promise<void> {
-      if (router.currentRoute.path !== "/login") {
-        await router.push("/login?login=need");
-      }
-    },
-    async logout(): Promise<void> {
-      try {
-        axiosInstance.delete(`${envs.API_HOST}api/auth/logout`).then();
-      } catch (e) {
-        console.error(e);
-      }
-      await router.push("/login").then();
+    async reloadAdminCodes({ commit }: ActionContext<any, any>): Promise<void> {
+      commit("setAdminCodes", await getAdminCodes());
     },
   },
 };
@@ -201,10 +316,10 @@ const command = {
 export default new Vuex.Store({
   strict: true,
   modules: {
-    user,
-    drawer,
+    admin,
+    config1,
+    authority,
     codes,
-    command,
   },
   plugins: [createPersistedState()],
 });

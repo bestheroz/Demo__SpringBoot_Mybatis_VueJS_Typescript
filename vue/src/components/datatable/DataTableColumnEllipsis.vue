@@ -42,7 +42,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
-import _, { DebouncedFunc } from "lodash";
+import { debounce, DebouncedFunc, uniqueId } from "lodash-es";
 
 @Component({ name: "DataTableColumnEllipsis" })
 export default class extends Vue {
@@ -53,8 +53,8 @@ export default class extends Vue {
     | number;
   show = false;
 
-  readonly textEllipsisTargetId = _.uniqueId("text-ellipsis-target-");
-  readonly debounce: DebouncedFunc<() => Record<string, never>> = _.debounce(
+  readonly textEllipsisTargetId = uniqueId("text-ellipsis-target-");
+  readonly debounce: DebouncedFunc<() => Record<string, never>> = debounce(
     this.debounceTextEllipsis,
     100,
   );

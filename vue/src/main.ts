@@ -7,6 +7,7 @@ import "./plugins/vee-validate";
 import "./plugins/vue-filter";
 import "./plugins/sentry";
 import dotenv from "dotenv";
+import "./assets/scss/theme.scss";
 
 Vue.config.productionTip = false;
 

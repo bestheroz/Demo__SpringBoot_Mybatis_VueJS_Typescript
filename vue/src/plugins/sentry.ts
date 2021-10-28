@@ -1,18 +1,17 @@
-import * as Sentry from "@sentry/browser";
-import { Vue as VueIntegration } from "@sentry/integrations";
+import * as Sentry from "@sentry/vue";
 import { Integrations } from "@sentry/tracing";
 import Vue from "vue";
+import envs from "@/constants/envs";
 
-if (process.env.VUE_APP_SENTRY_DSN) {
+if (envs.SENTRY_DSN && envs.ENVIRONMENT !== "local") {
   Sentry.init({
-    dsn: process.env.VUE_APP_SENTRY_DSN,
-    integrations: [
-      new Integrations.BrowserTracing(),
-      new VueIntegration({
-        Vue,
-        tracing: true,
-      }),
-    ],
-    tracesSampleRate: process.env.NODE_ENV === "production" ? 0.1 : 1.0, // Be sure to lower this in production
+    Vue: Vue,
+    dsn: envs.SENTRY_DSN,
+    environment: envs.ENVIRONMENT,
+    integrations: [new Integrations.BrowserTracing()],
+    tracesSampleRate: envs.ENVIRONMENT === "production" ? 1.0 : 1.0, // Be sure to lower this in production
+    tracingOptions: {
+      trackComponents: true,
+    },
   });
 }

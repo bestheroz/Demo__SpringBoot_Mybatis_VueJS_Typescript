@@ -1,15 +1,21 @@
 .swal2-container {
+  font-family: Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto,
+    "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR",
+    "Malgun Gothic", sans-serif !important;
+
   .swal2-popup {
     background-color: var(--v-background-base);
   }
 
   .swal2-title {
-    color: var(--v-text-base);
+    color: var(--v-primary-base);
   }
 
-  .swal2-content {
-    color: var(--v-text-base);
-    font-weight: 800;
+  .swal2-html-container {
+    color: var(--v-warning-base);
+  }
+  .swal2-actions {
+    margin-top: 1rem !important;
   }
   .swal2-popup {
     &.swal2-toast {
@@ -17,6 +23,11 @@
     }
   }
   .swal2-timer-progress-bar {
-    background-color: var(--v-text-base);
+    background-color: var(--v-secondary-base);
+  }
+
+  .swal2-validation-message {
+    color: var(--v-error-base);
+    background-color: var(--v-background-base);
   }
 }

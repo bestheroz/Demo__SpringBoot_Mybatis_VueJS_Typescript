@@ -1,19 +1,23 @@
-import axios, { AxiosError } from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 import envs from "@/constants/envs";
-import { errorPage } from "@/utils/errors";
 import store from "@/store";
 import { toastError, toastSuccess } from "@/utils/alerts";
+import { goSignInPage } from "@/utils/commands";
+import { Code } from "@/definitions/models";
 
 export const axiosInstance = axios.create({
   baseURL: envs.API_HOST,
   headers: {
-    contentType: "application/json",
-    Authorization: store.getters.accessToken,
+    "Content-Type": "application/json;charset=UTF-8",
   },
 });
 
 axiosInstance.interceptors.request.use(
   function (config) {
+    if (!config.headers) {
+      console.error("Failed to set 'request headers' : headers is not exist");
+      return;
+    }
     config.headers.Authorization = store.getters.accessToken;
     return config;
   },
@@ -27,20 +31,21 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   async function (error: AxiosError) {
-    if (error?.message === "Network Error") {
+    if (error.message === "Network Error") {
       toastError("Service Unavailable");
       return;
     }
-    if (error?.response) {
+    if (error.response) {
       if (error.response.headers.refreshtoken === "must") {
         const refreshToken = await apiRefreshToken(error);
         return refreshToken && axios.request(refreshToken.config);
       }
-      if ([400, 401].includes(error.response?.status)) {
-        await store.dispatch("needLogin");
+      if ([400, 401].includes(error.response.status)) {
+        await goSignInPage();
         return;
       } else if ([403, 404, 500].includes(error.response.status)) {
-        await errorPage(error.response.status);
+        console.error(error.response.data);
+        toastError(error.message);
         return;
       }
     }
@@ -52,119 +57,128 @@ axiosInstance.interceptors.response.use(
   },
 );
 
-export interface ApiDataResult<T> {
+export interface ApiDataResult<T = unknown> {
   code: string;
-  data?: T;
+  data: T;
   message: string;
-  paginationTotalLength?: number;
 }
 
-export async function getApi<T>(url: string): Promise<ApiDataResult<T>> {
-  const response = await axiosInstance.get<ApiDataResult<T>>(`api/${url}`);
-  return response?.data;
-}
-
-export async function postApi<T>(
+export async function getApi<T = never, R = T>(
   url: string,
-  data: T,
+  failAlert = true,
+): Promise<ApiDataResult<R>> {
+  const response = await axiosInstance.get<T, AxiosResponse<ApiDataResult<R>>>(
+    `api/${url}`,
+  );
+  if (!response.data.code.startsWith("S") && failAlert) {
+    alertResponseMessage(response.data);
+  }
+  return response.data;
+}
+
+export async function postApi<T = never, R = T>(
+  url: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any,@typescript-eslint/explicit-module-boundary-types
+  data: any,
   alert = true,
-): Promise<ApiDataResult<T>> {
-  const response = await axiosInstance.post<ApiDataResult<T>>(
+): Promise<ApiDataResult<R>> {
+  const response = await axiosInstance.post<T, AxiosResponse<ApiDataResult<R>>>(
     `api/${url}`,
     data,
   );
   // response.status === 201
   if (alert) {
-    alertResponseMessage(response?.data);
+    alertResponseMessage(response.data);
   }
-  return response?.data;
+  return response.data;
 }
 
-export async function putApi<T>(
+export async function putApi<T = never, R = T>(
   url: string,
-  data: T,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any,@typescript-eslint/explicit-module-boundary-types
+  data: any,
   alert = true,
-): Promise<ApiDataResult<T>> {
-  const response = await axiosInstance.put<ApiDataResult<T>>(
+): Promise<ApiDataResult<R>> {
+  const response = await axiosInstance.put<T, AxiosResponse<ApiDataResult<R>>>(
     `api/${url}`,
     data,
   );
   // response.status === 200
   if (alert) {
-    alertResponseMessage(response?.data);
+    alertResponseMessage(response.data);
   }
-  return response?.data;
+  return response.data;
 }
 
-export async function patchApi<T>(
+export async function patchApi<T = never, R = T>(
   url: string,
-  data: T,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any,@typescript-eslint/explicit-module-boundary-types
+  data: any,
   alert = true,
-): Promise<ApiDataResult<T>> {
-  const response = await axiosInstance.patch<ApiDataResult<T>>(
-    `api/${url}`,
-    data,
-  );
+): Promise<ApiDataResult<R>> {
+  const response = await axiosInstance.patch<
+    T,
+    AxiosResponse<ApiDataResult<R>>
+  >(`api/${url}`, data);
   // response.status === 200
   if (alert) {
-    alertResponseMessage(response?.data);
+    alertResponseMessage(response.data);
   }
-  return response?.data;
+  return response.data;
 }
 
-export async function deleteApi<T>(
+export async function deleteApi<T = never, R = T>(
   url: string,
   alert = true,
-): Promise<ApiDataResult<T>> {
-  const response = await axiosInstance.delete(`api/${url}`);
+): Promise<ApiDataResult<R>> {
+  const response = await axiosInstance.delete<
+    T,
+    AxiosResponse<ApiDataResult<R>>
+  >(`api/${url}`);
   // response.status === 204
   if (alert) {
-    alertResponseMessage(response?.data);
+    alertResponseMessage(response.data);
   }
-  return response?.data;
+  return response.data;
 }
 
-export async function getCodesApi<SelectItem>(
-  codeGroup: string,
-): Promise<SelectItem[]> {
-  const item = window.localStorage.getItem(`code__${codeGroup}`);
+export async function getCodesApi(type: string): Promise<Code[]> {
+  const item = window.localStorage.getItem(`code__${type}`);
   if (item) {
     return JSON.parse(item);
   } else {
     try {
-      const response = await axiosInstance.get<ApiDataResult<SelectItem[]>>(
-        `api/codes/${codeGroup}`,
-      );
-      const result = response?.data?.data || [];
+      const response = await axiosInstance.get<
+        string,
+        AxiosResponse<ApiDataResult<Code[]>>
+      >(`api/v1/codes/?type=${type}&available=true`);
+      const result = response.data.data || [];
       if (result.length > 0) {
-        window.localStorage.setItem(
-          `code__${codeGroup}`,
-          JSON.stringify(result),
-        );
+        window.localStorage.setItem(`code__${type}`, JSON.stringify(result));
       }
       return result;
     } catch (error) {
-      // console.warn(getErrorResult(error).message);
       return [];
     }
   }
 }
 
-export async function getVariableApi<T = string>(
-  variable: string,
+export async function getEnvironmentApi<T = string>(
+  key: string,
 ): Promise<T | null> {
-  const item = window.localStorage.getItem(`variable__${variable}`);
+  const item = window.localStorage.getItem(`environment__${key}`);
   if (item) {
     return JSON.parse(item);
   } else {
     try {
-      const response = await axiosInstance.get<ApiDataResult<T>>(
-        `api/variables/${variable}`,
-      );
-      const result = response?.data?.data || null;
+      const response = await axiosInstance.get<
+        T,
+        AxiosResponse<ApiDataResult<T>>
+      >(`api/v1/environments/${key}`);
+      const result = response.data.data || null;
       if (result) {
         window.localStorage.setItem(
-          `variable__${variable}`,
+          `environment__${key}`,
           JSON.stringify(result),
         );
       }
@@ -184,78 +198,92 @@ function alertResponseMessage(data: ApiDataResult<unknown>): void {
   }
 }
 
-const axiosInstanceForExcel = axios.create({
-  baseURL: envs.API_HOST,
-  responseType: "blob",
-  headers: {
-    Authorization: store.getters.accessToken,
-    "Content-Type":
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-  },
-});
+export async function uploadFileApi<T = string>(
+  url: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any,@typescript-eslint/explicit-module-boundary-types
+  formData: FormData,
+  alert = false,
+): Promise<ApiDataResult<T>> {
+  const response = await axiosInstance.post<
+    FormData,
+    AxiosResponse<ApiDataResult<T>>
+  >(`${envs.FILE_API_HOST}api/${url}`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  // response.status === 201
+  if (alert) {
+    alertResponseMessage(response.data);
+  }
+  return response.data;
+}
 
-axiosInstanceForExcel.interceptors.request.use(
-  function (config) {
-    config.headers.Authorization = store.getters.accessToken;
-    return config;
-  },
-  function (error) {
-    alertAxiosError(error);
-    return Promise.reject(error);
-  },
-);
-
-axiosInstanceForExcel.interceptors.response.use(
-  function (response) {
-    return response;
-  },
-  async function (error: AxiosError) {
-    if (error?.message === "Network Error") {
-      toastError("Service Unavailable");
-      return;
-    }
-    if (error?.response) {
-      if ([400, 401].includes(error.response?.status)) {
-        if (error.response.headers.refreshtoken === "must") {
-          const refreshToken = await apiRefreshToken(error);
-          return refreshToken && axios.request(refreshToken.config);
-        }
-        await store.dispatch("needLogin");
-        return;
-      } else if (
-        error.response.status === 404 &&
-        error.response.headers.refreshtoken === "must"
-      ) {
-        // 로컬환경때문에 추가
-        const refreshToken = await apiRefreshToken(error);
-        return refreshToken && axios.request(refreshToken.config);
-      }
-      // 404는 그냥... 로그보면서 판단하자
-      if ([403, 500].includes(error.response.status)) {
-        await errorPage(error.response.status);
-        return;
-      }
-    }
-    alertAxiosError(error);
-    return Promise.reject(error);
-  },
-);
-
-export async function getExcelApi(url: string): Promise<void> {
-  const response = await axiosInstanceForExcel.get<Blob>(`api/${url}`);
+export async function downloadFileApi(
+  url: string,
+  contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+): Promise<void> {
+  const response = await axiosInstance.get<Blob>(
+    `${envs.FILE_API_HOST}api/${url}`,
+    {
+      responseType: "blob",
+      headers: {
+        "Content-Type": contentType,
+      },
+    },
+  );
   const newUrl = window.URL.createObjectURL(
-    new Blob([response?.data], { type: response.headers["content-type"] }),
+    new Blob([response.data], { type: response.headers["content-type"] }),
   );
   const tempLink = document.createElement("a");
   tempLink.style.display = "none";
   tempLink.href = newUrl;
+  const contentDisposition = response.headers["content-disposition"];
   tempLink.setAttribute(
     "download",
-    response.headers["content-disposition"]
-      .split("=")
-      .pop()
-      .split(";")
-      .join(""),
+    (contentDisposition
+      ? contentDisposition
+          .split("=")
+          .pop()
+          ?.split(";")
+          .join("")
+          // eslint-disable-next-line
+          .split('"')
+          .join("")
+      : url.split("/").pop()) || "",
+  );
+  document.body.appendChild(tempLink);
+  tempLink.click();
+  document.body.removeChild(tempLink);
+  window.URL.revokeObjectURL(newUrl);
+}
+export async function downloadExcelApi(url: string): Promise<void> {
+  const response = await axiosInstance.get<Blob>(`api/${url}`, {
+    responseType: "blob",
+    headers: {
+      "Content-Type":
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    },
+  });
+  const newUrl = window.URL.createObjectURL(
+    new Blob([response.data], { type: response.headers["content-type"] }),
+  );
+  const tempLink = document.createElement("a");
+  tempLink.style.display = "none";
+  tempLink.href = newUrl;
+  const contentDisposition = response.headers["content-disposition"];
+  tempLink.setAttribute(
+    "download",
+    (contentDisposition
+      ? contentDisposition
+          .split("=")
+          .pop()
+          ?.split(";")
+          .join("")
+          // eslint-disable-next-line
+          .split('"')
+          .join("")
+      : url.split("/").pop()) || "",
   );
   document.body.appendChild(tempLink);
   tempLink.click();
@@ -265,12 +293,15 @@ export async function getExcelApi(url: string): Promise<void> {
 
 async function apiRefreshToken(error: AxiosError) {
   try {
-    await store.dispatch("reissueAccessToken");
+    await store.dispatch("reIssueAccessToken");
   } catch (e) {
-    if (e.response?.status === 401) {
-      await store.dispatch("needLogin");
-      return;
-    }
+    console.error(e);
+    await goSignInPage();
+    return;
+  }
+  if (!error.config.headers) {
+    console.error("Failed to set 'request headers' : headers is not exist");
+    return;
   }
   error.config.headers.Authorization = store.getters.accessToken;
   error.config.headers.AuthorizationR = store.getters.refreshToken;
@@ -278,5 +309,5 @@ async function apiRefreshToken(error: AxiosError) {
 }
 
 export function alertAxiosError(e: AxiosError): void {
-  e.response && toastError(e?.response?.data?.message || "System Error");
+  e.response && toastError(e.response.statusText || "System Error");
 }

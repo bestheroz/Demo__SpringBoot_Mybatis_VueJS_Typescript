@@ -1,27 +1,24 @@
 import store from "@/store";
-import { SelectItem } from "@/common/types";
+import { DateTime, SelectItem } from "@/definitions/types";
 import dayjs from "dayjs";
-import _ from "lodash";
+import { truncate } from "lodash-es";
+import envs from "@/constants/envs";
 
-export function getMemberNm(value: string | undefined | null): string {
-  const find: SelectItem = store.getters.memberCodes.find(
-    (value1: SelectItem) => value1.value === value,
+export function getAdminNm(value: number | undefined | null): string {
+  const find: SelectItem<number> = store.getters.adminCodes.find(
+    (value1: SelectItem<number>) => value1.value === value,
   );
-  return find?.text || value || "-";
+  return find?.text ?? value ?? "-";
 }
 
-export function formatDatetime(
-  value: string | number | Date | undefined | null,
-): string {
+export function formatDatetime(value: DateTime | undefined | null): string {
   if (value === undefined || value === null || value === "") {
     return "-";
   }
   return dayjs(value).format("YYYY-MM-DD HH:mm:ss");
 }
 
-export function formatDate(
-  value: string | number | Date | undefined | null,
-): string {
+export function formatDate(value: DateTime | undefined | null): string {
   if (value === undefined || value === null || value === "") {
     return "-";
   }
@@ -35,11 +32,20 @@ export function getEllipseText(
   if (value === undefined || value === null || value === "") {
     return "-";
   }
-  return _.truncate(value, {
+  return truncate(value, {
     length: length,
   });
 }
 
-export function getSwitchLabel(yn: boolean, prefix?: string): string {
-  return (prefix?.trim() || "") + (yn ? " 사용" : " 사용안함");
+export function getSwitchLabel(
+  yn: boolean,
+  text = ["사용", "사용안함"],
+): string {
+  return yn ? text[0] : text[1];
+}
+export function getImageUrl(path: string): string {
+  return `${envs.FILE_API_HOST.substring(
+    0,
+    envs.FILE_API_HOST.length - 1,
+  )}${path}`;
 }

@@ -1,11 +1,12 @@
 {
   "compilerOptions": {
-    "target": "ES6",
+    "target": "ES2019",
     "module": "ESNext",
     "strict": true,
     "alwaysStrict": true,
+    "allowJs": false,
     "strictNullChecks": true,
-    "jsx": "react",
+    "jsx": "preserve",
     "importHelpers": true,
     "moduleResolution": "node",
     "experimentalDecorators": true,
@@ -14,17 +15,21 @@
     "allowSyntheticDefaultImports": true,
     "emitDecoratorMetadata": true,
     "resolveJsonModule": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "isolatedModules": true,
+    "preserveConstEnums": true,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitReturns": false,
     "sourceMap": true,
     "baseUrl": ".",
     "types": ["webpack-env", "vuetify"],
     "paths": {
       "@/*": ["src/*"]
     },
-    "lib": ["ESNext", "DOM", "DOM.Iterable"],
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    "lib": ["ESNext", "DOM", "DOM.Iterable", "scripthost"],
     "pretty": true
   },
-  "include": ["src/**/*.ts", "src/**/*.vue"],
-  "exclude": ["node_modules"]
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue"],
+  "exclude": ["node_modules", "dist"]
 }

@@ -14,6 +14,7 @@ import org.springframework.util.Assert;
 @UtilityClass
 @Slf4j
 public class DateUtils {
+
   public String toStringNow(final String pattern) {
     Assert.hasText(pattern, "pattern parameter must not be empty or null");
     return toString(Instant.now(), pattern);

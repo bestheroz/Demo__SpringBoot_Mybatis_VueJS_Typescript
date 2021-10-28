@@ -18,7 +18,7 @@ public class VariableController {
   private Map<String, String> app;
 
   @GetMapping("title")
-  public ResponseEntity<ApiResult> getTitle() {
+  public ResponseEntity<ApiResult<String>> getTitle() {
     return Result.ok(this.app.get("title"));
   }
 }

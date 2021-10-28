@@ -3,12 +3,13 @@ package com.github.bestheroz.standard.common.file.excel;
 import com.github.bestheroz.standard.common.util.FileUtils;
 import com.github.bestheroz.standard.common.util.MapperUtils;
 import com.github.bestheroz.standard.context.abstractview.AbstractExcelXView;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +38,7 @@ public class ExcelService extends AbstractExcelXView {
       final HttpServletResponse response) {
     @SuppressWarnings("unchecked")
     final List<ExcelVO> excelVOs = (List<ExcelVO>) model.get(AbstractExcelXView.EXCEL_VOS);
-    final JsonArray listData = MapperUtils.toJsonArray(model.get(AbstractExcelXView.LIST_DATA));
+    final List<?> listData = (List<?>) model.get(AbstractExcelXView.LIST_DATA);
     final String fileName =
         FileUtils.getEncodedFileName(request, (String) model.get(AbstractExcelXView.FILE_NAME));
 
@@ -82,17 +83,29 @@ public class ExcelService extends AbstractExcelXView {
   }
 
   private void addRowData(
-      final SXSSFSheet sheet, final List<ExcelVO> excelVOs, final JsonArray listData) {
+      final SXSSFSheet sheet, final List<ExcelVO> excelVOs, final List<?> listData) {
     for (int i = 0; i < listData.size(); i++) {
       if (i != 0 && i % 100 == 0) {
         log.debug("[Excel]{} write {} rows", sheet.getSheetName(), i + 1);
       }
       final SXSSFRow row = sheet.createRow(3 + i);
-      final JsonObject jo = listData.get(i).getAsJsonObject();
+      final Map<String, Object> data = MapperUtils.toMap(listData.get(i));
+      log.debug("data[{}]: {}", i, data);
       for (int j = 0; j < excelVOs.size(); j++) {
-        final String value = jo.get(excelVOs.get(j).getDbColName()).getAsString();
-        if (StringUtils.isNotEmpty(value)) {
-          this.writeColumnData(excelVOs, j, row.createCell(j), value);
+        Object value = data;
+        for (final String key : StringUtils.split(excelVOs.get(j).getCellKey(), ".")) {
+          if (Objects.nonNull(value)) {
+            if (value instanceof HashMap) {
+              value = ((Map<String, Object>) value).get(key);
+            } else if (!value.getClass().isPrimitive()
+                && !(value instanceof List)
+                && !(value instanceof ArrayList)) {
+              value = (MapperUtils.toMap(value)).get(key);
+            }
+          }
+        }
+        if (Objects.nonNull(value)) {
+          this.writeColumnData(excelVOs, j, row.createCell(j), String.valueOf(value));
         }
       }
     }

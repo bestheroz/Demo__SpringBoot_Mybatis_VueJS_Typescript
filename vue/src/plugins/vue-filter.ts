@@ -1,41 +1,41 @@
 import Vue from "vue";
-import { SelectItem } from "@/common/types";
-import { getText } from "@/utils/codes";
+import { DateTime, SelectItem } from "@/definitions/types";
+import { getTextOfSelectItem } from "@/utils/codes";
 import {
   formatDate,
   formatDatetime,
   getEllipseText,
-  getMemberNm,
+  getAdminNm,
   getSwitchLabel,
 } from "@/utils/formatter";
 
 Vue.filter(
   "formatDatetime",
-  function (value: string | number | Date | undefined | null): string {
+  function (value: DateTime | undefined | null): string {
     return formatDatetime(value);
   },
 );
+Vue.filter("formatDate", function (value: DateTime | undefined | null): string {
+  return formatDate(value);
+});
 Vue.filter(
-  "formatDate",
-  function (value: string | number | Date | undefined | null): string {
-    return formatDate(value);
-  },
-);
-Vue.filter(
-  "formatMemberNm",
-  function (value: string | undefined | null): string {
-    return getMemberNm(value);
+  "formatAdminNm",
+  function (value: number | undefined | null): string {
+    return getAdminNm(value);
   },
 );
 Vue.filter(
   "getCodeText",
-  function (value: string, codes: SelectItem[] | null): string {
-    return getText(codes, value);
+  function (
+    value: string,
+    codes: SelectItem<string | number>[] | null,
+  ): string {
+    return getTextOfSelectItem(codes, value);
   },
 );
 Vue.filter("getEllipseText", function (text: string, length: number): string {
   return getEllipseText(text, length);
 });
-Vue.filter("getSwitchLabel", function (yn: boolean, prefix?: string): string {
-  return getSwitchLabel(yn, prefix);
+Vue.filter("getSwitchLabel", function (yn: boolean, text?: string[]): string {
+  return getSwitchLabel(yn, text);
 });

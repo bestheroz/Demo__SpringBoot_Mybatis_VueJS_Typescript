@@ -5,7 +5,13 @@ import com.github.bestheroz.standard.common.exception.ExceptionCode;
 import com.github.bestheroz.standard.common.util.adapter.InstantDeserializerTypeAdapter;
 import com.github.bestheroz.standard.common.util.adapter.InstantSerializerTypeAdapter;
 import com.github.bestheroz.standard.common.util.adapter.MapDeserializerTypeAdapter;
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonPrimitive;
 import com.google.gson.internal.LinkedTreeMap;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
@@ -46,7 +52,7 @@ public class MapperUtils {
     return getCollectionTypeCatchException(source, JsonObject.class);
   }
 
-  public Map<String, Object> toHashMap(final Object source) {
+  public Map<String, Object> toMap(final Object source) {
     return toObject(
         getCollectionTypeCatchException(source, JsonObject.class),
         new TypeToken<HashMap<String, Object>>() {}.getType());
@@ -91,8 +97,8 @@ public class MapperUtils {
     final JsonElement jsonElement = toJsonElement(source);
     if (jsonElement.isJsonPrimitive()) {
       log.warn(jsonElement.toString());
-      log.warn(ExceptionCode.ERROR_TRANSFORM_DATA.toString());
-      throw new BusinessException(ExceptionCode.ERROR_TRANSFORM_DATA);
+      log.warn(ExceptionCode.ERROR_SYSTEM.toString());
+      throw BusinessException.ERROR_SYSTEM;
     } else if (jsonElement.isJsonNull()) {
       if (targetType == JsonObject.class) {
         return (T) new JsonObject();

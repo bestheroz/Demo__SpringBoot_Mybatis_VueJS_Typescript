@@ -1,0 +1,3 @@
+{
+  "reject": ["eslint", "sass", "sass-loader", "vuex-persistedstate"]
+}

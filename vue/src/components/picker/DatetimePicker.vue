@@ -8,6 +8,7 @@
         :width="470"
         @keydown.esc="dialog = false"
         @keydown.enter="$refs.refDialog.save(textFieldString)"
+        :disabled="!$store.getters.writeAuthority"
       >
         <template #activator="{ on }">
           <ValidationProvider
@@ -31,7 +32,7 @@
               @click:clear="onClear"
               :error-messages="errors"
               :append-outer-icon="startType ? 'mdi-tilde' : undefined"
-              :class="endType ? 'ml-3' : undefined"
+              :class="classSet"
               :style="style"
               v-on="on"
             />
@@ -146,6 +147,17 @@ export default class extends Vue {
     this.clearable && (defaultWidth += 1);
     this.startType && (defaultWidth += 2);
     return `max-width: ${defaultWidth}rem;`;
+  }
+
+  get classSet(): string | undefined {
+    let result = "";
+    if (this.endType) {
+      result += " ml-3";
+    }
+    if (this.required) {
+      result += " required";
+    }
+    return result;
   }
 
   get hint(): string | undefined {
@@ -268,9 +280,9 @@ export default class extends Vue {
   }
 
   async validate(): Promise<boolean> {
-    return await (this.$refs.observer as InstanceType<
-      typeof ValidationObserver
-    >).validate();
+    return await (
+      this.$refs.observer as InstanceType<typeof ValidationObserver>
+    ).validate();
   }
 }
 </script>
