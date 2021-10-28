@@ -129,7 +129,7 @@ export default class AdminList extends Vue {
     page: 1,
     sortBy: ["updated"],
     sortDesc: [true],
-    itemsPerPage: 10,
+    itemsPerPage: 20,
   };
 
   items: Admin[] = [];

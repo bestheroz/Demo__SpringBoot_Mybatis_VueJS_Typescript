@@ -83,6 +83,7 @@ export default class extends Vue {
       this.filter.items
         .filter((item) => item.value !== filterItem.value)
         .forEach((item) => (item.checked = false));
+    this.$forceUpdate();
   }
 
   protected onUpdateTextField(
