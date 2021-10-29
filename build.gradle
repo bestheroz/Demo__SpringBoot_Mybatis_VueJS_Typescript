@@ -70,6 +70,6 @@ spotless {
     java {
         removeUnusedImports()
 
-        googleJavaFormat("1.9")
+        googleJavaFormat("1.10.0")
     }
 }
