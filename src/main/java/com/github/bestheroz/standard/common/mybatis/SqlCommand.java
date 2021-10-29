@@ -33,16 +33,6 @@ public class SqlCommand {
   public static final String INSERT_BATCH = "insertBatch";
   public static final String UPDATE_MAP_BY_MAP = "updateMapByMap";
   public static final String DELETE_BY_MAP = "deleteByMap";
-  public static final Set<String> VARCHAR_JAVA_TYPE_SET = Set.of("String", "Char");
-  public static final Set<String> SHORT_JAVA_TYPE_SET = Set.of("Short");
-  public static final Set<String> INTEGER_JAVA_TYPE_SET = Set.of("Integer");
-  public static final Set<String> BIGINT_JAVA_TYPE_SET = Set.of("Long");
-  public static final Set<String> NUMBER_JAVA_TYPE_SET =
-      Set.of("Short", "Integer", "Long", "Double");
-  public static final Set<String> DOUBLE_JAVA_TYPE_SET = Set.of("Double");
-  public static final Set<String> TIMESTAMP_JAVA_TYPE_SET = Set.of("Instant");
-  public static final Set<String> BLOB_JAVA_TYPE_SET = Set.of("Byte[]");
-  public static final Set<String> BOOLEAN_JAVA_TYPE_SET = Set.of("Boolean", "boolean");
   // 참고용: 각VO에 암호화 컬럼 정의 방법
   private static final String TABLE_COLUMN_NAME_CREATED_BY = "CREATED_BY";
   private static final String TABLE_COLUMN_NAME_CREATED = "CREATED";
@@ -55,27 +45,6 @@ public class SqlCommand {
   private static final String SYSDATE = "NOW()";
   public static final Set<String> EXCLUDE_FIELD_SET =
       Set.of("SERIAL_VERSION_U_I_D", "serialVersionUID", "E_N_C_R_Y_P_T_E_D__C_O_L_U_M_N__L_I_S_T");
-  private static final String INSERT_STRING = "#'{'{0}{1}'}'";
-  private static final String SET_STRING = "{0} = #'{'param{3}.{1}{2}'}'";
-  private static final String SET_UPDATED_BY_STRING = "{0} = ''{1}''";
-  private static final String WHERE_EQUALS_STRING = "{0} = #'{'whereConditions.{1}{2}'}'";
-  private static final String WHERE_NOT_EQUALS_STRING = "{0} <> #'{'whereConditions.{1}{2}'}'";
-  private static final String WHERE_CONTAINS_STRING =
-      "INSTR({0},  #'{'whereConditions.{1}{2}'}') > 0";
-  private static final String WHERE_NOT_CONTAINS_STRING =
-      "INSTR({0},  #'{'whereConditions.{1}{2}'}') = 0";
-  private static final String WHERE_STARTS_WITH_STRING =
-      "INSTR({0},  #'{'whereConditions.{1}{2}'}') = 1";
-  private static final String WHERE_ENDS_WITH_STRING =
-      "RIGHT({0}, CHAR_LENGTH(#'{'whereConditions.{1}{2}'}')) = #'{'whereConditions.{1}{2}'}'";
-  private static final String WHERE_LESS_THAN_STRING = "{0} < #'{'whereConditions.{1}{2}'}'";
-  private static final String WHERE_LESS_THAN_EQUALS_STRING =
-      "{0} <= #'{'whereConditions.{1}{2}'}'";
-  private static final String WHERE_GREATER_THAN_STRING = "{0} > #'{'whereConditions.{1}{2}'}'";
-  private static final String WHERE_GREATER_THAN_EQUALS_STRING =
-      "{0} >= #'{'whereConditions.{1}{2}'}'";
-  private static final String WHERE_IN_STRING = "{0} IN ({1})";
-  private static final String WHERE_NOT_IN_STRING = "{0} NOT IN ({1})";
 
   public String getTableName() {
     return getTableName(this.getEntityClass().getSimpleName());
@@ -263,7 +232,7 @@ public class SqlCommand {
                 sql.VALUES(
                     CaseUtils.getCamelCaseToSnakeCase(item.getKey()),
                     MessageFormat.format(
-                        INSERT_STRING, item.getKey(), this.getJdbcType(item.getValue()))));
+                        "#'{'{0}{1}'}'", item.getKey(), this.getJdbcType(item.getValue()))));
 
     final Set<String> fieldNames = this.getEntityFields(entity);
 
@@ -415,7 +384,8 @@ public class SqlCommand {
           } else {
             sql.SET(
                 MessageFormat.format(
-                    SET_STRING, dbColumnName, javaFieldName, this.getJdbcType(value), 1));
+                    "{0} = #'{'param{3}.{1}{2}'}'",
+                    dbColumnName, javaFieldName, this.getJdbcType(value), 1));
           }
         });
 
@@ -423,11 +393,8 @@ public class SqlCommand {
         (key, value) ->
             sql.WHERE(
                 MessageFormat.format(
-                    WHERE_EQUALS_STRING,
-                    CaseUtils.getCamelCaseToSnakeCase(key),
-                    key,
-                    this.getJdbcType(value),
-                    2)));
+                    "{0} = #'{'whereConditions.{1}{2}'}'",
+                    CaseUtils.getCamelCaseToSnakeCase(key), key, this.getJdbcType(value), 2)));
 
     this.getUpdateSetSql(sql, this.getEntityFields());
     if (!StringUtils.containsIgnoreCase(sql.toString(), "WHERE ")) {
@@ -446,7 +413,7 @@ public class SqlCommand {
     if (fieldNames.contains(VARIABLE_NAME_UPDATED_BY)) {
       sql.SET(
           MessageFormat.format(
-              SET_UPDATED_BY_STRING, TABLE_COLUMN_NAME_UPDATED_BY, AuthenticationUtils.getId()));
+              "{0} = ''{1}''", TABLE_COLUMN_NAME_UPDATED_BY, AuthenticationUtils.getId()));
     }
   }
 
@@ -553,41 +520,42 @@ public class SqlCommand {
     final String whereString;
     switch (conditionType) {
       case "contains":
-        whereString = WHERE_CONTAINS_STRING;
+        whereString = "INSTR({0},  #'{'whereConditions.{1}{2}'}') > 0";
         break;
       case "notEqual":
       case "booleanNotEqual":
-        whereString = WHERE_NOT_EQUALS_STRING;
+        whereString = "{0} <> #'{'whereConditions.{1}{2}'}'";
         break;
       case "notContains":
-        whereString = WHERE_NOT_CONTAINS_STRING;
+        whereString = "INSTR({0},  #'{'whereConditions.{1}{2}'}') = 0";
         break;
       case "startsWith":
-        whereString = WHERE_STARTS_WITH_STRING;
+        whereString = "INSTR({0},  #'{'whereConditions.{1}{2}'}') = 1";
         break;
       case "endsWith":
-        whereString = WHERE_ENDS_WITH_STRING;
+        whereString =
+            "RIGHT({0}, CHAR_LENGTH(#'{'whereConditions.{1}{2}'}')) = #'{'whereConditions.{1}{2}'}'";
         break;
       case "lessThan":
-        whereString = WHERE_LESS_THAN_STRING;
+        whereString = "{0} < #'{'whereConditions.{1}{2}'}'";
         break;
       case "lessThanOrEqual":
-        whereString = WHERE_LESS_THAN_EQUALS_STRING;
+        whereString = "{0} <= #'{'whereConditions.{1}{2}'}'";
         break;
       case "greaterThan":
-        whereString = WHERE_GREATER_THAN_STRING;
+        whereString = "{0} > #'{'whereConditions.{1}{2}'}'";
         break;
       case "greaterThanOrEqual":
-        whereString = WHERE_GREATER_THAN_EQUALS_STRING;
+        whereString = "{0} >= #'{'whereConditions.{1}{2}'}'";
         break;
       case "in":
-        whereString = WHERE_IN_STRING;
+        whereString = "{0} IN ({1})";
         break;
       case "notIn":
-        whereString = WHERE_NOT_IN_STRING;
+        whereString = "{0} NOT IN ({1})";
         break;
       default:
-        whereString = WHERE_EQUALS_STRING;
+        whereString = "{0} = #'{'whereConditions.{1}{2}'}'";
         break;
     }
     return whereString;
@@ -617,11 +585,11 @@ public class SqlCommand {
               if (StringUtils.equals(conditionType, "in")) {
                 sql.WHERE(
                     MessageFormat.format(
-                        WHERE_IN_STRING, CaseUtils.getCamelCaseToSnakeCase(columnName), str));
+                        "{0} IN ({1})", CaseUtils.getCamelCaseToSnakeCase(columnName), str));
               } else if (StringUtils.equals(conditionType, "notIn")) {
                 sql.WHERE(
                     MessageFormat.format(
-                        WHERE_NOT_IN_STRING, CaseUtils.getCamelCaseToSnakeCase(columnName), str));
+                        "{0} NOT IN ({1})", CaseUtils.getCamelCaseToSnakeCase(columnName), str));
               }
             }
           } else if (value instanceof String && value.equals("@NULL")) {
@@ -669,11 +637,11 @@ public class SqlCommand {
               if (conditionType.equals("in")) {
                 sql.WHERE(
                     MessageFormat.format(
-                        WHERE_IN_STRING, CaseUtils.getCamelCaseToSnakeCase(columnName), str));
+                        "{0} IN ({1})", CaseUtils.getCamelCaseToSnakeCase(columnName), str));
               } else if (conditionType.equals("notIn")) {
                 sql.WHERE(
                     MessageFormat.format(
-                        WHERE_NOT_IN_STRING, CaseUtils.getCamelCaseToSnakeCase(columnName), str));
+                        "{0} NOT IN ({1})", CaseUtils.getCamelCaseToSnakeCase(columnName), str));
               }
             }
           } else if (value instanceof String && value.equals("@NULL")) {

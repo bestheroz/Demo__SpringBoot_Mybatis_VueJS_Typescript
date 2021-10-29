@@ -48,6 +48,17 @@ public class DbTableVOCheckerContext {
   public static final Set<String> BOOLEAN_JDBC_TYPE_SET = Set.of("BOOLEAN", "TINYINT");
   public static final Set<String> BYTE_JDBC_TYPE_SET = Set.of("BLOB");
 
+  public static final Set<String> VARCHAR_JAVA_TYPE_SET = Set.of("String", "Char");
+  public static final Set<String> SHORT_JAVA_TYPE_SET = Set.of("Short");
+  public static final Set<String> INTEGER_JAVA_TYPE_SET = Set.of("Integer");
+  public static final Set<String> BIGINT_JAVA_TYPE_SET = Set.of("Long");
+  public static final Set<String> NUMBER_JAVA_TYPE_SET =
+      Set.of("Short", "Integer", "Long", "Double");
+  public static final Set<String> DOUBLE_JAVA_TYPE_SET = Set.of("Double");
+  public static final Set<String> TIMESTAMP_JAVA_TYPE_SET = Set.of("Instant");
+  public static final Set<String> BLOB_JAVA_TYPE_SET = Set.of("Byte[]");
+  public static final Set<String> BOOLEAN_JAVA_TYPE_SET = Set.of("Boolean", "boolean");
+
   private String resolveBasePackage() {
     return ClassUtils.convertClassNameToResourcePath(
         SystemPropertyUtils.resolvePlaceholders("com.github.bestheroz"));
@@ -131,15 +142,15 @@ public class DbTableVOCheckerContext {
                 }
                 final String columnTypeName = metaInfo.getColumnTypeName(i + 1);
                 if (STRING_JDBC_TYPE_SET.contains(columnTypeName)
-                        && !SqlCommand.VARCHAR_JAVA_TYPE_SET.contains(fieldClassName)
+                        && !VARCHAR_JAVA_TYPE_SET.contains(fieldClassName)
                     || NUMBER_JDBC_TYPE_SET.contains(columnTypeName)
-                        && !SqlCommand.NUMBER_JAVA_TYPE_SET.contains(fieldClassName)
+                        && !NUMBER_JAVA_TYPE_SET.contains(fieldClassName)
                     || DATETIME_JDBC_TYPE_SET.contains(columnTypeName)
-                        && !SqlCommand.TIMESTAMP_JAVA_TYPE_SET.contains(fieldClassName)
+                        && !TIMESTAMP_JAVA_TYPE_SET.contains(fieldClassName)
                     || BOOLEAN_JDBC_TYPE_SET.contains(columnTypeName)
-                        && !SqlCommand.BOOLEAN_JAVA_TYPE_SET.contains(fieldClassName)
+                        && !BOOLEAN_JAVA_TYPE_SET.contains(fieldClassName)
                     || BYTE_JDBC_TYPE_SET.contains(columnTypeName)
-                        && !SqlCommand.BLOB_JAVA_TYPE_SET.contains(fieldClassName)) {
+                        && !BLOB_JAVA_TYPE_SET.contains(fieldClassName)) {
                   log.warn(
                       "자료형이 일치하지 않음 {}.{}({}) != {}.{}({})",
                       tableName,
