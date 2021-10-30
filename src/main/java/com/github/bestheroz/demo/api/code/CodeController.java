@@ -9,7 +9,6 @@ import com.github.bestheroz.standard.common.response.Result;
 import com.github.bestheroz.standard.common.util.MapperUtils;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,7 +44,7 @@ public class CodeController {
             .getItemsByMapWithOrder(Map.of("type", type), List.of("displayOrder"))
             .stream()
             .map(CodeDTO::new)
-            .collect(Collectors.toList()));
+            .toList());
   }
 
   @PostMapping

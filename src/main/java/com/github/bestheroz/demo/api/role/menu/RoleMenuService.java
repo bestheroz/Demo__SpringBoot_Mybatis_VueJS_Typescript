@@ -49,7 +49,7 @@ public class RoleMenuService {
                         .findFirst()
                         .orElseThrow(() -> BusinessException.FAIL_NO_DATA_SUCCESS),
                     this.getChildren(r.getId())))
-        .collect(Collectors.toList());
+        .toList();
   }
 
   private List<RoleMenuChildrenDTO> getChildren(final Long parentId) {
@@ -78,7 +78,7 @@ public class RoleMenuService {
                         .findFirst()
                         .orElseThrow(() -> BusinessException.FAIL_NO_DATA_SUCCESS),
                     this.getChildren(r.getId())))
-        .collect(Collectors.toList());
+        .toList();
   }
 
   public List<RoleMenuChildrenDTO> saveAll(
@@ -99,7 +99,7 @@ public class RoleMenuService {
     final List<RoleMenuMap> roleMenuMaps = new ArrayList<>();
     this.getFlatRoleMenuMapWithRecursiveChildren(roleMenuMaps, roleId, payload, null);
     final List<RoleMenuMap> entitiesForInsertBatch =
-        roleMenuMaps.stream().filter(r -> r.getId() == null).collect(Collectors.toList());
+        roleMenuMaps.stream().filter(r -> r.getId() == null).toList();
     if (!entitiesForInsertBatch.isEmpty()) {
       this.roleMenuMapRepository.insertBatch(entitiesForInsertBatch);
     }

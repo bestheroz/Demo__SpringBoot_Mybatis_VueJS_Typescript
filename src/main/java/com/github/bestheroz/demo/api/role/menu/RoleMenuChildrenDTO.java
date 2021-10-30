@@ -9,7 +9,6 @@ import com.github.bestheroz.standard.common.util.NullUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Data;
@@ -34,9 +33,7 @@ public class RoleMenuChildrenDTO {
             RoleAuthorityType.DELETE));
     if (NullUtils.isNotEmpty(menuChildrenDTO.getChildren())) {
       this.children.addAll(
-          menuChildrenDTO.getChildren().stream()
-              .map(RoleMenuChildrenDTO::new)
-              .collect(Collectors.toList()));
+          menuChildrenDTO.getChildren().stream().map(RoleMenuChildrenDTO::new).toList());
     }
   }
 

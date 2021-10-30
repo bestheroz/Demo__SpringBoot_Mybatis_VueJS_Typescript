@@ -10,6 +10,12 @@ import org.springframework.stereotype.Repository;
 @Mapper
 @Repository
 public interface CodeRepository extends SqlRepository<Code> {
-  @Select(value = "select distinct type from code where available = true")
+  @Select(
+      value =
+          """
+            select distinct type
+              from code
+             where available = true
+             """)
   List<String> getTypes();
 }

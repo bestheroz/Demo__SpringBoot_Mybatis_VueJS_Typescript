@@ -9,7 +9,6 @@ import com.github.bestheroz.standard.common.file.excel.ExcelVO;
 import com.github.bestheroz.standard.context.abstractview.AbstractExcelXView;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -71,7 +70,7 @@ public class ExcelController {
         ExcelService.CellType.STRING,
         this.adminRepository.getCodes().stream()
             .map(c -> new CodeVO<>(c.getValue().toString(), c.getText()))
-            .collect(Collectors.toList()));
+            .toList());
 
     model.addAttribute(AbstractExcelXView.FILE_NAME, fileName);
     model.addAttribute(AbstractExcelXView.EXCEL_VOS, excelVOList);

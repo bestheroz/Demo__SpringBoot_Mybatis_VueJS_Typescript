@@ -61,7 +61,7 @@ public class AdminService {
                             .findFirst()
                             .orElseThrow(
                                 () -> new BusinessException(ExceptionCode.FAIL_NO_DATA_SUCCESS))))
-            .collect(Collectors.toList()));
+            .toList());
   }
 
   @Transactional(readOnly = true)

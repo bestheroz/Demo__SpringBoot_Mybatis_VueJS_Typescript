@@ -61,7 +61,7 @@ public class DbTableVOCheckerContext {
 
   private String resolveBasePackage() {
     return ClassUtils.convertClassNameToResourcePath(
-        SystemPropertyUtils.resolvePlaceholders("com.github.bestheroz"));
+        SystemPropertyUtils.resolvePlaceholders("com.github.bestheroz.demo.entity"));
   }
 
   private Set<Class<?>> findMyTypes() throws IOException, ClassNotFoundException {
@@ -217,7 +217,7 @@ public class DbTableVOCheckerContext {
                   .append(camelColumnName)
                   .append(";\n");
             }
-            log.warn("\n" + voSb.toString() + "\n");
+            log.warn("\n" + voSb + "\n");
           }
         } catch (final Throwable e) {
           log.warn(ExceptionUtils.getStackTrace(e));

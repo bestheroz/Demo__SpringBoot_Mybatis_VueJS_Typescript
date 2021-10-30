@@ -29,13 +29,13 @@ public class RoleService {
         .getItemsByMapWithOrder(Map.of("parentId", "@NULL"), List.of("displayOrder"))
         .stream()
         .map(r -> new RoleChildrenDTO(r, this.getChildren(r.getId())))
-        .collect(Collectors.toList());
+        .toList();
   }
 
   public List<RoleChildrenDTO> getChildren(final Long parentId) {
     return this.roleRepository.getItemsByMap(Map.of("parentId", parentId)).stream()
         .map(r -> new RoleChildrenDTO(r, this.getChildren(r.getId())))
-        .collect(Collectors.toList());
+        .toList();
   }
 
   public RoleChildrenDTO getItem(final Long id) {
@@ -127,8 +127,6 @@ public class RoleService {
     if (available != null) {
       map.put("available", available);
     }
-    return this.roleRepository.getItemsByMap(map).stream()
-        .map(RoleSimpleDTO::new)
-        .collect(Collectors.toList());
+    return this.roleRepository.getItemsByMap(map).stream().map(RoleSimpleDTO::new).toList();
   }
 }
