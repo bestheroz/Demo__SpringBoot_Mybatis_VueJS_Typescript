@@ -21,14 +21,7 @@ jobs:
         uses: actions/setup-node@main
         with:
           node-version: ${{ matrix.node-version }}
-
-      - name: Cache node
-        uses: actions/cache@main
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+          cache: 'npm'
 
       - name: npm install
         run: |
