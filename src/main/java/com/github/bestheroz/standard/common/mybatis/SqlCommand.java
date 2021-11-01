@@ -91,13 +91,12 @@ public class SqlCommand {
 
   private Class<?> getEntityClass() {
     final StackTraceElement[] stackTrace = new Throwable().getStackTrace();
-    final Optional<StackTraceElement> getItems =
+    final Optional<StackTraceElement> stackTraceElements=
         Arrays.stream(stackTrace)
             .filter(
                 item -> {
                   try {
-                    return (item.getClassName().startsWith("com.sun.proxy.$Proxy")
-                        && METHOD_LIST.contains(item.getMethodName())
+                    return (METHOD_LIST.contains(item.getMethodName())
                         && Class.forName(item.getClassName()).getInterfaces().length > 0
                         && Class.forName(item.getClassName())
                                 .getInterfaces()[0]
@@ -110,10 +109,11 @@ public class SqlCommand {
                   }
                 })
             .findFirst();
-    if (getItems.isEmpty()) {
+    if (stackTraceElements.isEmpty()) {
+      log.warn("stackTraceElements is Empty()");
       throw BusinessException.ERROR_SYSTEM;
     }
-    final StackTraceElement item = getItems.get();
+    final StackTraceElement item = stackTraceElements.get();
     try {
       final Class<?> cInterface = Class.forName(item.getClassName()).getInterfaces()[0];
       return Class.forName(
@@ -401,7 +401,7 @@ public class SqlCommand {
         return MessageFormat.format("{0} <> {1}", dbColumnName, this.getFormattedValue(value));
       case "in":
         {
-          final List<?> values = (ArrayList<?>) value;
+          final Set<?> values = (Set<?>) value;
           if (values.isEmpty()) {
             log.warn("WHERE - empty in cause : {}", dbColumnName);
             throw new BusinessException(ExceptionCode.FAIL_NO_DATA_SUCCESS);
@@ -411,7 +411,7 @@ public class SqlCommand {
         }
       case "notIn":
         {
-          final List<?> values = (ArrayList<?>) value;
+          final Set<?> values = (Set<?>) value;
           if (values.isEmpty()) {
             log.warn("WHERE - empty in cause : {}", dbColumnName);
             throw new BusinessException(ExceptionCode.FAIL_NO_DATA_SUCCESS);

@@ -30,7 +30,7 @@ public class RoleMenuService {
   public List<RoleMenuChildrenDTO> getItems(final Long roleId) {
     final List<RoleMenuMap> roleMenuMaps =
         this.roleMenuMapRepository.getItemsByMapWithOrder(
-            Map.of("roleId", roleId, "parentId", "@NULL"), List.of("displayOrder"));
+            Map.of("roleId", roleId, "parentId:null", "@NULL"), List.of("displayOrder"));
     final List<Menu> menus =
         this.menuRepository.getItemsByMap(
             Map.of(

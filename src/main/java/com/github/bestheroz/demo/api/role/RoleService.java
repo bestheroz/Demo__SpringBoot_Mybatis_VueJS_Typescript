@@ -26,7 +26,7 @@ public class RoleService {
   @Transactional(readOnly = true)
   public List<RoleChildrenDTO> getItems() {
     return this.roleRepository
-        .getItemsByMapWithOrder(Map.of("parentId", "@NULL"), List.of("displayOrder"))
+        .getItemsByMapWithOrder(Map.of("parentId:null", "@NULL"), List.of("displayOrder"))
         .stream()
         .map(r -> new RoleChildrenDTO(r, this.getChildren(r.getId())))
         .toList();
@@ -57,7 +57,7 @@ public class RoleService {
                       .map(RoleChildrenDTO::getId)
                       .filter(Objects::nonNull)
                       .collect(Collectors.toSet()),
-                  "parentId",
+                  "parentId:null",
                   "@NULL"))
           .forEach(
               r -> {

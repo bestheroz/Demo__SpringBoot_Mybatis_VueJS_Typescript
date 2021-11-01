@@ -62,7 +62,8 @@ public class MineService {
     } else {
       final Map<String, Object> params = new HashMap<>();
       params.put("roleId", role.getId());
-      params.put("parentId", parentId == null ? "@NULL" : parentId);
+      params.put(
+          parentId == null ? "parentId:null" : "parentId", parentId == null ? "@NULL" : parentId);
 
       final List<RoleMenuMap> items = this.roleMenuMapRepository.getItemsByMap(params);
       if (items.isEmpty()) {
