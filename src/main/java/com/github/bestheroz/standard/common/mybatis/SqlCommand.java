@@ -244,7 +244,7 @@ public class SqlCommand {
                               return SYSDATE;
                             } else if (StringUtils.equalsAny(
                                 column, VARIABLE_NAME_CREATED_BY, VARIABLE_NAME_UPDATED_BY)) {
-                              return "'" + AuthenticationUtils.getId() + "'";
+                              return AuthenticationUtils.getId().toString();
                             } else {
                               return this.getFormattedValue(entity.get(column));
                             }
@@ -267,7 +267,7 @@ public class SqlCommand {
                         .collect(Collectors.joining(",")),
                     VARIABLE_NAME_CREATED_BY,
                     VARIABLE_NAME_UPDATED_BY)) {
-                  values.add("'" + AuthenticationUtils.getId() + "'");
+                  values.add(AuthenticationUtils.getId().toString());
                 }
               }
               valuesList.add(values);
@@ -296,9 +296,7 @@ public class SqlCommand {
               VARIABLE_NAME_UPDATED_BY)) {
             return;
           }
-          sql.SET(
-              this.getEqualSql(
-                  CaseUtils.getCamelCaseToSnakeCase(javaFieldName), this.getFormattedValue(value)));
+          sql.SET(this.getEqualSql(CaseUtils.getCamelCaseToSnakeCase(javaFieldName), value));
         });
 
     this.getWhereSql(sql, whereConditions);
@@ -395,13 +393,12 @@ public class SqlCommand {
 
   private String getWhereString(
       final String conditionType, final String dbColumnName, final Object value) {
-    final String value1 = this.getFormattedValue(value);
     switch (conditionType) {
       case "eq":
       default:
         return this.getEqualSql(dbColumnName, value);
       case "ne":
-        return MessageFormat.format("{0} <> {1}", dbColumnName, value1);
+        return MessageFormat.format("{0} <> {1}", dbColumnName, this.getFormattedValue(value));
       case "in":
         {
           final List<?> values = (ArrayList<?>) value;
@@ -409,7 +406,8 @@ public class SqlCommand {
             log.warn("WHERE - empty in cause : {}", dbColumnName);
             throw new BusinessException(ExceptionCode.FAIL_NO_DATA_SUCCESS);
           }
-          return MessageFormat.format("{0} IN ({1})", dbColumnName, StringUtils.join(",", value1));
+          return MessageFormat.format(
+              "{0} IN ({1})", dbColumnName, StringUtils.join(",", this.getFormattedValue(value)));
         }
       case "notIn":
         {
@@ -419,28 +417,33 @@ public class SqlCommand {
             throw new BusinessException(ExceptionCode.FAIL_NO_DATA_SUCCESS);
           }
           return MessageFormat.format(
-              "{0} NOT IN ({1})", dbColumnName, StringUtils.join(",", value1));
+              "{0} NOT IN ({1})",
+              dbColumnName, StringUtils.join(",", this.getFormattedValue(value)));
         }
       case "null":
         return MessageFormat.format("{0} is null", dbColumnName);
       case "notNull":
         return MessageFormat.format("{0} is not null", dbColumnName);
       case "contains":
-        return MessageFormat.format("INSTR({0}, {1}) > 0", dbColumnName, value1);
+        return MessageFormat.format(
+            "INSTR({0}, {1}) > 0", dbColumnName, this.getFormattedValue(value));
       case "notContains":
-        return MessageFormat.format("INSTR({0}, {1}) = 0", dbColumnName, value1);
+        return MessageFormat.format(
+            "INSTR({0}, {1}) = 0", dbColumnName, this.getFormattedValue(value));
       case "startsWith":
-        return MessageFormat.format("INSTR({0}, {1}) = 1", dbColumnName, value1);
+        return MessageFormat.format(
+            "INSTR({0}, {1}) = 1", dbColumnName, this.getFormattedValue(value));
       case "endsWith":
-        return MessageFormat.format("RIGHT({0}, CHAR_LENGTH({1})) = {1}", dbColumnName, value1);
+        return MessageFormat.format(
+            "RIGHT({0}, CHAR_LENGTH({1})) = {1}", dbColumnName, this.getFormattedValue(value));
       case "lt":
-        return MessageFormat.format("{0} < {1}", dbColumnName, value1);
+        return MessageFormat.format("{0} < {1}", dbColumnName, this.getFormattedValue(value));
       case "lte":
-        return MessageFormat.format("{0} <= {1}", dbColumnName, value1);
+        return MessageFormat.format("{0} <= {1}", dbColumnName, this.getFormattedValue(value));
       case "gt":
-        return MessageFormat.format("{0} > {1}", dbColumnName, value1);
+        return MessageFormat.format("{0} > {1}", dbColumnName, this.getFormattedValue(value));
       case "gte":
-        return MessageFormat.format("{0} >= {1}", dbColumnName, value1);
+        return MessageFormat.format("{0} >= {1}", dbColumnName, this.getFormattedValue(value));
     }
   }
 
@@ -451,11 +454,11 @@ public class SqlCommand {
   private String getFormattedValue(final Object value) {
     if (value == null) {
       return "null";
-    } else if (value instanceof String) {
-      if (this.isISO8601String((String) value)) {
+    } else if (value instanceof String str) {
+      if (this.isISO8601String(str)) {
         return MessageFormat.format(
-            "FROM_UNIXTIME({0})",
-            Integer.parseInt(String.valueOf(Instant.parse((String) value).toEpochMilli() / 1000)));
+            "FROM_UNIXTIME({0,number,#})",
+            Integer.parseInt(String.valueOf(Instant.parse(str).toEpochMilli() / 1000)));
       } else {
         return "'" + value + "'";
       }
@@ -472,7 +475,9 @@ public class SqlCommand {
           final String columnName = StringUtils.substringBefore(key, ":");
           final String conditionType =
               StringUtils.defaultString(StringUtils.substringAfter(key, ":"), "eq");
-          sql.WHERE(this.getWhereString(conditionType, columnName, value));
+          sql.WHERE(
+              this.getWhereString(
+                  conditionType, CaseUtils.getCamelCaseToSnakeCase(columnName), value));
         });
   }
 

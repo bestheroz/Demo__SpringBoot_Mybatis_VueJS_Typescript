@@ -63,9 +63,9 @@ public class MapperUtils {
   }
 
   public JsonElement toJsonElement(final Object source) {
-    if (source instanceof String) {
+    if (source instanceof String str) {
       try {
-        return JsonParser.parseString((String) source);
+        return JsonParser.parseString(str);
       } catch (final Throwable e) {
         // ignored
         return GSON_INSTANCE.toJsonTree(source);
