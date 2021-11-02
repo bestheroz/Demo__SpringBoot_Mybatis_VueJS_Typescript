@@ -77,14 +77,14 @@ public class MapperUtils {
   }
 
   public String toString(final Object source) {
-    if(source instanceof Optional o) {
-      if(o.isEmpty()){
+    if (source instanceof Optional o) {
+      if (o.isEmpty()) {
         return "";
-      }else{
+      } else {
         return GSON_INSTANCE.toJson(o.get());
       }
-    }else{
-    return GSON_INSTANCE.toJson(source);
+    } else {
+      return GSON_INSTANCE.toJson(source);
     }
   }
 

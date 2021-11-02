@@ -91,7 +91,7 @@ public class SqlCommand {
 
   private Class<?> getEntityClass() {
     final StackTraceElement[] stackTrace = new Throwable().getStackTrace();
-    final Optional<StackTraceElement> stackTraceElements=
+    final Optional<StackTraceElement> stackTraceElements =
         Arrays.stream(stackTrace)
             .filter(
                 item -> {
@@ -407,8 +407,9 @@ public class SqlCommand {
             throw new BusinessException(ExceptionCode.FAIL_NO_DATA_SUCCESS);
           }
           return MessageFormat.format(
-              "{0} IN ({1})", dbColumnName, values.stream().map(this::getFormattedValue).collect(
-                  Collectors.joining(",")) );
+              "{0} IN ({1})",
+              dbColumnName,
+              values.stream().map(this::getFormattedValue).collect(Collectors.joining(",")));
         }
       case "notIn":
         {
@@ -419,8 +420,8 @@ public class SqlCommand {
           }
           return MessageFormat.format(
               "{0} NOT IN ({1})",
-              dbColumnName, values.stream().map(this::getFormattedValue).collect(
-                  Collectors.joining(",")));
+              dbColumnName,
+              values.stream().map(this::getFormattedValue).collect(Collectors.joining(",")));
         }
       case "null":
         return MessageFormat.format("{0} is null", dbColumnName);

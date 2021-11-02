@@ -95,8 +95,7 @@ public class ExcelService extends AbstractExcelXView {
           if (Objects.nonNull(value)) {
             if (value instanceof HashMap map) {
               value = (map).get(key);
-            } else if (!value.getClass().isPrimitive()
-                && !(value instanceof List)) {
+            } else if (!value.getClass().isPrimitive() && !(value instanceof List)) {
               value = (MapperUtils.toMap(value)).get(key);
             }
           }
