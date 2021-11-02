@@ -182,12 +182,6 @@ export default class extends Vue {
   }
 
   get noneWriteAuthority(): boolean {
-    console.log(
-      "-> this.$store.getters.writeAuthority",
-      this.$store.getters.writeAuthority,
-    );
-    console.log("-> this.$store.getters.roleId", this.$store.getters.roleId);
-    console.log("-> this.vModel.role.available", this.vModel.role.available);
     return (
       (!this.$store.getters.writeAuthority ||
         this.$store.getters.roleId === this.vModel.role.id ||
