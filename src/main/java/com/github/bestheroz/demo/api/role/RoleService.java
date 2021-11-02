@@ -10,9 +10,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,27 +46,23 @@ public class RoleService {
 
   public List<RoleChildrenDTO> saveAll(final List<RoleChildrenDTO> payload) {
     if (AuthenticationUtils.isSuperAdmin()) {
-      final List<Long> delete_ids = new ArrayList<>();
-      this.roleRepository
-          .getItemsByMap(
-              Map.of(
-                  "id:notIn",
-                  payload.stream()
-                      .map(RoleChildrenDTO::getId)
-                      .filter(Objects::nonNull)
-                      .collect(Collectors.toSet()),
-                  "parentId:null",
-                  "@NULL"))
-          .forEach(
-              r -> {
-                delete_ids.add(r.getId());
-                this.getDeleteIds(delete_ids, r.getId());
-              });
+      final Set<Long> deleteIds = new HashSet<>();
+      this.setRoleIdsByIdWithDTORecursiveChildren(deleteIds, payload);
+      this.roleRepository.deleteByMap(Map.of("id:notIn", deleteIds, "parentId:null", "@NULL"));
     }
     final List<Role> roles = new ArrayList<>();
     this.getFlatRoleWithRecursiveChildren(roles, payload, null);
     roles.forEach(r -> this.roleRepository.updateById(r, r.getId()));
     return this.getItems();
+  }
+
+  private void setRoleIdsByIdWithDTORecursiveChildren(
+      final Set<Long> roleIdList, final List<RoleChildrenDTO> list) {
+    list.forEach(
+        r -> {
+          roleIdList.add(r.getId());
+          this.setRoleIdsByIdWithDTORecursiveChildren(roleIdList, r.getChildren());
+        });
   }
 
   private void getDeleteIds(final List<Long> delete_ids, final Long id) {
