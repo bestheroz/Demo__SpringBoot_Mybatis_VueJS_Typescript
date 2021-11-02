@@ -3,7 +3,6 @@ package com.github.bestheroz.demo.api.code;
 import com.github.bestheroz.demo.repository.CodeRepository;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +20,7 @@ public class CodeService {
           .getItemsByMapWithOrder(Map.of("type", payload.get(0).getType()), List.of("displayOrder"))
           .stream()
           .map(CodeDTO::new)
-          .collect(Collectors.toList());
+          .toList();
     } else {
       return List.of();
     }

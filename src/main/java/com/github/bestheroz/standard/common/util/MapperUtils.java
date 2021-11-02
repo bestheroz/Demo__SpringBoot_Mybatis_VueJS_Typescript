@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
@@ -63,9 +64,9 @@ public class MapperUtils {
   }
 
   public JsonElement toJsonElement(final Object source) {
-    if (source instanceof String) {
+    if (source instanceof String str) {
       try {
-        return JsonParser.parseString((String) source);
+        return JsonParser.parseString(str);
       } catch (final Throwable e) {
         // ignored
         return GSON_INSTANCE.toJsonTree(source);
@@ -76,7 +77,15 @@ public class MapperUtils {
   }
 
   public String toString(final Object source) {
+    if(source instanceof Optional o) {
+      if(o.isEmpty()){
+        return "";
+      }else{
+        return GSON_INSTANCE.toJson(o.get());
+      }
+    }else{
     return GSON_INSTANCE.toJson(source);
+    }
   }
 
   public <T> List<T> toArrayList(final Object source, final Class<T> targetType) {

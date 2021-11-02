@@ -7,7 +7,6 @@ import com.github.bestheroz.demo.type.MenuType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,16 +20,16 @@ public class MenuService {
   @Transactional(readOnly = true)
   public List<MenuChildrenDTO> getItems() {
     return this.menuRepository
-        .getItemsByMapWithOrder(Map.of("parentId", "@NULL"), List.of("displayOrder"))
+        .getItemsByMapWithOrder(Map.of("parentId:null", "@NULL"), List.of("displayOrder"))
         .stream()
         .map(r -> new MenuChildrenDTO(r, this.getChildren(r.getId())))
-        .collect(Collectors.toList());
+        .toList();
   }
 
   public List<MenuChildrenDTO> getChildren(final Long parentId) {
     return this.menuRepository.getItemsByMap(Map.of("parentId", parentId)).stream()
         .map(r -> new MenuChildrenDTO(r, this.getChildren(r.getId())))
-        .collect(Collectors.toList());
+        .toList();
   }
 
   public void deleteById(final Long id) {

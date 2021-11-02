@@ -6,6 +6,6 @@ runs:
   steps:
     - run: |
         echo "gradle build"
-        gradle build --exclude-task test -Dspring.profiles.active=dev
+        gradle build --no-daemon --exclude-task test -Dspring.profiles.active=dev
         cp build/resources/main/application.yml build/
       shell: bash

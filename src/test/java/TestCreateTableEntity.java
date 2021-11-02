@@ -9,6 +9,7 @@ import java.nio.file.StandardOpenOption;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
+import java.text.MessageFormat;
 import javax.annotation.Resource;
 import javax.sql.DataSource;
 import lombok.extern.slf4j.Slf4j;
@@ -120,7 +121,7 @@ public class TestCreateTableEntity {
   }
 
   private void writeToFile(
-      final String tableEntityName, final StringBuilder javaString, final StringBuilder tsString)
+      final String entityName, final StringBuilder javaString, final StringBuilder tsString)
       throws IOException {
     final boolean hasAbstractCreatedUpdateEntity =
         StringUtils.contains(javaString, " createdBy")
@@ -128,29 +129,32 @@ public class TestCreateTableEntity {
             && StringUtils.contains(javaString, " updatedBy")
             && StringUtils.contains(javaString, " updated");
     final String javaHeader =
-        "package "
-            + this.javaPackageName
-            + this.javaPackageEndPoint
-            + ";\n"
-            + "\n"
-            + (hasAbstractCreatedUpdateEntity
-                ? "import " + this.javaPackageName + "AbstractCreatedUpdateEntity;\n"
-                : "")
-            + "import lombok.AllArgsConstructor;\n"
-            + "import lombok.Data;\n"
-            + "import lombok.EqualsAndHashCode;\n"
-            + "import lombok.NoArgsConstructor;\n"
-            + "\n"
-            + "import java.io.Serializable;\n"
-            + "\n"
-            + (hasAbstractCreatedUpdateEntity ? "@EqualsAndHashCode(callSuper = true)\n" : "")
-            + "@Data\n"
-            + "@NoArgsConstructor\n"
-            + "@AllArgsConstructor\n"
-            + "public class "
-            + tableEntityName
-            + (hasAbstractCreatedUpdateEntity ? " extends AbstractCreatedUpdateEntity" : "")
-            + " implements Serializable {\n";
+        MessageFormat.format(
+            """
+        package {0}{1};
+
+        {2}
+        import lombok.AllArgsConstructor;
+        import lombok.AllArgsConstructor;
+        import lombok.Data;
+        import lombok.EqualsAndHashCode;
+        import lombok.NoArgsConstructor;
+        import java.io.Serializable;
+
+        {3}
+        @Data
+        @NoArgsConstructor
+        @AllArgsConstructor
+        public class {4}{5} implements Serializable {
+        """,
+            this.javaPackageName,
+            this.javaPackageEndPoint,
+            hasAbstractCreatedUpdateEntity
+                ? "import " + this.javaPackageName + "AbstractCreatedUpdateEntity;"
+                : "",
+            hasAbstractCreatedUpdateEntity ? "@EqualsAndHashCode(callSuper = true)" : "",
+            entityName,
+            hasAbstractCreatedUpdateEntity ? " extends AbstractCreatedUpdateEntity" : "");
     final String javaBody =
         hasAbstractCreatedUpdateEntity
             ? javaString
@@ -170,7 +174,7 @@ public class TestCreateTableEntity {
             this.javaFilePath
                 + this.javaPackageEndPoint.replaceAll("\\.", "/")
                 + "/"
-                + tableEntityName
+                + entityName
                 + ".java");
     Files.write(
         javaEntityFilePath,
@@ -179,31 +183,31 @@ public class TestCreateTableEntity {
             ? StandardOpenOption.CREATE_NEW
             : StandardOpenOption.TRUNCATE_EXISTING);
     final String repositoryHeader =
-        "package "
-            + this.javaPackageName
-            + this.javaPackageEndPoint
-            + ";\n"
-            + "\n"
-            + "import "
-            + this.javaProjectRootPackageName
-            + "standard.common.mybatis.SqlRepository;\n"
-            + "import org.apache.ibatis.annotations.Mapper;\n"
-            + "import org.springframework.stereotype.Repository;\n"
-            + "\n"
-            + "@Mapper\n"
-            + "@Repository\n"
-            + "public interface "
-            + tableEntityName.replace("Entity", "Repository")
-            + " extends SqlRepository<"
-            + tableEntityName
-            + "> {\n"
-            + "}\n";
+        MessageFormat.format(
+            """
+        package {0}{1};
+
+        import {2}standard.common.mybatis.SqlRepository;
+        import org.apache.ibatis.annotations.Mapper;
+        import org.springframework.stereotype.Repository;
+
+        @Mapper
+        @Repository
+
+        public interface {3} extends SqlRepository<{4}> {
+        }
+        """,
+            this.javaPackageName,
+            this.javaPackageEndPoint,
+            this.javaProjectRootPackageName,
+            entityName.replace("Entity", "Repository"),
+            entityName);
     final Path javaRepositoryFilePath =
         Paths.get(
             this.javaFilePath
                 + this.javaPackageEndPoint.replaceAll("\\.", "/")
                 + "/"
-                + tableEntityName.replace("Entity", "Repository")
+                + entityName.replace("Entity", "Repository")
                 + ".java");
     Files.write(
         javaRepositoryFilePath,
@@ -211,10 +215,15 @@ public class TestCreateTableEntity {
         Files.notExists(javaRepositoryFilePath)
             ? StandardOpenOption.CREATE_NEW
             : StandardOpenOption.TRUNCATE_EXISTING);
-    final String tsHeader = "export interface " + tableEntityName + " {\n";
     Files.write(
         Paths.get(this.tsFilePath),
-        (tsHeader + tsString + "}\n").getBytes(),
+        MessageFormat.format(
+                """
+                   export interface {0} {
+                   {1}}
+                   """,
+                entityName, tsString)
+            .getBytes(),
         StandardOpenOption.APPEND);
   }
 }

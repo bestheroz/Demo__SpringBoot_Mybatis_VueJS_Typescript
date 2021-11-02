@@ -29,7 +29,7 @@ jobs:
       fail-fast: false
       matrix:
         language: [ 'java', 'javascript' ]
-        java-version: [ 11 ]
+        java-version: [ 17 ]
         # CodeQL supports [ 'cpp', 'csharp', 'go', 'java', 'javascript', 'python' ]
         # Learn more:
         # https://docs.github.com/en/free-pro-team@latest/github/finding-security-vulnerabilities-and-errors-in-your-code/configuring-code-scanning#changing-the-languages-that-are-analyzed
@@ -51,17 +51,9 @@ jobs:
     - name: Set up JDK ${{ matrix.java-version }}
       uses: actions/setup-java@main
       with:
+        distribution: 'temurin'
         java-version: ${{ matrix.java-version }}
-
-    - name: Cache Gradle
-      uses: actions/cache@main
-      with:
-        path: |
-          ~/.gradle/caches
-          ~/.gradle/wrapper
-        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-        restore-keys: |
-          ${{ runner.os }}-gradle-
+        cache: 'gradle'
 
     - uses: ./.github/actions/build-gradle
 

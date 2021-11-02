@@ -58,13 +58,12 @@ public class MineService {
 
   private List<RoleMenuChildrenDTO> getChildren(final Role role, final Long parentId) {
     if (AuthenticationUtils.isSuperAdmin()) {
-      return this.menuService.getItems().stream()
-          .map(RoleMenuChildrenDTO::new)
-          .collect(Collectors.toList());
+      return this.menuService.getItems().stream().map(RoleMenuChildrenDTO::new).toList();
     } else {
       final Map<String, Object> params = new HashMap<>();
       params.put("roleId", role.getId());
-      params.put("parentId", parentId == null ? "@NULL" : parentId);
+      params.put(
+          parentId == null ? "parentId:null" : "parentId", parentId == null ? "@NULL" : parentId);
 
       final List<RoleMenuMap> items = this.roleMenuMapRepository.getItemsByMap(params);
       if (items.isEmpty()) {
@@ -86,7 +85,7 @@ public class MineService {
                           .orElseThrow(
                               () -> new BusinessException(ExceptionCode.FAIL_NO_DATA_SUCCESS)),
                       this.getChildren(role, m.getId())))
-          .collect(Collectors.toList());
+          .toList();
     }
   }
 
@@ -97,7 +96,7 @@ public class MineService {
     } else {
       return this.roleRepository.getItemById(id).stream()
           .map(r -> new RoleChildrenDTO(r, this.roleService.getChildren(r.getId())))
-          .collect(Collectors.toList());
+          .toList();
     }
   }
 }

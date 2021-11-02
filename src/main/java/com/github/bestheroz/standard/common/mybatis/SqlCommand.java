@@ -1,6 +1,7 @@
 package com.github.bestheroz.standard.common.mybatis;
 
 import com.github.bestheroz.standard.common.exception.BusinessException;
+import com.github.bestheroz.standard.common.exception.ExceptionCode;
 import com.github.bestheroz.standard.common.util.AuthenticationUtils;
 import com.github.bestheroz.standard.common.util.CaseUtils;
 import com.github.bestheroz.standard.common.util.MapperUtils;
@@ -45,6 +46,17 @@ public class SqlCommand {
   private static final String SYSDATE = "NOW()";
   public static final Set<String> EXCLUDE_FIELD_SET =
       Set.of("SERIAL_VERSION_U_I_D", "serialVersionUID", "E_N_C_R_Y_P_T_E_D__C_O_L_U_M_N__L_I_S_T");
+  private static final Set<String> METHOD_LIST =
+      Set.of(
+          SELECT_ITEMS_BY_MAP_WITH_ORDER,
+          SELECT_TARGET_ITEMS_BY_MAP_WITH_ORDER,
+          SELECT_ITEMS_BY_DATATABLE,
+          SELECT_ITEM_BY_MAP,
+          COUNT_BY_MAP,
+          COUNT_BY_DATATABLE,
+          INSERT,
+          UPDATE_MAP_BY_MAP,
+          DELETE_BY_MAP);
 
   public String getTableName() {
     return getTableName(this.getEntityClass().getSimpleName());
@@ -79,23 +91,12 @@ public class SqlCommand {
 
   private Class<?> getEntityClass() {
     final StackTraceElement[] stackTrace = new Throwable().getStackTrace();
-    final Optional<StackTraceElement> getItems =
+    final Optional<StackTraceElement> stackTraceElements=
         Arrays.stream(stackTrace)
             .filter(
                 item -> {
                   try {
-                    return (item.getClassName().startsWith("com.sun.proxy.$Proxy")
-                        && List.of(
-                                SELECT_ITEMS_BY_MAP_WITH_ORDER,
-                                SELECT_TARGET_ITEMS_BY_MAP_WITH_ORDER,
-                                SELECT_ITEMS_BY_DATATABLE,
-                                SELECT_ITEM_BY_MAP,
-                                COUNT_BY_MAP,
-                                COUNT_BY_DATATABLE,
-                                INSERT,
-                                UPDATE_MAP_BY_MAP,
-                                DELETE_BY_MAP)
-                            .contains(item.getMethodName())
+                    return (METHOD_LIST.contains(item.getMethodName())
                         && Class.forName(item.getClassName()).getInterfaces().length > 0
                         && Class.forName(item.getClassName())
                                 .getInterfaces()[0]
@@ -108,10 +109,11 @@ public class SqlCommand {
                   }
                 })
             .findFirst();
-    if (getItems.isEmpty()) {
+    if (stackTraceElements.isEmpty()) {
+      log.warn("stackTraceElements is Empty()");
       throw BusinessException.ERROR_SYSTEM;
     }
-    final StackTraceElement item = getItems.get();
+    final StackTraceElement item = stackTraceElements.get();
     try {
       final Class<?> cInterface = Class.forName(item.getClassName()).getInterfaces()[0];
       return Class.forName(
@@ -119,41 +121,6 @@ public class SqlCommand {
               cInterface.getGenericInterfaces()[0].getTypeName(), "<", ">"));
     } catch (final ClassNotFoundException e) {
       log.warn("Failed to getEntityClass");
-      throw BusinessException.ERROR_SYSTEM;
-    }
-  }
-
-  private int getRepositoryMethodParamLength() {
-    final StackTraceElement[] stackTrace = new Throwable().getStackTrace();
-    final Optional<StackTraceElement> getItems =
-        Arrays.stream(stackTrace)
-            .filter(
-                item ->
-                    (item.getClassName().startsWith("com.sun.proxy.$Proxy")
-                        && List.of(
-                                SELECT_ITEMS_BY_MAP_WITH_ORDER,
-                                SELECT_TARGET_ITEMS_BY_MAP_WITH_ORDER,
-                                SELECT_ITEMS_BY_DATATABLE,
-                                SELECT_ITEM_BY_MAP,
-                                COUNT_BY_MAP,
-                                COUNT_BY_DATATABLE,
-                                INSERT,
-                                UPDATE_MAP_BY_MAP,
-                                DELETE_BY_MAP)
-                            .contains(item.getMethodName())))
-            .findFirst();
-    if (getItems.isEmpty()) {
-      throw BusinessException.ERROR_SYSTEM;
-    }
-    final StackTraceElement item = getItems.get();
-    try {
-      return Arrays.stream(Class.forName(item.getClassName()).getInterfaces()[0].getMethods())
-          .filter(method -> method.getName().equals(item.getMethodName()))
-          .findFirst()
-          .map(first -> first.getParameterTypes().length)
-          .orElse(0);
-    } catch (final ClassNotFoundException e) {
-      log.warn("Failed to getRepositoryMethodParamLength");
       throw BusinessException.ERROR_SYSTEM;
     }
   }
@@ -215,10 +182,9 @@ public class SqlCommand {
   }
 
   public <T> String insert(@NonNull final T entity) {
-    final Map<String, Object> param = MapperUtils.toMap(entity);
     final SQL sql = new SQL();
     sql.INSERT_INTO(getTableName(entity.getClass().getSimpleName()));
-    param.entrySet().stream()
+    MapperUtils.toMap(entity).entrySet().stream()
         .filter(
             item ->
                 !StringUtils.equalsAny(
@@ -231,8 +197,7 @@ public class SqlCommand {
             item ->
                 sql.VALUES(
                     CaseUtils.getCamelCaseToSnakeCase(item.getKey()),
-                    MessageFormat.format(
-                        "#'{'{0}{1}'}'", item.getKey(), this.getJdbcType(item.getValue()))));
+                    this.getFormattedValue(item.getValue())));
 
     final Set<String> fieldNames = this.getEntityFields(entity);
 
@@ -243,10 +208,10 @@ public class SqlCommand {
       sql.VALUES(TABLE_COLUMN_NAME_UPDATED, SYSDATE);
     }
     if (fieldNames.contains(VARIABLE_NAME_CREATED_BY)) {
-      sql.VALUES(TABLE_COLUMN_NAME_CREATED_BY, "'" + AuthenticationUtils.getId() + "'");
+      sql.VALUES(TABLE_COLUMN_NAME_CREATED_BY, AuthenticationUtils.getId().toString());
     }
     if (fieldNames.contains(VARIABLE_NAME_UPDATED_BY)) {
-      sql.VALUES(TABLE_COLUMN_NAME_UPDATED_BY, "'" + AuthenticationUtils.getId() + "'");
+      sql.VALUES(TABLE_COLUMN_NAME_UPDATED_BY, AuthenticationUtils.getId().toString());
     }
 
     log.debug(sql.toString());
@@ -262,52 +227,47 @@ public class SqlCommand {
     sql.INSERT_INTO(getTableName(entities.get(0).getClass().getSimpleName()));
     final Set<String> columns = this.getEntityFields(entities.get(0));
 
-    final String intoColumns =
-        StringUtils.join(
-            columns.stream()
-                .map(CaseUtils::getCamelCaseToSnakeCase)
-                .collect(Collectors.joining(",")));
-    sql.INTO_COLUMNS(intoColumns);
+    sql.INTO_COLUMNS(
+        columns.stream().map(CaseUtils::getCamelCaseToSnakeCase).collect(Collectors.joining(",")));
 
-    final List<List<Object>> valuesList = new ArrayList<>();
+    final List<List<String>> valuesList = new ArrayList<>();
     entities.stream()
         .map(MapperUtils::toMap)
         .forEach(
             entity -> {
-              final List<Object> values = new ArrayList<>();
-              columns.forEach(
-                  column -> {
-                    if (StringUtils.equalsAny(
-                        column, VARIABLE_NAME_CREATED, VARIABLE_NAME_UPDATED)) {
-                      values.add(SYSDATE);
-                    } else if (StringUtils.equalsAny(
-                        column, VARIABLE_NAME_CREATED_BY, VARIABLE_NAME_UPDATED_BY)) {
-                      values.add("'" + AuthenticationUtils.getId() + "'");
-                    } else {
-                      final Object o = entity.get(column);
-                      final String value;
-                      if (o == null) {
-                        value = "null";
-                      } else if (o instanceof String) {
-                        value = MessageFormat.format("''{0}''", o);
-                      } else if (o instanceof Set || o instanceof List) {
-                        value = "'" + MapperUtils.toJsonArray(o).toString() + "'";
-                      } else {
-                        value = o.toString();
-                      }
-                      values.add(value);
-                    }
-                  });
+              final List<String> values =
+                  columns.stream()
+                      .map(
+                          column -> {
+                            if (StringUtils.equalsAny(
+                                column, VARIABLE_NAME_CREATED, VARIABLE_NAME_UPDATED)) {
+                              return SYSDATE;
+                            } else if (StringUtils.equalsAny(
+                                column, VARIABLE_NAME_CREATED_BY, VARIABLE_NAME_UPDATED_BY)) {
+                              return AuthenticationUtils.getId().toString();
+                            } else {
+                              return this.getFormattedValue(entity.get(column));
+                            }
+                          })
+                      .toList();
               if (!values.contains(VARIABLE_NAME_CREATED)
                   && !values.contains(VARIABLE_NAME_UPDATED)
                   && !values.contains(VARIABLE_NAME_CREATED_BY)
                   && !values.contains(VARIABLE_NAME_UPDATED_BY)) {
                 if (StringUtils.containsAny(
-                    intoColumns, VARIABLE_NAME_CREATED, VARIABLE_NAME_UPDATED)) {
+                    columns.stream()
+                        .map(CaseUtils::getCamelCaseToSnakeCase)
+                        .collect(Collectors.joining(",")),
+                    VARIABLE_NAME_CREATED,
+                    VARIABLE_NAME_UPDATED)) {
                   values.add(SYSDATE);
                 } else if (StringUtils.containsAny(
-                    intoColumns, VARIABLE_NAME_CREATED_BY, VARIABLE_NAME_UPDATED_BY)) {
-                  values.add("'" + AuthenticationUtils.getId() + "'");
+                    columns.stream()
+                        .map(CaseUtils::getCamelCaseToSnakeCase)
+                        .collect(Collectors.joining(",")),
+                    VARIABLE_NAME_CREATED_BY,
+                    VARIABLE_NAME_UPDATED_BY)) {
+                  values.add(AuthenticationUtils.getId().toString());
                 }
               }
               valuesList.add(values);
@@ -336,66 +296,10 @@ public class SqlCommand {
               VARIABLE_NAME_UPDATED_BY)) {
             return;
           }
-          final String dbColumnName = CaseUtils.getCamelCaseToSnakeCase(javaFieldName);
-          if (value instanceof Set) {
-            final Set<?> value1 = (Set<?>) value;
-            if (value1.isEmpty()) {
-              sql.SET(MessageFormat.format("{0} = []", dbColumnName));
-            } else {
-              sql.SET(
-                  MessageFormat.format(
-                      "{0} = ''{1}''",
-                      dbColumnName,
-                      "["
-                          + value1.stream()
-                              .map(
-                                  v -> {
-                                    if (v instanceof String) {
-                                      return MessageFormat.format("\"{0}\"", v);
-                                    } else {
-                                      return v.toString();
-                                    }
-                                  })
-                              .collect(Collectors.joining(","))
-                          + "]"));
-            }
-          } else if (value instanceof List) {
-            final List<?> value1 = (List<?>) value;
-            if (value1.isEmpty()) {
-              sql.SET(MessageFormat.format("{0} = []", dbColumnName));
-            } else {
-              sql.SET(
-                  MessageFormat.format(
-                      "{0} = ''{1}''",
-                      dbColumnName,
-                      "["
-                          + value1.stream()
-                              .map(
-                                  v -> {
-                                    if (v instanceof String) {
-                                      return MessageFormat.format("\"{0}\"", v);
-                                    } else {
-                                      return v.toString();
-                                    }
-                                  })
-                              .collect(Collectors.joining(","))
-                          + "]"));
-            }
-          } else {
-            sql.SET(
-                MessageFormat.format(
-                    "{0} = #'{'param{3}.{1}{2}'}'",
-                    dbColumnName, javaFieldName, this.getJdbcType(value), 1));
-          }
+          sql.SET(this.getEqualSql(CaseUtils.getCamelCaseToSnakeCase(javaFieldName), value));
         });
 
-    whereConditions.forEach(
-        (key, value) ->
-            sql.WHERE(
-                MessageFormat.format(
-                    "{0} = #'{'whereConditions.{1}{2}'}'",
-                    CaseUtils.getCamelCaseToSnakeCase(key), key, this.getJdbcType(value), 2)));
-
+    this.getWhereSql(sql, whereConditions);
     this.getUpdateSetSql(sql, this.getEntityFields());
     if (!StringUtils.containsIgnoreCase(sql.toString(), "WHERE ")) {
       log.warn("whereConditions is empty");
@@ -440,7 +344,7 @@ public class SqlCommand {
     final SQL sql = new SQL();
     sql.SELECT("COUNT(1) AS CNT").FROM(this.getTableName());
     Optional.ofNullable(dataTableFilterDTO.getFilter())
-        .ifPresent(item -> this.getWhereBoundSql(sql, item));
+        .ifPresent(item -> this.getWhereSql(sql, item));
     log.debug(sql.toString());
     return sql.toString();
   }
@@ -460,7 +364,7 @@ public class SqlCommand {
     sql.FROM(this.getTableName());
 
     Optional.ofNullable(dataTableFilterDTO.getFilter())
-        .ifPresent(item -> this.getWhereBoundSql(sql, item));
+        .ifPresent(item -> this.getWhereSql(sql, item));
 
     Optional.ofNullable(dataTableFilterDTO.getSortBy())
         .ifPresent(
@@ -487,78 +391,84 @@ public class SqlCommand {
     }
   }
 
-  private String getJdbcType(final Object object) {
-    final String jdbcType;
-    if (object instanceof String || object instanceof Character) {
-      jdbcType = ", jdbcType=VARCHAR";
-    } else if (object instanceof Short) {
-      jdbcType = ", jdbcType=SMALLINT";
-    } else if (object instanceof Integer) {
-      jdbcType = ", jdbcType=INTEGER";
-    } else if (object instanceof Long) {
-      jdbcType = ", jdbcType=BIGINT";
-    } else if (object instanceof Double) {
-      jdbcType = ", jdbcType=DOUBLE";
-    } else if (object instanceof Instant) {
-      jdbcType = ", jdbcType=TIMESTAMP";
-    } else if (object instanceof Boolean) {
-      jdbcType = ", jdbcType=BOOLEAN";
-    } else if (object instanceof Byte[]) {
-      jdbcType = ", jdbcType=BLOB";
-    } else if (object instanceof Set || object instanceof List) {
-      jdbcType = ", jdbcType=JSON";
-    } else if (object == null) {
-      jdbcType = ", jdbcType=NULL";
-    } else {
-      jdbcType = "";
-      log.warn("케이스 빠짐 {}", object.getClass().getSimpleName());
+  private String getWhereString(
+      final String conditionType, final String dbColumnName, final Object value) {
+    switch (conditionType) {
+      case "eq":
+      default:
+        return this.getEqualSql(dbColumnName, value);
+      case "ne":
+        return MessageFormat.format("{0} <> {1}", dbColumnName, this.getFormattedValue(value));
+      case "in":
+        {
+          final Set<?> values = (Set<?>) value;
+          if (values.isEmpty()) {
+            log.warn("WHERE - empty in cause : {}", dbColumnName);
+            throw new BusinessException(ExceptionCode.FAIL_NO_DATA_SUCCESS);
+          }
+          return MessageFormat.format(
+              "{0} IN ({1})", dbColumnName, values.stream().map(this::getFormattedValue).collect(
+                  Collectors.joining(",")) );
+        }
+      case "notIn":
+        {
+          final Set<?> values = (Set<?>) value;
+          if (values.isEmpty()) {
+            log.warn("WHERE - empty in cause : {}", dbColumnName);
+            throw new BusinessException(ExceptionCode.FAIL_NO_DATA_SUCCESS);
+          }
+          return MessageFormat.format(
+              "{0} NOT IN ({1})",
+              dbColumnName, values.stream().map(this::getFormattedValue).collect(
+                  Collectors.joining(",")));
+        }
+      case "null":
+        return MessageFormat.format("{0} is null", dbColumnName);
+      case "notNull":
+        return MessageFormat.format("{0} is not null", dbColumnName);
+      case "contains":
+        return MessageFormat.format(
+            "INSTR({0}, {1}) > 0", dbColumnName, this.getFormattedValue(value));
+      case "notContains":
+        return MessageFormat.format(
+            "INSTR({0}, {1}) = 0", dbColumnName, this.getFormattedValue(value));
+      case "startsWith":
+        return MessageFormat.format(
+            "INSTR({0}, {1}) = 1", dbColumnName, this.getFormattedValue(value));
+      case "endsWith":
+        return MessageFormat.format(
+            "RIGHT({0}, CHAR_LENGTH({1})) = {1}", dbColumnName, this.getFormattedValue(value));
+      case "lt":
+        return MessageFormat.format("{0} < {1}", dbColumnName, this.getFormattedValue(value));
+      case "lte":
+        return MessageFormat.format("{0} <= {1}", dbColumnName, this.getFormattedValue(value));
+      case "gt":
+        return MessageFormat.format("{0} > {1}", dbColumnName, this.getFormattedValue(value));
+      case "gte":
+        return MessageFormat.format("{0} >= {1}", dbColumnName, this.getFormattedValue(value));
     }
-    return jdbcType;
   }
 
-  private String getWhereString(final String conditionType) {
-    final String whereString;
-    switch (conditionType) {
-      case "contains":
-        whereString = "INSTR({0},  #'{'whereConditions.{1}{2}'}') > 0";
-        break;
-      case "notEqual":
-      case "booleanNotEqual":
-        whereString = "{0} <> #'{'whereConditions.{1}{2}'}'";
-        break;
-      case "notContains":
-        whereString = "INSTR({0},  #'{'whereConditions.{1}{2}'}') = 0";
-        break;
-      case "startsWith":
-        whereString = "INSTR({0},  #'{'whereConditions.{1}{2}'}') = 1";
-        break;
-      case "endsWith":
-        whereString =
-            "RIGHT({0}, CHAR_LENGTH(#'{'whereConditions.{1}{2}'}')) = #'{'whereConditions.{1}{2}'}'";
-        break;
-      case "lessThan":
-        whereString = "{0} < #'{'whereConditions.{1}{2}'}'";
-        break;
-      case "lessThanOrEqual":
-        whereString = "{0} <= #'{'whereConditions.{1}{2}'}'";
-        break;
-      case "greaterThan":
-        whereString = "{0} > #'{'whereConditions.{1}{2}'}'";
-        break;
-      case "greaterThanOrEqual":
-        whereString = "{0} >= #'{'whereConditions.{1}{2}'}'";
-        break;
-      case "in":
-        whereString = "{0} IN ({1})";
-        break;
-      case "notIn":
-        whereString = "{0} NOT IN ({1})";
-        break;
-      default:
-        whereString = "{0} = #'{'whereConditions.{1}{2}'}'";
-        break;
+  private String getEqualSql(final String dbColumnName, final Object value) {
+    return MessageFormat.format("{0} = {1}", dbColumnName, this.getFormattedValue(value));
+  }
+
+  private String getFormattedValue(final Object value) {
+    if (value == null) {
+      return "null";
+    } else if (value instanceof String str) {
+      if (this.isISO8601String(str)) {
+        return MessageFormat.format(
+            "FROM_UNIXTIME({0,number,#})",
+            Integer.parseInt(String.valueOf(Instant.parse(str).toEpochMilli() / 1000)));
+      } else {
+        return "'" + value + "'";
+      }
+    } else if (value instanceof Set || value instanceof List) {
+      return "'" + MapperUtils.toJsonArray(value).toString() + "'";
+    } else {
+      return value.toString();
     }
-    return whereString;
   }
 
   private void getWhereSql(final SQL sql, final Map<String, Object> whereConditions) {
@@ -566,116 +476,17 @@ public class SqlCommand {
         (key, value) -> {
           final String columnName = StringUtils.substringBefore(key, ":");
           final String conditionType =
-              StringUtils.defaultString(StringUtils.substringAfter(key, ":"), "equals");
-          if (StringUtils.equalsAny(conditionType, "in", "notIn")) {
-            final Set<?> value1 = (Set<?>) value;
-            if (!value1.isEmpty()) {
-              final String str;
-              final Object[] toArray = value1.toArray();
-              if (toArray[0] instanceof String) {
-                str =
-                    StringUtils.defaultIfEmpty(
-                        Arrays.stream(toArray)
-                            .map(item -> "'" + item + "'")
-                            .collect(Collectors.joining(",")),
-                        "''");
-              } else {
-                str = StringUtils.defaultIfEmpty(StringUtils.join(toArray, ","), "");
-              }
-              if (StringUtils.equals(conditionType, "in")) {
-                sql.WHERE(
-                    MessageFormat.format(
-                        "{0} IN ({1})", CaseUtils.getCamelCaseToSnakeCase(columnName), str));
-              } else if (StringUtils.equals(conditionType, "notIn")) {
-                sql.WHERE(
-                    MessageFormat.format(
-                        "{0} NOT IN ({1})", CaseUtils.getCamelCaseToSnakeCase(columnName), str));
-              }
-            }
-          } else if (value instanceof String && value.equals("@NULL")) {
-            sql.WHERE(
-                MessageFormat.format("{0} is null", CaseUtils.getCamelCaseToSnakeCase(columnName)));
-          } else if (value instanceof String && value.equals("@NOTNULL")) {
-            sql.WHERE(
-                MessageFormat.format(
-                    "{0} is not null", CaseUtils.getCamelCaseToSnakeCase(columnName)));
-          } else {
-            final String whereString = this.getWhereString(conditionType);
-            sql.WHERE(
-                MessageFormat.format(
-                    this.getRepositoryMethodParamLength() == 1
-                        ? whereString.replace("whereConditions.", "")
-                        : whereString,
-                    CaseUtils.getCamelCaseToSnakeCase(columnName),
-                    columnName,
-                    this.getJdbcType(value)));
-          }
+              StringUtils.defaultString(StringUtils.substringAfter(key, ":"), "eq");
+          sql.WHERE(
+              this.getWhereString(
+                  conditionType, CaseUtils.getCamelCaseToSnakeCase(columnName), value));
         });
   }
 
-  private void getWhereBoundSql(final SQL sql, final Map<String, Object> whereConditions) {
-    whereConditions.forEach(
-        (key, value) -> {
-          final String columnName = StringUtils.substringBefore(key, ":");
-          final String conditionType =
-              StringUtils.defaultString(StringUtils.substringAfter(key, ":"), "equals");
-          if (StringUtils.equalsAny(conditionType, "in", "notIn")) {
-            final Set<?> value1 = (Set<?>) value;
-            if (!value1.isEmpty()) {
-              final String str;
-              final Object[] toArray = value1.toArray();
-              if (toArray[0] instanceof String) {
-                str =
-                    StringUtils.defaultIfEmpty(
-                        Arrays.stream(toArray)
-                            .map(item -> "'" + item + "'")
-                            .collect(Collectors.joining(",")),
-                        "''");
-              } else {
-                str = StringUtils.defaultIfEmpty(StringUtils.join(toArray, ","), "");
-              }
-              if (conditionType.equals("in")) {
-                sql.WHERE(
-                    MessageFormat.format(
-                        "{0} IN ({1})", CaseUtils.getCamelCaseToSnakeCase(columnName), str));
-              } else if (conditionType.equals("notIn")) {
-                sql.WHERE(
-                    MessageFormat.format(
-                        "{0} NOT IN ({1})", CaseUtils.getCamelCaseToSnakeCase(columnName), str));
-              }
-            }
-          } else if (value instanceof String && value.equals("@NULL")) {
-            sql.WHERE(
-                MessageFormat.format("{0} is null", CaseUtils.getCamelCaseToSnakeCase(columnName)));
-          } else if (value instanceof String && value.equals("@NOTNULL")) {
-            sql.WHERE(
-                MessageFormat.format(
-                    "{0} is not null", CaseUtils.getCamelCaseToSnakeCase(columnName)));
-          } else {
-            String whereString = this.getWhereString(conditionType);
-            whereString = whereString.replace("whereConditions.", "");
-            whereString = whereString.replace("{0}", CaseUtils.getCamelCaseToSnakeCase(columnName));
-            if (value instanceof String
-                && StringUtils.countMatches(((String) value), '-') == 2
-                && StringUtils.countMatches(((String) value), ':') == 2
-                && StringUtils.countMatches(((String) value), 'T') == 1
-                && StringUtils.endsWith(((String) value), "Z")) {
-              whereString =
-                  whereString.replace(
-                      "#'{'{1}{2}'}'",
-                      "FROM_UNIXTIME("
-                          + Integer.parseInt(
-                              String.valueOf(Instant.parse((String) value).toEpochMilli() / 1000))
-                          + ")");
-            } else {
-              if (value instanceof String) {
-                whereString = whereString.replace("#'{'{1}{2}'}'", "'" + value + "'");
-              } else {
-                whereString = whereString.replace("#'{'{1}{2}'}'", value.toString());
-              }
-            }
-            sql.WHERE(whereString);
-          }
-        });
+  private boolean isISO8601String(final String value) {
+    return StringUtils.countMatches(value, '-') == 2
+        && StringUtils.countMatches(value, ':') == 2
+        && StringUtils.countMatches(value, 'T') == 1
+        && StringUtils.endsWith(value, "Z");
   }
 }

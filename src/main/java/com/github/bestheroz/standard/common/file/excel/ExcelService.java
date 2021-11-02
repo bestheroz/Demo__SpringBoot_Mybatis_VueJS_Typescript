@@ -5,7 +5,6 @@ import com.github.bestheroz.standard.common.util.MapperUtils;
 import com.github.bestheroz.standard.context.abstractview.AbstractExcelXView;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -90,16 +89,14 @@ public class ExcelService extends AbstractExcelXView {
       }
       final SXSSFRow row = sheet.createRow(3 + i);
       final Map<String, Object> data = MapperUtils.toMap(listData.get(i));
-      log.debug("data[{}]: {}", i, data);
       for (int j = 0; j < excelVOs.size(); j++) {
         Object value = data;
         for (final String key : StringUtils.split(excelVOs.get(j).getCellKey(), ".")) {
           if (Objects.nonNull(value)) {
-            if (value instanceof HashMap) {
-              value = ((Map<String, Object>) value).get(key);
+            if (value instanceof HashMap map) {
+              value = (map).get(key);
             } else if (!value.getClass().isPrimitive()
-                && !(value instanceof List)
-                && !(value instanceof ArrayList)) {
+                && !(value instanceof List)) {
               value = (MapperUtils.toMap(value)).get(key);
             }
           }

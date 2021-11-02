@@ -34,7 +34,6 @@ public class AdminController {
 
   @GetMapping
   public ResponseEntity<ApiResult<Page<AdminDTO>>> getItems(final AdminFilter adminFilter) {
-    log.debug("adminFilter: {}", adminFilter);
     return Result.ok(this.adminService.getAdmins(adminFilter));
   }
 
