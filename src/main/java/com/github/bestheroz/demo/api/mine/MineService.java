@@ -18,6 +18,7 @@ import com.github.bestheroz.standard.common.util.AuthenticationUtils;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -69,23 +70,25 @@ public class MineService {
       if (items.isEmpty()) {
         return List.of();
       }
-      final List<Menu> menus =
-          this.menuRepository.getItemsByMap(
-              Map.of(
-                  "id:in", items.stream().map(RoleMenuMap::getMenuId).collect(Collectors.toSet())));
-
-      return items.stream()
-          .map(
-              m ->
-                  new RoleMenuChildrenDTO(
-                      m,
-                      menus.stream()
-                          .filter(menu -> menu.getId().equals(m.getMenuId()))
-                          .findFirst()
-                          .orElseThrow(
-                              () -> new BusinessException(ExceptionCode.FAIL_NO_DATA_SUCCESS)),
-                      this.getChildren(role, m.getId())))
-          .toList();
+      final Set<Long> menuIds =
+          items.stream().map(RoleMenuMap::getMenuId).collect(Collectors.toSet());
+      if (menuIds.isEmpty()) {
+        return List.of();
+      } else {
+        final List<Menu> menus = this.menuRepository.getItemsByMap(Map.of("id:in", menuIds));
+        return items.stream()
+            .map(
+                m ->
+                    new RoleMenuChildrenDTO(
+                        m,
+                        menus.stream()
+                            .filter(menu -> menu.getId().equals(m.getMenuId()))
+                            .findFirst()
+                            .orElseThrow(
+                                () -> new BusinessException(ExceptionCode.FAIL_NO_DATA_SUCCESS)),
+                        this.getChildren(role, m.getId())))
+            .toList();
+      }
     }
   }
 

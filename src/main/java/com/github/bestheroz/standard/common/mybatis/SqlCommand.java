@@ -4,6 +4,7 @@ import com.github.bestheroz.standard.common.exception.BusinessException;
 import com.github.bestheroz.standard.common.exception.ExceptionCode;
 import com.github.bestheroz.standard.common.util.AuthenticationUtils;
 import com.github.bestheroz.standard.common.util.CaseUtils;
+import com.github.bestheroz.standard.common.util.DateUtils;
 import com.github.bestheroz.standard.common.util.MapperUtils;
 import com.github.bestheroz.standard.common.util.NullUtils;
 import java.lang.reflect.Field;
@@ -412,7 +413,6 @@ public class SqlCommand {
               values.stream().map(this::getFormattedValue).collect(Collectors.joining(",")));
         }
       case "notIn":
-        {
           final Set<?> values = (Set<?>) value;
           if (values.isEmpty()) {
             log.warn("WHERE - empty in cause : {}", dbColumnName);
@@ -422,7 +422,6 @@ public class SqlCommand {
               "{0} NOT IN ({1})",
               dbColumnName,
               values.stream().map(this::getFormattedValue).collect(Collectors.joining(",")));
-        }
       case "null":
         return MessageFormat.format("{0} is null", dbColumnName);
       case "notNull":
@@ -459,9 +458,13 @@ public class SqlCommand {
       return "null";
     } else if (value instanceof String str) {
       if (this.isISO8601String(str)) {
-        return MessageFormat.format(
-            "FROM_UNIXTIME({0,number,#})",
-            Integer.parseInt(String.valueOf(Instant.parse(str).toEpochMilli() / 1000)));
+        return "'" + DateUtils.toString(
+            Instant.parse(str), "yyyy-MM-dd HH:mm:ss.SSS"
+        )+ "'";
+        // MYSQL
+//        return MessageFormat.format(
+//            "FROM_UNIXTIME({0,number,#})",
+//            Integer.parseInt(String.valueOf(Instant.parse(str).toEpochMilli() / 1000)));
       } else {
         return "'" + value + "'";
       }

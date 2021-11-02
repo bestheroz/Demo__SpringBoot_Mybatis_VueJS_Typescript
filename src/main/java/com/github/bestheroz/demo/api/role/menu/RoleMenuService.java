@@ -31,25 +31,29 @@ public class RoleMenuService {
     final List<RoleMenuMap> roleMenuMaps =
         this.roleMenuMapRepository.getItemsByMapWithOrder(
             Map.of("roleId", roleId, "parentId:null", "@NULL"), List.of("displayOrder"));
-    final List<Menu> menus =
-        this.menuRepository.getItemsByMap(
-            Map.of(
-                "id:in",
-                roleMenuMaps.stream()
-                    .filter(Objects::nonNull)
-                    .map(RoleMenuMap::getMenuId)
-                    .collect(Collectors.toSet())));
-    return roleMenuMaps.stream()
-        .map(
-            r ->
-                new RoleMenuChildrenDTO(
-                    r,
-                    menus.stream()
-                        .filter(m -> m.getId().equals(r.getMenuId()))
-                        .findFirst()
-                        .orElseThrow(() -> BusinessException.FAIL_NO_DATA_SUCCESS),
-                    this.getChildren(r.getId())))
-        .toList();
+    if (roleMenuMaps.isEmpty()) {
+      return List.of();
+    } else {
+      final List<Menu> menus =
+          this.menuRepository.getItemsByMap(
+              Map.of(
+                  "id:in",
+                  roleMenuMaps.stream()
+                      .filter(Objects::nonNull)
+                      .map(RoleMenuMap::getMenuId)
+                      .collect(Collectors.toSet())));
+      return roleMenuMaps.stream()
+          .map(
+              r ->
+                  new RoleMenuChildrenDTO(
+                      r,
+                      menus.stream()
+                          .filter(m -> m.getId().equals(r.getMenuId()))
+                          .findFirst()
+                          .orElseThrow(() -> BusinessException.FAIL_NO_DATA_SUCCESS),
+                      this.getChildren(r.getId())))
+          .toList();
+    }
   }
 
   private List<RoleMenuChildrenDTO> getChildren(final Long parentId) {
@@ -94,7 +98,10 @@ public class RoleMenuService {
                 exist_ids.add(r.getId());
                 this.getExistIds(exist_ids, r.getChildren());
               });
-      this.roleMenuMapRepository.deleteByMap(Map.of("roleId", roleId, "id:notIn", exist_ids));
+
+      if (!exist_ids.isEmpty()) {
+        this.roleMenuMapRepository.deleteByMap(Map.of("roleId", roleId, "id:notIn", exist_ids));
+      }
     }
     final List<RoleMenuMap> roleMenuMaps = new ArrayList<>();
     this.getFlatRoleMenuMapWithRecursiveChildren(roleMenuMaps, roleId, payload, null);

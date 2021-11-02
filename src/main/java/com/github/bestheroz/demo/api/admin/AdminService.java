@@ -11,6 +11,7 @@ import com.github.bestheroz.standard.common.util.AuthenticationUtils;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,12 +29,11 @@ public class AdminService {
   public Page<AdminDTO> getAdmins(final AdminFilter adminFilter) {
     adminFilter.getFilter().put("roleId:ne", 1);
     if (adminFilter.getRoleId().isEmpty() && AuthenticationUtils.isNotSuperAdmin()) {
-      adminFilter
-          .getFilter()
-          .put(
-              "roleId:in",
-              this.roleService.getFlatRoleIdsByIdWithRecursiveChildren(
-                  AuthenticationUtils.getRoleId()));
+      final Set<Long> roleIds =
+          this.roleService.getFlatRoleIdsByIdWithRecursiveChildren(AuthenticationUtils.getRoleId());
+      if (!roleIds.isEmpty()) {
+        adminFilter.getFilter().put("roleId:in", roleIds);
+      }
     }
     final int count = this.adminRepository.countForDataTable(adminFilter);
     if (count == 0) {

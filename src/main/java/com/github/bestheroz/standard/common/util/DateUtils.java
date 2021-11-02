@@ -36,7 +36,7 @@ public class DateUtils {
 
   public String toString(final Long timestamp, final String pattern) {
     Assert.hasText(pattern, "pattern parameter must not be empty or null");
-    return toString(timestamp, pattern, ZoneId.of("Asia/Seoul"));
+    return toString(timestamp, pattern, ZoneId.of("UTC"));
   }
 
   public String toString(final Long timestamp, final String pattern, final ZoneId zoneId) {
@@ -52,7 +52,7 @@ public class DateUtils {
   public String toString(final Date date, final String pattern) {
     Assert.hasText(pattern, "pattern parameter must not be empty or null");
     return Optional.ofNullable(date)
-        .map(item -> toString(item.getTime(), pattern, ZoneId.of("Asia/Seoul")))
+        .map(item -> toString(item.getTime(), pattern, ZoneId.of("UTC")))
         .orElse(StringUtils.EMPTY);
   }
 
