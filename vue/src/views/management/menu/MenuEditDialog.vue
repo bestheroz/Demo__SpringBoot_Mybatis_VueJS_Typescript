@@ -157,7 +157,7 @@ export default class extends Vue {
   }
 
   protected linkIconSite(): void {
-    window.open("https://pictogrammers.github.io/@mdi/font/6.2.95/", "_blank");
+    window.open("https://pictogrammers.github.io/@mdi/font/6.4.95/", "_blank");
   }
 }
 </script>
