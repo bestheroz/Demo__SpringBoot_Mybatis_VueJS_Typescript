@@ -89,7 +89,6 @@ public class ExcelService extends AbstractExcelXView {
       }
       final SXSSFRow row = sheet.createRow(3 + i);
       final Map<String, Object> data = MapperUtils.toMap(listData.get(i));
-      log.debug("data[{}]: {}", i, data);
       for (int j = 0; j < excelVOs.size(); j++) {
         Object value = data;
         for (final String key : StringUtils.split(excelVOs.get(j).getCellKey(), ".")) {

@@ -6,7 +6,6 @@ import com.github.bestheroz.standard.common.exception.BusinessException;
 import com.github.bestheroz.standard.common.exception.ExceptionCode;
 import com.github.bestheroz.standard.common.response.ApiResult;
 import com.github.bestheroz.standard.common.response.Result;
-import com.github.bestheroz.standard.common.util.MapperUtils;
 import java.util.List;
 import java.util.Map;
 import javax.validation.Valid;
@@ -51,7 +50,6 @@ public class CodeController {
   public ResponseEntity<ApiResult<CodeDTO>> post(@RequestBody @Valid final CodeDTO payload) {
     final Code code = payload.toCode();
     this.codeRepository.insert(code);
-    log.debug("code: {}", MapperUtils.toString(code));
     return Result.created(
         new CodeDTO(
             this.codeRepository

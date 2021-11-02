@@ -26,7 +26,7 @@ public class AdminService {
 
   @Transactional(readOnly = true)
   public Page<AdminDTO> getAdmins(final AdminFilter adminFilter) {
-    adminFilter.getFilter().put("roleId:notEqual", 1);
+    adminFilter.getFilter().put("roleId:ne", 1);
     if (adminFilter.getRoleId().isEmpty() && AuthenticationUtils.isNotSuperAdmin()) {
       adminFilter
           .getFilter()
