@@ -13,15 +13,21 @@
           <v-icon v-text="menu.icon" />
         </v-list-item-icon>
         <v-list-item-title class="d-inline">
-          <v-btn icon v-if="$store.getters.writeAuthority">
-            <v-icon class="drag-handle"> mdi-sort </v-icon>
-          </v-btn>
-          <a
-            class="text--anchor"
-            @click="$emit('click:edit', menu)"
-            v-text="menu.name"
-          />
-          <span v-text="menu.url" class="offset-1" />
+          <v-row no-gutters>
+            <v-col cols="2">
+              <v-btn icon v-if="$store.getters.writeAuthority">
+                <v-icon class="drag-handle"> mdi-sort </v-icon>
+              </v-btn>
+              <a
+                class="text--anchor"
+                @click="$emit('click:edit', menu)"
+                v-text="menu.name"
+              />
+            </v-col>
+            <v-col cols="10" class="pt-1">
+              <span v-text="menu.url" />
+            </v-col>
+          </v-row>
           <menu-nested-draggable
             v-if="menu.type === MENU_TYPE.GROUP"
             v-model="menu.children"
