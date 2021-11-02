@@ -7,7 +7,7 @@
       :drawer="drawer"
       :depth="depth"
     >
-      <template v-if="drawer.children && drawer.children.length > 0">
+      <template>
         <nav-menu :drawers="drawer.children" :depth="depth + 1" />
       </template>
     </nav-menu-item>
