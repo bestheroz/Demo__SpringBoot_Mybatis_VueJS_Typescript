@@ -69,7 +69,7 @@ public class ExcelController {
         "updatedBy",
         ExcelService.CellType.STRING,
         this.adminRepository.getCodes().stream()
-            .map(c -> new CodeVO<>(c.getValue().toString(), c.getText()))
+            .map(c -> new CodeVO<>(c.value().toString(), c.text()))
             .toList());
 
     model.addAttribute(AbstractExcelXView.FILE_NAME, fileName);

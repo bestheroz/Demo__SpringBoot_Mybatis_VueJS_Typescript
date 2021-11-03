@@ -45,7 +45,6 @@ public abstract class AbstractExcelXView extends AbstractView {
   public static final String FILE_NAME = "fileName";
   public static final String PASSWORD = "password";
   public static final String EXCEL_VOS = "excelVOs";
-  public static final String SQL = "SQL";
   public static final String LIST_DATA = "listData";
   /** The content type for an Excel response */
   private static final String CONTENT_TYPE =
@@ -82,13 +81,8 @@ public abstract class AbstractExcelXView extends AbstractView {
       final CellType cellType,
       final List<CodeVO<String>> codeList) {
     excelVOList.add(
-        ExcelVO.builder()
-            .title(title)
-            .cellKey(cellKey)
-            .cellType(cellType)
-            .codeList(codeList)
-            .charByte(cellType.equals(CellType.STRING) ? 1.2D : 1.0D)
-            .build());
+        new ExcelVO(
+            title, cellKey, cellType.equals(CellType.STRING) ? 1.2D : 1.0D, cellType, codeList));
   }
 
   @Override
@@ -200,7 +194,7 @@ public abstract class AbstractExcelXView extends AbstractView {
       sheet.autoSizeColumn(j);
       // java.lang.IllegalArgumentException: The maximum column width for an individual cell is 255
       // characters. max 59999
-      int columWidth = (int) (sheet.getColumnWidth(j) * excelVOs.get(j).getCharByte() + 300);
+      int columWidth = (int) (sheet.getColumnWidth(j) * excelVOs.get(j).charByte() + 300);
       columWidth = Math.max(columWidth, 3000);
       columWidth = Math.min(columWidth, 59999);
       sheet.setColumnWidth(j, columWidth);
@@ -213,35 +207,34 @@ public abstract class AbstractExcelXView extends AbstractView {
       final Integer columnIdx,
       final SXSSFCell cell,
       final String data) {
-    if (excelVOs.get(columnIdx).getCellType().equals(CellType.INTEGER)) {
+    if (excelVOs.get(columnIdx).cellType().equals(CellType.INTEGER)) {
       this.setInteger(cell, data);
-    } else if (excelVOs.get(columnIdx).getCellType().equals(CellType.DOUBLE)) {
+    } else if (excelVOs.get(columnIdx).cellType().equals(CellType.DOUBLE)) {
       this.setDouble(cell, data);
-    } else if (excelVOs.get(columnIdx).getCellType().equals(CellType.DATE)
-        || excelVOs.get(columnIdx).getCellType().equals(CellType.DATE_YYYYMMDDHHMMSS)) {
+    } else if (excelVOs.get(columnIdx).cellType().equals(CellType.DATE)
+        || excelVOs.get(columnIdx).cellType().equals(CellType.DATE_YYYYMMDDHHMMSS)) {
       this.setDate(cell, Instant.parse(data).toString());
-    } else if (excelVOs.get(columnIdx).getCellType().equals(CellType.DATE_YYYYMMDD)) {
+    } else if (excelVOs.get(columnIdx).cellType().equals(CellType.DATE_YYYYMMDD)) {
       this.setDate(cell, Instant.parse(data).toString());
     } else {
       try {
-        Optional.ofNullable(excelVOs.get(columnIdx).getCodeList())
-            .flatMap(
-                items -> items.stream().filter(item -> item.getValue().equals(data)).findFirst())
+        Optional.ofNullable(excelVOs.get(columnIdx).codeList())
+            .flatMap(items -> items.stream().filter(item -> item.value().equals(data)).findFirst())
             .ifPresentOrElse(
                 item -> {
-                  final String text = item.getText();
-                  if (excelVOs.get(columnIdx).getCellType().equals(CellType.STRING_CENTER)) {
+                  final String text = item.text();
+                  if (excelVOs.get(columnIdx).cellType().equals(CellType.STRING_CENTER)) {
                     this.setStringCenter(cell, text);
-                  } else if (excelVOs.get(columnIdx).getCellType().equals(CellType.STRING_RIGHT)) {
+                  } else if (excelVOs.get(columnIdx).cellType().equals(CellType.STRING_RIGHT)) {
                     this.setStringRight(cell, text);
                   } else {
                     this.setString(cell, text);
                   }
                 },
                 () -> {
-                  if (excelVOs.get(columnIdx).getCellType().equals(CellType.STRING_CENTER)) {
+                  if (excelVOs.get(columnIdx).cellType().equals(CellType.STRING_CENTER)) {
                     this.setStringCenter(cell, data);
-                  } else if (excelVOs.get(columnIdx).getCellType().equals(CellType.STRING_RIGHT)) {
+                  } else if (excelVOs.get(columnIdx).cellType().equals(CellType.STRING_RIGHT)) {
                     this.setStringRight(cell, data);
                   } else {
                     this.setString(cell, data);

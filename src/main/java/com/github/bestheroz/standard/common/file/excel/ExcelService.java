@@ -76,7 +76,7 @@ public class ExcelService extends AbstractExcelXView {
     final SXSSFRow row2 = sheet.createRow(2);
     for (int i = 0; i < excelVOs.size(); i++) {
       final SXSSFCell cell = row2.createCell(i);
-      cell.setCellValue(excelVOs.get(i).getTitle());
+      cell.setCellValue(excelVOs.get(i).title());
       cell.setCellStyle(cellStyle);
     }
   }
@@ -91,7 +91,7 @@ public class ExcelService extends AbstractExcelXView {
       final Map<String, Object> data = MapperUtils.toMap(listData.get(i));
       for (int j = 0; j < excelVOs.size(); j++) {
         Object value = data;
-        for (final String key : StringUtils.split(excelVOs.get(j).getCellKey(), ".")) {
+        for (final String key : StringUtils.split(excelVOs.get(j).cellKey(), ".")) {
           if (Objects.nonNull(value)) {
             if (value instanceof HashMap map) {
               value = (map).get(key);
