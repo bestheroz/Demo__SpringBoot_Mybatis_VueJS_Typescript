@@ -157,11 +157,11 @@ public class TestCreateTableEntity {
     final String javaBody =
         hasAbstractCreatedUpdate
             ? javaString
-            .toString()
-            .replace("private String createdBy;\n", "")
-            .replace("private Instant created;\n", "")
-            .replace("private String updatedBy;\n", "")
-            .replace("private Instant updated;\n", "")
+                .toString()
+                .replace("private String createdBy;\n", "")
+                .replace("private Instant created;\n", "")
+                .replace("private String updatedBy;\n", "")
+                .replace("private Instant updated;\n", "")
             : javaString.toString();
     if (Files.notExists(
         Paths.get(this.javaFilePath + this.javaPackageEndPoint.replaceAll("\\.", "/")))) {
@@ -206,7 +206,8 @@ public class TestCreateTableEntity {
             this.javaFilePath
                 + this.javaPackageEndPoint.replaceAll("\\.", "/")
                 + "/"
-                + entityName+"Repository"
+                + entityName
+                + "Repository"
                 + ".java");
     Files.write(
         javaRepositoryFilePath,
