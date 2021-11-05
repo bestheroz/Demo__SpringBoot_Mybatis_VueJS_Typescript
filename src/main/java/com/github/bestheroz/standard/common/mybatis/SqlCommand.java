@@ -468,6 +468,10 @@ public class SqlCommand {
       }
     } else if (value instanceof Set || value instanceof List) {
       return "'" + MapperUtils.toJsonArray(value).toString() + "'";
+    } else if (value instanceof Instant instant) {
+      return MessageFormat.format(
+          "FROM_UNIXTIME({0,number,#})",
+          Integer.parseInt(String.valueOf((instant).toEpochMilli() / 1000)));
     } else {
       return value.toString();
     }

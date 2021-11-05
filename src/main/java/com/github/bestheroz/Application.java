@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration;
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
-import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootApplication(
     scanBasePackages = "com.github.bestheroz",
@@ -14,7 +14,7 @@ import org.springframework.cache.annotation.EnableCaching;
       JpaRepositoriesAutoConfiguration.class,
       HibernateJpaAutoConfiguration.class
     })
-@EnableCaching
+@EnableTransactionManagement
 public class Application {
   public static void main(final String[] args) {
     SpringApplication.run(Application.class, args);
