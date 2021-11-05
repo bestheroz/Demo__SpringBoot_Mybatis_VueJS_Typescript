@@ -24,12 +24,11 @@ import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.core.type.classreading.CachingMetadataReaderFactory;
 import org.springframework.core.type.classreading.MetadataReader;
 import org.springframework.core.type.classreading.MetadataReaderFactory;
-import org.springframework.stereotype.Component;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.SystemPropertyUtils;
 
 @Slf4j
-@Component
+// @Component
 public class DbTableVOCheckerContext {
   public static final String DEFAULT_DATE_TYPE = "Instant";
   public static final Set<String> STRING_JDBC_TYPE_SET =
@@ -75,7 +74,7 @@ public class DbTableVOCheckerContext {
         ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX
             + this.resolveBasePackage()
             + "/"
-            + "**/Table*Entity.class";
+            + "**/*.class";
     for (final Resource resource : resourcePatternResolver.getResources(packageSearchPath)) {
       if (resource.isReadable()) {
         final MetadataReader metadataReader = metadataReaderFactory.getMetadataReader(resource);
@@ -98,6 +97,9 @@ public class DbTableVOCheckerContext {
       final Set<Class<?>> targetClassList = this.findMyTypes();
       for (final Class<?> class1 : targetClassList) {
         final String tableName = SqlCommand.getTableName(class1.getSimpleName());
+        if (tableName.equals("abstract_created_update")) {
+          continue;
+        }
         try (final ResultSet rs = stmt.executeQuery("SELECT * FROM " + tableName + " LIMIT 0")) {
           final ResultSetMetaData metaInfo = rs.getMetaData();
           final String className = class1.getSimpleName();

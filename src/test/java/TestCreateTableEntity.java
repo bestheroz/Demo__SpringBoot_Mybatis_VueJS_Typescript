@@ -28,7 +28,7 @@ public class TestCreateTableEntity {
   private final String tableName = "MEMBER_MENU";
   private final String javaPackageEndPoint = this.tableName.replaceAll("_", ".").toLowerCase();
   private final String javaProjectRootPackageName = "com.github.bestheroz.";
-  private final String javaPackageName = this.javaProjectRootPackageName + "demo.api.entity.";
+  private final String javaPackageName = this.javaProjectRootPackageName + "demo.entity.";
   private final String javaFilePath =
       "src/main/java/" + this.javaPackageName.replaceAll("\\.", "/");
   private final String tsFilePath = "vue/src/common/types.ts";
@@ -41,8 +41,7 @@ public class TestCreateTableEntity {
   public void makeEntityRepositoryFilesAuto() {
     try (final Statement stmt = this.dataSource.getConnection().createStatement()) {
       try (final ResultSet rs = stmt.executeQuery("SELECT * FROM " + this.tableName + " LIMIT 0")) {
-        final String tableEntityName =
-            "Table" + CaseUtils.getSnakeCaseToCamelCase(this.tableName) + "Entity";
+        final String tableEntityName = CaseUtils.getSnakeCaseToCamelCase(this.tableName);
 
         final ResultSetMetaData metaInfo = rs.getMetaData();
         System.out.println(tableEntityName);
@@ -123,7 +122,7 @@ public class TestCreateTableEntity {
   private void writeToFile(
       final String entityName, final StringBuilder javaString, final StringBuilder tsString)
       throws IOException {
-    final boolean hasAbstractCreatedUpdateEntity =
+    final boolean hasAbstractCreatedUpdate =
         StringUtils.contains(javaString, " createdBy")
             && StringUtils.contains(javaString, " created")
             && StringUtils.contains(javaString, " updatedBy")
@@ -149,20 +148,20 @@ public class TestCreateTableEntity {
         """,
             this.javaPackageName,
             this.javaPackageEndPoint,
-            hasAbstractCreatedUpdateEntity
-                ? "import " + this.javaPackageName + "AbstractCreatedUpdateEntity;"
+            hasAbstractCreatedUpdate
+                ? "import " + this.javaPackageName + "AbstractCreatedUpdate;"
                 : "",
-            hasAbstractCreatedUpdateEntity ? "@EqualsAndHashCode(callSuper = true)" : "",
+            hasAbstractCreatedUpdate ? "@EqualsAndHashCode(callSuper = true)" : "",
             entityName,
-            hasAbstractCreatedUpdateEntity ? " extends AbstractCreatedUpdateEntity" : "");
+            hasAbstractCreatedUpdate ? " extends AbstractCreatedUpdate" : "");
     final String javaBody =
-        hasAbstractCreatedUpdateEntity
+        hasAbstractCreatedUpdate
             ? javaString
-                .toString()
-                .replace("private String createdBy;\n", "")
-                .replace("private Instant created;\n", "")
-                .replace("private String updatedBy;\n", "")
-                .replace("private Instant updated;\n", "")
+            .toString()
+            .replace("private String createdBy;\n", "")
+            .replace("private Instant created;\n", "")
+            .replace("private String updatedBy;\n", "")
+            .replace("private Instant updated;\n", "")
             : javaString.toString();
     if (Files.notExists(
         Paths.get(this.javaFilePath + this.javaPackageEndPoint.replaceAll("\\.", "/")))) {
@@ -200,14 +199,14 @@ public class TestCreateTableEntity {
             this.javaPackageName,
             this.javaPackageEndPoint,
             this.javaProjectRootPackageName,
-            entityName.replace("Entity", "Repository"),
+            entityName + "Repository",
             entityName);
     final Path javaRepositoryFilePath =
         Paths.get(
             this.javaFilePath
                 + this.javaPackageEndPoint.replaceAll("\\.", "/")
                 + "/"
-                + entityName.replace("Entity", "Repository")
+                + entityName+"Repository"
                 + ".java");
     Files.write(
         javaRepositoryFilePath,
