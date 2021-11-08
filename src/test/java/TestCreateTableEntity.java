@@ -44,7 +44,7 @@ public class TestCreateTableEntity {
   public void makeEntityRepositoryFilesAuto() {
     try (final Statement stmt = this.dataSource.getConnection().createStatement()) {
       try (final ResultSet rs = stmt.executeQuery("SELECT * FROM " + this.tableName + " LIMIT 0")) {
-        final String entityName = CaseUtils.getSnakeCaseToCamelCase(this.tableName);
+        final String entityName = CaseUtils.getUpperSnakeCaseToCamelCase(this.tableName);
 
         final ResultSetMetaData metaInfo = rs.getMetaData();
         System.out.println(entityName);
@@ -198,8 +198,8 @@ public class TestCreateTableEntity {
         MessageFormat.format(
                 """
                export interface {0} '{
-               {1}
-               '}
+               '{1}
+               }
                """,
                 entityName, tsString)
             .getBytes(),

@@ -32,4 +32,19 @@ public class CaseUtils {
     }
     return result.toString();
   }
+
+  public String getUpperSnakeCaseToCamelCase(final String str) {
+    final StringBuilder result = new StringBuilder(str.length());
+    boolean beforeUnderbar = true;
+    for (int i = 0; i < str.length(); i++) {
+      final char ch = str.charAt(i);
+      if (ch == '_') {
+        beforeUnderbar = true;
+      } else {
+        result.append(beforeUnderbar ? Character.toUpperCase(ch) : Character.toLowerCase(ch));
+        beforeUnderbar = false;
+      }
+    }
+    return result.toString();
+  }
 }

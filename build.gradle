@@ -29,6 +29,7 @@ dependencies {
     implementation "org.projectlombok:lombok"
     implementation "org.apache.commons:commons-lang3"
     implementation "com.h2database:h2"
+    implementation 'org.mariadb.jdbc:mariadb-java-client'
     implementation 'org.hibernate:hibernate-core:5.6.0.Final'
     implementation 'javax.validation:validation-api'
     implementation "org.mybatis.spring.boot:mybatis-spring-boot-starter:$mybatisVersion"
@@ -51,7 +52,7 @@ dependencies {
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 test {
-    exclude "**/*"
+    useJUnitPlatform()
 }
 
 tasks.withType(JavaCompile) {
