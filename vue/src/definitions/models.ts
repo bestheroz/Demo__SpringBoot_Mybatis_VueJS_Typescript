@@ -34,7 +34,6 @@ export interface Code extends IdCreatedUpdated {
 }
 
 export interface RoleMenuMap {
-  id?: number;
   menu: Menu;
   authoritiesJson: string[];
   children: RoleMenuMap[];

@@ -1,21 +1,21 @@
 package com.github.bestheroz.demo.entity;
 
 import com.github.bestheroz.demo.api.mine.MineConfigDTO;
+import java.io.Serial;
 import java.io.Serializable;
+import java.time.Instant;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class AdminConfig extends AbstractCreatedUpdate implements Serializable {
-  private static final long serialVersionUID = 1426310156205338408L;
+public class AdminConfig implements Serializable {
+  @Serial private static final long serialVersionUID = 1426310156205338408L;
 
   private Long id;
   private Long adminId;
@@ -25,6 +25,11 @@ public class AdminConfig extends AbstractCreatedUpdate implements Serializable {
   private Boolean toolbarDetached;
   private Boolean contentBoxed;
   private String primaryColor;
+
+  protected Long createdBy;
+  protected Instant created;
+  protected Long updatedBy;
+  protected Instant updated;
 
   public void change(final MineConfigDTO dto) {
     this.globalTheme = dto.getGlobalTheme();

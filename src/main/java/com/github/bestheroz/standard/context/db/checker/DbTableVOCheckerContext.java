@@ -32,14 +32,18 @@ import org.springframework.util.SystemPropertyUtils;
 public class DbTableVOCheckerContext {
   public static final String DEFAULT_DATE_TYPE = "Instant";
   public static final Set<String> STRING_JDBC_TYPE_SET =
-      Set.of("VARCHAR", "VARCHAR2", "CHAR", "CLOB");
+      Set.of("VARCHAR", "VARCHAR2", "CHAR", "CLOB", "TEXT", "MEDIUMTEXT", "SMALLTEXT");
   public static final Set<String> NUMBER_JDBC_TYPE_SET =
       Set.of(
           "INTEGER",
+          "TINYINT",
           "INT",
           "INT UNSIGNED",
           "NUMBER",
           "DECIMAL",
+          "SMALLINT",
+          "SMALLINT UNSIGNED",
+          "INTEGER UNSIGNED",
           "DECIMAL UNSIGNED",
           "BIGINT UNSIGNED",
           "BIGINT");

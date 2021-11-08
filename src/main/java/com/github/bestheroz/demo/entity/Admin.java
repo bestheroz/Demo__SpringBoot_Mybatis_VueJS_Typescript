@@ -9,15 +9,13 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class Admin extends AbstractCreatedUpdate implements Serializable {
+public class Admin implements Serializable {
   @Serial private static final long serialVersionUID = 7280716056600887400L;
   private Long id;
   private String adminId;
@@ -28,6 +26,11 @@ public class Admin extends AbstractCreatedUpdate implements Serializable {
   private Boolean available;
   private String token;
   private Instant expired;
+
+  protected Long createdBy;
+  protected Instant created;
+  protected Long updatedBy;
+  protected Instant updated;
 
   public void plusSignInFailCnt() {
     this.signInFailCnt = this.signInFailCnt + 1;

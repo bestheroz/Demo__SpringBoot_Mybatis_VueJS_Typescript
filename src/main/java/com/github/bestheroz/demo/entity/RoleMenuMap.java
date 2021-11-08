@@ -1,6 +1,7 @@
 package com.github.bestheroz.demo.entity;
 
 import com.github.bestheroz.demo.type.RoleAuthorityType;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -15,7 +16,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class RoleMenuMap implements Serializable {
-  private static final long serialVersionUID = -4753709861734048435L;
+  @Serial private static final long serialVersionUID = -4753709861734048435L;
 
   private Long id;
 
