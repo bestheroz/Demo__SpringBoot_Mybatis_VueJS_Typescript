@@ -74,6 +74,7 @@ export default class extends Vue {
         return { ...item, checked: false };
       }
     });
+    this.$emit("change");
   }
 }
 </script>

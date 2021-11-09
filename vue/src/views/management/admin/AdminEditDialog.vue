@@ -108,6 +108,7 @@
                     />
                   </ValidationProvider>
                   <v-btn
+                    v-else-if="$store.getters.roleId !== vModel.role.id"
                     color="primary"
                     outlined
                     @click="resetPasswordDialog = true"
