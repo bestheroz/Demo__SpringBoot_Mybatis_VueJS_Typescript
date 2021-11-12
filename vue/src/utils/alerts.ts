@@ -19,7 +19,8 @@ export function toastSuccess(message: string, timer = 2000): void {
     iconColor: "var(--v-primary-base)",
     timer: timer,
     timerProgressBar: !!timer,
-    title: message,
+    titleText: message,
+    width: `${message.replaceAll(" ", "").length * 0.9 + 10}rem`,
   });
 }
 export function toastInfo(message: string, timer = 5000): void {
@@ -28,7 +29,8 @@ export function toastInfo(message: string, timer = 5000): void {
     iconColor: "var(--v-info-base)",
     timer: timer,
     timerProgressBar: !!timer,
-    title: message,
+    titleText: message,
+    width: `${message.replaceAll(" ", "").length * 0.9 + 10}rem`,
   });
 }
 export function toastWarning(message: string, timer = 3000): void {
@@ -37,7 +39,8 @@ export function toastWarning(message: string, timer = 3000): void {
     iconColor: "var(--v-warning-base)",
     timer: timer,
     timerProgressBar: !!timer,
-    title: message,
+    titleText: message,
+    width: `${message.replaceAll(" ", "").length * 0.9 + 10}rem`,
   });
 }
 export function toastError(message: string, timer?: number): void {
@@ -46,7 +49,8 @@ export function toastError(message: string, timer?: number): void {
     iconColor: "var(--v-error-base)",
     timer: timer,
     timerProgressBar: !!timer,
-    title: message,
+    titleText: message,
+    width: `${message.replaceAll(" ", "").length * 0.9 + 10}rem`,
   });
 }
 export function toastCloseAll(): void {
@@ -60,7 +64,7 @@ export async function confirm(
   cancelButtonText = "취소",
 ): Promise<SweetAlertResult> {
   return await Swal.fire({
-    title: title,
+    titleText: title,
     text: text,
     icon: "question",
     showConfirmButton: true,
@@ -79,7 +83,7 @@ export async function confirmDelete(
   cancelButtonText = "취소",
 ): Promise<SweetAlertResult> {
   return await Swal.fire({
-    title: title,
+    titleText: title,
     text: text,
     icon: "question",
     showConfirmButton: true,
@@ -98,7 +102,7 @@ export async function prompt(
 ): Promise<string> {
   return await Swal.fire({
     input: "text",
-    title: title,
+    titleText: title,
     text: text,
     icon: "question",
     inputPlaceholder: inputPlaceholder,
@@ -124,11 +128,10 @@ export async function promptPassword(
 ): Promise<string> {
   return await Swal.fire({
     input: "password",
-    title: title,
+    titleText: title,
     text: text,
     icon: "question",
-    // prettier-ignore
-    iconHtml: "<i class=\"mdi mdi-keyboard-outline\"></i>",
+    iconHtml: "<i class='mdi mdi-keyboard-outline'></i>",
     inputPlaceholder: inputPlaceholder,
     showCancelButton: true,
     allowEscapeKey: false,
