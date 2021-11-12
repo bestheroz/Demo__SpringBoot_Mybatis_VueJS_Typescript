@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-menu rounded="lg" v-model="isOpen" transition="slide-y-transition">
+    <v-menu rounded="lg" v-model="isOpen" offset-y>
       <template #activator="{ on }">
         <v-chip
           :close="!filter.required"
@@ -10,7 +10,6 @@
           v-on="on"
           class="px-2"
           v-show="chipLabel"
-          style="z-index: 9"
           label
         >
           {{ chipLabel }}

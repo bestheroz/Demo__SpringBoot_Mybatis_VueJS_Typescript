@@ -1,10 +1,6 @@
 <template>
   <div>
-    <v-menu
-      rounded="lg"
-      :close-on-content-click="false"
-      transition="scale-transition"
-    >
+    <v-menu rounded="lg" :close-on-content-click="false">
       <template #activator="{ on, attrs }">
         <v-chip
           color="primary"
@@ -51,7 +47,7 @@
       <span
         v-for="filter in filters"
         :key="filter.key"
-        class="d-inline-flex ml-1"
+        class="d-inline-flex ml-1 mt-1"
       >
         <data-table-filter-selected-chip
           :filter="filter"
