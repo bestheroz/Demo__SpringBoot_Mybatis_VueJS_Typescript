@@ -157,7 +157,7 @@ export default class AdminList extends Vue {
         text: "사용 가능",
         key: "available",
         items: BooleanTypes.map((v) => {
-          return { ...v, checked: v.value };
+          return { ...v, checked: false };
         }),
         single: true,
       },
