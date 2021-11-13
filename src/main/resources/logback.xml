@@ -5,18 +5,16 @@
     <property name="LOG_DIR" value="/logs"/>
     <appender name="SENTRY" class="io.sentry.logback.SentryAppender"/>
     <appender name="DEBUG_FILE_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
-      <file>${LOG_DIR}/debuglog.log</file>
+      <file>${LOG_DIR}/debug.log</file>
       <append>true</append>
       <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
         <fileNamePattern>${LOG_DIR}/debug-%d{yyyyMMdd}.log</fileNamePattern>
-        <maxHistory>10</maxHistory>
+        <maxHistory>60</maxHistory>
       </rollingPolicy>
-      <withJansi>true</withJansi>
+      <!--      <withJansi>true</withJansi>-->
       <encoder>
         <pattern>
-          <!-- @formatter:off -->
-          %d{HH:mm:ss.SSS} %highlight(%-5level) %magenta([%t]) %-75.75cyan(%c{1}.%M\(%L\)) %m%n
-          <!-- @formatter:on -->
+          <!-- @formatter:off -->%d{HH:mm:ss.SSS} %-5level [%t] %-75.75(%c{1}.%M\(%L\)) %m%n<!-- @formatter:on -->
         </pattern>
       </encoder>
     </appender>
@@ -24,18 +22,15 @@
       <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
         <level>WARN</level>
       </filter>
-      <file>${LOG_DIR}/errlog.log</file>
+      <file>${LOG_DIR}/error.log</file>
       <append>true</append>
       <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
         <fileNamePattern>${LOG_DIR}/error-%d{yyyyMMdd}.log</fileNamePattern>
-        <maxHistory>10</maxHistory>
+        <maxHistory>60</maxHistory>
       </rollingPolicy>
-      <withJansi>true</withJansi>
       <encoder>
         <pattern>
-          <!-- @formatter:off -->
-          %d{HH:mm:ss.SSS} %highlight(%-5level) %magenta([%t]) %-75.75cyan(%c{1}.%M\(%L\)) %m%n
-          <!-- @formatter:on -->
+          <!-- @formatter:off -->%d{HH:mm:ss.SSS} %-5level [%t] %-75.75(%c{1}.%M\(%L\)) %m%n<!-- @formatter:on -->
         </pattern>
       </encoder>
     </appender>
@@ -45,9 +40,7 @@
       <withJansi>true</withJansi>
       <encoder>
         <pattern>
-          <!-- @formatter:off -->
-          %d{HH:mm:ss.SSS} %highlight(%-5level) %magenta([%t]) %-75.75cyan(%c{1}.%M\(%L\)) %m%n
-          <!-- @formatter:on -->
+          <!-- @formatter:off -->%d{HH:mm:ss.SSS} %highlight(%-5level) %magenta([%t]) %-75.75cyan(%c{1}.%M\(%L\)) %m%n<!-- @formatter:on -->
         </pattern>
       </encoder>
     </appender>

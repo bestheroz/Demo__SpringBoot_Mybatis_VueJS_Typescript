@@ -1,5 +1,6 @@
 package com.github.bestheroz.standard.context.log;
 
+import com.github.bestheroz.standard.context.init.StaticConfig;
 import com.p6spy.engine.logging.Category;
 import com.p6spy.engine.spy.P6SpyOptions;
 import com.p6spy.engine.spy.appender.MessageFormattingStrategy;
@@ -43,9 +44,13 @@ public class P6spyConfig {
         if (sql.startsWith("create") || sql.startsWith("alter") || sql.startsWith("comment")) {
           return FormatStyle.DDL.getFormatter().format(sql);
         } else {
-          return FormatStyle.HIGHLIGHT
-              .getFormatter()
-              .format(FormatStyle.BASIC.getFormatter().format(sql));
+          if (StaticConfig.LOCAL_ACTIVE_PROFILE_FLAG) {
+            return FormatStyle.HIGHLIGHT
+                .getFormatter()
+                .format(FormatStyle.BASIC.getFormatter().format(sql));
+          } else {
+            return FormatStyle.BASIC.getFormatter().format(sql);
+          }
         }
       }
       return sql;
