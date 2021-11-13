@@ -25,8 +25,12 @@
                       v-model="vModel.adminId"
                       label="관리자 아이디"
                       :counter="50"
-                      :error-messages="errors"
+                      :error-messages="adminIdErrorText || errors"
+                      :success-messages="adminIdSuccessText"
+                      :append-icon="adminIdAppendIcon"
                       class="required"
+                      :loading="loading"
+                      @input="debounceCheckExistsAdminId"
                     />
                   </ValidationProvider>
                 </v-col>
@@ -122,7 +126,8 @@
               block
               text="저장"
               icon="mdi-content-save"
-              :loading="loading"
+              :disabled="!adminIdSuccessText"
+              :loading="saving"
               @click="save"
               v-if="!noneWriteAuthority"
             />
@@ -145,7 +150,7 @@
 
 <script lang="ts">
 import { Component, PropSync, Ref, VModel, Vue } from "vue-property-decorator";
-import { patchApi, postApi } from "@/utils/apis";
+import { getApi, patchApi, postApi } from "@/utils/apis";
 import DatetimePicker from "@/components/picker/DatetimePicker.vue";
 import { ValidationObserver } from "vee-validate";
 import pbkdf2 from "pbkdf2";
@@ -155,6 +160,7 @@ import type { Admin } from "@/definitions/models";
 import CreatedUpdatedBar from "@/components/history/CreatedUpdatedBar.vue";
 import ButtonWithIcon from "@/components/button/ButtonWithIcon.vue";
 import RoleSelections from "@/views/management/role/RoleSelections.vue";
+import { debounce, DebouncedFunc } from "lodash-es";
 
 @Component({
   components: {
@@ -171,12 +177,21 @@ export default class extends Vue {
   @PropSync("dialog", { required: true, type: Boolean }) syncedDialog!: boolean;
   @Ref("observer") readonly observer!: InstanceType<typeof ValidationObserver>;
 
-  loading = false;
+  saving = false;
   password = "";
   password2 = "";
   show1 = false;
   show2 = false;
   resetPasswordDialog = false;
+  existsAdminId = false;
+  originalAdminId = "";
+  checked = true;
+  loading = false;
+
+  readonly debounce: DebouncedFunc<() => Promise<void>> = debounce(
+    this.checkExistsAdminId,
+    500,
+  );
 
   get isNew(): boolean {
     return !this.vModel.id;
@@ -191,6 +206,39 @@ export default class extends Vue {
     );
   }
 
+  get adminIdErrorText(): string[] | undefined {
+    if (!this.checked) {
+      return undefined;
+    }
+    if (this.vModel.adminId === this.originalAdminId) {
+      return undefined;
+    }
+    return this.existsAdminId ? ["이미 사용중인 아이디 입니다."] : undefined;
+  }
+  get adminIdSuccessText(): string[] | undefined {
+    if (!this.checked) {
+      return undefined;
+    }
+    if (this.vModel.adminId === this.originalAdminId) {
+      return undefined;
+    }
+    return this.existsAdminId ? undefined : ["사용 가능한 아이디 입니다."];
+  }
+
+  get adminIdAppendIcon(): string | unknown {
+    if (this.adminIdSuccessText) {
+      return "mdi-check-circle";
+    }
+    if (this.adminIdErrorText) {
+      return "mdi-alert-circle";
+    }
+    return undefined;
+  }
+
+  protected created(): void {
+    this.originalAdminId = this.vModel.adminId;
+  }
+
   protected async save(): Promise<void> {
     const isValid = await this.observer.validate();
     if (!isValid) {
@@ -200,7 +248,7 @@ export default class extends Vue {
   }
 
   protected async create(): Promise<void> {
-    this.loading = true;
+    this.saving = true;
     const params = { ...this.vModel, password: this.password };
     if (params.password) {
       params.password = pbkdf2
@@ -208,7 +256,7 @@ export default class extends Vue {
         .toString();
     }
     const response = await postApi<Admin>("admins/", params);
-    this.loading = false;
+    this.saving = false;
     if (response.code.startsWith("S")) {
       await this.$store.dispatch("reloadAdminCodes");
       this.syncedDialog = false;
@@ -217,7 +265,7 @@ export default class extends Vue {
   }
 
   protected async update(): Promise<void> {
-    this.loading = true;
+    this.saving = true;
     const params = { ...this.vModel, password: this.password };
     if (params.password) {
       params.password = pbkdf2
@@ -225,7 +273,7 @@ export default class extends Vue {
         .toString();
     }
     const response = await patchApi<Admin>(`admins/${this.vModel.id}`, params);
-    this.loading = false;
+    this.saving = false;
     if (response.code.startsWith("S")) {
       if (this.vModel.id === this.$store.getters.admin.id) {
         await this.$store.dispatch("reIssueAccessToken");
@@ -234,6 +282,25 @@ export default class extends Vue {
       this.syncedDialog = false;
       this.$emit("updated", response.data);
     }
+  }
+
+  protected debounceCheckExistsAdminId(): void {
+    if (this.vModel.adminId === this.originalAdminId) {
+      return;
+    }
+    this.loading = true;
+    this.checked = false;
+    this.debounce();
+  }
+
+  protected async checkExistsAdminId(): Promise<void> {
+    this.loading = true;
+    const response = await getApi<boolean>(
+      `admins/exists-admin-id?adminId=${this.vModel.adminId}`,
+    );
+    this.loading = false;
+    this.checked = true;
+    this.existsAdminId = response.data;
   }
 }
 </script>
