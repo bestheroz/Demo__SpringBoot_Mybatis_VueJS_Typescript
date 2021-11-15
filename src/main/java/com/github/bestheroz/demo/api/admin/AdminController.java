@@ -7,6 +7,7 @@ import com.github.bestheroz.demo.type.Page;
 import com.github.bestheroz.standard.common.response.ApiResult;
 import com.github.bestheroz.standard.common.response.Result;
 import java.util.List;
+import java.util.Set;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +30,10 @@ public class AdminController {
 
   @GetMapping(value = "codes/")
   public ResponseEntity<ApiResult<List<CodeVO<Long>>>> getCodes() {
-    return Result.ok(this.adminRepository.getCodes());
+    return Result.ok(
+        this.adminRepository.getTargetItems(Set.of("id", "name")).stream()
+            .map(a -> new CodeVO<>(a.getId(), a.getName()))
+            .toList());
   }
 
   @GetMapping

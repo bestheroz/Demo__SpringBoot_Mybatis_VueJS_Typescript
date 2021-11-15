@@ -17,7 +17,7 @@ public class CodeService {
         .forEach(c -> this.codeRepository.updateById(c, c.getId()));
     if (!payload.isEmpty()) {
       return this.codeRepository
-          .getItemsByMapWithOrder(Map.of("type", payload.get(0).getType()), List.of("displayOrder"))
+          .getItemsByMapOrderBy(Map.of("type", payload.get(0).getType()), List.of("displayOrder"))
           .stream()
           .map(CodeDTO::new)
           .toList();

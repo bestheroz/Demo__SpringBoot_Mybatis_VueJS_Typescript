@@ -40,7 +40,7 @@ public class CodeController {
       @RequestParam(value = "type") final String type) {
     return Result.ok(
         this.codeRepository
-            .getItemsByMapWithOrder(Map.of("type", type), List.of("displayOrder"))
+            .getItemsByMapOrderBy(Map.of("type", type), List.of("displayOrder"))
             .stream()
             .map(CodeDTO::new)
             .toList());

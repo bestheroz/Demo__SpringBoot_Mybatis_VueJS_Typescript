@@ -29,7 +29,7 @@ public class RoleMenuService {
   @Transactional(readOnly = true)
   public List<RoleMenuChildrenDTO> getItems(final Long roleId) {
     final List<RoleMenuMap> roleMenuMaps =
-        this.roleMenuMapRepository.getItemsByMapWithOrder(
+        this.roleMenuMapRepository.getItemsByMapOrderBy(
             Map.of("roleId", roleId, "parentId:null", "@NULL"), List.of("displayOrder"));
     if (roleMenuMaps.isEmpty()) {
       return List.of();

@@ -24,7 +24,7 @@ public class RoleService {
   @Transactional(readOnly = true)
   public List<RoleChildrenDTO> getItems() {
     return this.roleRepository
-        .getItemsByMapWithOrder(Map.of("parentId:null", "@NULL"), List.of("displayOrder"))
+        .getItemsByMapOrderBy(Map.of("parentId:null", "@NULL"), List.of("displayOrder"))
         .stream()
         .map(r -> new RoleChildrenDTO(r, this.getChildren(r.getId())))
         .toList();

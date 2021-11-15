@@ -20,7 +20,7 @@ public class MenuService {
   @Transactional(readOnly = true)
   public List<MenuChildrenDTO> getItems() {
     return this.menuRepository
-        .getItemsByMapWithOrder(Map.of("parentId:null", "@NULL"), List.of("displayOrder"))
+        .getItemsByMapOrderBy(Map.of("parentId:null", "@NULL"), List.of("displayOrder"))
         .stream()
         .map(r -> new MenuChildrenDTO(r, this.getChildren(r.getId())))
         .toList();
