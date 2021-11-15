@@ -14,8 +14,7 @@ import org.apache.ibatis.annotations.UpdateProvider;
 
 public interface SqlRepository<T extends Serializable> {
   default List<T> getItems() {
-    return this.getDistinctAndTargetItemsByMapOrderBy(
-        Set.of(), Set.of(), Map.of(), List.of());
+    return this.getDistinctAndTargetItemsByMapOrderBy(Set.of(), Set.of(), Map.of(), List.of());
   }
 
   default List<T> getItemsOrderBy(final List<String> orderByConditions) {
@@ -61,8 +60,7 @@ public interface SqlRepository<T extends Serializable> {
 
   // Target 시리즈를 사용하기 위해서는 Entity에 반드시 @NoArgsConstructor 가 필요하다
   default List<T> getTargetItems(final Set<String> targetColumns) {
-    return this.getDistinctAndTargetItemsByMapOrderBy(
-        Set.of(), targetColumns, Map.of(), List.of());
+    return this.getDistinctAndTargetItemsByMapOrderBy(Set.of(), targetColumns, Map.of(), List.of());
   }
 
   // Target 시리즈를 사용하기 위해서는 Entity에 반드시 @NoArgsConstructor 가 필요하다
