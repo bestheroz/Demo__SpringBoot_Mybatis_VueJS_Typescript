@@ -126,7 +126,9 @@
               block
               text="저장"
               icon="mdi-content-save"
-              :disabled="!adminIdSuccessText"
+              :disabled="
+                !adminIdSuccessText && originalAdminId !== vModel.adminId
+              "
               :loading="saving"
               @click="save"
               v-if="!noneWriteAuthority"
