@@ -462,7 +462,7 @@ public class SqlCommand {
         //            "FROM_UNIXTIME({0,number,#})",
         //            Integer.parseInt(String.valueOf(Instant.parse(str).toEpochMilli() / 1000)));
       } else {
-        return "'" + value + "'";
+        return "'" + str.replaceAll("'", "''") + "'";
       }
     } else if (value instanceof Set || value instanceof List) {
       return "'" + MapperUtils.toJsonArray(value).toString() + "'";
@@ -473,7 +473,7 @@ public class SqlCommand {
       //          "FROM_UNIXTIME({0,number,#})",
       //          Integer.parseInt(String.valueOf((instant).toEpochMilli() / 1000)));
     } else {
-      return value.toString();
+      return value.toString().replaceAll("'", "''");
     }
   }
 
