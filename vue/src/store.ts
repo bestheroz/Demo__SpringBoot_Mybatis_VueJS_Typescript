@@ -265,7 +265,7 @@ const authority = {
   mutations: {
     setRole(state: any, role: Role): void {
       if (role) {
-        state.superAdminFlag = role.id === 1;
+        state.superAdminFlag = role?.id === 1;
         state.drawers = getDrawersFromRoleMenuMaps(role.maps);
         state.flatAuthorities = getFlatRoleMenuMaps(role.maps);
       }
