@@ -69,7 +69,7 @@ const admin = {
         state.roleId = admin.roleId;
         state.accessToken = accessToken;
       } catch (e: unknown) {
-        signOut();
+        signOut().then();
       }
     },
     setRefreshToken(state: any, refreshToken: string): void {
