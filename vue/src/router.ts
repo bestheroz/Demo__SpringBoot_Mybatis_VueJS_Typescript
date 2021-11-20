@@ -81,11 +81,6 @@ const routes = (): RouteConfig[] => {
     {
       path: "/",
       beforeEnter: requireAuth(),
-      redirect: "/blank",
-    },
-    {
-      path: "/blank",
-      beforeEnter: requireAuth(),
       component: () => import("@/views/Home.vue"),
     },
     {
@@ -106,7 +101,7 @@ const routes = (): RouteConfig[] => {
 };
 
 export default new Router({
-  mode: "history",
+  mode: "hash",
   base: process.env.BASE_URL,
   scrollBehavior(_to: Route, _from: Route, savedPosition) {
     return savedPosition || { x: 0, y: 0 };
