@@ -3,12 +3,13 @@ package com.github.bestheroz.standard.common.authenticate;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.Claim;
 import com.github.bestheroz.standard.common.exception.BusinessException;
 import com.github.bestheroz.standard.common.exception.ExceptionCode;
 import com.github.bestheroz.standard.common.util.LogUtils;
-import com.github.bestheroz.standard.common.util.MapperUtils;
 import java.sql.Date;
 import java.time.OffsetDateTime;
+import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +33,9 @@ public class JwtTokenProvider {
     Assert.notNull(customUserDetails.getRoleId(), "roleId parameter must not be empty or null");
     return JWT.create()
         .withClaim("id", customUserDetails.getId())
-        .withClaim("admin", MapperUtils.toString(customUserDetails))
+        .withClaim("adminId", customUserDetails.getAdminId())
+        .withClaim("name", customUserDetails.getName())
+        .withClaim("roleId", customUserDetails.getRoleId())
         .withExpiresAt(
             Date.from(
                 OffsetDateTime.now().plusSeconds(expiresAtAccessToken.intValue()).toInstant()))
@@ -75,15 +78,17 @@ public class JwtTokenProvider {
   public CustomUserDetails getCustomUserDetails(final String token) {
     Assert.hasText(token, "token parameter must not be empty or null");
     try {
-      return MapperUtils.toObject(
+      final Map<String, Claim> claims =
           JWT.require(ALGORITHM)
               .acceptExpiresAt(expiresAtAccessToken)
               .build()
               .verify(token)
-              .getClaims()
-              .get("admin")
-              .asString(),
-          CustomUserDetails.class);
+              .getClaims();
+      return new CustomUserDetails(
+          claims.get("id").asLong(),
+          claims.get("adminId").asString(),
+          claims.get("name").asString(),
+          claims.get("roleId").asLong());
     } catch (final JWTVerificationException | NullPointerException e) {
       log.warn(LogUtils.getStackTrace(e));
       throw new BusinessException(ExceptionCode.FAIL_TRY_SIGN_IN_FIRST);
