@@ -29,4 +29,8 @@
       color: red;
     }
   }
+  .v-bottom-sheet.v-dialog.v-bottom-sheet--inset {
+    min-width: 650px;
+    width: 70%;
+  }
 }

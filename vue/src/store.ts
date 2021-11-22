@@ -59,14 +59,15 @@ const admin = {
       try {
         const jwt = jwt_decode<{
           exp: number;
+          id: number;
           adminId: string;
-          admin: string;
+          name: string;
+          roleId: string;
         }>(accessToken);
-        const admin = JSON.parse(jwt.admin);
-        state.id = admin.id;
-        state.adminId = admin.adminId;
-        state.name = admin.name;
-        state.roleId = admin.roleId;
+        state.id = jwt.id;
+        state.adminId = jwt.adminId;
+        state.name = jwt.name;
+        state.roleId = jwt.roleId;
         state.accessToken = accessToken;
       } catch (e: unknown) {
         signOut().then();
