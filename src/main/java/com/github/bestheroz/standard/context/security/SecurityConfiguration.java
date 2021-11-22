@@ -53,6 +53,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
   public void configure(final WebSecurity web) {
     web.ignoring()
         .antMatchers(
+            "/index.html",
             "/static/**",
             "/**/*.js",
             "/**/*.js.map",
@@ -61,7 +62,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             "/images/**",
             "/fonts/**",
             "/favicon.*",
-            "/manifest.json");
+            "/manifest.json",
+            "/robots.txt");
   }
 
   @Bean
