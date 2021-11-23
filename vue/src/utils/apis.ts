@@ -28,9 +28,11 @@ axiosInstance.interceptors.request.use(
 );
 axiosInstance.interceptors.response.use(
   function (response) {
-    response.data.success =
-      [200, 201].includes(response.status) &&
-      response.data?.code?.startsWith("S");
+    if (response.data) {
+      response.data.success =
+        [200, 201].includes(response.status) &&
+        response.data.code?.startsWith("S");
+    }
     return response;
   },
   async function (error: AxiosError) {
