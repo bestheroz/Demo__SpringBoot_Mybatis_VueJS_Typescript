@@ -114,7 +114,7 @@ export default class extends Vue {
       adminEncodedPassword,
       false,
     );
-    if (response.code.startsWith("S")) {
+    if (response.success) {
       this.adminEncodedPassword = adminEncodedPassword; // edit-me-dialog로 넘길 사용자 인코딩 패스워드
       this.editMeDialog = true;
     } else {

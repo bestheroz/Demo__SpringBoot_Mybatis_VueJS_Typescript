@@ -28,6 +28,9 @@ axiosInstance.interceptors.request.use(
 );
 axiosInstance.interceptors.response.use(
   function (response) {
+    response.data.success =
+      [200, 201].includes(response.status) &&
+      response.data?.code?.startsWith("S");
     return response;
   },
   async function (error: AxiosError) {
@@ -61,6 +64,7 @@ export interface ApiDataResult<T = unknown> {
   code: string;
   data: T;
   message: string;
+  success: boolean;
 }
 
 export async function getApi<T = never, R = T>(
@@ -70,7 +74,7 @@ export async function getApi<T = never, R = T>(
   const response = await axiosInstance.get<T, AxiosResponse<ApiDataResult<R>>>(
     `api/${url}`,
   );
-  if (!response.data.code.startsWith("S") && failAlert) {
+  if (!response.data.success && failAlert) {
     alertResponseMessage(response.data);
   }
   return response.data;
@@ -191,7 +195,7 @@ export async function getEnvironmentApi<T = string>(
 }
 
 function alertResponseMessage(data: ApiDataResult<unknown>): void {
-  if (data.code.startsWith("S")) {
+  if (data.success) {
     toastSuccess(data.message);
   } else {
     toastError(data.message);

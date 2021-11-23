@@ -259,7 +259,7 @@ export default class extends Vue {
     }
     const response = await postApi<Admin>("admins/", params);
     this.saving = false;
-    if (response.code.startsWith("S")) {
+    if (response.success) {
       await this.$store.dispatch("reloadAdminCodes");
       this.syncedDialog = false;
       this.$emit("created", response.data);
@@ -276,7 +276,7 @@ export default class extends Vue {
     }
     const response = await patchApi<Admin>(`admins/${this.vModel.id}`, params);
     this.saving = false;
-    if (response.code.startsWith("S")) {
+    if (response.success) {
       if (this.vModel.id === this.$store.getters.admin.id) {
         await this.$store.dispatch("reIssueAccessToken");
       }

@@ -206,7 +206,7 @@ export default class CodeList extends Vue {
       this.saving = true;
       const response = await deleteApi<Code>(`codes/${value.id}`);
       this.saving = false;
-      if (response.code.startsWith("S")) {
+      if (response.success) {
         window.localStorage.removeItem(`code__${value.type}`);
         this.items = this.items.filter((item) => item.id !== value.id);
       }
@@ -225,7 +225,7 @@ export default class CodeList extends Vue {
       }),
     );
     this.saving = false;
-    if (response.code.startsWith("S")) {
+    if (response.success) {
       window.localStorage.removeItem(`code__${this.type}`);
       this.items = response.data || [];
     }

@@ -116,7 +116,7 @@ export default class extends Vue {
 
       const response = await deleteApi<Menu>(`menus/${value.id}`);
       this.saving = false;
-      if (response.code.startsWith("S")) {
+      if (response.success) {
         this.$store.dispatch("reloadRole").then();
         this.items = this.deleteWithRecursiveChildren(this.items, value);
       }
@@ -136,7 +136,7 @@ export default class extends Vue {
     this.saving = true;
     const response = await postApi<Menu[]>("menus/save-all/", this.items);
     this.saving = false;
-    if (response.code.startsWith("S")) {
+    if (response.success) {
       this.$store.dispatch("reloadRole").then();
       this.items = response.data || [];
     }

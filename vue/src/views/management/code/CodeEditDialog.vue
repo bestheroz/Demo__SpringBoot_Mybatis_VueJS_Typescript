@@ -118,7 +118,7 @@ export default class extends Vue {
     this.loading = true;
     const response = await postApi<Code>("codes/", this.vModel);
     this.loading = false;
-    if (response.code.startsWith("S")) {
+    if (response.success) {
       this.syncedDialog = false;
       this.$emit("created", response.data);
     }
@@ -128,7 +128,7 @@ export default class extends Vue {
     this.loading = true;
     const response = await putApi<Code>(`codes/${this.vModel.id}`, this.vModel);
     this.loading = false;
-    if (response.code.startsWith("S")) {
+    if (response.success) {
       this.syncedDialog = false;
       window.localStorage.removeItem(`code__${this.vModel.type}`);
       this.$emit("updated", response.data);

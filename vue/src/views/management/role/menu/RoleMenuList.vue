@@ -144,8 +144,9 @@ export default class extends Vue {
       `roles/${this.roleId}/maps/save-all/`,
       this.items,
     );
+    console.log("-> response", response);
     this.saving = false;
-    if (response.code.startsWith("S") && response.data) {
+    if (response.success && response.data) {
       this.items = response.data;
       this.$store.dispatch("reloadRole").then();
     }

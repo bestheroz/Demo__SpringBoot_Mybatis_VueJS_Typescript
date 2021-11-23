@@ -114,7 +114,7 @@ export default class extends Vue {
       this.saving = true;
       const response = await deleteApi<Role>(`roles/${value.id}`);
       this.saving = false;
-      if (response.code.startsWith("S")) {
+      if (response.success) {
         this.getList().then();
       }
     }
@@ -124,7 +124,7 @@ export default class extends Vue {
     this.saving = true;
     const response = await postApi<Role[]>("roles/save-all/", this.items);
     this.saving = false;
-    if (response.code.startsWith("S")) {
+    if (response.success) {
       this.items = response.data || [];
     }
   }

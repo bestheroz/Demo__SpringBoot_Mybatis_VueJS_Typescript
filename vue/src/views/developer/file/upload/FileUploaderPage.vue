@@ -49,7 +49,7 @@ export default class extends Vue {
   async deleteFile(filepath: string): Promise<void> {
     const response = await deleteApi(`delete/file?filePath=${filepath}`, false);
 
-    if (response.code.startsWith("S")) {
+    if (response.success) {
       this.filePaths = this.filePaths.filter(
         (filePath) => filePath !== filepath,
       );

@@ -135,7 +135,7 @@ export default class extends Vue {
   protected onVdropzoneSuccess(file: DropzoneFile): void {
     const response = JSON.parse(file.xhr.responseText);
     if (response) {
-      if (response.code.startsWith("S")) {
+      if (response.success) {
         this.multiple
           ? (this.filePath = [
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment

@@ -289,7 +289,7 @@ export default class AdminList extends Vue {
       this.saving = true;
       const response = await deleteApi<Admin>(`admins/${value.id}`);
       this.saving = false;
-      if (response.code.startsWith("S")) {
+      if (response.success) {
         await this.$store.dispatch("reloadAdminCodes");
         this.items = this.items.filter((item) => item.id !== (value.id || 0));
         this.totalItems--;

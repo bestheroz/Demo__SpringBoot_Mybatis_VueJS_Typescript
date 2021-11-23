@@ -94,7 +94,7 @@ export default class extends Vue {
     const payload = { ...this.item, password: this.adminPassword };
     const response = await patchApi<Admin>("mine", payload);
     this.loading = false;
-    if (response.code.startsWith("S")) {
+    if (response.success) {
       await this.$store.dispatch("reIssueAccessToken");
       await this.$store.dispatch("reloadAdminCodes");
       this.syncedDialog = false;

@@ -123,7 +123,7 @@ export default class extends Vue {
         .toString(),
     });
     this.loading = false;
-    if (response.code.startsWith("S")) {
+    if (response.success) {
       this.syncedDialog = false;
     }
   }
