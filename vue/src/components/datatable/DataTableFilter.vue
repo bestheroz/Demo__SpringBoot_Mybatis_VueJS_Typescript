@@ -14,7 +14,7 @@
           필터
         </v-chip>
       </template>
-      <v-card min-width="400" class="mt-6">
+      <v-card min-width="400" class="mt-6" v-if="show">
         <v-row no-gutters>
           <v-col cols="12" sm="6">
             <v-list-item-group v-model="index" mandatory>
