@@ -21,18 +21,19 @@ public class SignOutController {
   public void signOut(
       @RequestHeader(value = "Authorization", required = false) final String accessToken) {
     if (StringUtils.isEmpty(accessToken)) {
-      return;
+      return Result.ok();
     }
     try {
       SecurityContextHolder.getContext()
           .setAuthentication(JwtTokenProvider.getAuthentication(accessToken));
+      if (AuthenticationUtils.isNotSigned()) {
+        return Result.ok();
+      }
     } catch (final UsernameNotFoundException e) {
-      return;
-    }
-    if (AuthenticationUtils.isNotSigned()) {
-      return;
+      return Result.ok();
     }
     this.signOutService.signOut();
     AuthenticationUtils.signOut();
+    return Result.ok();
   }
 }
