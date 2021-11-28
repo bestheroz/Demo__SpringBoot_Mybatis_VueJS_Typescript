@@ -2,6 +2,7 @@
   <div>
     <page-title
       @click="showAddDialog"
+      :button-loading="saving"
       :more-actions="$store.getters.excelAuthority"
     >
       <template #list>
@@ -98,10 +99,9 @@
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import type { Filter, PageResult, Pagination } from "@/definitions/types";
 import { SelectItem } from "@/definitions/types";
-import { deleteApi, downloadExcelApi, getApi } from "@/utils/apis";
+import { downloadExcelApi, getApi } from "@/utils/apis";
 import envs from "@/constants/envs";
 import AdminEditDialog from "@/views/management/admin/AdminEditDialog.vue";
-import { confirmDelete } from "@/utils/alerts";
 import qs from "qs";
 import { defaultAdmin } from "@/definitions/defaults";
 import type { Admin, Role } from "@/definitions/models";
@@ -129,7 +129,7 @@ export default class AdminList extends Vue {
     page: 1,
     sortBy: ["updated"],
     sortDesc: [true],
-    itemsPerPage: 20,
+    itemsPerPage: 10,
   };
 
   items: Admin[] = [];
@@ -146,8 +146,8 @@ export default class AdminList extends Vue {
     return [
       {
         type: "checkbox",
-        text: "역할",
-        key: "roleId",
+        text: "권한",
+        key: "roleIdList",
         items: this.roles.map((v) => {
           return { ...v, checked: false };
         }),
@@ -155,7 +155,7 @@ export default class AdminList extends Vue {
       {
         type: "checkbox",
         text: "사용 가능",
-        key: "available",
+        key: "availableList",
         items: BooleanTypes.map((v) => {
           return { ...v, checked: false };
         }),
@@ -203,6 +203,7 @@ export default class AdminList extends Vue {
         align: "center",
         value: "availableSignIn",
         width: "6rem",
+        sortable: false,
       },
       {
         text: "작업 일시",
@@ -262,16 +263,20 @@ export default class AdminList extends Vue {
   }, 300);
 
   protected onCreated(value: Admin): void {
-    this.items = [value, ...this.items];
+    this.saving = true;
+    this.items = [value, ...this.items].slice(0, this.pagination.itemsPerPage);
     this.totalItems++;
+    this.saving = false;
   }
 
   protected onUpdated(value: Admin): void {
+    this.saving = true;
     this.items.splice(
       this.items.findIndex((item) => item.id === this.editItem.id),
       1,
       value,
     );
+    this.saving = false;
   }
   protected showAddDialog(): void {
     this.editItem = defaultAdmin();
@@ -281,20 +286,6 @@ export default class AdminList extends Vue {
   protected showEditDialog(value: Admin): void {
     this.editItem = cloneDeep(value);
     this.dialog = true;
-  }
-
-  protected async remove(value: Admin): Promise<void> {
-    const result = await confirmDelete(`관리자 아이디: ${value.adminId}`);
-    if (result.value) {
-      this.saving = true;
-      const response = await deleteApi<Admin>(`admins/${value.id}`);
-      this.saving = false;
-      if (response.success) {
-        await this.$store.dispatch("reloadAdminCodes");
-        this.items = this.items.filter((item) => item.id !== (value.id || 0));
-        this.totalItems--;
-      }
-    }
   }
 
   protected async excel(): Promise<void> {

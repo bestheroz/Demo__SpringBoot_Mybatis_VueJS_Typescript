@@ -11,11 +11,25 @@
     background-color: initial;
   }
   .v-data-table {
+    thead {
+      .v-data-table__progress {
+        .v-progress-linear {
+          height: 0.5rem !important;
+        }
+      }
+    }
     table {
       tr {
         td {
           border-bottom: thin solid var(--v-secondary-base) !important;
         }
+      }
+    }
+  }
+  .v-card--loading {
+    .v-card__progress {
+      .v-progress-linear {
+        height: 0.5rem !important;
       }
     }
   }

@@ -7,6 +7,7 @@
         <v-btn
           icon
           large
+          :loading="buttonLoading"
           v-bind="attrs"
           v-on="on"
           class="mr-1"
@@ -21,6 +22,7 @@
     <button-icon-tooltip
       :text="buttonText"
       :icon="buttonIcon"
+      :loading="buttonLoading"
       large
       @click="$emit('click')"
       v-if="!hideButton && $store.getters.writeAuthority"
@@ -39,6 +41,7 @@ import { RoleMenuMap } from "@/definitions/models";
 export default class extends Vue {
   @Prop({}) readonly title!: string;
   @Prop({ default: "추가" }) readonly buttonText!: string;
+  @Prop({ type: Boolean }) readonly buttonLoading!: boolean;
   @Prop({ default: "mdi-plus" }) readonly buttonIcon!: string;
   @Prop({ type: Boolean }) readonly moreActions!: boolean;
   @Prop({ type: Boolean }) readonly hideButton!: boolean;

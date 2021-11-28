@@ -1,32 +1,30 @@
 <template>
   <div>
     <v-card flat :loading="loading">
-      <v-card-text>
-        <v-row dense>
-          <v-col sm="12" md="6">
-            <role-menu-nested-draggable v-model="items" :role-id="roleId" />
-          </v-col>
-          <v-col sm="12" md="6">
-            <v-card-text class="py-0 elevation-1">
-              <v-chip-group
+      <v-row dense>
+        <v-col sm="12" md="6">
+          <role-menu-nested-draggable v-model="items" :role-id="roleId" />
+        </v-col>
+        <v-col sm="12" md="6">
+          <v-card-text class="py-0 elevation-1">
+            <v-chip-group
+              v-model="selected"
+              multiple
+              column
+              @change="onChangeSelectedChip"
+            >
+              <role-menu-menu-item
                 v-model="selected"
-                multiple
-                column
-                @change="onChangeSelectedChip"
-              >
-                <role-menu-menu-item
-                  v-model="selected"
-                  :menus="menus"
-                  :disabled="
-                    $store.getters.writeAuthority &&
-                    roleId === $store.getters.roleId
-                  "
-                />
-              </v-chip-group>
-            </v-card-text>
-          </v-col>
-        </v-row>
-      </v-card-text>
+                :menus="menus"
+                :disabled="
+                  $store.getters.writeAuthority &&
+                  roleId === $store.getters.roleId
+                "
+              />
+            </v-chip-group>
+          </v-card-text>
+        </v-col>
+      </v-row>
     </v-card>
   </div>
 </template>
@@ -51,7 +49,6 @@ export default class extends Vue {
   menus: Menu[] = [];
   selected: number[] = [];
   loading = false;
-  saving = false;
   drag = false;
 
   get dragOptions(): { animation: number } {
@@ -139,12 +136,10 @@ export default class extends Vue {
   }
 
   public async saveItems(): Promise<void> {
-    this.saving = true;
     const response = await postApi<RoleMenuMap[]>(
       `roles/${this.roleId}/maps/save-all/`,
       this.items,
     );
-    this.saving = false;
     if (response.success && response.data) {
       this.items = response.data;
       this.$store.dispatch("reloadRole").then();

@@ -60,4 +60,5 @@ export interface Filter {
   disabled?: boolean;
   single?: boolean;
   required?: boolean;
+  object?: unknown;
 }

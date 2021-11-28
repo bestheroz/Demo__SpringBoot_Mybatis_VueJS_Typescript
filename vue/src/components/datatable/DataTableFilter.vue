@@ -1,20 +1,22 @@
 <template>
   <div>
-    <v-menu rounded="lg" :close-on-content-click="false">
+    <v-menu rounded="lg" :close-on-content-click="false" v-if="show">
       <template #activator="{ on, attrs }">
         <v-chip
           color="primary"
           outlined
+          filter
+          filter-icon="mdi-filter-variant"
+          :input-value="true"
           v-bind="attrs"
           v-on="on"
-          class="px-3"
+          class="pa-2"
           label
         >
-          <v-icon> mdi-filter-variant </v-icon>
           필터
         </v-chip>
       </template>
-      <v-card min-width="400" class="mt-6" v-if="show">
+      <v-card min-width="400" class="mt-6">
         <v-row no-gutters>
           <v-col cols="12" sm="6">
             <v-list-item-group v-model="index" mandatory>
@@ -47,7 +49,7 @@
       <span
         v-for="filter in filters"
         :key="filter.key"
-        class="d-inline-flex ml-1 mt-1"
+        class="d-inline-flex ml-1 my-0"
       >
         <data-table-filter-selected-chip
           :filter="filter"

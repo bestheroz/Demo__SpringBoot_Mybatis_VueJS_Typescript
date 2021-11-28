@@ -8,7 +8,7 @@
           outlined
           :color="filter.required ? 'error' : 'primary'"
           v-on="on"
-          class="px-2"
+          class="pa-2"
           v-show="chipLabel"
           label
         >
