@@ -1,6 +1,11 @@
 <template>
   <div>
-    <v-menu rounded="lg" :close-on-content-click="false" v-if="show">
+    <v-menu
+      max-height="300"
+      rounded="lg"
+      :close-on-content-click="false"
+      transition="scale-transition"
+    >
       <template #activator="{ on, attrs }">
         <v-chip
           color="primary"
@@ -16,9 +21,9 @@
           필터
         </v-chip>
       </template>
-      <v-card min-width="400" class="mt-6">
+      <v-card min-width="400" class="mt-6" v-if="show">
         <v-row no-gutters>
-          <v-col cols="12" sm="6">
+          <v-col width="auto">
             <v-list-item-group v-model="index" mandatory>
               <v-list-item
                 v-for="filter in filters"
@@ -35,7 +40,7 @@
             </v-list-item-group>
           </v-col>
 
-          <v-col cols="12" sm="6">
+          <v-col width="auto">
             <data-table-filter-items
               v-model="selectedFilter"
               @change="onChangeFilter"
