@@ -30,7 +30,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+import { Component, VModel, Vue } from "vue-property-decorator";
 import type { Filter } from "@/definitions/types";
 import DataTableFilterItems from "@/components/datatable/DataTableFilterItems.vue";
 
@@ -38,7 +38,7 @@ import DataTableFilterItems from "@/components/datatable/DataTableFilterItems.vu
   components: { DataTableFilterItems },
 })
 export default class extends Vue {
-  @Prop({ required: true }) readonly filter!: Filter;
+  @VModel({ required: true }) filter!: Filter;
 
   isOpen = false;
 
@@ -66,13 +66,16 @@ export default class extends Vue {
   }
 
   protected emptySelectFilters(): void {
-    this.filter.items = this.filter.items.map((item) => {
-      if (this.filter.type === "text") {
-        return { ...item, checked: false, value: "" };
-      } else {
-        return { ...item, checked: false };
-      }
-    });
+    this.filter = {
+      ...this.filter,
+      items: this.filter.items.map((item) => {
+        if (this.filter.type === "text") {
+          return { ...item, checked: false, value: "" };
+        } else {
+          return { ...item, checked: false };
+        }
+      }),
+    };
     this.$emit("change");
   }
 }

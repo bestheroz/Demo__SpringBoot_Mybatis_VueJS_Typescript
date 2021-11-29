@@ -9,7 +9,6 @@
         <v-list-item-action class="mr-4" v-if="filter.type === 'checkbox'">
           <v-checkbox
             v-model="item.checked"
-            :value="item.value"
             :true-value="item.value"
             :disabled="item.checked && filter.single && filter.required"
             @click="onClickCheckbox(item)"
@@ -33,7 +32,10 @@
           />
         </v-list-item-content>
         <v-list-item-content v-if="filter.type !== 'text'">
-          <v-list-item-title v-text="item.text" />
+          <v-list-item-title
+            v-text="item.text"
+            :class="item.checked ? 'success--text' : undefined"
+          />
         </v-list-item-content>
       </v-list-item>
     </v-list>
@@ -81,10 +83,14 @@ export default class extends Vue {
 
   @Emit("change")
   protected onClickCheckbox(filterItem: FilterItem<FilterItemType>): void {
-    this.filter.single &&
-      this.filter.items
-        .filter((item) => item.value !== filterItem.value)
-        .forEach((item) => (item.checked = false));
+    if (this.filter.single) {
+      this.filter = {
+        ...this.filter,
+        items: this.filter.items.map((item) => {
+          return { ...item, checked: item.value === filterItem.value };
+        }),
+      };
+    }
     this.$forceUpdate();
   }
 

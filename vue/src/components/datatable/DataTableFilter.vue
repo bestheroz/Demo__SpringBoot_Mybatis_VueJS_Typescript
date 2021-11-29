@@ -1,11 +1,6 @@
 <template>
   <div>
-    <v-menu
-      max-height="300"
-      rounded="lg"
-      :close-on-content-click="false"
-      transition="scale-transition"
-    >
+    <v-menu rounded="lg" :close-on-content-click="false">
       <template #activator="{ on, attrs }">
         <v-chip
           color="primary"
@@ -18,15 +13,15 @@
           class="pa-2"
           label
         >
-          필터
+          필터 ({{ filteredLength }} / {{ cloneFilters.length }})
         </v-chip>
       </template>
-      <v-card min-width="400" class="mt-6" v-if="show">
+      <v-card min-width="400" class="mt-6">
         <v-row no-gutters>
-          <v-col width="auto">
+          <v-col cols="12" sm="6">
             <v-list-item-group v-model="index" mandatory>
               <v-list-item
-                v-for="filter in filters"
+                v-for="filter in cloneFilters"
                 :key="filter.key"
                 :disabled="filter.disabled"
               >
@@ -40,9 +35,9 @@
             </v-list-item-group>
           </v-col>
 
-          <v-col width="auto">
+          <v-col cols="12" sm="6">
             <data-table-filter-items
-              v-model="selectedFilter"
+              v-model="cloneFilters[index]"
               @change="onChangeFilter"
             />
           </v-col>
@@ -50,14 +45,14 @@
       </v-card>
     </v-menu>
     <!--    필터 선택 Chip 부분-->
-    <template v-if="show">
+    <template>
       <span
-        v-for="filter in filters"
+        v-for="(filter, index) in cloneFilters"
         :key="filter.key"
         class="d-inline-flex ml-1 my-0"
       >
         <data-table-filter-selected-chip
-          :filter="filter"
+          v-model="cloneFilters[index]"
           @change="onChangeFilter"
         />
       </span>
@@ -77,15 +72,11 @@ import DataTableFilterSelectedChip from "@/components/datatable/DataTableFilterS
 export default class extends Vue {
   @Prop({ required: true }) readonly filters!: Filter[];
 
+  cloneFilters: Filter[] = [];
   index = 0;
-  show = true;
-
-  get selectedFilter(): Filter {
-    return this.filters[this.index];
-  }
 
   get selectedFilters(): Filter[] {
-    return this.filters
+    return this.cloneFilters
       .filter((v) => v.items.some((i) => i.checked))
       .map((v) => {
         return {
@@ -95,20 +86,22 @@ export default class extends Vue {
       });
   }
 
-  protected onChangeFilter(): void {
-    this.watchFilters(this.filters);
+  get filteredLength(): number {
+    return this.cloneFilters
+      .map((f) => f.items.some((i) => i.checked))
+      .filter((f) => f).length;
   }
 
-  @Watch("filters", { deep: true })
+  @Watch("filters", { immediate: true })
+  protected watchFilters(): void {
+    this.cloneFilters = this.filters;
+  }
+
   @Emit("update:output")
-  protected watchFilters(
-    val: Filter[],
-  ): Record<string, (string | number | boolean)[]> {
-    this.show = false;
-    this.$nextTick(() => (this.show = true));
+  protected onChangeFilter(): Record<string, (string | number | boolean)[]> {
     return Object.fromEntries(
       Object.entries(
-        val
+        this.cloneFilters
           .filter((v) => v.items.some((i) => i.checked))
           .map((v) => {
             return {
