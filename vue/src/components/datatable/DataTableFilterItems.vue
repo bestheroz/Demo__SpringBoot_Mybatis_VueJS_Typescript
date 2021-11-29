@@ -9,6 +9,7 @@
         <v-list-item-action class="mr-4" v-if="filter.type === 'checkbox'">
           <v-checkbox
             v-model="item.checked"
+            :value="item.value"
             :true-value="item.value"
             :disabled="item.checked && filter.single && filter.required"
             @click="onClickCheckbox(item)"
