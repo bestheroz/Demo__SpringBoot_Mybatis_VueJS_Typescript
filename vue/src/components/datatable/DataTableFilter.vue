@@ -95,6 +95,9 @@ export default class extends Vue {
   @Watch("filters", { immediate: true })
   protected watchFilters(): void {
     this.cloneFilters = this.filters;
+    if (this.filteredLength > 0) {
+      this.onChangeFilter();
+    }
   }
 
   @Emit("update:output")
