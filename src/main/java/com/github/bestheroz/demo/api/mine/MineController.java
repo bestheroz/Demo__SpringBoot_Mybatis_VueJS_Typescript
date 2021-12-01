@@ -121,8 +121,7 @@ public class MineController {
                 .orElseGet(
                     () -> {
                       final AdminConfig adminConfig =
-                          payload.toAdminConfig(
-                              Admin.builder().id(AuthenticationUtils.getId()).build());
+                          payload.toAdminConfig(AuthenticationUtils.getAdmin());
                       this.adminConfigRepository.insert(adminConfig);
                       return this.adminConfigRepository.getItemById(adminConfig.getId());
                     })

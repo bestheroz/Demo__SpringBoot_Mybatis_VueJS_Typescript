@@ -1,5 +1,7 @@
 package com.github.bestheroz.standard.common.util;
 
+import com.github.bestheroz.demo.entity.Admin;
+import com.github.bestheroz.demo.entity.Role;
 import com.github.bestheroz.standard.common.authenticate.CustomUserDetails;
 import com.github.bestheroz.standard.common.exception.BusinessException;
 import com.github.bestheroz.standard.common.exception.ExceptionCode;
@@ -23,7 +25,7 @@ public class AuthenticationUtils {
     return !isSigned();
   }
 
-  public CustomUserDetails getSignInVO() {
+  private CustomUserDetails getCustomUserDetails() {
     try {
       if (isNotSigned()) {
         throw new BusinessException(ExceptionCode.FAIL_TRY_SIGN_IN_FIRST);
@@ -38,15 +40,28 @@ public class AuthenticationUtils {
     }
   }
 
+  public Admin getAdmin() {
+    final CustomUserDetails customUserDetails = getCustomUserDetails();
+    return Admin.builder()
+        .id(customUserDetails.getId())
+        .name(customUserDetails.getName())
+        .adminId(customUserDetails.getAdminId())
+        .roleId(getRoleId())
+        .build();
+  }
+
+  public Role getRole() {
+    final CustomUserDetails customUserDetails = getCustomUserDetails();
+    return Role.builder().id(customUserDetails.getRoleId()).build();
+  }
+
   public Long getId() {
-    return getSignInVO().getId();
+    return getCustomUserDetails().getId();
   }
 
   public Long getRoleId() {
     try {
-      return Optional.ofNullable(AuthenticationUtils.getSignInVO())
-          .map(CustomUserDetails::getRoleId)
-          .orElseThrow(() -> new BusinessException(ExceptionCode.FAIL_TRY_SIGN_IN_FIRST));
+      return getCustomUserDetails().getRoleId();
     } catch (final NullPointerException e) {
       throw new BusinessException(ExceptionCode.FAIL_TRY_SIGN_IN_FIRST);
     } catch (final Throwable e) {
