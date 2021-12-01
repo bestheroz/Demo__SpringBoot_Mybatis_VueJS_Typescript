@@ -10,7 +10,7 @@
           <v-checkbox
             v-model="item.checked"
             :true-value="item.value"
-            :disabled="item.checked && filter.single && filter.required"
+            :disabled="filter.required && checkedLength === 1 && item.checked"
             @click="onClickCheckbox(item)"
           />
         </v-list-item-action>
@@ -68,6 +68,10 @@ export default class extends Vue {
     return ["dateStartEndPicker"].includes(this.filter.type);
   }
 
+  get checkedLength(): number {
+    return this.filter.items.filter((i) => i.checked).length;
+  }
+
   protected created(): void {
     if (this.fromChip && this.isDialogComponent) {
       this.searchDialog = true;
@@ -87,11 +91,14 @@ export default class extends Vue {
       this.filter = {
         ...this.filter,
         items: this.filter.items.map((item) => {
-          return { ...item, checked: item.value === filterItem.value };
+          return {
+            ...item,
+            checked: filterItem.checked && item.value === filterItem.value,
+          };
         }),
       };
+      this.filter.items = [...this.filter.items];
     }
-    this.$forceUpdate();
   }
 
   protected onUpdateTextField(
