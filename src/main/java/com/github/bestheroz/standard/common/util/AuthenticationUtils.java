@@ -5,7 +5,6 @@ import com.github.bestheroz.demo.entity.Role;
 import com.github.bestheroz.standard.common.authenticate.CustomUserDetails;
 import com.github.bestheroz.standard.common.exception.BusinessException;
 import com.github.bestheroz.standard.common.exception.ExceptionCode;
-import java.util.Optional;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
