@@ -28,10 +28,13 @@ axiosInstance.interceptors.request.use(
 );
 axiosInstance.interceptors.response.use(
   function (response) {
-    if (response.data) {
+    if (response?.data) {
       response.data.success =
         [200, 201].includes(response.status) &&
         response.data.code?.startsWith("S");
+    } else {
+      console.error(response);
+      toastError("에러가 발생하였습니다. 잠시 후 다시 시도해주세요.");
     }
     return response;
   },
@@ -76,7 +79,11 @@ export async function getApi<T = never, R = T>(
   const response = await axiosInstance.get<T, AxiosResponse<ApiDataResult<R>>>(
     `api/${url}`,
   );
-  if (!response.data.success && failAlert) {
+  if (
+    !response.data.success &&
+    !response.data.code?.startsWith("S") &&
+    failAlert
+  ) {
     alertResponseMessage(response.data);
   }
   return response.data;
@@ -197,7 +204,7 @@ export async function getEnvironmentApi<T = string>(
 }
 
 function alertResponseMessage(data: ApiDataResult<unknown>): void {
-  if (data.success) {
+  if (data.success || data.code.startsWith("S")) {
     toastSuccess(data.message);
   } else {
     toastError(data.message);
