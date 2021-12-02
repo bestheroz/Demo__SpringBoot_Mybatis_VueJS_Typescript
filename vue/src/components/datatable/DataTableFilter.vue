@@ -97,11 +97,18 @@ export default class extends Vue {
   protected watchFilters(): void {
     this.cloneFilters = [
       ...this.filters.map((f) => {
+        const cloneItems =
+          this.cloneFilters.find((c) => c.key === f.key)?.items || [];
         return {
           ...f,
           items: [
             ...f.items.map((i) => {
-              return { ...i };
+              return {
+                ...i,
+                checked:
+                  cloneItems.find((ci) => ci.value === i.value)?.checked ||
+                  i.checked,
+              };
             }),
           ],
         };
@@ -111,6 +118,7 @@ export default class extends Vue {
   }
 
   public resetFilter(): void {
+    this.cloneFilters = [];
     this.watchFilters();
   }
 
