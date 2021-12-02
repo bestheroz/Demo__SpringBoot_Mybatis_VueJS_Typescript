@@ -8,7 +8,7 @@ Vue.use(Router);
 
 const requireAuth =
   () => async (_to: Route, _from: Route, next: NavigationGuardNext) => {
-    if (store.getters.loggedIn) {
+    if (store.getters.signedIn) {
       return next();
     }
     return goSignInPage();

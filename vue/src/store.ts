@@ -44,7 +44,7 @@ const admin = {
         roleId: state.roleId,
       };
     },
-    loggedIn: (state: any): boolean => {
+    signedIn: (state: any): boolean => {
       return !!state.id && !!state.accessToken && !!state.refreshToken;
     },
     accessToken: (state: any): string | null => {
@@ -224,7 +224,7 @@ const config1 = {
     },
     reloadConfig: ({ commit, getters }: ActionContext<any, any>) => {
       commit("setConfig", defaultAdminConfig());
-      if (getters.loggedIn) {
+      if (getters.signedIn) {
         uploadConfig(getters.config);
       }
     },
