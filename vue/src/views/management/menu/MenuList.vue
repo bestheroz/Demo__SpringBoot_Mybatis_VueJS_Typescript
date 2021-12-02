@@ -1,17 +1,21 @@
 <template>
   <div>
-    <page-title
-      @click="showAddDialog"
-      :more-actions="$store.getters.writeAuthority"
-    >
-      <template #list>
-        <v-list>
-          <v-list-item>
-            <v-btn @click="saveAll">
-              <v-icon class="drag-handle"> mdi-sort </v-icon> 순서저장
-            </v-btn>
-          </v-list-item>
-        </v-list>
+    <page-title @click="showAddDialog" :button-loading="saving">
+      <template #more-buttons>
+        <v-btn
+          @click="saveAll"
+          color="primary"
+          outlined
+          x-large
+          v-if="$store.getters.writeAuthority"
+        >
+          <v-icon> mdi-sort</v-icon>
+          순서저장
+        </v-btn>
+        <v-btn @click="getList" color="primary" outlined x-large>
+          <v-icon> mdi-refresh</v-icon>
+          새로고침
+        </v-btn>
       </template>
     </page-title>
     <v-card :loading="loading || saving">
@@ -104,6 +108,7 @@ export default class extends Vue {
     this.editItem = defaultMenu();
     this.dialog = true;
   }
+
   protected showEditDialog(value: Menu): void {
     this.editItem = cloneDeep(value);
     this.dialog = true;
@@ -113,7 +118,6 @@ export default class extends Vue {
     const result = await confirmDelete(`메뉴명: ${value.name}`);
     if (result.value) {
       this.saving = true;
-
       const response = await deleteApi<Menu>(`menus/${value.id}`);
       this.saving = false;
       if (response.success) {

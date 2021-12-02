@@ -27,4 +27,13 @@ public interface AdminRepository extends SqlRepository<Admin> {
          where id = #{id, jdbcType=BIGINT}
         """)
   void updateTokenAndSignInFailCnt(Long id, String token);
+
+  @Update(
+      value =
+          """
+        update admin
+           set token = null
+         where id = #{id, jdbcType=BIGINT}
+        """)
+  void updateTokenNullById(Long id);
 }

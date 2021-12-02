@@ -78,8 +78,7 @@ public class MenuController {
             .getItemById(id)
             .map(
                 (menu) -> {
-                  menu.changeMenu(payload);
-                  this.menuRepository.updateById(menu, menu.getId());
+                  menu.changeMenu(this.menuRepository, payload);
                   return this.menuRepository
                       .getItemById(menu.getId())
                       .map(r -> new MenuChildrenDTO(r, this.menuService.getChildren(r.getId())))

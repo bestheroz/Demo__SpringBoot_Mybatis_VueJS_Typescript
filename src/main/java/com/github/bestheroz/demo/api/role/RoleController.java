@@ -55,8 +55,7 @@ public class RoleController {
             .getItemById(id)
             .map(
                 (item) -> {
-                  item.change(payload);
-                  this.roleRepository.updateById(item, id);
+                  item.change(roleRepository, payload);
                   return new RoleSimpleDTO(
                       this.roleRepository
                           .getItemById(id)

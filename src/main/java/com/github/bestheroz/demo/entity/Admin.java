@@ -1,7 +1,7 @@
 package com.github.bestheroz.demo.entity;
 
 import com.github.bestheroz.demo.api.admin.AdminDTO;
-import com.github.bestheroz.standard.common.util.AuthenticationUtils;
+import com.github.bestheroz.demo.repository.AdminRepository;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
@@ -9,11 +9,11 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Data
 @Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@RequiredArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Admin implements Serializable {
   @Serial private static final long serialVersionUID = 7280716056600887400L;
@@ -32,42 +32,37 @@ public class Admin implements Serializable {
   protected Long updatedBy;
   protected Instant updated;
 
-  public void plusSignInFailCnt() {
+  public void plusSignInFailCnt(AdminRepository adminRepository) {
     this.signInFailCnt = this.signInFailCnt + 1;
+    adminRepository.plusSignInFailCnt(this.id);
   }
 
-  public void resetSignInFailCnt() {
-    this.signInFailCnt = 0;
-  }
-
-  public void signedSuccess(final String token) {
+  public void signedSuccess(AdminRepository adminRepository, final String token) {
     this.token = token;
-    this.resetSignInFailCnt();
+    this.signInFailCnt = 0;
+    adminRepository.updateTokenAndSignInFailCnt(this.id, this.token);
   }
 
-  public void signOut() {
-    this.token = null;
+  public void signOut(AdminRepository adminRepository) {
+    adminRepository.updateTokenNullById(this.id);
   }
 
-  public void changePassword(final String password) {
+  public void changePassword(AdminRepository adminRepository, final String password) {
     this.password = password;
-    this.updated = Instant.now();
-    this.updatedBy = AuthenticationUtils.getId();
-    this.resetSignInFailCnt();
+    this.signInFailCnt = 0;
+    adminRepository.updateById(this, this.id);
   }
 
-  public void changeName(final String name) {
+  public void changeName(AdminRepository adminRepository, final String name) {
     this.name = name;
-    this.updated = Instant.now();
-    this.updatedBy = AuthenticationUtils.getId();
+    adminRepository.updateById(this, this.id);
   }
 
-  public void change(final AdminDTO dto) {
+  public void change(AdminRepository adminRepository, final AdminDTO dto) {
     this.name = dto.getName();
     this.roleId = dto.getRole().getId();
     this.available = dto.getAvailable();
     this.expired = dto.getExpired();
-    this.updated = Instant.now();
-    this.updatedBy = AuthenticationUtils.getId();
+    adminRepository.updateById(this, this.id);
   }
 }

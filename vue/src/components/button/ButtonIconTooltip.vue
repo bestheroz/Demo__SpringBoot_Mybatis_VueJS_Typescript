@@ -19,6 +19,7 @@
           :large="large"
           :x-large="xLarge"
           :block="block"
+          :class="className"
         >
           <v-icon
             v-text="icon"
@@ -56,6 +57,7 @@ export default class extends Vue {
   @Prop({ type: Boolean }) readonly large!: boolean;
   @Prop({ type: Boolean }) readonly xLarge!: boolean;
   @Prop({ type: Boolean }) readonly block!: boolean;
+  @Prop({}) readonly className!: string;
   @Prop({}) readonly size!: number | string;
 
   get defaultPosition(): boolean {

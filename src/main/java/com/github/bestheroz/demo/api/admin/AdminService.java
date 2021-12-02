@@ -82,8 +82,7 @@ public class AdminService {
         .getItemById(id)
         .map(
             item -> {
-              item.change(payload);
-              this.adminRepository.updateById(item, item.getId());
+              item.change(this.adminRepository, payload);
               return this.getAdmin(id);
             })
         .orElseThrow(() -> new BusinessException(ExceptionCode.FAIL_NO_DATA_SUCCESS));
@@ -94,8 +93,7 @@ public class AdminService {
         .getItemById(id)
         .map(
             (item) -> {
-              item.changePassword(password);
-              this.adminRepository.updateById(item, item.getId());
+              item.changePassword(this.adminRepository, password);
               return this.getAdmin(id);
             })
         .orElseThrow(() -> new BusinessException(ExceptionCode.FAIL_NO_DATA_SUCCESS));

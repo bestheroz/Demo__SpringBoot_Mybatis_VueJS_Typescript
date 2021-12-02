@@ -6,7 +6,19 @@
       :button-loading="saving"
       @click="saveItems"
       :hide-button="roleId === $store.getters.roleId"
-    />
+    >
+      <template #more-buttons>
+        <v-btn
+          @click="refRoleMenuList.getMenus(roleId)"
+          color="primary"
+          outlined
+          x-large
+        >
+          <v-icon> mdi-refresh</v-icon>
+          새로고침
+        </v-btn>
+      </template>
+    </page-title>
     <v-card>
       <v-card-text>
         <data-table-filter :filters="filters" :output.sync="filterOutput" />
@@ -54,8 +66,8 @@ export default class extends Vue {
     ];
   }
 
-  get roleId(): string {
-    return this.filterOutput.roleId as string;
+  get roleId(): number {
+    return this.filterOutput.roleId as number;
   }
 
   protected created(): void {

@@ -1,18 +1,21 @@
 <template>
   <div class="w-full">
-    <page-title
-      @click="showAddDialog"
-      :button-loading="saving"
-      :more-actions="$store.getters.writeAuthority"
-    >
-      <template #list>
-        <v-list>
-          <v-list-item>
-            <v-btn @click="saveItems" :loading="saving">
-              <v-icon class="drag-handle"> mdi-sort </v-icon> 순서저장
-            </v-btn>
-          </v-list-item>
-        </v-list>
+    <page-title @click="showAddDialog" :button-loading="saving">
+      <template #more-buttons>
+        <v-btn
+          @click="saveItems"
+          color="primary"
+          outlined
+          x-large
+          v-if="$store.getters.writeAuthority"
+        >
+          <v-icon> mdi-sort</v-icon>
+          순서저장
+        </v-btn>
+        <v-btn @click="refCodeList.getList()" color="primary" outlined x-large>
+          <v-icon> mdi-refresh</v-icon>
+          새로고침
+        </v-btn>
       </template>
     </page-title>
     <v-card>
@@ -53,6 +56,7 @@ export default class extends Vue {
   saving = false;
 
   filterOutput: Record<string, string | number | boolean[]> = {};
+
   get filters(): Filter[] {
     return [
       {
@@ -81,6 +85,7 @@ export default class extends Vue {
     await this.refCodeList.saveItems();
     this.saving = false;
   }
+
   protected async showAddDialog(): Promise<void> {
     await this.refCodeList.showAddDialog();
   }
@@ -90,9 +95,11 @@ export default class extends Vue {
     const response = await getApi<string[]>("codes/types/");
     this.types = response.data ? response.data : [];
   }
+
   protected onCreated(value: Code): void {
     this.types = [value.type, ...this.types];
   }
+
   protected onRemoved(value: Code): void {
     this.types = this.types.filter((item) => item !== value.type);
   }

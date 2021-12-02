@@ -1,6 +1,5 @@
 package com.github.bestheroz.demo.api.sign.out;
 
-import com.github.bestheroz.demo.entity.Admin;
 import com.github.bestheroz.demo.repository.AdminRepository;
 import com.github.bestheroz.standard.common.util.AuthenticationUtils;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +15,8 @@ public class SignOutService {
   private final AdminRepository adminRepository;
 
   public void signOut() {
-    this.adminRepository.getItemById(AuthenticationUtils.getId()).ifPresent(Admin::signOut);
+    this.adminRepository
+        .getItemById(AuthenticationUtils.getId())
+        .ifPresent(admin -> admin.signOut(adminRepository));
   }
 }

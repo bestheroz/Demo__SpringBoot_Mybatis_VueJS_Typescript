@@ -1,6 +1,7 @@
 package com.github.bestheroz.demo.entity;
 
 import com.github.bestheroz.demo.api.role.RoleSimpleDTO;
+import com.github.bestheroz.demo.repository.RoleRepository;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
@@ -32,8 +33,9 @@ public class Role implements Serializable {
     this.parentId = parentId;
   }
 
-  public void change(final RoleSimpleDTO dto) {
+  public void change(RoleRepository roleRepository, final RoleSimpleDTO dto) {
     this.name = dto.getName();
     this.available = dto.getAvailable();
+    roleRepository.updateById(this, this.id);
   }
 }

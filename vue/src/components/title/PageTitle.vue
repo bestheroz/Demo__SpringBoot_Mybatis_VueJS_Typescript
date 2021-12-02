@@ -2,11 +2,16 @@
   <div class="d-flex align-center pb-2">
     <div class="display-1" v-text="_title" />
     <v-spacer />
-    <v-menu bottom left v-if="moreActions">
+    <v-menu
+      bottom
+      left
+      transition="slide-x-reverse-transition"
+      v-if="!hideMoreActions"
+    >
       <template #activator="{ on, attrs }">
         <v-btn
           icon
-          large
+          x-large
           :loading="buttonLoading"
           v-bind="attrs"
           v-on="on"
@@ -17,12 +22,15 @@
         </v-btn>
       </template>
 
-      <slot name="list" />
+      <v-list class="pa-0">
+        <slot name="more-buttons" />
+      </v-list>
     </v-menu>
     <button-icon-tooltip
       :text="buttonText"
       :icon="buttonIcon"
       :loading="buttonLoading"
+      class-name="px-2"
       large
       @click="$emit('click')"
       v-if="!hideButton && $store.getters.writeAuthority"
@@ -43,7 +51,7 @@ export default class extends Vue {
   @Prop({ default: "추가" }) readonly buttonText!: string;
   @Prop({ type: Boolean }) readonly buttonLoading!: boolean;
   @Prop({ default: "mdi-plus" }) readonly buttonIcon!: string;
-  @Prop({ type: Boolean }) readonly moreActions!: boolean;
+  @Prop({ type: Boolean }) readonly hideMoreActions!: boolean;
   @Prop({ type: Boolean }) readonly hideButton!: boolean;
 
   get _title(): string {

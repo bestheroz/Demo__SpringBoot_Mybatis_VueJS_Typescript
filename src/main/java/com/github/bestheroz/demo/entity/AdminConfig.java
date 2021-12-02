@@ -1,6 +1,7 @@
 package com.github.bestheroz.demo.entity;
 
 import com.github.bestheroz.demo.api.mine.MineConfigDTO;
+import com.github.bestheroz.demo.repository.AdminConfigRepository;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
@@ -31,12 +32,13 @@ public class AdminConfig implements Serializable {
   protected Long updatedBy;
   protected Instant updated;
 
-  public void change(final MineConfigDTO dto) {
+  public void change(AdminConfigRepository adminConfigRepository, final MineConfigDTO dto) {
     this.globalTheme = dto.getGlobalTheme();
     this.toolbarTheme = dto.getToolbarTheme();
     this.menuTheme = dto.getMenuTheme();
     this.toolbarDetached = dto.getToolbarDetached();
     this.contentBoxed = dto.getContentBoxed();
     this.primaryColor = dto.getPrimaryColor();
+    adminConfigRepository.updateById(this, this.id);
   }
 }

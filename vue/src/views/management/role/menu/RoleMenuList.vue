@@ -86,7 +86,7 @@ export default class extends Vue {
         .map((item) => item.menu.id || 0) || [];
   }
 
-  protected async getMenus(roleId: number): Promise<Menu[]> {
+  public async getMenus(roleId: number): Promise<Menu[]> {
     if (this.roleId === this.$store.getters.roleId) {
       const response = await getApi<Menu[]>(`menus/?roleId=${roleId}`);
       return response.data || [];
@@ -95,6 +95,7 @@ export default class extends Vue {
       return response.data || [];
     }
   }
+
   protected onChangeSelectedChip(selected: number[]): void {
     // 삭제!
     this.items = this.removeNotSelectedChildrenItem(selected, this.items);
