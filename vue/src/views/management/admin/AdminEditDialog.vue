@@ -22,15 +22,15 @@
                     rules="required|max:50"
                   >
                     <v-text-field
-                      v-model="vModel.adminId"
+                      v-model="vModel.loginId"
                       label="관리자 아이디"
                       :counter="50"
-                      :error-messages="adminIdErrorText || errors"
-                      :success-messages="adminIdSuccessText"
-                      :append-icon="adminIdAppendIcon"
+                      :error-messages="loginIdErrorText || errors"
+                      :success-messages="loginIdSuccessText"
+                      :append-icon="loginIdAppendIcon"
                       class="required"
                       :loading="loading"
-                      @input="debounceCheckExistsAdminId"
+                      @input="debounceCheckExistsLoginId"
                     />
                   </ValidationProvider>
                 </v-col>
@@ -127,7 +127,7 @@
               text="저장"
               icon="mdi-content-save"
               :disabled="
-                !adminIdSuccessText && originalAdminId !== vModel.adminId
+                !loginIdSuccessText && originalLoginId !== vModel.loginId
               "
               :loading="saving"
               @click="save"
@@ -185,13 +185,13 @@ export default class extends Vue {
   show1 = false;
   show2 = false;
   resetPasswordDialog = false;
-  existsAdminId = false;
-  originalAdminId = "";
+  existsLoginId = false;
+  originalLoginId = "";
   checked = true;
   loading = false;
 
   readonly debounce: DebouncedFunc<() => Promise<void>> = debounce(
-    this.checkExistsAdminId,
+    this.checkExistsLoginId,
     500,
   );
 
@@ -208,37 +208,38 @@ export default class extends Vue {
     );
   }
 
-  get adminIdErrorText(): string[] | undefined {
+  get loginIdErrorText(): string[] | undefined {
     if (!this.checked) {
       return undefined;
     }
-    if (this.vModel.adminId === this.originalAdminId) {
+    if (this.vModel.loginId === this.originalLoginId) {
       return undefined;
     }
-    return this.existsAdminId ? ["이미 사용중인 아이디 입니다."] : undefined;
-  }
-  get adminIdSuccessText(): string[] | undefined {
-    if (!this.checked) {
-      return undefined;
-    }
-    if (this.vModel.adminId === this.originalAdminId) {
-      return undefined;
-    }
-    return this.existsAdminId ? undefined : ["사용 가능한 아이디 입니다."];
+    return this.existsLoginId ? ["이미 사용중인 아이디 입니다."] : undefined;
   }
 
-  get adminIdAppendIcon(): string | unknown {
-    if (this.adminIdSuccessText) {
+  get loginIdSuccessText(): string[] | undefined {
+    if (!this.checked) {
+      return undefined;
+    }
+    if (this.vModel.loginId === this.originalLoginId) {
+      return undefined;
+    }
+    return this.existsLoginId ? undefined : ["사용 가능한 아이디 입니다."];
+  }
+
+  get loginIdAppendIcon(): string | unknown {
+    if (this.loginIdSuccessText) {
       return "mdi-check-circle";
     }
-    if (this.adminIdErrorText) {
+    if (this.loginIdErrorText) {
       return "mdi-alert-circle";
     }
     return undefined;
   }
 
   protected created(): void {
-    this.originalAdminId = this.vModel.adminId;
+    this.originalLoginId = this.vModel.loginId;
   }
 
   protected async save(): Promise<void> {
@@ -286,8 +287,8 @@ export default class extends Vue {
     }
   }
 
-  protected debounceCheckExistsAdminId(): void {
-    if (this.vModel.adminId === this.originalAdminId) {
+  protected debounceCheckExistsLoginId(): void {
+    if (this.vModel.loginId === this.originalLoginId) {
       return;
     }
     this.loading = true;
@@ -295,14 +296,14 @@ export default class extends Vue {
     this.debounce();
   }
 
-  protected async checkExistsAdminId(): Promise<void> {
+  protected async checkExistsLoginId(): Promise<void> {
     this.loading = true;
     const response = await getApi<boolean>(
-      `admins/exists-admin-id?adminId=${this.vModel.adminId}`,
+      `admins/exists-login-id?loginId=${this.vModel.loginId}`,
     );
     this.loading = false;
     this.checked = true;
-    this.existsAdminId = response.data;
+    this.existsLoginId = response.data;
   }
 }
 </script>

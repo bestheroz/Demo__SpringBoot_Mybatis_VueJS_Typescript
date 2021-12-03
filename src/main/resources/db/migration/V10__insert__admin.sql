@@ -1,6 +1,6 @@
 INSERT
 INTO `admin`
-(ADMIN_ID,
+(LOGIN_ID,
  PASSWORD,
  NAME,
  ROLE_ID,
@@ -26,7 +26,7 @@ VALUES ('developer',
 
 INSERT
 INTO `admin`
-(ADMIN_ID,
+(LOGIN_ID,
  PASSWORD,
  NAME,
  ROLE_ID,
@@ -52,7 +52,7 @@ VALUES ('developer1',
 
 INSERT
 INTO `admin`
-(ADMIN_ID,
+(LOGIN_ID,
  PASSWORD,
  NAME,
  ROLE_ID,
@@ -78,7 +78,7 @@ VALUES ('developer2',
 
 INSERT
 INTO `admin`
-(ADMIN_ID,
+(LOGIN_ID,
  PASSWORD,
  NAME,
  ROLE_ID,
@@ -104,7 +104,7 @@ VALUES ('developer3',
 
 INSERT
 INTO `admin`
-(ADMIN_ID,
+(LOGIN_ID,
  PASSWORD,
  NAME,
  ROLE_ID,
@@ -130,7 +130,7 @@ VALUES ('1',
 
 INSERT
 INTO `admin`
-(ADMIN_ID,
+(LOGIN_ID,
  PASSWORD,
  NAME,
  ROLE_ID,
@@ -156,7 +156,7 @@ VALUES ('admin',
 
 INSERT
 INTO `admin`
-(ADMIN_ID,
+(LOGIN_ID,
  PASSWORD,
  NAME,
  ROLE_ID,
@@ -182,7 +182,7 @@ VALUES ('writer',
 
 INSERT
 INTO `admin`
-(ADMIN_ID,
+(LOGIN_ID,
  PASSWORD,
  NAME,
  ROLE_ID,
@@ -208,7 +208,7 @@ VALUES ('viewer',
 
 INSERT
 INTO `admin`
-(ADMIN_ID,
+(LOGIN_ID,
  PASSWORD,
  NAME,
  ROLE_ID,

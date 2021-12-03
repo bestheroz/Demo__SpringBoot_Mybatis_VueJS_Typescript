@@ -31,12 +31,12 @@ public class SignInService implements UserDetailsService {
   private final RoleRepository roleRepository;
 
   @Override
-  public UserDetails loadUserByUsername(final String adminId) throws UsernameNotFoundException {
-    if (StringUtils.isEmpty(adminId)) {
+  public UserDetails loadUserByUsername(final String loginId) throws UsernameNotFoundException {
+    if (StringUtils.isEmpty(loginId)) {
       throw new UsernameNotFoundException("No user found");
     }
     return this.adminRepository
-        .getItemByMap(Map.of("adminId", adminId))
+        .getItemByMap(Map.of("loginId", loginId))
         .map(
             admin -> {
               final Role role =
@@ -45,13 +45,13 @@ public class SignInService implements UserDetailsService {
                       .orElseThrow(() -> BusinessException.FAIL_NO_DATA_SUCCESS);
               return new CustomUserDetails(admin, role);
             })
-        .orElseThrow(() -> new UsernameNotFoundException("No user found by `" + adminId + "`"));
+        .orElseThrow(() -> new UsernameNotFoundException("No user found by `" + loginId + "`"));
   }
 
   @Transactional(propagation = Propagation.NEVER)
-  public Map<String, String> signIn(final String adminId, final String password) {
+  public Map<String, String> signIn(final String loginId, final String password) {
     return this.adminRepository
-        .getItemByMap(Map.of("adminId", adminId))
+        .getItemByMap(Map.of("loginId", loginId))
         .map(
             admin -> {
               final Role role =

@@ -1,7 +1,7 @@
 CREATE TABLE admin
 (
     id               BIGINT(20) PRIMARY KEY AUTO_INCREMENT,
-    admin_id         VARCHAR(100) NOT NULL,
+    login_id         VARCHAR(100) NOT NULL,
     password         CHAR(128) NULL,
     name             VARCHAR(100) NOT NULL,
     role_id          BIGINT(20) NOT NULL,

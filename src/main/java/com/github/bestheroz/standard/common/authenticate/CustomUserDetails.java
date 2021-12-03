@@ -20,14 +20,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 public class CustomUserDetails implements UserDetails, Serializable {
   private static final long serialVersionUID = -3806331610004769750L;
   private Long id;
-  private String adminId;
+  private String loginId;
   private String name;
   private Long roleId;
 
   public CustomUserDetails(final Admin admin, final Role role) {
     this.id = admin.getId();
     this.name = admin.getName();
-    this.adminId = admin.getAdminId();
+    this.loginId = admin.getLoginId();
     this.roleId = role.getId();
   }
 
@@ -44,7 +44,7 @@ public class CustomUserDetails implements UserDetails, Serializable {
 
   @Override
   public String getUsername() {
-    return this.getAdminId();
+    return this.getLoginId();
   }
 
   @Override

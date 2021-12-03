@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AdminPasswordDTO {
   private Long id;
-  private String adminId;
+  private String loginId;
   private String name;
   private String password;
   @NotNull private RoleSimpleDTO role;
@@ -27,7 +27,7 @@ public class AdminPasswordDTO {
 
   public Admin toAdmin() {
     return Admin.builder()
-        .adminId(this.adminId)
+        .loginId(this.loginId)
         .name(this.name)
         .password(this.password)
         .roleId(this.role.getId())

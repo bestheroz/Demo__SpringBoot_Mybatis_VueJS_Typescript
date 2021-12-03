@@ -28,12 +28,12 @@ public class JwtTokenProvider {
 
   public String createAccessToken(final CustomUserDetails customUserDetails) {
     Assert.notNull(customUserDetails, "customUserDetails parameter must not be empty or null");
-    Assert.hasText(customUserDetails.getAdminId(), "adminId parameter must not be empty or null");
+    Assert.hasText(customUserDetails.getLoginId(), "loginId parameter must not be empty or null");
     Assert.hasText(customUserDetails.getName(), "name parameter must not be empty or null");
     Assert.notNull(customUserDetails.getRoleId(), "roleId parameter must not be empty or null");
     return JWT.create()
         .withClaim("id", customUserDetails.getId())
-        .withClaim("adminId", customUserDetails.getAdminId())
+        .withClaim("loginId", customUserDetails.getLoginId())
         .withClaim("name", customUserDetails.getName())
         .withClaim("roleId", customUserDetails.getRoleId())
         .withExpiresAt(
@@ -44,7 +44,7 @@ public class JwtTokenProvider {
 
   public String createRefreshToken(final CustomUserDetails customUserDetails) {
     Assert.notNull(customUserDetails, "customUserDetails parameter must not be empty or null");
-    Assert.hasText(customUserDetails.getAdminId(), "adminId parameter must not be empty or null");
+    Assert.hasText(customUserDetails.getLoginId(), "loginId parameter must not be empty or null");
     return JWT.create()
         .withClaim("id", customUserDetails.getId())
         .withExpiresAt(
@@ -86,7 +86,7 @@ public class JwtTokenProvider {
               .getClaims();
       return new CustomUserDetails(
           claims.get("id").asLong(),
-          claims.get("adminId").asString(),
+          claims.get("loginId").asString(),
           claims.get("name").asString(),
           claims.get("roleId").asLong());
     } catch (final JWTVerificationException | NullPointerException e) {

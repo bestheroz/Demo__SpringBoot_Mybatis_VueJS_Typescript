@@ -14,10 +14,10 @@
               rules="required"
             >
               <v-text-field
-                v-model="adminId"
+                v-model="loginId"
                 :validate-on-blur="false"
                 label="ID"
-                name="adminId"
+                name="loginId"
                 outlined
                 :error-messages="errors"
                 :success="valid"
@@ -70,7 +70,7 @@ import { ValidationObserver } from "vee-validate";
 import pbkdf2 from "pbkdf2";
 import { ApiDataResult, axiosInstance } from "@/utils/apis";
 import { toastCloseAll } from "@/utils/alerts";
-import { defaultAdminConfig, defaultAdmin } from "@/definitions/defaults";
+import { defaultAdmin, defaultAdminConfig } from "@/definitions/defaults";
 import { getYourConfig, routerReplace } from "@/utils/commands";
 import { AxiosResponse } from "axios";
 
@@ -80,7 +80,7 @@ import { AxiosResponse } from "axios";
 export default class extends Vue {
   @Ref("observer") readonly observer!: InstanceType<typeof ValidationObserver>;
 
-  adminId = "1";
+  loginId = "1";
   password = "1";
 
   dialog = false;
@@ -116,7 +116,7 @@ export default class extends Vue {
       .toString();
     this.loading = true;
     const response = await axiosInstance.post<
-      { adminId: string; password: string },
+      { loginId: string; password: string },
       AxiosResponse<
         ApiDataResult<{
           accessToken: string;
@@ -124,7 +124,7 @@ export default class extends Vue {
         }>
       >
     >("api/sign-in", {
-      adminId: this.adminId,
+      loginId: this.loginId,
       password: pbkdf2Password,
     });
     this.loading = false;
@@ -146,6 +146,7 @@ export default class extends Vue {
       this.errorProviderMessages = response.data.message;
     }
   }
+
   protected resetErrors(): void {
     this.errorProvider = false;
     this.errorProviderMessages = "";

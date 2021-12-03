@@ -8,7 +8,7 @@
             <v-row>
               <v-col cols="12">
                 <v-text-field
-                  :value="item.adminId"
+                  :value="item.loginId"
                   label="나의 아이디"
                   disabled
                 />

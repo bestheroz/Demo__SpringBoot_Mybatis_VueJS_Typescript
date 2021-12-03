@@ -19,7 +19,7 @@ public class AdminFilter extends DataTableFilterDTO {
   private List<Boolean> available = new ArrayList<>();
   private List<Long> roleId = new ArrayList<>();
 
-  private final Set<String> searchColumns = Set.of("adminId", "name");
+  private final Set<String> searchColumns = Set.of("loginId", "name");
 
   @Override
   public Map<String, Object> getFilter() {

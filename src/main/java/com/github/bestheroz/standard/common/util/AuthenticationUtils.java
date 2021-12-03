@@ -44,7 +44,7 @@ public class AuthenticationUtils {
     return Admin.builder()
         .id(customUserDetails.getId())
         .name(customUserDetails.getName())
-        .adminId(customUserDetails.getAdminId())
+        .loginId(customUserDetails.getLoginId())
         .roleId(getRoleId())
         .build();
   }

@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AdminDTO {
   private Long id;
-  private String adminId;
+  private String loginId;
   private String name;
   @NotNull private RoleSimpleDTO role;
   private Boolean available;
@@ -27,7 +27,7 @@ public class AdminDTO {
 
   public AdminDTO(@NotNull final Admin admin, @NotNull final Role role) {
     this.id = admin.getId();
-    this.adminId = admin.getAdminId();
+    this.loginId = admin.getLoginId();
     this.name = admin.getName();
     this.role = new RoleSimpleDTO(role);
     this.available = admin.getAvailable();

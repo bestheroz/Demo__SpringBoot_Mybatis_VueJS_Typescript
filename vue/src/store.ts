@@ -26,7 +26,7 @@ Vue.use(Vuex);
 const admin = {
   state: {
     id: 0,
-    adminId: "",
+    loginId: "",
     name: "",
     roleId: 0,
     accessToken: null,
@@ -39,7 +39,7 @@ const admin = {
     admin: (state: any) => {
       return {
         id: state.id,
-        adminId: state.adminId,
+        loginId: state.loginId,
         name: state.name,
         roleId: state.roleId,
       };
@@ -60,12 +60,12 @@ const admin = {
         const jwt = jwt_decode<{
           exp: number;
           id: number;
-          adminId: string;
+          loginId: string;
           name: string;
           roleId: string;
         }>(accessToken);
         state.id = jwt.id;
-        state.adminId = jwt.adminId;
+        state.loginId = jwt.loginId;
         state.name = jwt.name;
         state.roleId = jwt.roleId;
         state.accessToken = accessToken;
@@ -80,13 +80,13 @@ const admin = {
       state: any,
       admin: {
         id: number;
-        adminId: string;
+        loginId: string;
         name: string;
         roleId: number;
       },
     ) => {
       state.id = admin.id;
-      state.adminId = admin.adminId;
+      state.loginId = admin.loginId;
       state.name = admin.name;
       state.roleId = admin.roleId;
       state.accessToken = null;

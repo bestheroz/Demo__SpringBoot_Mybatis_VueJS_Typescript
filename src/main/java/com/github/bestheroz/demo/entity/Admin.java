@@ -18,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 public class Admin implements Serializable {
   @Serial private static final long serialVersionUID = 7280716056600887400L;
   private Long id;
-  private String adminId;
+  private String loginId;
   private String password;
   private String name;
   private Long roleId;

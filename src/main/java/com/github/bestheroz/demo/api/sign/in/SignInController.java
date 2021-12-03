@@ -22,7 +22,7 @@ public class SignInController {
   @PostMapping
   ResponseEntity<ApiResult<Map<String, String>>> signIn(
       @RequestBody @Valid final SignInDTO payload) {
-    return Result.ok(this.signInService.signIn(payload.getAdminId(), payload.getPassword()));
+    return Result.ok(this.signInService.signIn(payload.getLoginId(), payload.getPassword()));
   }
 
   @GetMapping(value = "/refresh-token")

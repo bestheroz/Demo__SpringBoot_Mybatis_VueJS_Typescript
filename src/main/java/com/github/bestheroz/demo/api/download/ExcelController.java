@@ -34,7 +34,7 @@ public class ExcelController {
     final List<ExcelVO> excelVOList = new ArrayList<>();
 
     // header
-    AbstractExcelXView.addHeader(excelVOList, "사용자 아이디", "adminId", ExcelService.CellType.STRING);
+    AbstractExcelXView.addHeader(excelVOList, "사용자 아이디", "loginId", ExcelService.CellType.STRING);
     AbstractExcelXView.addHeader(excelVOList, "사용자 명", "name", ExcelService.CellType.STRING);
     AbstractExcelXView.addHeader(
         excelVOList, "권한", "role.name", ExcelService.CellType.STRING_CENTER);

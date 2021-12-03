@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class SignInDTO {
-  @NotEmpty private String adminId;
+  @NotEmpty private String loginId;
   @NotEmpty private String password;
 }
