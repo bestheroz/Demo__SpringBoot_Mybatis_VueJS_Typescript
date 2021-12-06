@@ -45,16 +45,21 @@
         :flat="!$store.getters.isToolbarDetached"
       >
         <div class="d-flex flex-grow-1 align-center">
-          <div class="d-flex flex-grow-1 align-center">
-            <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
+          <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
 
-            <v-spacer class="d-none d-lg-block" />
+          <v-btn icon @click="toNewTab" class="secondary--text">
+            <v-icon>mdi-window-maximize</v-icon>
+          </v-btn>
+          <v-btn icon @click="toNewWindow" class="secondary--text">
+            <v-icon>mdi-dock-window</v-icon>
+          </v-btn>
 
-            <v-spacer class="d-block d-sm-none" />
+          <v-spacer class="d-none d-lg-block" />
 
-            <toolbar-admin />
-            <h4 class="primary--text mt-1" v-text="$store.getters.admin.name" />
-          </div>
+          <v-spacer class="d-block d-sm-none" />
+
+          <toolbar-admin />
+          <h4 class="primary--text mt-1" v-text="$store.getters.admin.name" />
         </div>
       </v-card>
     </v-app-bar>
@@ -76,7 +81,7 @@
           >
             @bestheroz
           </a>
-          <v-icon small color="pink"> mdi-heart </v-icon>
+          <v-icon small color="pink"> mdi-heart</v-icon>
         </div>
       </v-footer>
     </v-main>
@@ -88,6 +93,7 @@ import ToolbarAdmin from "../components/toolbar/ToolbarAdmin.vue";
 import { Component, Vue } from "vue-property-decorator";
 import envs from "@/constants/envs";
 import NavMenu from "@/components/navigation/NavMenu.vue";
+import { routerToNewTab, routerToNewWindow } from "@/utils/commands";
 
 @Component({
   components: {
@@ -98,5 +104,13 @@ import NavMenu from "@/components/navigation/NavMenu.vue";
 export default class extends Vue {
   drawer = null;
   readonly envs = envs;
+
+  protected toNewTab(): void {
+    routerToNewTab(this.$route.path);
+  }
+
+  protected toNewWindow(): void {
+    routerToNewWindow(this.$route.path);
+  }
 }
 </script>

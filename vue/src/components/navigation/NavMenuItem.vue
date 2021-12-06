@@ -2,9 +2,7 @@
   <div>
     <v-list-item
       v-if="drawer.type !== MENU_TYPE.GROUP"
-      :to="drawer.url"
-      :link="drawer.type === MENU_TYPE.PAGE"
-      :target="drawer.type === MENU_TYPE.NEW_TAB ? '_blank' : undefined"
+      @click="newTab"
       active-class="primary--text"
       :style="{
         'margin-left': `24px`,
@@ -48,6 +46,7 @@
 import { Component, Prop, Vue } from "vue-property-decorator";
 import type { Drawer } from "@/definitions/types";
 import { MENU_TYPE } from "@/definitions/selections";
+import { routerPush, routerToNewTab } from "@/utils/commands";
 
 @Component({})
 export default class extends Vue {
@@ -55,5 +54,17 @@ export default class extends Vue {
   @Prop({ required: true }) readonly depth!: number;
 
   readonly MENU_TYPE = MENU_TYPE;
+
+  protected newTab(): void {
+    if (!this.drawer.url) {
+      return;
+    }
+    const routeData = this.$router.resolve(this.drawer.url);
+    if (this.drawer.type === MENU_TYPE.PAGE) {
+      routerPush(routeData.href);
+    } else if (this.drawer.type === MENU_TYPE.NEW_TAB) {
+      routerToNewTab(routeData.href);
+    }
+  }
 }
 </script>

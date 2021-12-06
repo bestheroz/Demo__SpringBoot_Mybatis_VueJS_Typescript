@@ -21,6 +21,18 @@ export async function routerPush(path: string): Promise<void> {
   }
 }
 
+export function routerToNewTab(path: string): void {
+  window.open(path, "_blank");
+}
+
+export function routerToNewWindow(path: string): void {
+  window.open(
+    path,
+    "_blank",
+    "location=false,menubar=false,scrollbars=true,status=false,toolbar=false",
+  );
+}
+
 export async function goSignInPage(): Promise<void> {
   await routerReplace("/sign-in");
 }
@@ -67,6 +79,7 @@ const uploadConfigHandler = debounce((config: AdminConfig) => {
     console.error(e);
   }
 }, 1000);
+
 export function uploadConfig(config: AdminConfig): void {
   uploadConfigHandler(config);
 }
@@ -112,6 +125,7 @@ export function getDrawersFromRoleMenuMaps(
     };
   });
 }
+
 export function getFlatRoleMenuMaps(
   roleMenuMaps: RoleMenuMap[],
 ): RoleMenuMap[] {
