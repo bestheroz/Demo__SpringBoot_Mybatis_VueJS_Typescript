@@ -322,5 +322,5 @@ export default new Vuex.Store({
     authority,
     codes,
   },
-  plugins: [createPersistedState({ storage: window.sessionStorage })],
+  plugins: [createPersistedState()],
 });

@@ -50,9 +50,9 @@ export default class extends Vue {
   @Prop({ type: Boolean }) readonly withSwitch!: boolean;
   @Prop({ type: Array }) readonly switchText!: string[];
   @Prop({ type: Boolean }) readonly disabledSwitch!: boolean;
+  @Prop({ type: Boolean }) readonly isNew!: boolean;
   @Prop({}) readonly prefix!: string;
   @Prop({}) readonly text!: string;
-  @Prop({}) readonly isNew!: string;
   @Prop({}) readonly suffix!: string;
 
   readonly getSwitchLabel = getSwitchLabel;

@@ -69,6 +69,7 @@
                       :counter="50"
                       :error-messages="errors"
                       @click:append="linkIconSite"
+                      class="required"
                     />
                   </ValidationProvider>
                 </v-col>
@@ -105,6 +106,7 @@ import type { Menu } from "@/definitions/models";
 import CreatedUpdatedBar from "@/components/history/CreatedUpdatedBar.vue";
 import { MENU_TYPE, MenuTypes } from "@/definitions/selections";
 import ButtonWithIcon from "@/components/button/ButtonWithIcon.vue";
+import { routerToNewTab } from "@/utils/commands";
 
 @Component({
   components: {
@@ -157,7 +159,7 @@ export default class extends Vue {
   }
 
   protected linkIconSite(): void {
-    window.open("https://pictogrammers.github.io/@mdi/font/6.4.95/", "_blank");
+    routerToNewTab("https://pictogrammers.github.io/@mdi/font/6.4.95/");
   }
 }
 </script>
