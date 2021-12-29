@@ -315,7 +315,7 @@ const codes = {
 };
 /* eslint-enable @typescript-eslint/no-explicit-any */
 export default new Vuex.Store({
-  strict: true,
+  strict: process.env.NODE_ENV !== "production",
   modules: {
     admin,
     config1,
