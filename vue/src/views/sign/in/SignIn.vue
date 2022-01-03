@@ -101,7 +101,7 @@ export default class extends Vue {
     await this.$store.dispatch("reloadConfig");
     await this.$store.commit("setRole", null);
     await this.$store.commit("setAdminCodes", null);
-    window.localStorage.clear();
+    window.sessionStorage.clear();
   }
 
   protected async submit(): Promise<void> {

@@ -49,7 +49,7 @@
             >
               <v-list-item-content style="display: inline-block">
                 <v-btn icon v-if="$store.getters.writeAuthority">
-                  <v-icon class="drag-handle"> mdi-sort </v-icon>
+                  <v-icon class="drag-handle"> mdi-sort</v-icon>
                 </v-btn>
                 <a
                   class="text--anchor"
@@ -65,7 +65,7 @@
                 <v-icon v-if="item.available" color="success">
                   mdi-check-circle
                 </v-icon>
-                <v-icon v-else> mdi-circle-outline </v-icon>
+                <v-icon v-else> mdi-circle-outline</v-icon>
               </v-list-item-content>
               <v-list-item-content style="display: inline-block">
                 {{ item.updated | formatDatetime }}
@@ -80,7 +80,7 @@
               >
                 <div class="actions">
                   <v-btn icon @click="remove(item)">
-                    <v-icon color="error"> mdi-delete-outline </v-icon>
+                    <v-icon color="error"> mdi-delete-outline</v-icon>
                   </v-btn>
                 </div>
               </v-list-item-action>
@@ -163,6 +163,7 @@ export default class CodeList extends Vue {
       value,
     );
   }
+
   public showAddDialog(): void {
     this.editItem = {
       ...defaultCode(),
@@ -184,7 +185,7 @@ export default class CodeList extends Vue {
       const response = await deleteApi<Code>(`codes/${value.id}`);
       this.loading = false;
       if (response.success) {
-        window.localStorage.removeItem(`code__${value.type}`);
+        window.sessionStorage.removeItem(`code__${value.type}`);
         this.items = this.items.filter((item) => item.id !== value.id);
         if (this.items.length === 0) {
           this.$emit("removed", value);
@@ -206,7 +207,7 @@ export default class CodeList extends Vue {
     );
     this.loading = false;
     if (response.success) {
-      window.localStorage.removeItem(`code__${this.type}`);
+      window.sessionStorage.removeItem(`code__${this.type}`);
       this.items = response.data || [];
     }
   }

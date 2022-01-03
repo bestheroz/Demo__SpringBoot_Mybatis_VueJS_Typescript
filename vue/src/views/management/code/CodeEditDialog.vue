@@ -130,7 +130,7 @@ export default class extends Vue {
     this.loading = false;
     if (response.success) {
       this.syncedDialog = false;
-      window.localStorage.removeItem(`code__${this.vModel.type}`);
+      window.sessionStorage.removeItem(`code__${this.vModel.type}`);
       this.$emit("updated", response.data);
     }
   }

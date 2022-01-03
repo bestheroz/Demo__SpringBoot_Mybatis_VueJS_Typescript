@@ -156,7 +156,7 @@ export async function deleteApi<T = never, R = T>(
 }
 
 export async function getCodesApi(type: string): Promise<Code[]> {
-  const item = window.localStorage.getItem(`code__${type}`);
+  const item = window.sessionStorage.getItem(`code__${type}`);
   if (item) {
     return JSON.parse(item);
   } else {
@@ -167,7 +167,7 @@ export async function getCodesApi(type: string): Promise<Code[]> {
       >(`api/v1/codes/?type=${type}&available=true`);
       const result = response.data.data || [];
       if (result.length > 0) {
-        window.localStorage.setItem(`code__${type}`, JSON.stringify(result));
+        window.sessionStorage.setItem(`code__${type}`, JSON.stringify(result));
       }
       return result;
     } catch (error) {
@@ -179,7 +179,7 @@ export async function getCodesApi(type: string): Promise<Code[]> {
 export async function getEnvironmentApi<T = string>(
   key: string,
 ): Promise<T | null> {
-  const item = window.localStorage.getItem(`environment__${key}`);
+  const item = window.sessionStorage.getItem(`environment__${key}`);
   if (item) {
     return JSON.parse(item);
   } else {
@@ -190,7 +190,7 @@ export async function getEnvironmentApi<T = string>(
       >(`api/v1/environments/${key}`);
       const result = response.data.data || null;
       if (result) {
-        window.localStorage.setItem(
+        window.sessionStorage.setItem(
           `environment__${key}`,
           JSON.stringify(result),
         );
@@ -270,6 +270,7 @@ export async function downloadFileApi(
   document.body.removeChild(tempLink);
   window.URL.revokeObjectURL(newUrl);
 }
+
 export async function downloadExcelApi(url: string): Promise<void> {
   const response = await axiosInstance.get<Blob>(`api/${url}`, {
     responseType: "blob",
