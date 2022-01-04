@@ -76,17 +76,6 @@ export default class extends Vue {
   cloneFilters: Filter[] = [];
   index = 0;
 
-  get selectedFilters(): Filter[] {
-    return this.cloneFilters
-      .filter((v) => v.items.some((i) => i.checked))
-      .map((v) => {
-        return {
-          ...v,
-          items: v.items.filter((i) => i.checked),
-        };
-      });
-  }
-
   get filteredLength(): number {
     return this.cloneFilters
       .map((f) => f.items.some((i) => i.checked))
@@ -94,9 +83,9 @@ export default class extends Vue {
   }
 
   @Watch("filters", { immediate: true })
-  protected watchFilters(): void {
+  protected watchFilters(val: Filter[]): void {
     this.cloneFilters = [
-      ...this.filters.map((f) => {
+      ...val.map((f) => {
         const cloneItems =
           this.cloneFilters.find((c) => c.key === f.key)?.items || [];
         return {
@@ -119,7 +108,7 @@ export default class extends Vue {
 
   public resetFilter(): void {
     this.cloneFilters = [];
-    this.watchFilters();
+    this.watchFilters(this.filters);
   }
 
   @Emit("update:output")

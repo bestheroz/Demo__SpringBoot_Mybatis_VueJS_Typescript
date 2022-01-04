@@ -20,7 +20,11 @@
     </page-title>
     <v-card>
       <v-card-text>
-        <data-table-filter :filters="filters" :output.sync="filterOutput" />
+        <data-table-filter
+          ref="refDataTableFilter"
+          :filters="filters"
+          :output.sync="filterOutput"
+        />
         <code-list
           ref="refCodeList"
           :type="type"
@@ -51,6 +55,7 @@ import { Code } from "@/definitions/models";
 })
 export default class extends Vue {
   @Ref() readonly refCodeList!: CodeList;
+  @Ref() readonly refDataTableFilter!: DataTableFilter;
 
   types: string[] = [];
   saving = false;
@@ -98,6 +103,9 @@ export default class extends Vue {
 
   protected onCreated(value: Code): void {
     this.types = [value.type, ...this.types];
+    this.$nextTick(() => {
+      this.refDataTableFilter.resetFilter();
+    });
   }
 
   protected onRemoved(value: Code): void {
