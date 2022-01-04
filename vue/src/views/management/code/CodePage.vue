@@ -59,8 +59,9 @@ export default class extends Vue {
 
   types: string[] = [];
   saving = false;
+  type = "";
 
-  filterOutput: Record<string, string | number | boolean[]> = {};
+  filterOutput: Record<string, (string | number | boolean)[]> = {};
 
   get filters(): Filter[] {
     return [
@@ -70,19 +71,16 @@ export default class extends Vue {
         key: "type",
         single: true,
         required: true,
-        items: this.types.map((v, index) => {
-          return { value: v, text: v, checked: index === 0 };
+        items: this.types.map((v) => {
+          return { value: v, text: v, checked: this.type === v };
         }),
       },
     ];
   }
 
-  get type(): string {
-    return this.filterOutput.type as string;
-  }
-
-  protected created(): void {
-    this.getTypes().then();
+  protected async created(): Promise<void> {
+    await this.getTypes();
+    this.type = this.types?.[0];
   }
 
   protected async saveItems(): Promise<void> {
@@ -101,11 +99,15 @@ export default class extends Vue {
     this.types = response.data ? response.data : [];
   }
 
-  protected onCreated(value: Code): void {
-    this.types = [value.type, ...this.types];
-    this.$nextTick(() => {
+  protected async onCreated(value: Code): Promise<void> {
+    if (!this.types.some((t) => t === value.type)) {
+      this.types = [value.type, ...this.types];
+    }
+    if (this.type !== value.type) {
+      this.type = value.type;
+      await this.$nextTick();
       this.refDataTableFilter.resetFilter();
-    });
+    }
   }
 
   protected onRemoved(value: Code): void {
