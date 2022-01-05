@@ -26,7 +26,7 @@
       </template>
 
       <!-- Navigation menu -->
-      <nav-menu :drawers="$store.getters.drawers" />
+      <nav-menu :drawers="drawers" />
     </v-navigation-drawer>
 
     <!-- Toolbar -->
@@ -69,7 +69,7 @@
         <div class="overline">
           <a
             class="text-decoration-none"
-            href="http://work.cubewiz.co.kr/"
+            href="https://github.com/bestheroz"
             target="_blank"
           >
             @bestheroz
@@ -86,6 +86,7 @@ import ToolbarAdmin from "../components/toolbar/ToolbarAdmin.vue";
 import { Component, Vue } from "vue-property-decorator";
 import envs from "@/constants/envs";
 import NavMenu from "@/components/navigation/NavMenu.vue";
+import { Drawer } from "@/definitions/types";
 
 @Component({
   components: {
@@ -96,5 +97,11 @@ import NavMenu from "@/components/navigation/NavMenu.vue";
 export default class extends Vue {
   drawer = null;
   readonly envs = envs;
+
+  get drawers(): Drawer[] {
+    return envs.ENVIRONMENT === "local"
+      ? this.$store.getters.drawers
+      : this.$store.getters.drawers.filter((d: Drawer) => d.id !== 1);
+  }
 }
 </script>
