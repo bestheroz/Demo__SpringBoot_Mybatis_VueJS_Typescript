@@ -1,7 +1,10 @@
 <template>
   <div>
     <v-card class="text-center pa-1">
-      <v-card-title class="justify-center display-1 mb-2">Welcome</v-card-title>
+      <v-card-title
+        class="justify-center display-1 mb-2"
+        v-text="envs.PRODUCT_TITLE"
+      />
       <v-card-subtitle>Sign in to your account</v-card-subtitle>
 
       <!-- sign in form -->
@@ -54,9 +57,11 @@
             >
               Sign In
             </v-btn>
-            <div v-if="errorProvider" class="error--text">
-              {{ errorProviderMessages }}
-            </div>
+            <div
+              v-if="errorProvider"
+              class="error--text"
+              v-text="errorProviderMessages"
+            />
           </ValidationObserver>
         </v-form>
       </v-card-text>
@@ -73,12 +78,14 @@ import { toastCloseAll } from "@/utils/alerts";
 import { defaultAdmin, defaultAdminConfig } from "@/definitions/defaults";
 import { getYourConfig, routerReplace } from "@/utils/commands";
 import { AxiosResponse } from "axios";
+import envs from "@/constants/envs";
 
 @Component({
   components: {},
 })
 export default class extends Vue {
   @Ref("observer") readonly observer!: InstanceType<typeof ValidationObserver>;
+  readonly envs = envs;
 
   loginId = "1";
   password = "1";
