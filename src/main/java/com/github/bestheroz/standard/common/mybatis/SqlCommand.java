@@ -493,6 +493,6 @@ public class SqlCommand {
     return StringUtils.countMatches(value, '-') == 2
         && StringUtils.countMatches(value, ':') == 2
         && StringUtils.countMatches(value, 'T') == 1
-        && StringUtils.endsWith(value, "Z");
+        && (StringUtils.endsWith(value, "Z") || StringUtils.countMatches(value, '+') == 1);
   }
 }
