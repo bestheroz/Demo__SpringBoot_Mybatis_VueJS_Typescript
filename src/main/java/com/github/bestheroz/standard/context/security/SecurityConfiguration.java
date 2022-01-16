@@ -19,11 +19,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
   public static final String[] PUBLIC =
       new String[] {
-        "/api/sign-in",
-        "/api/sign-in/**",
-        "/api/sign-out",
-        "/api/auth/refresh-token",
-        "/actuator/**",
+        "/api/sign-in", "/api/sign-in/refresh-token", "/api/sign-out", "/actuator/**",
       };
 
   @Override
