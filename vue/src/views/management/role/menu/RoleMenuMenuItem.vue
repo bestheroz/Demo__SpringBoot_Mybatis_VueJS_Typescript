@@ -1,14 +1,13 @@
 <template>
-  <div :class="`w-full offset-${depth}`">
+  <div :class="`offset-${depth}`">
     <div
       v-for="menu in menus"
       :key="menu.id"
       :class="menu.type === MENU_TYPE.GROUP ? '' : 'd-inline-block'"
     >
       <v-chip
-        :key="menu.id"
         :value="menu.id"
-        :outlined="!selected.includes(menu.id)"
+        :outlined="!vModel.includes(menu.id)"
         color="primary"
         class="px-4"
         label
@@ -23,7 +22,7 @@
         {{ menu.name }}
       </v-chip>
       <role-menu-menu-item
-        v-model="selected"
+        v-model="vModel"
         :menus="menu.children"
         :depth="depth + 1"
         :disabled="disabled"
@@ -33,22 +32,39 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, VModel, Vue } from "vue-property-decorator";
-import type { Menu } from "@/definitions/models";
 import { MENU_TYPE } from "@/definitions/selections";
+import { Menu } from "@/definitions/models";
+import {
+  defineComponent,
+  PropType,
+  reactive,
+  toRefs,
+} from "@vue/composition-api";
+import setupVModel from "@/composition/setupVModel";
 
-@Component({
-  components: {
-    RoleMenuMenuItem: () =>
-      import("@/views/management/role/menu/RoleMenuMenuItem.vue"),
+export default defineComponent({
+  name: "RoleMenuMenuItem",
+  props: {
+    value: {
+      type: Array as PropType<number[]>,
+      required: true,
+    },
+    menus: {
+      type: Array as PropType<Menu[]>,
+      required: true,
+    },
+    depth: {
+      type: Number,
+      default: 0,
+    },
+    disabled: {
+      type: Boolean,
+    },
   },
-})
-export default class extends Vue {
-  @VModel({ required: true }) selected!: number[];
-  @Prop({ required: true }) readonly menus!: Menu[];
-  @Prop({ default: 0 }) readonly depth!: number;
-  @Prop({ type: Boolean }) readonly disabled!: boolean;
-
-  readonly MENU_TYPE = MENU_TYPE;
-}
+  setup(props, { emit }) {
+    const vModel = setupVModel<number[]>(props, emit);
+    const state = reactive({ MENU_TYPE: MENU_TYPE });
+    return { ...vModel, ...toRefs(state) };
+  },
+});
 </script>

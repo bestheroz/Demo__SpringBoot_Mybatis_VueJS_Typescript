@@ -5,6 +5,10 @@ import { toastError, toastSuccess } from "@/utils/alerts";
 import { goSignInPage } from "@/utils/commands";
 import { Code } from "@/definitions/models";
 
+function getAccessToken(): string {
+  return window.localStorage.getItem("accessToken") ?? "";
+}
+
 export const axiosInstance = axios.create({
   baseURL: envs.API_HOST,
   headers: {
@@ -18,7 +22,7 @@ axiosInstance.interceptors.request.use(
       console.error("Failed to set 'request headers' : headers is not exist");
       return;
     }
-    config.headers.Authorization = store.getters.accessToken;
+    config.headers.Authorization = getAccessToken();
     return config;
   },
   function (error) {
@@ -46,7 +50,12 @@ axiosInstance.interceptors.response.use(
     if (error.response) {
       if (error.response.headers.refreshtoken === "must") {
         const refreshToken = await apiRefreshToken(error);
-        return refreshToken && axios.request(refreshToken.config);
+        if (refreshToken?.config?.headers) {
+          refreshToken.config.headers.Authorization = getAccessToken();
+          return axios.request(refreshToken.config);
+        } else {
+          return;
+        }
       }
       if ([400, 401].includes(error.response.status)) {
         await goSignInPage();
@@ -317,8 +326,7 @@ async function apiRefreshToken(error: AxiosError) {
     console.error("Failed to set 'request headers' : headers is not exist");
     return;
   }
-  error.config.headers.Authorization = store.getters.accessToken;
-  error.config.headers.AuthorizationR = store.getters.refreshToken;
+  error.config.headers.AuthorizationR = getAccessToken();
   return error;
 }
 

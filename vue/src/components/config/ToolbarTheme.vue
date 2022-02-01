@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-navigation-drawer
-      v-model="dialog"
+      v-model="vModel"
       fixed
       right
       hide-overlay
@@ -10,9 +10,9 @@
       width="330"
     >
       <div class="d-flex align-center pa-2">
-        <div class="title">Settings</div>
+        <div class="text-h6">Settings</div>
         <v-spacer />
-        <v-btn icon @click="dialog = false">
+        <v-btn icon @click="vModel = false">
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </div>
@@ -171,23 +171,40 @@
 </template>
 
 <script lang="ts">
-import { Component, VModel, Vue } from "vue-property-decorator";
+import {
+  computed,
+  defineComponent,
+  reactive,
+  toRefs,
+} from "@vue/composition-api";
+import setupVModel from "@/composition/setupVModel";
+import store from "@/store";
 
-@Component({})
-export default class extends Vue {
-  @VModel({ required: true, type: Boolean }) dialog!: boolean;
-
-  timeout = 0;
-  readonly swatches: string[][] = [
-    ["#0096c7", "#31944f"],
-    ["#EE4f12", "#46BBB1"],
-    ["#ee44aa", "#55BB46"],
-  ];
-
-  protected setPrimaryColor(primaryColor: string): void {
-    this.$store.dispatch("setPrimaryColor", primaryColor);
-  }
-}
+export default defineComponent({
+  props: {
+    value: {
+      type: Boolean,
+      required: true,
+    },
+  },
+  setup(props, { emit }) {
+    const vModel = setupVModel<boolean>(props, emit);
+    const state = reactive({ timeout: 0 });
+    const computes = {
+      swatches: computed((): string[][] => [
+        ["#0096c7", "#31944f"],
+        ["#EE4f12", "#46BBB1"],
+        ["#ee44aa", "#55BB46"],
+      ]),
+    };
+    const methods = {
+      setPrimaryColor: (primaryColor: string): void => {
+        store.dispatch("setPrimaryColor", primaryColor);
+      },
+    };
+    return { ...vModel, ...toRefs(state), ...computes, ...methods };
+  },
+});
 </script>
 
 <style lang="scss" scoped>

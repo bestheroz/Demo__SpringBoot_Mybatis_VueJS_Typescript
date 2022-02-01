@@ -8,7 +8,7 @@ Vue.use(Router);
 
 const requireAuth =
   () => async (_to: Route, _from: Route, next: NavigationGuardNext) => {
-    if (store.getters.signedIn) {
+    if (store.getters.loggedIn) {
       return next();
     }
     return goSignInPage();
@@ -81,7 +81,7 @@ const routes = (): RouteConfig[] => {
     {
       path: "/",
       beforeEnter: requireAuth(),
-      component: () => import("@/views/Home.vue"),
+      component: () => import("@/views/HomePage.vue"),
     },
     {
       path: "/sign-in",
@@ -101,7 +101,7 @@ const routes = (): RouteConfig[] => {
 };
 
 export default new Router({
-  mode: "hash",
+  mode: "history",
   base: process.env.BASE_URL,
   scrollBehavior(_to: Route, _from: Route, savedPosition) {
     return savedPosition || { x: 0, y: 0 };

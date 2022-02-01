@@ -9,22 +9,21 @@
           x-large
           v-if="$store.getters.writeAuthority"
         >
-          <v-icon> mdi-sort</v-icon>
-          순서저장
+          <v-icon> mdi-sort </v-icon> 순서저장
         </v-btn>
-        <v-btn @click="refCodeList.getList()" color="primary" outlined x-large>
-          <v-icon> mdi-refresh</v-icon>
-          새로고침
+        <v-btn
+          @click="$refs.refCodeList.getList()"
+          color="primary"
+          outlined
+          x-large
+        >
+          <v-icon> mdi-refresh </v-icon> 새로고침
         </v-btn>
       </template>
     </page-title>
     <v-card>
       <v-card-text>
-        <data-table-filter
-          ref="refDataTableFilter"
-          :filters="filters"
-          :output.sync="filterOutput"
-        />
+        <data-table-filter :filters="filters" :output.sync="filterOutput" />
         <code-list
           ref="refCodeList"
           :type="type"
@@ -38,80 +37,86 @@
 </template>
 
 <script lang="ts">
-import { Component, Ref, Vue } from "vue-property-decorator";
 import CodeList from "@/views/management/code/CodeList.vue";
 import PageTitle from "@/components/title/PageTitle.vue";
 import DataTableFilter from "@/components/datatable/DataTableFilter.vue";
-import { Filter } from "@/definitions/types";
+import { Filter, FilterOutput } from "@/definitions/types";
 import { getApi } from "@/utils/apis";
 import { Code } from "@/definitions/models";
+import {
+  computed,
+  defineComponent,
+  onMounted,
+  reactive,
+  ref,
+  toRefs,
+} from "@vue/composition-api";
 
-@Component({
-  components: {
-    DataTableFilter,
-    PageTitle,
-    CodeList,
-  },
-})
-export default class extends Vue {
-  @Ref() readonly refCodeList!: CodeList;
-  @Ref() readonly refDataTableFilter!: DataTableFilter;
+export default defineComponent({
+  components: { DataTableFilter, PageTitle, CodeList },
+  setup() {
+    const state = reactive({
+      types: [] as string[],
+      saving: false,
+      filterOutput: {} as FilterOutput,
+    });
 
-  types: string[] = [];
-  saving = false;
-  type = "";
+    const computes = {
+      type: computed(() => (state.filterOutput.type?.[0] as string) || ""),
+      filters: computed((): Filter[] => [
+        {
+          type: "checkbox",
+          text: "타입",
+          key: "type",
+          single: true,
+          required: true,
+          items: state.types.map((v) => ({
+            value: v,
+            text: v,
+            checked: false,
+          })),
+        },
+      ]),
+    };
 
-  filterOutput: Record<string, (string | number | boolean)[]> = {};
-
-  get filters(): Filter[] {
-    return [
-      {
-        type: "checkbox",
-        text: "타입",
-        key: "type",
-        single: true,
-        required: true,
-        items: this.types.map((v) => {
-          return { value: v, text: v, checked: this.type === v };
-        }),
+    const methods = {
+      saveItems: async (): Promise<void> => {
+        state.saving = true;
+        await refCodeList.value?.saveItems();
+        state.saving = false;
       },
-    ];
-  }
+      showAddDialog: async (): Promise<void> => {
+        await refCodeList.value?.showAddDialog();
+      },
+      getTypes: async (): Promise<void> => {
+        state.types = [];
+        const response = await getApi<string[]>("codes/types/");
+        state.types = response.data ? response.data : [];
+      },
+      onCreated: async (value: Code): Promise<void> => {
+        if (state.types.every((t) => t === value.type)) {
+          state.types = [value.type, ...state.types];
+        }
+      },
+      onRemoved: (value: Code): void => {
+        state.types = state.types.filter((item) => item !== value.type);
+      },
+    };
 
-  protected async created(): Promise<void> {
-    await this.getTypes();
-    this.type = this.types?.[0];
-  }
+    onMounted(async () => {
+      await methods.getTypes();
+      computes.filters.value
+        .find((f) => f.key === "type")
+        ?.items.forEach((i) => (i.checked = i.value === state.types?.[0]));
+    });
 
-  protected async saveItems(): Promise<void> {
-    this.saving = true;
-    await this.refCodeList.saveItems();
-    this.saving = false;
-  }
-
-  protected async showAddDialog(): Promise<void> {
-    await this.refCodeList.showAddDialog();
-  }
-
-  protected async getTypes(): Promise<void> {
-    this.types = [];
-    const response = await getApi<string[]>("codes/types/");
-    this.types = response.data ? response.data : [];
-  }
-
-  protected async onCreated(value: Code): Promise<void> {
-    if (!this.types.some((t) => t === value.type)) {
-      this.types = [value.type, ...this.types];
-    }
-    if (this.type !== value.type) {
-      this.type = value.type;
-      await this.$nextTick();
-      this.refDataTableFilter.resetFilter();
-    }
-  }
-
-  protected onRemoved(value: Code): void {
-    this.types = this.types.filter((item) => item !== value.type);
-  }
-}
+    const refCodeList = ref<null | InstanceType<typeof CodeList>>(null);
+    return {
+      ...toRefs(state),
+      ...computes,
+      ...methods,
+      refCodeList,
+    };
+  },
+});
 </script>

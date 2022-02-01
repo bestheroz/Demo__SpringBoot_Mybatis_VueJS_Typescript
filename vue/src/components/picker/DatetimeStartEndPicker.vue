@@ -76,84 +76,116 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, PropSync, Ref, Vue } from "vue-property-decorator";
 import DatetimePicker from "@/components/picker/DatetimePicker.vue";
 import dayjs from "dayjs";
+import { DateTime } from "@/definitions/types";
+import {
+  computed,
+  defineComponent,
+  PropType,
+  reactive,
+  ref,
+  toRefs,
+} from "@vue/composition-api";
 
-@Component({
+export default defineComponent({
   components: { DatetimePicker },
-})
-export default class extends Vue {
-  @PropSync("start", { required: true }) syncedStart!:
-    | Date
-    | string
-    | number
-    | null;
+  props: {
+    start: {
+      type: [String, Number, Date, Object] as PropType<DateTime>,
+      default: undefined,
+    },
+    end: {
+      type: [String, Number, Date, Object] as PropType<DateTime>,
+      default: undefined,
+    },
+    startLabel: { type: String, default: undefined },
+    endLabel: { type: String, default: undefined },
+    startMessage: { type: String, default: undefined },
+    endMessage: { type: String, default: undefined },
+    required: { type: Boolean },
+    disabled: { type: Boolean },
+    startDisabled: { type: Boolean },
+    endDisabled: { type: Boolean },
+    dense: { type: Boolean },
+    hideDetails: { type: Boolean },
+    clearable: { type: Boolean },
+    useSeconds: { type: Boolean },
+    fullWidth: { type: Boolean },
+    hideHint: { type: Boolean },
+  },
+  setup(props, { emit }) {
+    const state = reactive({});
+    const computes = {
+      syncedStart: computed({
+        get(): DateTime {
+          return props.start as DateTime;
+        },
+        set(value: DateTime) {
+          emit("update:start", value);
+        },
+      }),
+      syncedEnd: computed({
+        get(): DateTime {
+          return props.end as DateTime;
+        },
+        set(value: DateTime) {
+          emit("update:end", value);
+        },
+      }),
+      DATE_FORMAT: computed((): string => "YYYY-MM-DD"),
+      MINUTE_TIME_PICKER_FORMAT: computed((): string => "HH:mm"),
+      TIMEPICKER_FORMAT: computed((): string => "HH:mm:ss"),
 
-  @PropSync("end", { required: true }) readonly syncedEnd!:
-    | Date
-    | string
-    | number
-    | null;
+      defaultLabelForStart: computed(
+        (): string => props.startLabel || "시작 시각",
+      ),
 
-  @Prop({ type: String }) readonly startLabel!: string | null;
+      defaultLabelForEnd: computed((): string => props.endLabel || "종료 시각"),
 
-  @Prop({ type: String }) readonly endLabel!: string | null;
+      minDate: computed((): string[] | undefined => {
+        if (!computes.syncedStart.value) {
+          return undefined;
+        }
+        return [
+          dayjs(computes.syncedStart.value).format(computes.DATE_FORMAT.value),
+          props.useSeconds
+            ? dayjs(computes.syncedStart.value).format(
+                computes.TIMEPICKER_FORMAT.value,
+              )
+            : dayjs(computes.syncedStart.value).format(
+                computes.MINUTE_TIME_PICKER_FORMAT.value,
+              ),
+        ];
+      }),
 
-  @Prop({ type: String }) readonly startMessage!: string | null;
-  @Prop({ type: String }) readonly endMessage!: string | null;
-  @Prop({ type: Boolean, default: false }) readonly required!: boolean;
-  @Prop({ type: Boolean, default: false }) readonly disabled!: boolean;
-  @Prop({ type: Boolean, default: false }) readonly startDisabled!: boolean;
-  @Prop({ type: Boolean, default: false }) readonly endDisabled!: boolean;
-  @Prop({ type: Boolean, default: false }) readonly dense!: boolean;
-  @Prop({ type: Boolean, default: false }) readonly hideDetails!: boolean;
-  @Prop({ type: Boolean, default: false }) readonly clearable!: boolean;
-  @Prop({ type: Boolean, default: false }) readonly useSeconds!: boolean;
-  @Prop({ type: Boolean, default: false }) readonly fullWidth!: boolean;
-  @Prop({ type: Boolean, default: false }) readonly hideHint!: boolean;
-
-  @Ref("refStart") readonly refStart!: DatetimePicker;
-  @Ref("refEnd") readonly refEnd!: DatetimePicker;
-
-  readonly DATE_FORMAT = "YYYY-MM-DD";
-  readonly MINUTE_TIME_PICKER_FORMAT = "HH:mm";
-  readonly TIMEPICKER_FORMAT = "HH:mm:ss";
-
-  get defaultLabelForStart(): string {
-    return this.startLabel || "시작 시각";
-  }
-
-  get defaultLabelForEnd(): string {
-    return this.endLabel || "종료 시각";
-  }
-
-  get minDate(): string[] | undefined {
-    if (!this.syncedStart) {
-      return undefined;
-    }
-    return [
-      dayjs(this.syncedStart).format(this.DATE_FORMAT),
-      this.useSeconds
-        ? dayjs(this.syncedStart).format(this.TIMEPICKER_FORMAT)
-        : dayjs(this.syncedStart).format(this.MINUTE_TIME_PICKER_FORMAT),
-    ];
-  }
-
-  get maxDate(): string[] | undefined {
-    if (!this.syncedEnd) {
-      return undefined;
-    }
-    return [
-      dayjs(this.syncedEnd).format(this.DATE_FORMAT),
-      this.useSeconds
-        ? dayjs(this.syncedEnd).format(this.TIMEPICKER_FORMAT)
-        : dayjs(this.syncedEnd).format(this.MINUTE_TIME_PICKER_FORMAT),
-    ];
-  }
-
-  async validate(): Promise<boolean> {
-    return (await this.refStart.validate()) && (await this.refEnd.validate());
-  }
-}
+      maxDate: computed((): string[] | undefined => {
+        if (!computes.syncedEnd.value) {
+          return undefined;
+        }
+        return [
+          dayjs(computes.syncedEnd.value).format(computes.DATE_FORMAT.value),
+          props.useSeconds
+            ? dayjs(computes.syncedEnd.value).format(
+                computes.TIMEPICKER_FORMAT.value,
+              )
+            : dayjs(computes.syncedEnd.value).format(
+                computes.MINUTE_TIME_PICKER_FORMAT.value,
+              ),
+        ];
+      }),
+    };
+    const methods = {
+      validate: async (): Promise<boolean> => {
+        return (
+          !!(await refStart.value?.validate()) &&
+          !!(await refEnd.value?.validate())
+        );
+      },
+    };
+    const refStart = ref<null | InstanceType<typeof DatetimePicker>>(null);
+    const refEnd = ref<null | InstanceType<typeof DatetimePicker>>(null);
+    return { ...toRefs(state), ...computes, ...methods, refStart, refEnd };
+  },
+});
 </script>

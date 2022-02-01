@@ -59,7 +59,6 @@
 
 <script lang="ts">
 import config from "../../configs";
-import { Component, Vue } from "vue-property-decorator";
 import EditMeDialog from "@/views/components/EditMeDialog.vue";
 import ToolbarTheme from "@/components/config/ToolbarTheme.vue";
 import EditPasswordDialog from "@/views/components/EditPasswordDialog.vue";
@@ -67,59 +66,64 @@ import { signOut } from "@/utils/commands";
 import { promptPassword, toastError } from "@/utils/alerts";
 import pbkdf2 from "pbkdf2";
 import { postApi } from "@/utils/apis";
+import store from "@/store";
+import { defineComponent, reactive, toRefs } from "@vue/composition-api";
 
-@Component({
+export default defineComponent({
   components: { ToolbarTheme, EditMeDialog, EditPasswordDialog },
-})
-export default class extends Vue {
-  menu = config.toolbar.admin;
-  editMeDialog = false;
-  editMePasswordDialog = false;
-  toolbarThemeDialog = false;
+  setup() {
+    const state = reactive({
+      menu: config.toolbar.admin,
+      editMeDialog: false,
+      editMePasswordDialog: false,
+      toolbarThemeDialog: false,
+      adminEncodedPassword: "",
+      signOut: signOut,
+    });
+    const methods = {
+      getActions: (item: { key: string }): void => {
+        switch (item.key) {
+          case "adminmenu.profile":
+            methods.confirmPassword();
+            break;
+          case "adminmenu.changePassword":
+            state.editMePasswordDialog = true;
+            break;
+          case "adminmenu.theme":
+            state.toolbarThemeDialog = true;
+            break;
+        }
+      },
 
-  readonly signOut = signOut;
-  adminEncodedPassword = "";
+      confirmPassword: async (): Promise<void> => {
+        const adminPassword = await promptPassword(
+          "내 정보 확인/수정",
+          store.getters.admin.name +
+            " 님의 정보확인을 위해 비밀번호를 입력 해 주세요",
+        );
 
-  protected getActions(item: { key: string }): void {
-    switch (item.key) {
-      case "adminmenu.profile":
-        this.confirmPassword();
-        break;
-      case "adminmenu.changePassword":
-        this.editMePasswordDialog = true;
-        break;
-      case "adminmenu.theme":
-        this.toolbarThemeDialog = true;
-        break;
-    }
-  }
+        if (!adminPassword) {
+          return;
+        }
 
-  protected async confirmPassword(): Promise<void> {
-    const adminPassword = await promptPassword(
-      "내 정보 확인/수정",
-      this.$store.getters.admin.name +
-        " 님의 정보확인을 위해 비밀번호를 입력 해 주세요",
-    );
+        const adminEncodedPassword = pbkdf2
+          .pbkdf2Sync(adminPassword, "salt", 1, 32, "sha512")
+          .toString();
 
-    if (!adminPassword) {
-      return;
-    }
-
-    const adminEncodedPassword = pbkdf2
-      .pbkdf2Sync(adminPassword, "salt", 1, 32, "sha512")
-      .toString();
-
-    const response = await postApi<void>(
-      "mine/verify-password",
-      adminEncodedPassword,
-      false,
-    );
-    if (response.success) {
-      this.adminEncodedPassword = adminEncodedPassword; // edit-me-dialog로 넘길 사용자 인코딩 패스워드
-      this.editMeDialog = true;
-    } else {
-      toastError(response.message);
-    }
-  }
-}
+        const response = await postApi<void>(
+          "mine/verify-password",
+          adminEncodedPassword,
+          false,
+        );
+        if (response.success) {
+          state.adminEncodedPassword = adminEncodedPassword; // edit-me-dialog로 넘길 사용자 인코딩 패스워드
+          state.editMeDialog = true;
+        } else {
+          toastError(response.message);
+        }
+      },
+    };
+    return { ...toRefs(state), ...methods };
+  },
+});
 </script>

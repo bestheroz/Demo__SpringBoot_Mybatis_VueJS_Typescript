@@ -8,8 +8,11 @@ import "./plugins/vue-filter";
 import "./plugins/sentry";
 import dotenv from "dotenv";
 import "./assets/scss/theme.scss";
+import VueCompositionApi from "@vue/composition-api";
 
 Vue.config.productionTip = false;
+
+Vue.use(VueCompositionApi);
 
 new Vue({
   router,

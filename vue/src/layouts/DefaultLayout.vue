@@ -14,11 +14,11 @@
       <template #prepend>
         <div class="pa-2">
           <div
-            class="title font-weight-bold primary--text"
+            class="text-h6 font-weight-bold primary--text"
             v-text="envs.PRODUCT_TITLE"
           />
           <div
-            class="overline grey--text"
+            class="text-overline grey--text"
             v-text="envs.PRODUCT_VERSION"
             style="text-transform: none"
           />
@@ -45,14 +45,16 @@
         :flat="!$store.getters.isToolbarDetached"
       >
         <div class="d-flex flex-grow-1 align-center">
-          <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
+          <div class="d-flex flex-grow-1 align-center">
+            <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
 
-          <v-spacer class="d-none d-lg-block" />
+            <v-spacer class="d-none d-lg-block" />
 
-          <v-spacer class="d-block d-sm-none" />
+            <v-spacer class="d-block d-sm-none" />
 
-          <toolbar-admin />
-          <h4 class="primary--text mt-1" v-text="$store.getters.admin.name" />
+            <toolbar-admin />
+            <h4 class="primary--text mt-1" v-text="$store.getters.admin.name" />
+          </div>
         </div>
       </v-card>
     </v-app-bar>
@@ -66,7 +68,7 @@
 
       <v-footer app inset>
         <v-spacer />
-        <div class="overline">
+        <div class="text-overline">
           <a
             class="text-decoration-none"
             href="https://github.com/bestheroz"
@@ -74,7 +76,7 @@
           >
             @bestheroz
           </a>
-          <v-icon small color="pink"> mdi-heart</v-icon>
+          <v-icon small color="pink"> mdi-heart </v-icon>
         </div>
       </v-footer>
     </v-main>
@@ -83,25 +85,30 @@
 
 <script lang="ts">
 import ToolbarAdmin from "../components/toolbar/ToolbarAdmin.vue";
-import { Component, Vue } from "vue-property-decorator";
 import envs from "@/constants/envs";
 import NavMenu from "@/components/navigation/NavMenu.vue";
 import { Drawer } from "@/definitions/types";
+import {
+  computed,
+  defineComponent,
+  reactive,
+  toRefs,
+} from "@vue/composition-api";
+import store from "@/store";
 
-@Component({
-  components: {
-    NavMenu,
-    ToolbarAdmin,
+export default defineComponent({
+  components: { NavMenu, ToolbarAdmin },
+  setup() {
+    const state = reactive({ drawer: null });
+    const computes = {
+      envs: computed((): typeof envs => envs),
+      drawers: computed((): Drawer[] =>
+        envs.ENVIRONMENT === "local"
+          ? store.getters.drawers
+          : store.getters.drawers.filter((d: Drawer) => d.id !== 1),
+      ),
+    };
+    return { ...toRefs(state), ...computes };
   },
-})
-export default class extends Vue {
-  drawer = null;
-  readonly envs = envs;
-
-  get drawers(): Drawer[] {
-    return envs.ENVIRONMENT === "local"
-      ? this.$store.getters.drawers
-      : this.$store.getters.drawers.filter((d: Drawer) => d.id !== 1);
-  }
-}
+});
 </script>

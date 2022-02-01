@@ -16,36 +16,63 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, VModel, Vue } from "vue-property-decorator";
 import { getApi } from "@/utils/apis";
 import type { Role } from "@/definitions/models";
 import { defaultRole } from "@/definitions/defaults";
 
-@Component({
-  components: {},
-})
-export default class extends Vue {
-  @VModel({ required: true, default: () => defaultRole() }) vModel!: Role;
-  @Prop() readonly errorMessages!: string[];
-  @Prop({ default: "역할" }) readonly label!: string;
-  @Prop({ type: Boolean }) readonly clearable!: boolean;
-  @Prop({ type: Boolean }) readonly required!: boolean;
-  @Prop({ type: Boolean }) readonly disabled!: boolean;
-  @Prop() readonly paramAvailable?: boolean;
-  items: Role[] = [];
-  loading = false;
+import {
+  defineComponent,
+  onBeforeMount,
+  PropType,
+  reactive,
+  toRefs,
+} from "@vue/composition-api";
+import setupVModel from "@/composition/setupVModel";
 
-  protected async created(): Promise<void> {
-    this.loading = true;
-    const response = await getApi<Role[]>(
-      `roles/selections/?available=${
-        !this.disabled && this.paramAvailable !== undefined
-          ? this.paramAvailable
-          : ""
-      }`,
-    );
-    this.items = response.data || [];
-    this.loading = false;
-  }
-}
+export default defineComponent({
+  props: {
+    value: {
+      type: Object as PropType<Role>,
+      required: true,
+      default: () => defaultRole(),
+    },
+    errorMessages: {
+      type: Array as PropType<string[]>,
+      default: undefined,
+    },
+    label: {
+      type: String,
+      default: "역할",
+    },
+    clearable: {
+      type: Boolean,
+    },
+    required: {
+      type: Boolean,
+    },
+    disabled: {
+      type: Boolean,
+    },
+    paramAvailable: {
+      type: Boolean,
+    },
+  },
+  setup(props, { emit }) {
+    const vModel = setupVModel<Role>(props, emit);
+    const state = reactive({ items: [] as Role[], loading: false });
+    onBeforeMount(async () => {
+      state.loading = true;
+      const response = await getApi<Role[]>(
+        `roles/selections/?available=${
+          !props.disabled && props.paramAvailable !== undefined
+            ? props.paramAvailable
+            : ""
+        }`,
+      );
+      state.items = response.data || [];
+      state.loading = false;
+    });
+    return { ...vModel, ...toRefs(state) };
+  },
+});
 </script>

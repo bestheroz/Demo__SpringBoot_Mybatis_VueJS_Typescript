@@ -1,13 +1,24 @@
 import {
   Admin,
   AdminConfig,
+  App,
+  AppVersion,
   Code,
+  Faq,
   Menu,
+  Notice,
+  Popup,
   Role,
   RoleMenuMap,
+  Terms,
+  TermsAdminMap,
 } from "@/definitions/models";
 import dayjs from "dayjs";
-import { MENU_TYPE, ROLE_AUTHORITY_TYPE } from "@/definitions/selections";
+import {
+  APP_TYPE,
+  MENU_TYPE,
+  ROLE_AUTHORITY_TYPE,
+} from "@/definitions/selections";
 import config from "../configs";
 
 export function defaultSignedAdmin(): {
@@ -79,5 +90,85 @@ export function defaultRoleMenuMap(): RoleMenuMap {
     menu: defaultMenu(),
     authoritiesJson: [ROLE_AUTHORITY_TYPE.VIEW],
     children: [],
+  };
+}
+
+export function defaultApp(): App {
+  return {
+    name: "",
+    platform: APP_TYPE.APP_ANDROID,
+    description: null,
+    available: false,
+  };
+}
+
+export function defaultAppVersion(): AppVersion {
+  return {
+    app: defaultApp(),
+    version: "",
+    forceUpdate: false,
+    releaseNote: "",
+    available: false,
+  };
+}
+
+export function defaultNotice(): Notice {
+  return {
+    title: "",
+    maps: [],
+    displayOrder: null,
+    content: "",
+    viewCount: 0,
+    available: false,
+    displayEndDate: null,
+    displayStartDate: null,
+  };
+}
+
+export function defaultFaq(): Faq {
+  return {
+    title: "",
+    tags: [],
+    maps: [],
+    viewCount: 0,
+    displayOrder: null,
+    answer: null,
+    available: false,
+  };
+}
+
+export function defaultTerms(): Terms {
+  return {
+    name: "",
+    type: "",
+    content: "",
+    forceAgreeFlag: false,
+    revisionDate: null,
+    service: "",
+    availableFlag: false,
+    termsAdminMaps: [],
+  };
+}
+
+export function defaultTermsAdminMap(): TermsAdminMap {
+  return {
+    agreeFlag: false,
+  };
+}
+
+export function defaultPopup(): Popup {
+  return {
+    title: "",
+    maps: [],
+    displayOrder: null,
+    content: "",
+    availableFlag: false,
+    width: 0,
+    height: 0,
+    locationX: 0,
+    locationY: 0,
+    displayOption: 0,
+    displayStartDate: null,
+    displayEndDate: null,
   };
 }

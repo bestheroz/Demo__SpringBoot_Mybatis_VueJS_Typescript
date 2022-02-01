@@ -58,7 +58,8 @@ public class MineController {
         .map(
             admin -> {
               this.verifyPassword(admin.getPassword(), payload.getPassword());
-              admin.changeName(this.adminRepository, payload.getName());
+              admin.setName(payload.getName());
+              this.adminRepository.updateById(admin, admin.getId());
               return Result.ok(
                   new EditMeDTO(
                       this.adminRepository
@@ -89,7 +90,8 @@ public class MineController {
         .map(
             admin -> {
               this.verifyPassword(admin.getPassword(), payload.getOldPassword());
-              admin.changePassword(this.adminRepository, payload.getNewPassword());
+              admin.changePassword(payload.getNewPassword());
+              this.adminRepository.updateById(admin, admin.getId());
               return Result.ok();
             })
         .orElseThrow(() -> BusinessException.FAIL_NO_DATA_SUCCESS);
@@ -111,7 +113,8 @@ public class MineController {
                 .getItemByMap(Map.of("adminId", AuthenticationUtils.getId()))
                 .map(
                     adminConfig -> {
-                      adminConfig.change(adminConfigRepository, payload);
+                      adminConfig.change(payload);
+                      this.adminConfigRepository.updateById(adminConfig, adminConfig.getId());
                       return this.adminConfigRepository.getItemById(adminConfig.getId());
                     })
                 .orElseGet(

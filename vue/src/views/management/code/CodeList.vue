@@ -37,7 +37,7 @@
         <draggable
           tag="div"
           v-model="items"
-          v-bind="dragOptions"
+          :animation="200"
           handle=".drag-handle"
         >
           <transition-group type="transition" name="flip-list">
@@ -100,116 +100,95 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue, Watch } from "vue-property-decorator";
-import { deleteApi, getApi, postApi } from "@/utils/apis";
+import { deleteApi, postApi } from "@/utils/apis";
 import CodeEditDialog from "@/views/management/code/CodeEditDialog.vue";
 import { confirmDelete } from "@/utils/alerts";
 import { defaultCode } from "@/definitions/defaults";
 import type { Code } from "@/definitions/models";
-import { cloneDeep, debounce } from "lodash-es";
 import draggable from "vuedraggable";
-import PageTitle from "@/components/title/PageTitle.vue";
-import DataTableFilter from "@/components/datatable/DataTableFilter.vue";
+import { defineComponent, watch } from "@vue/composition-api";
+import setupListDialog from "@/composition/setupListDialog";
+import setupListPage from "@/composition/setupList";
 
-@Component({
-  components: {
-    DataTableFilter,
-    PageTitle,
-    CodeEditDialog,
-    draggable,
+export default defineComponent({
+  components: { CodeEditDialog, draggable },
+  props: {
+    type: {
+      type: String,
+      required: true,
+    },
   },
-})
-export default class CodeList extends Vue {
-  @Prop({ required: true }) readonly type!: string;
-
-  loading = false;
-  items: Code[] = [];
-  dialog = false;
-  editItem: Code = defaultCode();
-
-  get dragOptions(): { animation: number } {
-    return {
-      animation: 200,
-    };
-  }
-
-  @Watch("type", { immediate: true })
-  public getList(): void {
-    if (this.type) {
-      this.fetchList();
-    }
-  }
-
-  protected fetchList = debounce(async function (this: CodeList) {
-    this.items = [];
-    this.loading = true;
-    const response = await getApi<Code[]>(`codes/?type=${this.type}`);
-    this.loading = false;
-    this.items = response.data || [];
-  }, 300);
-
-  protected onCreated(value: Code): void {
-    if (this.type === value.type) {
-      this.items = [value, ...this.items];
-    } else {
-      this.$emit("created", value);
-    }
-  }
-
-  protected onUpdated(value: Code): void {
-    this.items.splice(
-      this.items.findIndex((item) => item.id === this.editItem.id),
-      1,
-      value,
-    );
-  }
-
-  public showAddDialog(): void {
-    this.editItem = {
+  setup(props, { emit }) {
+    const listPage = setupListPage<Code>(`codes/?type=${props.type}`);
+    const listDialog = setupListDialog<Code>(() => ({
       ...defaultCode(),
-      type: this.type,
-      displayOrder: this.items.length + 1,
-    };
-    this.dialog = true;
-  }
+      type: props.type,
+      displayOrder: listPage.items.value.length + 1,
+    }));
 
-  protected showEditDialog(value: Code): void {
-    this.editItem = cloneDeep(value);
-    this.dialog = true;
-  }
-
-  protected async remove(value: Code): Promise<void> {
-    const result = await confirmDelete(`코드: ${value.value}`);
-    if (result.value) {
-      this.loading = true;
-      const response = await deleteApi<Code>(`codes/${value.id}`);
-      this.loading = false;
-      if (response.success) {
-        window.sessionStorage.removeItem(`code__${value.type}`);
-        this.items = this.items.filter((item) => item.id !== value.id);
-        if (this.items.length === 0) {
-          this.$emit("removed", value);
+    const methods = {
+      saveItems: async (): Promise<void> => {
+        listPage.loading.value = true;
+        const response = await postApi<Code[]>(
+          "codes/save-all/",
+          listPage.items.value.map((item, index) => {
+            return {
+              ...item,
+              displayOrder: index + 1,
+            };
+          }),
+        );
+        listPage.loading.value = false;
+        if (response.success) {
+          window.sessionStorage.removeItem(`code__${props.type}`);
+          listPage.items.value = response.data || [];
         }
-      }
-    }
-  }
-
-  public async saveItems(): Promise<void> {
-    this.loading = true;
-    const response = await postApi<Code[]>(
-      "codes/save-all/",
-      this.items.map((item, index) => {
-        return {
-          ...item,
-          displayOrder: index + 1,
-        };
-      }),
+      },
+      remove: async (value: Code): Promise<void> => {
+        const result = await confirmDelete(`코드: ${value.value}`);
+        if (result.value) {
+          listPage.loading.value = true;
+          const response = await deleteApi<Code>(`codes/${value.id}`);
+          listPage.loading.value = false;
+          if (response.success) {
+            window.sessionStorage.removeItem(`code__${value.type}`);
+            listPage.items.value = listPage.items.value.filter(
+              (item) => item.id !== value.id,
+            );
+            if (listPage.items.value.length === 0) {
+              emit("removed", value);
+            }
+          }
+        }
+      },
+      onCreated: (value: Code): void => {
+        if (props.type === value.type) {
+          listPage.items.value = [value, ...listPage.items.value];
+        } else {
+          emit("created", value);
+        }
+      },
+      onUpdated: (value: Code): void => {
+        listPage.items.value.splice(
+          listPage.items.value.findIndex(
+            (item) => item.id === listDialog.editItem.value.id,
+          ),
+          1,
+          value,
+        );
+      },
+      getList: (): void => {
+        listPage.fetchList.value();
+      },
+    };
+    watch(
+      () => props.type,
+      () => {
+        listPage.url.value = `codes/?type=${props.type}`;
+        listPage.fetchList.value();
+      },
     );
-    this.loading = false;
-    if (response.success) {
-      window.sessionStorage.removeItem(`code__${this.type}`);
-      this.items = response.data || [];
-    }
-  }
-}
+    return { ...listDialog, ...listPage, ...methods };
+  },
+});
 </script>

@@ -15,18 +15,16 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
 import NavMenuItem from "@/components/navigation/NavMenuItem.vue";
 import { Drawer } from "@/definitions/types";
+import { defineComponent, PropType } from "@vue/composition-api";
 
-@Component({
-  components: {
-    NavMenuItem,
-    NavMenu: () => import("@/components/navigation/NavMenu.vue"),
+export default defineComponent({
+  name: "NavMenu",
+  components: { NavMenuItem },
+  props: {
+    drawers: { type: Array as PropType<Drawer[]>, default: () => [] },
+    depth: { type: Number, default: 0 },
   },
-})
-export default class extends Vue {
-  @Prop({ default: () => [] }) readonly drawers!: Drawer[];
-  @Prop({ default: 0 }) readonly depth!: number;
-}
+});
 </script>

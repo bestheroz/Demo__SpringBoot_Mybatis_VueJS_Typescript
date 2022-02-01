@@ -37,31 +37,34 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+import { computed, defineComponent } from "@vue/composition-api";
 
-@Component({
-  components: {},
-})
-export default class extends Vue {
-  @Prop({ required: true }) readonly icon!: string;
-  @Prop({ required: true }) readonly text!: string;
-  @Prop({ default: "primary" }) readonly color!: string;
-  @Prop({ type: Boolean }) readonly disabled!: boolean;
-  @Prop({ type: Boolean }) readonly loading!: boolean;
-  @Prop({ type: Boolean }) readonly bottom!: boolean;
-  @Prop({ type: Boolean }) readonly left!: boolean;
-  @Prop({ type: Boolean }) readonly top!: boolean;
-  @Prop({ type: Boolean }) readonly right!: boolean;
-  @Prop({ type: Boolean }) readonly small!: boolean;
-  @Prop({ type: Boolean }) readonly xSmall!: boolean;
-  @Prop({ type: Boolean }) readonly large!: boolean;
-  @Prop({ type: Boolean }) readonly xLarge!: boolean;
-  @Prop({ type: Boolean }) readonly block!: boolean;
-  @Prop({}) readonly className!: string;
-  @Prop({}) readonly size!: number | string;
-
-  get defaultPosition(): boolean {
-    return !this.top && !this.bottom && !this.right && !this.left;
-  }
-}
+export default defineComponent({
+  props: {
+    icon: { required: true, type: String },
+    text: { required: true, type: String },
+    color: { default: "primary", type: String },
+    disabled: { type: Boolean },
+    loading: { type: Boolean },
+    bottom: { type: Boolean },
+    left: { type: Boolean },
+    top: { type: Boolean },
+    right: { type: Boolean },
+    small: { type: Boolean },
+    xSmall: { type: Boolean },
+    large: { type: Boolean },
+    xLarge: { type: Boolean },
+    block: { type: Boolean },
+    className: { type: String, default: undefined },
+    size: { type: [String, Number], default: undefined },
+  },
+  setup(props) {
+    const computes = {
+      defaultPosition: computed((): boolean => {
+        return !props.top && !props.bottom && !props.right && !props.left;
+      }),
+    };
+    return { ...computes };
+  },
+});
 </script>

@@ -98,7 +98,6 @@
 </template>
 
 <script lang="ts">
-import { Component, PropSync, Ref, VModel, Vue } from "vue-property-decorator";
 import { postApi, putApi } from "@/utils/apis";
 import { ValidationObserver } from "vee-validate";
 import DialogTitle from "@/components/title/DialogTitle.vue";
@@ -106,60 +105,79 @@ import type { Menu } from "@/definitions/models";
 import CreatedUpdatedBar from "@/components/history/CreatedUpdatedBar.vue";
 import { MENU_TYPE, MenuTypes } from "@/definitions/selections";
 import ButtonWithIcon from "@/components/button/ButtonWithIcon.vue";
-import { routerToNewTab } from "@/utils/commands";
+import setupEditDialog from "@/composition/setupEditDialog";
+import {
+  defineComponent,
+  PropType,
+  reactive,
+  ref,
+  toRefs,
+} from "@vue/composition-api";
+import store from "@/store";
 
-@Component({
-  components: {
-    ButtonWithIcon,
-    CreatedUpdatedBar,
-    DialogTitle,
+export default defineComponent({
+  components: { ButtonWithIcon, CreatedUpdatedBar, DialogTitle },
+  props: {
+    value: {
+      type: Object as PropType<Menu>,
+      required: true,
+    },
+    dialog: {
+      required: true,
+      type: Boolean,
+    },
   },
-})
-export default class extends Vue {
-  @VModel({ required: true }) vModel!: Menu;
-  @PropSync("dialog", { required: true, type: Boolean }) syncedDialog!: boolean;
-  @Ref("observer") readonly observer!: InstanceType<typeof ValidationObserver>;
+  setup(props, { emit }) {
+    const editDialog = setupEditDialog<Menu>(props, emit, "menus/");
+    const state = reactive({
+      MenuTypes: MenuTypes,
+      MENU_TYPE: MENU_TYPE,
+    });
+    const methods = {
+      save: async (): Promise<void> => {
+        const isValid = await observer.value?.validate();
+        if (!isValid) {
+          return;
+        }
+        editDialog.isNew.value
+          ? await methods.create()
+          : await methods.update();
+      },
 
-  loading = false;
-  readonly MenuTypes = MenuTypes;
-  readonly MENU_TYPE = MENU_TYPE;
+      create: async (): Promise<void> => {
+        editDialog.loading.value = true;
+        const response = await postApi<Menu>("menus/", editDialog.vModel.value);
+        editDialog.loading.value = false;
+        if (response.success) {
+          store.dispatch("reloadRole").then();
+          editDialog.syncedDialog.value = false;
+          emit("created", response.data);
+        }
+      },
 
-  get isNew(): boolean {
-    return !this.vModel.id;
-  }
+      update: async (): Promise<void> => {
+        editDialog.loading.value = true;
+        const response = await putApi<Menu>(
+          `menus/${editDialog.vModel.value.id}`,
+          editDialog.vModel.value,
+        );
+        editDialog.loading.value = false;
+        if (response.success) {
+          store.dispatch("reloadRole").then();
+          editDialog.syncedDialog.value = false;
+          emit("updated", response.data);
+        }
+      },
 
-  protected async save(): Promise<void> {
-    const isValid = await this.observer.validate();
-    if (!isValid) {
-      return;
-    }
-    this.isNew ? await this.create() : await this.update();
-  }
-
-  protected async create(): Promise<void> {
-    this.loading = true;
-    const response = await postApi<Menu>("menus/", this.vModel);
-    this.loading = false;
-    if (response.success) {
-      this.$store.dispatch("reloadRole").then();
-      this.syncedDialog = false;
-      this.$emit("created", response.data);
-    }
-  }
-
-  protected async update(): Promise<void> {
-    this.loading = true;
-    const response = await putApi<Menu>(`menus/${this.vModel.id}`, this.vModel);
-    this.loading = false;
-    if (response.success) {
-      this.$store.dispatch("reloadRole").then();
-      this.syncedDialog = false;
-      this.$emit("updated", response.data);
-    }
-  }
-
-  protected linkIconSite(): void {
-    routerToNewTab("https://pictogrammers.github.io/@mdi/font/6.4.95/");
-  }
-}
+      linkIconSite: (): void => {
+        window.open(
+          "https://pictogrammers.github.io/@mdi/font/6.5.95/",
+          "_blank",
+        );
+      },
+    };
+    const observer = ref<null | InstanceType<typeof ValidationObserver>>(null);
+    return { ...editDialog, ...toRefs(state), ...methods, observer };
+  },
+});
 </script>

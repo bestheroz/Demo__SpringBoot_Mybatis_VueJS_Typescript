@@ -1,11 +1,3 @@
 {
-  "reject": [
-    "eslint",
-    "sass",
-    "sass-loader",
-    "vuex-persistedstate",
-    "eslint-plugin-prettier",
-    "eslint-plugin-vue",
-    "@vue/eslint-config-typescript"
-  ]
+  "reject": ["sass", "sass-loader", "vuex-persistedstate"]
 }

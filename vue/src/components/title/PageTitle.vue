@@ -1,6 +1,6 @@
 <template>
   <div class="d-flex align-center pb-2">
-    <div class="display-1" v-text="_title" />
+    <div class="text-h4" v-text="_title" />
     <v-spacer />
     <v-menu
       bottom
@@ -39,28 +39,33 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
 import ButtonIconTooltip from "@/components/button/ButtonIconTooltip.vue";
 import { RoleMenuMap } from "@/definitions/models";
+import store from "@/store";
+import { computed, defineComponent } from "@vue/composition-api";
+import router from "@/router";
 
-@Component({
+export default defineComponent({
   components: { ButtonIconTooltip },
-})
-export default class extends Vue {
-  @Prop({}) readonly title!: string;
-  @Prop({ default: "추가" }) readonly buttonText!: string;
-  @Prop({ type: Boolean }) readonly buttonLoading!: boolean;
-  @Prop({ default: "mdi-plus" }) readonly buttonIcon!: string;
-  @Prop({ type: Boolean }) readonly hideMoreActions!: boolean;
-  @Prop({ type: Boolean }) readonly hideButton!: boolean;
-
-  get _title(): string {
-    return (
-      this.title ||
-      this.$store.getters.flatAuthorities.find(
-        (f: RoleMenuMap) => f.menu.url === this.$route.path,
-      ).menu.name
-    );
-  }
-}
+  props: {
+    title: { type: String, default: undefined },
+    buttonText: { type: String, default: "추가" },
+    buttonLoading: { type: Boolean },
+    buttonIcon: { type: String, default: "mdi-plus" },
+    hideMoreActions: { type: Boolean },
+    hideButton: { type: Boolean },
+  },
+  setup(props) {
+    const computes = {
+      _title: computed(
+        (): string =>
+          props.title ||
+          store.getters.flatAuthorities.find(
+            (f: RoleMenuMap) => f.menu.url === router.app.$route.path,
+          ).menu.name,
+      ),
+    };
+    return { ...computes };
+  },
+});
 </script>

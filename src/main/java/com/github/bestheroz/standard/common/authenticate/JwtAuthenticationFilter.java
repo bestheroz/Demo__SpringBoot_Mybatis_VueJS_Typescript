@@ -41,7 +41,7 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
             .map(item -> item.replace("*", ""))
             .filter(requestURI::startsWith)
             .findFirst();
-    if (oPublicPages.isEmpty() && requestURI.startsWith("/api")) {
+    if (oPublicPages.isEmpty()) {
       final String token = JwtTokenProvider.resolveAccessToken(request);
       if (StringUtils.isEmpty(token)) {
         log.info("non accessToken");

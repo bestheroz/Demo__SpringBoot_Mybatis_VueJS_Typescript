@@ -33,32 +33,35 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
 import { deleteApi, downloadFileApi } from "@/utils/apis";
 import { toastError } from "@/utils/alerts";
 import FileUploader from "@/components/file/FileUploader.vue";
+import { defineComponent, reactive, toRefs } from "@vue/composition-api";
 
-@Component({
-  components: {
-    FileUploader,
+export default defineComponent({
+  components: { FileUploader },
+  setup() {
+    const state = reactive({ filePaths: [] as string[] });
+    const methods = {
+      deleteFile: async (filepath: string): Promise<void> => {
+        const response = await deleteApi(
+          `delete/file?filePath=${filepath}`,
+          false,
+        );
+
+        if (response.success) {
+          state.filePaths = state.filePaths.filter(
+            (filePath) => filePath !== filepath,
+          );
+        } else {
+          toastError(response.message);
+        }
+      },
+      downloadFile: async (filepath: string): Promise<void> => {
+        await downloadFileApi(`download/file?filePath=${filepath}`);
+      },
+    };
+    return { ...toRefs(state), ...methods };
   },
-})
-export default class extends Vue {
-  filePaths: string[] = [];
-
-  async deleteFile(filepath: string): Promise<void> {
-    const response = await deleteApi(`delete/file?filePath=${filepath}`, false);
-
-    if (response.success) {
-      this.filePaths = this.filePaths.filter(
-        (filePath) => filePath !== filepath,
-      );
-    } else {
-      toastError(response.message);
-    }
-  }
-  async downloadFile(filepath: string): Promise<void> {
-    await downloadFileApi(`download/file?filePath=${filepath}`);
-  }
-}
+});
 </script>

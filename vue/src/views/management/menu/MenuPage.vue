@@ -5,13 +5,12 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
 import MenuList from "@/views/management/menu/MenuList.vue";
+import { defineComponent } from "@vue/composition-api";
 
-@Component({
+export default defineComponent({
   components: {
     MenuList,
   },
-})
-export default class extends Vue {}
+});
 </script>

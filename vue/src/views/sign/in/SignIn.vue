@@ -2,7 +2,7 @@
   <div>
     <v-card class="text-center pa-1">
       <v-card-title
-        class="justify-center display-1 mb-2"
+        class="justify-center text-h4 mb-2"
         v-text="envs.PRODUCT_TITLE"
       />
       <v-card-subtitle>Sign in to your account</v-card-subtitle>
@@ -70,93 +70,101 @@
 </template>
 
 <script lang="ts">
-import { Component, Ref, Vue } from "vue-property-decorator";
-import { ValidationObserver } from "vee-validate";
+import envs from "@/constants/envs";
 import pbkdf2 from "pbkdf2";
 import { ApiDataResult, axiosInstance } from "@/utils/apis";
 import { toastCloseAll } from "@/utils/alerts";
-import { defaultAdmin, defaultAdminConfig } from "@/definitions/defaults";
+import { defaultAdminConfig } from "@/definitions/defaults";
 import { getYourConfig, routerReplace } from "@/utils/commands";
 import { AxiosResponse } from "axios";
-import envs from "@/constants/envs";
+import { ValidationObserver } from "vee-validate";
+import {
+  computed,
+  defineComponent,
+  onBeforeMount,
+  onMounted,
+  reactive,
+  ref,
+  toRefs,
+} from "@vue/composition-api";
+import Vuetify from "@/plugins/vuetify";
+import store from "@/store";
 
-@Component({
-  components: {},
-})
-export default class extends Vue {
-  @Ref("observer") readonly observer!: InstanceType<typeof ValidationObserver>;
-  readonly envs = envs;
-
-  loginId = "1";
-  password = "1";
-
-  dialog = false;
-  loading = false;
-
-  errorProvider = false;
-  errorProviderMessages = "";
-
-  // show password field
-  showPassword = false;
-
-  protected async created(): Promise<void> {
-    this.$vuetify.theme.dark = false;
-  }
-
-  protected async mounted(): Promise<void> {
-    await this.$store.commit("setAdmin", defaultAdmin());
-    await this.$store.dispatch("reloadConfig");
-    await this.$store.commit("setRole", null);
-    await this.$store.commit("setAdminCodes", null);
-    window.sessionStorage.clear();
-  }
-
-  protected async submit(): Promise<void> {
-    this.resetErrors();
-    const inValid = await this.observer.validate();
-    if (!inValid) {
-      return;
-    }
-
-    const pbkdf2Password: string = pbkdf2
-      .pbkdf2Sync(this.password || "", "salt", 1, 32, "sha512")
-      .toString();
-    this.loading = true;
-    const response = await axiosInstance.post<
-      { loginId: string; password: string },
-      AxiosResponse<
-        ApiDataResult<{
-          accessToken: string;
-          refreshToken: string;
-        }>
-      >
-    >("api/sign-in", {
-      loginId: this.loginId,
-      password: pbkdf2Password,
+export default defineComponent({
+  setup() {
+    const state = reactive({
+      loginId: "1",
+      password: "1",
+      loading: false,
+      errorProvider: false,
+      errorProviderMessages: "",
+      showPassword: false,
     });
-    this.loading = false;
-    if (response.data.success && response.data.data) {
-      await this.$store.dispatch("saveToken", {
-        accessToken: response.data.data.accessToken,
-        refreshToken: response.data.data.refreshToken,
-      });
-      await this.$store.dispatch("reloadRole");
-      await this.$store.commit(
-        "setConfig",
-        (await getYourConfig()) || defaultAdminConfig(),
-      );
-      await this.$store.dispatch("reloadAdminCodes");
-      toastCloseAll();
-      await routerReplace("/");
-    } else {
-      this.errorProvider = true;
-      this.errorProviderMessages = response.data.message;
-    }
-  }
+    const computes = {
+      envs: computed((): typeof envs => envs),
+    };
+    const methods = {
+      submit: async (): Promise<void> => {
+        methods.resetErrors();
+        const inValid = await observer.value?.validate();
+        if (!inValid) {
+          return;
+        }
 
-  protected resetErrors(): void {
-    this.errorProvider = false;
-    this.errorProviderMessages = "";
-  }
-}
+        const pbkdf2Password: string = pbkdf2
+          .pbkdf2Sync(state.password || "", "salt", 1, 32, "sha512")
+          .toString();
+        state.loading = true;
+        const response = await axiosInstance.post<
+          { loginId: string; password: string },
+          AxiosResponse<
+            ApiDataResult<{
+              accessToken: string;
+              refreshToken: string;
+            }>
+          >
+        >("api/sign-in", {
+          loginId: state.loginId,
+          password: pbkdf2Password,
+        });
+        state.loading = false;
+        if (response.data.success && response.data.data) {
+          await store.commit("saveToken", {
+            accessToken: response.data.data.accessToken,
+            refreshToken: response.data.data.refreshToken,
+          });
+          await store.dispatch("reloadRole");
+          await store.commit(
+            "setConfig",
+            (await getYourConfig()) || defaultAdminConfig(),
+          );
+          await store.dispatch("reloadAdminCodes");
+          toastCloseAll();
+          await routerReplace("/");
+        } else {
+          state.errorProvider = true;
+          state.errorProviderMessages = response.data.message;
+        }
+      },
+
+      resetErrors(): void {
+        state.errorProvider = false;
+        state.errorProviderMessages = "";
+      },
+    };
+    onBeforeMount(() => {
+      Vuetify.framework.theme.dark = false;
+    });
+    onMounted(async () => {
+      await store.commit("clearAdmin");
+      await store.dispatch("reloadConfig");
+      await store.commit("setRole", null);
+      await store.commit("setAdminCodes", null);
+      window.localStorage.clear();
+      window.sessionStorage.clear();
+    });
+    const observer = ref<null | InstanceType<typeof ValidationObserver>>(null);
+    return { ...toRefs(state), ...computes, ...methods, observer };
+  },
+});
 </script>

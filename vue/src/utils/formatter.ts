@@ -8,7 +8,7 @@ export function getAdminNm(value: number | undefined | null): string {
   const find: SelectItem<number> = store.getters.adminCodes.find(
     (value1: SelectItem<number>) => value1.value === value,
   );
-  return find?.text ?? value ?? "-";
+  return find?.text ?? value?.toString() ?? "-";
 }
 
 export function formatDatetime(value: DateTime | undefined | null): string {

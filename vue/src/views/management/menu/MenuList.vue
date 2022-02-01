@@ -9,12 +9,10 @@
           x-large
           v-if="$store.getters.writeAuthority"
         >
-          <v-icon> mdi-sort</v-icon>
-          순서저장
+          <v-icon> mdi-sort </v-icon> 순서저장
         </v-btn>
         <v-btn @click="getList" color="primary" outlined x-large>
-          <v-icon> mdi-refresh</v-icon>
-          새로고침
+          <v-icon> mdi-refresh </v-icon> 새로고침
         </v-btn>
       </template>
     </page-title>
@@ -38,7 +36,6 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
 import { deleteApi, getApi, postApi } from "@/utils/apis";
 import { confirmDelete } from "@/utils/alerts";
 import MenuEditDialog from "@/views/management/menu/MenuEditDialog.vue";
@@ -47,103 +44,126 @@ import { cloneDeep } from "lodash-es";
 import type { Menu } from "@/definitions/models";
 import PageTitle from "@/components/title/PageTitle.vue";
 import MenuNestedDraggable from "@/views/management/menu/MenuNestedDraggable.vue";
+import {
+  defineComponent,
+  onMounted,
+  reactive,
+  toRefs,
+} from "@vue/composition-api";
+import setupList from "@/composition/setupList";
+import setupListDialog from "@/composition/setupListDialog";
+import setupReadonly from "@/composition/setupReadonly";
+import store from "@/store";
 
-@Component({
-  components: {
-    MenuNestedDraggable,
-    PageTitle,
-    MenuEditDialog,
+export default defineComponent({
+  components: { MenuNestedDraggable, PageTitle, MenuEditDialog },
+  props: {
+    height: {
+      type: [Number, String],
+      default: undefined,
+    },
   },
-})
-export default class extends Vue {
-  @Prop() readonly height!: number | string;
+  setup() {
+    const listDialog = setupListDialog<Menu>(defaultMenu);
+    const list = setupList<Menu>("menus/");
 
-  items: Menu[] = [];
-  loading = false;
-  saving = false;
-  drag = false;
+    const state = reactive({
+      saving: false,
+      drag: false,
+    });
 
-  editItem: Menu = defaultMenu();
-  dialog = false;
+    const methods = {
+      getList: async (): Promise<void> => {
+        list.items.value = [];
+        list.loading.value = true;
+        const response = await getApi<Menu[]>("menus/");
+        list.loading.value = false;
+        list.items.value = response.data || [];
+      },
 
-  protected mounted(): void {
-    this.getList();
-  }
+      onCreated: (value: Menu): void => {
+        list.items.value = [...list.items.value, value];
+      },
 
-  public async getList(): Promise<void> {
-    this.items = [];
-    this.loading = true;
-    const response = await getApi<Menu[]>("menus/");
-    this.loading = false;
-    this.items = response.data || [];
-  }
+      onUpdated: (value: Menu): void => {
+        methods.changeUpdateItemRecursive(list.items.value, value);
+      },
 
-  protected onCreated(value: Menu): void {
-    this.items = [...this.items, value];
-  }
-
-  protected onUpdated(value: Menu): void {
-    this.changeUpdateItemRecursive(this.items, value);
-  }
-
-  protected changeUpdateItemRecursive(items: Menu[], value: Menu): boolean {
-    if (items.some((item) => item.id === value.id)) {
-      items.splice(
-        items.findIndex((item) => item.id === value.id),
-        1,
-        value,
-      );
-      return true;
-    } else {
-      for (const item of items) {
-        if (this.changeUpdateItemRecursive(item.children, value)) {
+      changeUpdateItemRecursive: (items: Menu[], value: Menu): boolean => {
+        if (items.some((item) => item.id === value.id)) {
+          items.splice(
+            items.findIndex((item) => item.id === value.id),
+            1,
+            value,
+          );
           return true;
+        } else {
+          for (const item of items) {
+            if (methods.changeUpdateItemRecursive(item.children, value)) {
+              return true;
+            }
+          }
+          return false;
         }
-      }
-      return false;
-    }
-  }
+      },
 
-  public showAddDialog(): void {
-    this.editItem = defaultMenu();
-    this.dialog = true;
-  }
+      showAddDialog: (): void => {
+        listDialog.editItem.value = defaultMenu();
+        listDialog.dialog.value = true;
+      },
+      showEditDialog: (value: Menu): void => {
+        listDialog.editItem.value = cloneDeep(value);
+        listDialog.dialog.value = true;
+      },
 
-  protected showEditDialog(value: Menu): void {
-    this.editItem = cloneDeep(value);
-    this.dialog = true;
-  }
+      onDelete: async (value: Menu): Promise<void> => {
+        const result = await confirmDelete(`메뉴명: ${value.name}`);
+        if (result.value) {
+          state.saving = true;
+          const response = await deleteApi<Menu>(`menus/${value.id}`);
+          state.saving = false;
+          if (response.success) {
+            store.dispatch("reloadRole").then();
+            list.items.value = methods.deleteWithRecursiveChildren(
+              list.items.value,
+              value,
+            );
+          }
+        }
+      },
 
-  protected async onDelete(value: Menu): Promise<void> {
-    const result = await confirmDelete(`메뉴명: ${value.name}`);
-    if (result.value) {
-      this.saving = true;
-      const response = await deleteApi<Menu>(`menus/${value.id}`);
-      this.saving = false;
-      if (response.success) {
-        this.$store.dispatch("reloadRole").then();
-        this.items = this.deleteWithRecursiveChildren(this.items, value);
-      }
-    }
-  }
+      deleteWithRecursiveChildren: (menus: Menu[], menu: Menu): Menu[] => {
+        return menus
+          .filter((item) => item.id !== menu.id)
+          .map((m) => {
+            m.children = methods.deleteWithRecursiveChildren(m.children, menu);
+            return m;
+          });
+      },
 
-  protected deleteWithRecursiveChildren(menus: Menu[], menu: Menu): Menu[] {
-    return menus
-      .filter((item) => item.id !== menu.id)
-      .map((m) => {
-        m.children = this.deleteWithRecursiveChildren(m.children, menu);
-        return m;
-      });
-  }
-
-  public async saveAll(): Promise<void> {
-    this.saving = true;
-    const response = await postApi<Menu[]>("menus/save-all/", this.items);
-    this.saving = false;
-    if (response.success) {
-      this.$store.dispatch("reloadRole").then();
-      this.items = response.data || [];
-    }
-  }
-}
+      saveAll: async (): Promise<void> => {
+        state.saving = true;
+        const response = await postApi<Menu[]>(
+          "menus/save-all/",
+          list.items.value,
+        );
+        state.saving = false;
+        if (response.success) {
+          store.dispatch("reloadRole").then();
+          list.items.value = response.data || [];
+        }
+      },
+    };
+    onMounted(() => {
+      methods.getList();
+    });
+    return {
+      ...listDialog,
+      ...list,
+      ...setupReadonly(),
+      ...toRefs(state),
+      ...methods,
+    };
+  },
+});
 </script>

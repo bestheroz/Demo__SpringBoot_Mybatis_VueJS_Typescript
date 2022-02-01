@@ -3,14 +3,14 @@
     <draggable
       class="dragArea"
       tag="div"
-      :list="roles"
+      :list="vModel"
       :group="{ name: 'g1' }"
-      v-bind="dragOptions"
+      :animation="200"
       handle=".drag-handle"
     >
       <v-list-item
         :key="role.id"
-        v-for="role in roles"
+        v-for="role in vModel"
         :class="role.id === 1 ? 'd-none' : undefined"
       >
         <v-list-item-title class="d-inline" v-if="role.id !== 1">
@@ -33,27 +33,34 @@
   </v-list>
 </template>
 <script lang="ts">
-import { Component, VModel, Vue } from "vue-property-decorator";
 import { Role } from "@/definitions/models";
 import draggable from "vuedraggable";
+import { computed, defineComponent, PropType } from "@vue/composition-api";
 
-@Component({
-  components: {
-    RoleNestedDraggable: () =>
-      import("@/views/management/role/RoleNestedDraggable.vue"),
-    draggable,
+export default defineComponent({
+  name: "RoleNestedDraggable",
+  components: { draggable },
+  props: {
+    value: {
+      type: Array as PropType<Role[]>,
+      required: true,
+      default: () => [] as Role[],
+    },
   },
-})
-export default class extends Vue {
-  @VModel({ required: true, type: Array, default: () => [] })
-  readonly roles!: Role[];
-
-  get dragOptions(): { animation: number } {
-    return {
-      animation: 200,
+  setup(props, { emit }) {
+    const computes = {
+      vModel: computed({
+        get(): Role[] {
+          return props.value;
+        },
+        set(value: Role[]) {
+          emit("input", value);
+        },
+      }),
     };
-  }
-}
+    return { ...computes };
+  },
+});
 </script>
 <style scoped lang="scss">
 .dragArea {

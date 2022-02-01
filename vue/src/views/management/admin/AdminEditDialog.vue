@@ -151,7 +151,6 @@
 </template>
 
 <script lang="ts">
-import { Component, PropSync, Ref, VModel, Vue } from "vue-property-decorator";
 import { getApi, patchApi, postApi } from "@/utils/apis";
 import DatetimePicker from "@/components/picker/DatetimePicker.vue";
 import { ValidationObserver } from "vee-validate";
@@ -163,8 +162,19 @@ import CreatedUpdatedBar from "@/components/history/CreatedUpdatedBar.vue";
 import ButtonWithIcon from "@/components/button/ButtonWithIcon.vue";
 import RoleSelections from "@/views/management/role/RoleSelections.vue";
 import { debounce, DebouncedFunc } from "lodash-es";
+import setupEditDialog from "@/composition/setupEditDialog";
+import {
+  computed,
+  defineComponent,
+  onBeforeMount,
+  PropType,
+  reactive,
+  ref,
+  toRefs,
+} from "@vue/composition-api";
+import store from "@/store";
 
-@Component({
+export default defineComponent({
   components: {
     RoleSelections,
     ButtonWithIcon,
@@ -173,137 +183,148 @@ import { debounce, DebouncedFunc } from "lodash-es";
     DatetimePicker,
     ResetPasswordDialog,
   },
-})
-export default class extends Vue {
-  @VModel({ required: true }) vModel!: Admin;
-  @PropSync("dialog", { required: true, type: Boolean }) syncedDialog!: boolean;
-  @Ref("observer") readonly observer!: InstanceType<typeof ValidationObserver>;
-
-  saving = false;
-  password = "";
-  password2 = "";
-  show1 = false;
-  show2 = false;
-  resetPasswordDialog = false;
-  existsLoginId = false;
-  originalLoginId = "";
-  checked = true;
-  loading = false;
-
-  readonly debounce: DebouncedFunc<() => Promise<void>> = debounce(
-    this.checkExistsLoginId,
-    500,
-  );
-
-  get isNew(): boolean {
-    return !this.vModel.id;
-  }
-
-  get noneWriteAuthority(): boolean {
-    return (
-      (!this.$store.getters.writeAuthority ||
-        this.$store.getters.roleId === this.vModel.role.id ||
-        !this.vModel.role.available) &&
-      !this.isNew
-    );
-  }
-
-  get loginIdErrorText(): string[] | undefined {
-    if (!this.checked) {
-      return undefined;
-    }
-    if (this.vModel.loginId === this.originalLoginId) {
-      return undefined;
-    }
-    return this.existsLoginId ? ["이미 사용중인 아이디 입니다."] : undefined;
-  }
-
-  get loginIdSuccessText(): string[] | undefined {
-    if (!this.checked) {
-      return undefined;
-    }
-    if (this.vModel.loginId === this.originalLoginId) {
-      return undefined;
-    }
-    return this.existsLoginId ? undefined : ["사용 가능한 아이디 입니다."];
-  }
-
-  get loginIdAppendIcon(): string | unknown {
-    if (this.loginIdSuccessText) {
-      return "mdi-check-circle";
-    }
-    if (this.loginIdErrorText) {
-      return "mdi-alert-circle";
-    }
-    return undefined;
-  }
-
-  protected created(): void {
-    this.originalLoginId = this.vModel.loginId;
-  }
-
-  protected async save(): Promise<void> {
-    const isValid = await this.observer.validate();
-    if (!isValid) {
-      return;
-    }
-    this.isNew ? await this.create() : await this.update();
-  }
-
-  protected async create(): Promise<void> {
-    this.saving = true;
-    const params = { ...this.vModel, password: this.password };
-    if (params.password) {
-      params.password = pbkdf2
-        .pbkdf2Sync(params.password, "salt", 1, 32, "sha512")
-        .toString();
-    }
-    const response = await postApi<Admin>("admins/", params);
-    this.saving = false;
-    if (response.success) {
-      await this.$store.dispatch("reloadAdminCodes");
-      this.syncedDialog = false;
-      this.$emit("created", response.data);
-    }
-  }
-
-  protected async update(): Promise<void> {
-    this.saving = true;
-    const params = { ...this.vModel, password: this.password };
-    if (params.password) {
-      params.password = pbkdf2
-        .pbkdf2Sync(params.password, "salt", 1, 32, "sha512")
-        .toString();
-    }
-    const response = await patchApi<Admin>(`admins/${this.vModel.id}`, params);
-    this.saving = false;
-    if (response.success) {
-      if (this.vModel.id === this.$store.getters.admin.id) {
-        await this.$store.dispatch("reIssueAccessToken");
-      }
-      await this.$store.dispatch("reloadAdminCodes");
-      this.syncedDialog = false;
-      this.$emit("updated", response.data);
-    }
-  }
-
-  protected debounceCheckExistsLoginId(): void {
-    if (this.vModel.loginId === this.originalLoginId) {
-      return;
-    }
-    this.loading = true;
-    this.checked = false;
-    this.debounce();
-  }
-
-  protected async checkExistsLoginId(): Promise<void> {
-    this.loading = true;
-    const response = await getApi<boolean>(
-      `admins/exists-login-id?loginId=${this.vModel.loginId}`,
-    );
-    this.loading = false;
-    this.checked = true;
-    this.existsLoginId = response.data;
-  }
-}
+  props: {
+    value: {
+      type: Object as PropType<Admin>,
+      required: true,
+    },
+    dialog: {
+      required: true,
+      type: Boolean,
+    },
+  },
+  setup(props, { emit }) {
+    const editDialog = setupEditDialog<Admin>(props, emit, "admins/");
+    const state = reactive({
+      saving: false,
+      password: "",
+      password2: "",
+      show1: false,
+      show2: false,
+      resetPasswordDialog: false,
+      existsLoginId: false,
+      originalLoginId: "",
+      checked: true,
+    });
+    const computes = {
+      debounce: computed(
+        (): DebouncedFunc<() => Promise<void>> =>
+          debounce(methods.checkExistsLoginId, 500),
+      ),
+      noneWriteAuthority: computed(
+        (): boolean =>
+          (!store.getters.writeAuthority ||
+            store.getters.roleId === editDialog.vModel.value.role.id ||
+            !editDialog.vModel.value.role.available) &&
+          !editDialog.isNew.value,
+      ),
+      loginIdErrorText: computed((): string[] | undefined => {
+        if (!state.checked) {
+          return undefined;
+        }
+        if (editDialog.vModel.value.loginId === state.originalLoginId) {
+          return undefined;
+        }
+        return state.existsLoginId
+          ? ["이미 사용중인 아이디 입니다."]
+          : undefined;
+      }),
+      loginIdSuccessText: computed((): string[] | undefined => {
+        if (!state.checked) {
+          return undefined;
+        }
+        if (editDialog.vModel.value.loginId === state.originalLoginId) {
+          return undefined;
+        }
+        return state.existsLoginId ? undefined : ["사용 가능한 아이디 입니다."];
+      }),
+      loginIdAppendIcon: computed((): string | unknown => {
+        if (computes.loginIdSuccessText.value) {
+          return "mdi-check-circle";
+        }
+        if (computes.loginIdErrorText.value) {
+          return "mdi-alert-circle";
+        }
+        return undefined;
+      }),
+    };
+    const methods = {
+      save: async (): Promise<void> => {
+        const isValid = await observer.value?.validate();
+        if (!isValid) {
+          return;
+        }
+        editDialog.isNew.value
+          ? await methods.create()
+          : await methods.update();
+      },
+      create: async (): Promise<void> => {
+        state.saving = true;
+        const params = { ...editDialog.vModel.value, password: state.password };
+        if (params.password) {
+          params.password = pbkdf2
+            .pbkdf2Sync(params.password, "salt", 1, 32, "sha512")
+            .toString();
+        }
+        const response = await postApi<Admin>("admins/", params);
+        state.saving = false;
+        if (response.success) {
+          await store.dispatch("reloadAdminCodes");
+          editDialog.syncedDialog.value = false;
+          emit("created", response.data);
+        }
+      },
+      update: async (): Promise<void> => {
+        state.saving = true;
+        const params = { ...editDialog.vModel.value, password: state.password };
+        if (params.password) {
+          params.password = pbkdf2
+            .pbkdf2Sync(params.password, "salt", 1, 32, "sha512")
+            .toString();
+        }
+        const response = await patchApi<Admin>(
+          `admins/${editDialog.vModel.value.id}`,
+          params,
+        );
+        state.saving = false;
+        if (response.success) {
+          if (editDialog.vModel.value.id === store.getters.admin.id) {
+            await store.dispatch("reIssueAccessToken");
+          }
+          await store.dispatch("reloadAdminCodes");
+          editDialog.syncedDialog.value = false;
+          emit("updated", response.data);
+        }
+      },
+      debounceCheckExistsLoginId: (): void => {
+        if (editDialog.vModel.value.loginId === state.originalLoginId) {
+          return;
+        }
+        editDialog.loading.value = true;
+        state.checked = false;
+        computes.debounce.value();
+      },
+      checkExistsLoginId: async (): Promise<void> => {
+        editDialog.loading.value = true;
+        const response = await getApi<boolean>(
+          `admins/exists-login-id?loginId=${editDialog.vModel.value.loginId}`,
+        );
+        editDialog.loading.value = false;
+        state.checked = true;
+        state.existsLoginId = response.data;
+      },
+    };
+    onBeforeMount(() => {
+      state.originalLoginId = editDialog.vModel.value.loginId;
+    });
+    const observer = ref<null | InstanceType<typeof ValidationObserver>>(null);
+    return {
+      ...editDialog,
+      ...toRefs(state),
+      ...computes,
+      ...methods,
+      observer,
+    };
+  },
+});
 </script>

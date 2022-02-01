@@ -41,50 +41,66 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import { debounce, DebouncedFunc, uniqueId } from "lodash-es";
+import {
+  computed,
+  defineComponent,
+  reactive,
+  toRefs,
+  watch,
+} from "@vue/composition-api";
 
-@Component({ name: "DataTableColumnEllipsis" })
-export default class extends Vue {
-  @Prop({ required: true }) readonly value!: string;
-  @Prop({ required: false, default: "25rem" }) readonly width!: string | number;
-  @Prop({ required: false, default: "25rem" }) readonly tooltipWidth!:
-    | string
-    | number;
-  show = false;
-
-  readonly textEllipsisTargetId = uniqueId("text-ellipsis-target-");
-  readonly debounce: DebouncedFunc<() => Record<string, never>> = debounce(
-    this.debounceTextEllipsis,
-    100,
-  );
-
-  get maxWidth(): string {
-    return typeof this.width === "string" ? this.width : `${this.width}px`;
-  }
-
-  @Watch("value", { immediate: true })
-  watchValue(): void {
-    this.debounce && this.debounce();
-  }
-
-  debounceTextEllipsis(): void {
-    Promise.resolve()
-      .then(() => {
-        document
-          .querySelectorAll<HTMLElement>(`.${this.textEllipsisTargetId}`)
-          .forEach((item) => item.classList.remove("text-ellipsis"));
-      })
-      .then(() => {
-        document
-          .querySelectorAll<HTMLElement>(`.${this.textEllipsisTargetId}`)
-          .forEach((item) => {
-            item.style.maxWidth = item.offsetWidth + "px";
-            item.classList.add("text-ellipsis");
+export default defineComponent({
+  props: {
+    value: { type: String, required: true },
+    width: { type: [String, Number], default: "25rem" },
+    tooltipWidth: { type: [String, Number], default: "25rem" },
+  },
+  setup(props) {
+    const state = reactive({ show: false });
+    const computes = {
+      textEllipsisTargetId: computed((): string =>
+        uniqueId("text-ellipsis-target-"),
+      ),
+      debounce: computed((): DebouncedFunc<() => Record<string, never>> => {
+        return debounce(methods.debounceTextEllipsis, 100);
+      }),
+      maxWidth: computed((): string =>
+        typeof props.width === "string" ? props.width : `${props.width}px`,
+      ),
+    };
+    const methods = {
+      debounceTextEllipsis: (): void => {
+        Promise.resolve()
+          .then(() => {
+            document
+              .querySelectorAll<HTMLElement>(
+                `.${computes.textEllipsisTargetId.value}`,
+              )
+              .forEach((item) => item.classList.remove("text-ellipsis"));
+          })
+          .then(() => {
+            document
+              .querySelectorAll<HTMLElement>(
+                `.${computes.textEllipsisTargetId.value}`,
+              )
+              .forEach((item) => {
+                item.style.maxWidth = item.offsetWidth + "px";
+                item.classList.add("text-ellipsis");
+              });
           });
-      });
-  }
-}
+      },
+    };
+    watch(
+      () => props.value,
+      () => {
+        computes.debounce.value && computes.debounce.value();
+      },
+      { immediate: true },
+    );
+    return { ...toRefs(state), ...computes, ...methods };
+  },
+});
 </script>
 <style lang="scss">
 .v-application {

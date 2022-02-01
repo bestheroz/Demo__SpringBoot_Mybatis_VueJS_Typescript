@@ -10,13 +10,14 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
 import TextEditor from "@/components/texteditor/TextEditor.vue";
+import { defineComponent, reactive, toRefs } from "@vue/composition-api";
 
-@Component({
+export default defineComponent({
   components: { TextEditor },
-})
-export default class extends Vue {
-  textHtml = "텍스트에디터 테스트";
-}
+  setup() {
+    const state = reactive({ textHtml: "텍스트에디터 테스트" });
+    return { ...toRefs(state) };
+  },
+});
 </script>

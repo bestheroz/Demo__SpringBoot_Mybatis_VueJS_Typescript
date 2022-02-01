@@ -5,7 +5,7 @@
       max-height="400"
       contain
     />
-    <div class="display-2 mt-10">How did you get here?</div>
+    <div class="text-h3 mt-10">How did you get here?</div>
     <div class="my-3">
       Sorry we can't seem to find the page you're looking for.
     </div>

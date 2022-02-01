@@ -63,43 +63,59 @@
 </template>
 
 <script lang="ts">
-import { Component, PropSync, Ref, Prop, Vue } from "vue-property-decorator";
 import { patchApi } from "@/utils/apis";
 import { ValidationObserver } from "vee-validate";
 import pbkdf2 from "pbkdf2";
 import DialogTitle from "@/components/title/DialogTitle.vue";
 import ButtonWithIcon from "@/components/button/ButtonWithIcon.vue";
 import { Admin } from "@/definitions/models";
+import { defineComponent, reactive, ref, toRefs } from "@vue/composition-api";
+import setupSyncedDialog from "@/composition/setupSyncedDialog";
 
-@Component({
+export default defineComponent({
   components: { ButtonWithIcon, DialogTitle },
-})
-export default class extends Vue {
-  @Prop({}) readonly adminId!: number;
-  @PropSync("dialog", { required: true, type: Boolean }) syncedDialog!: boolean;
-  @Ref("observer") readonly observer!: InstanceType<typeof ValidationObserver>;
+  props: {
+    dialog: {
+      required: true,
+      type: Boolean,
+    },
+    adminId: {
+      required: true,
+      type: Number,
+    },
+  },
+  setup(props, { emit }) {
+    const syncedDialog = setupSyncedDialog(props, emit);
+    const state = reactive({
+      loading: false,
+      password: "",
+      passwordCheck: "",
+      showPassword: false,
+      showPasswordCheck: false,
+    });
+    const methods = {
+      async resetPassword(): Promise<void> {
+        const isValid = await observer.value?.validate();
+        if (!isValid) {
+          return;
+        }
 
-  loading = false;
-  password = "";
-  passwordCheck = "";
-  showPassword = false;
-  showPasswordCheck = false;
+        state.loading = true;
 
-  protected async resetPassword(): Promise<void> {
-    const isValid = await this.observer.validate();
-    if (!isValid) {
-      return;
-    }
+        const password = pbkdf2
+          .pbkdf2Sync(state.password, "salt", 1, 32, "sha512")
+          .toString();
 
-    this.loading = true;
-
-    const password = pbkdf2
-      .pbkdf2Sync(this.password, "salt", 1, 32, "sha512")
-      .toString();
-
-    await patchApi<Admin>(`admins/${this.adminId}/reset-password`, password);
-    this.loading = false;
-    this.syncedDialog = false;
-  }
-}
+        await patchApi<Admin>(
+          `admins/${props.adminId}/reset-password`,
+          password,
+        );
+        state.loading = false;
+        syncedDialog.syncedDialog.value = false;
+      },
+    };
+    const observer = ref<null | InstanceType<typeof ValidationObserver>>(null);
+    return { ...syncedDialog, ...toRefs(state), ...methods, observer };
+  },
+});
 </script>

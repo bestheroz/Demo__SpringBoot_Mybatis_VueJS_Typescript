@@ -9,12 +9,10 @@
           x-large
           v-if="$store.getters.writeAuthority"
         >
-          <v-icon> mdi-sort</v-icon>
-          순서저장
+          <v-icon> mdi-sort </v-icon> 순서저장
         </v-btn>
         <v-btn @click="getList" color="primary" outlined x-large>
-          <v-icon> mdi-refresh</v-icon>
-          새로고침
+          <v-icon> mdi-refresh </v-icon> 새로고침
         </v-btn>
       </template>
     </page-title>
@@ -35,7 +33,7 @@
           v-model="items[0].children"
           @click:edit="(item) => showEditDialog(item)"
           @click:delete="(item) => onDelete(item)"
-          v-else
+          v-else-if="items && items.length > 0"
         />
       </v-card-text>
     </v-card>
@@ -50,88 +48,77 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
-import { deleteApi, getApi, postApi } from "@/utils/apis";
+import { deleteApi, postApi } from "@/utils/apis";
 import { confirmDelete } from "@/utils/alerts";
 import RoleEditDialog from "@/views/management/role/RoleEditDialog.vue";
 import { defaultRole } from "@/definitions/defaults";
-import { cloneDeep } from "lodash-es";
 import type { Role } from "@/definitions/models";
 import PageTitle from "@/components/title/PageTitle.vue";
 import RoleNestedDraggable from "@/views/management/role/RoleNestedDraggable.vue";
+import {
+  defineComponent,
+  onMounted,
+  reactive,
+  toRefs,
+} from "@vue/composition-api";
+import setupList from "@/composition/setupList";
+import setupListDialog from "@/composition/setupListDialog";
+import store from "@/store";
 
-@Component({
-  components: {
-    RoleNestedDraggable,
-    PageTitle,
-    RoleEditDialog,
+export default defineComponent({
+  components: { RoleNestedDraggable, PageTitle, RoleEditDialog },
+  props: {
+    height: {
+      type: [Number, String],
+      default: undefined,
+    },
   },
-})
-export default class extends Vue {
-  @Prop() readonly height!: number | string;
+  setup() {
+    const list = store.getters.isSuperAdmin
+      ? setupList<Role>("roles/")
+      : setupList<Role>("mine/roles/");
+    const listDialog = setupListDialog<Role>(defaultRole);
 
-  items: Role[] = this.$store.getters.isSuperAdmin ? [] : [defaultRole()];
-  loading = false;
-  saving = false;
-  drag = false;
+    const state = reactive({
+      saving: false,
+      drag: false,
+    });
+    const methods = {
+      onCreated: (): void => {
+        list.getList();
+      },
+      onUpdated: (): void => {
+        list.getList();
+      },
+      onDelete: async (value: Role): Promise<void> => {
+        const result = await confirmDelete(`역할명: ${value.name}`);
+        if (result.value) {
+          state.saving = true;
+          const response = await deleteApi<Role>(`roles/${value.id}`);
+          state.saving = false;
+          if (response.success) {
+            list.getList();
+          }
+        }
+      },
+      saveAll: async (): Promise<void> => {
+        state.saving = true;
+        const response = await postApi<Role[]>(
+          "roles/save-all/",
+          list.items.value,
+        );
+        state.saving = false;
+        if (response.success) {
+          list.items.value = response.data || [];
+        }
+      },
+    };
 
-  editItem: Role = defaultRole();
-  dialog = false;
+    onMounted(() => {
+      list.getList();
+    });
 
-  protected mounted(): void {
-    this.getList();
-  }
-
-  public async getList(): Promise<void> {
-    this.items = this.$store.getters.isSuperAdmin ? [] : [defaultRole()];
-    this.loading = true;
-    let response;
-    if (this.$store.getters.isSuperAdmin) {
-      response = await getApi<Role[]>("roles/");
-    } else {
-      response = await getApi<Role[]>("mine/roles/");
-    }
-    this.loading = false;
-    this.items = response.data || [];
-  }
-
-  protected onCreated(): void {
-    this.getList().then();
-  }
-
-  protected onUpdated(): void {
-    this.getList().then();
-  }
-
-  public showAddDialog(): void {
-    this.editItem = defaultRole();
-    this.dialog = true;
-  }
-
-  protected showEditDialog(value: Role): void {
-    this.editItem = cloneDeep(value);
-    this.dialog = true;
-  }
-
-  protected async onDelete(value: Role): Promise<void> {
-    const result = await confirmDelete(`역할명: ${value.name}`);
-    if (result.value) {
-      this.saving = true;
-      const response = await deleteApi<Role>(`roles/${value.id}`);
-      this.saving = false;
-      if (response.success) {
-        this.getList().then();
-      }
-    }
-  }
-
-  public async saveAll(): Promise<void> {
-    this.saving = true;
-    const response = await postApi<Role[]>("roles/save-all/", this.items);
-    this.saving = false;
-    if (response.success) {
-      this.items = response.data || [];
-    }
-  }
-}
+    return { ...list, ...listDialog, ...toRefs(state), ...methods };
+  },
+});
 </script>

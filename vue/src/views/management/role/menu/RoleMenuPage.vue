@@ -9,13 +9,12 @@
     >
       <template #more-buttons>
         <v-btn
-          @click="refRoleMenuList.getMenus(roleId)"
+          @click="$refs.refRoleMenuList.getList()"
           color="primary"
           outlined
           x-large
         >
-          <v-icon> mdi-refresh</v-icon>
-          새로고침
+          <v-icon> mdi-refresh </v-icon> 새로고침
         </v-btn>
       </template>
     </page-title>
@@ -29,60 +28,61 @@
 </template>
 
 <script lang="ts">
-import { Component, Ref, Vue } from "vue-property-decorator";
 import RoleMenuList from "@/views/management/role/menu/RoleMenuList.vue";
 import PageTitle from "@/components/title/PageTitle.vue";
 import { Role } from "@/definitions/models";
 import DataTableFilter from "@/components/datatable/DataTableFilter.vue";
-import { Filter } from "@/definitions/types";
+import { Filter, FilterOutput } from "@/definitions/types";
 import { getApi } from "@/utils/apis";
+import {
+  computed,
+  defineComponent,
+  onBeforeMount,
+  reactive,
+  ref,
+  toRefs,
+} from "@vue/composition-api";
 
-@Component({
-  components: {
-    DataTableFilter,
-    PageTitle,
-    RoleMenuList,
-  },
-})
-export default class extends Vue {
-  @Ref() readonly refRoleMenuList!: RoleMenuList;
+export default defineComponent({
+  components: { DataTableFilter, PageTitle, RoleMenuList },
+  setup() {
+    const state = reactive({
+      roles: [] as Role[],
+      saving: false,
+      filterOutput: {} as FilterOutput,
+    });
+    const computes = {
+      filters: computed((): Filter[] => [
+        {
+          type: "checkbox",
+          text: "타입",
+          key: "roleId",
+          single: true,
+          required: true,
+          items: state.roles.map((v, index) => {
+            return { value: v.id || 0, text: v.name, checked: index === 0 };
+          }),
+        },
+      ]),
+      roleId: computed((): number => state.filterOutput.roleId?.[0] as number),
+    };
 
-  roles: Role[] = [];
-  saving = false;
-  filterOutput: Record<string, string | number | boolean[]> = {};
-
-  get filters(): Filter[] {
-    return [
-      {
-        type: "checkbox",
-        text: "타입",
-        key: "roleId",
-        single: true,
-        required: true,
-        items: this.roles.map((v, index) => {
-          return { value: v.id || 0, text: v.name, checked: index === 0 };
-        }),
+    const methods = {
+      saveItems: async (): Promise<void> => {
+        state.saving = true;
+        await refRoleMenuList.value?.saveItems();
+        state.saving = false;
       },
-    ];
-  }
-
-  get roleId(): number {
-    return this.filterOutput.roleId as number;
-  }
-
-  protected created(): void {
-    this.getRoles().then();
-  }
-
-  protected async saveItems(): Promise<void> {
-    this.saving = true;
-    await this.refRoleMenuList.saveItems();
-    this.saving = false;
-  }
-
-  protected async getRoles(): Promise<void> {
-    const response = await getApi<Role[]>("mine/roles/selections/");
-    this.roles = (response.data || []).filter((r) => r.id !== 1);
-  }
-}
+      getRoles: async (): Promise<void> => {
+        const response = await getApi<Role[]>("mine/roles/selections/");
+        state.roles = (response.data || []).filter((r) => r.id !== 1);
+      },
+    };
+    onBeforeMount(() => {
+      methods.getRoles().then();
+    });
+    const refRoleMenuList = ref<null | InstanceType<typeof RoleMenuList>>(null);
+    return { ...toRefs(state), ...computes, ...methods, refRoleMenuList };
+  },
+});
 </script>

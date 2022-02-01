@@ -80,59 +80,58 @@
 </template>
 
 <script lang="ts">
-import { Component, PropSync, Ref, VModel, Vue } from "vue-property-decorator";
-import { postApi, putApi } from "@/utils/apis";
+import { putApi } from "@/utils/apis";
 import { ValidationObserver } from "vee-validate";
 import DialogTitle from "@/components/title/DialogTitle.vue";
 import type { Code } from "@/definitions/models";
 import CreatedUpdatedBar from "@/components/history/CreatedUpdatedBar.vue";
 import ButtonWithIcon from "@/components/button/ButtonWithIcon.vue";
+import { defineComponent, PropType, ref } from "@vue/composition-api";
+import setupEditDialog from "@/composition/setupEditDialog";
 
-@Component({
-  components: {
-    ButtonWithIcon,
-    CreatedUpdatedBar,
-    DialogTitle,
+export default defineComponent({
+  components: { ButtonWithIcon, CreatedUpdatedBar, DialogTitle },
+  props: {
+    value: {
+      type: Object as PropType<Code>,
+      required: true,
+    },
+    dialog: {
+      required: true,
+      type: Boolean,
+    },
   },
-})
-export default class extends Vue {
-  @VModel({ required: true }) vModel!: Code;
-  @PropSync("dialog", { required: true, type: Boolean }) syncedDialog!: boolean;
-  @Ref("observer") readonly observer!: InstanceType<typeof ValidationObserver>;
+  setup(props, { emit }) {
+    const editDialog = setupEditDialog<Code>(props, emit, "codes/");
+    const methods = {
+      save: async (): Promise<void> => {
+        const isValid = await observer.value?.validate();
+        if (!isValid) {
+          return;
+        }
+        editDialog.isNew.value
+          ? await editDialog.create()
+          : await methods.update();
+      },
 
-  loading = false;
-
-  get isNew(): boolean {
-    return !this.vModel.id;
-  }
-
-  protected async save(): Promise<void> {
-    const isValid = await this.observer.validate();
-    if (!isValid) {
-      return;
-    }
-    this.isNew ? await this.create() : await this.put();
-  }
-
-  protected async create(): Promise<void> {
-    this.loading = true;
-    const response = await postApi<Code>("codes/", this.vModel);
-    this.loading = false;
-    if (response.success) {
-      this.syncedDialog = false;
-      this.$emit("created", response.data);
-    }
-  }
-
-  protected async put(): Promise<void> {
-    this.loading = true;
-    const response = await putApi<Code>(`codes/${this.vModel.id}`, this.vModel);
-    this.loading = false;
-    if (response.success) {
-      this.syncedDialog = false;
-      window.sessionStorage.removeItem(`code__${this.vModel.type}`);
-      this.$emit("updated", response.data);
-    }
-  }
-}
+      update: async (): Promise<void> => {
+        editDialog.loading.value = true;
+        const response = await putApi<Code>(
+          `codes/${editDialog.vModel.value.id}`,
+          editDialog.vModel.value,
+        );
+        editDialog.loading.value = false;
+        if (response.success) {
+          editDialog.syncedDialog.value = false;
+          window.sessionStorage.removeItem(
+            `code__${editDialog.vModel.value.type}`,
+          );
+          emit("updated", response.data);
+        }
+      },
+    };
+    const observer = ref<null | InstanceType<typeof ValidationObserver>>(null);
+    return { ...editDialog, ...methods, observer };
+  },
+});
 </script>

@@ -72,70 +72,89 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, PropSync, Ref, Vue } from "vue-property-decorator";
 import DatePicker from "@/components/picker/DatePicker.vue";
 import dayjs from "dayjs";
+import { DateTime } from "@/definitions/types";
+import { computed, defineComponent, PropType, ref } from "@vue/composition-api";
 
-@Component({
+export default defineComponent({
   components: { DatePicker },
-})
-export default class extends Vue {
-  @PropSync("start", { required: true }) syncedStart!:
-    | Date
-    | string
-    | number
-    | null;
+  props: {
+    start: {
+      type: [String, Number, Date, Object] as PropType<DateTime>,
+      default: undefined,
+    },
+    end: {
+      type: [String, Number, Date, Object] as PropType<DateTime>,
+      default: undefined,
+    },
+    startLabel: { type: String, default: undefined },
+    endLabel: { type: String, default: undefined },
+    startMessage: { type: String, default: undefined },
+    endMessage: { type: String, default: undefined },
+    required: { type: Boolean },
+    disabled: { type: Boolean },
+    startDisabled: { type: Boolean },
+    endDisabled: { type: Boolean },
+    dense: { type: Boolean },
+    hideDetails: { type: Boolean },
+    clearable: { type: Boolean },
+    fullWidth: { type: Boolean },
+    hideHint: { type: Boolean },
+  },
+  setup(props, { emit }) {
+    const computes = {
+      syncedStart: computed({
+        get(): DateTime {
+          return props.start as DateTime;
+        },
+        set(value: DateTime) {
+          emit("update:start", value);
+        },
+      }),
+      syncedEnd: computed({
+        get(): DateTime {
+          return props.end as DateTime;
+        },
+        set(value: DateTime) {
+          emit("update:end", value);
+        },
+      }),
+      DATEPICKER_FORMAT: computed((): string => "YYYY-MM-DD"),
+      defaultLabelForStart: computed(
+        (): string => props.startLabel || "시작 날짜",
+      ),
+      defaultLabelForEnd: computed((): string => props.endLabel || "종료 날짜"),
 
-  @PropSync("end", { required: true }) readonly syncedEnd!:
-    | Date
-    | string
-    | number
-    | null;
+      minDate: computed((): string | undefined => {
+        if (!computes.syncedStart.value) {
+          return undefined;
+        }
+        return dayjs(computes.syncedStart.value).format(
+          computes.DATEPICKER_FORMAT.value,
+        );
+      }),
 
-  @Prop({ type: String }) readonly startLabel!: string | null;
-
-  @Prop({ type: String }) readonly endLabel!: string | null;
-
-  @Prop({ type: String }) readonly startMessage!: string | null;
-  @Prop({ type: String }) readonly endMessage!: string | null;
-  @Prop({ type: Boolean, default: false }) readonly required!: boolean;
-  @Prop({ type: Boolean, default: false }) readonly disabled!: boolean;
-  @Prop({ type: Boolean, default: false }) readonly startDisabled!: boolean;
-  @Prop({ type: Boolean, default: false }) readonly endDisabled!: boolean;
-  @Prop({ type: Boolean, default: false }) readonly dense!: boolean;
-  @Prop({ type: Boolean, default: false }) readonly hideDetails!: boolean;
-  @Prop({ type: Boolean, default: false }) readonly clearable!: boolean;
-  @Prop({ type: Boolean, default: false }) readonly fullWidth!: boolean;
-  @Prop({ type: Boolean, default: false }) readonly hideHint!: boolean;
-
-  @Ref("refStart") readonly refStart!: DatePicker;
-  @Ref("refEnd") readonly refEnd!: DatePicker;
-
-  readonly DATEPICKER_FORMAT = "YYYY-MM-DD";
-
-  get defaultLabelForStart(): string {
-    return this.startLabel || "시작 날짜";
-  }
-  get defaultLabelForEnd(): string {
-    return this.endLabel || "종료 날짜";
-  }
-
-  get minDate(): string | undefined {
-    if (!this.syncedStart) {
-      return undefined;
-    }
-    return dayjs(this.syncedStart).format(this.DATEPICKER_FORMAT);
-  }
-
-  get maxDate(): string | undefined {
-    if (!this.syncedEnd) {
-      return undefined;
-    }
-    return dayjs(this.syncedEnd).format(this.DATEPICKER_FORMAT);
-  }
-
-  async validate(): Promise<boolean> {
-    return (await this.refStart.validate()) && (await this.refEnd.validate());
-  }
-}
+      maxDate: computed((): string | undefined => {
+        if (!computes.syncedEnd.value) {
+          return undefined;
+        }
+        return dayjs(computes.syncedEnd.value).format(
+          computes.DATEPICKER_FORMAT.value,
+        );
+      }),
+    };
+    const methods = {
+      validate: async (): Promise<boolean> => {
+        return (
+          !!(await refStart.value?.validate()) &&
+          !!(await refEnd.value?.validate())
+        );
+      },
+    };
+    const refStart = ref<null | InstanceType<typeof DatePicker>>(null);
+    const refEnd = ref<null | InstanceType<typeof DatePicker>>(null);
+    return { ...computes, ...methods, refStart, refEnd };
+  },
+});
 </script>

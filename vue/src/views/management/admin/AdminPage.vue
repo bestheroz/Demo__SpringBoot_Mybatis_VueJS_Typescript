@@ -5,11 +5,11 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
 import AdminList from "@/views/management/admin/AdminList.vue";
 
-@Component({
+import { defineComponent } from "@vue/composition-api";
+
+export default defineComponent({
   components: { AdminList },
-})
-export default class extends Vue {}
+});
 </script>

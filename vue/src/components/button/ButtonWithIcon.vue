@@ -18,21 +18,20 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+import { defineComponent } from "@vue/composition-api";
 
-@Component({
-  components: {},
-})
-export default class extends Vue {
-  @Prop({ required: true }) readonly text!: string;
-  @Prop({ required: true }) readonly icon!: string;
-  @Prop({ default: "primary" }) readonly color!: string;
-  @Prop({ type: Boolean }) readonly disabled!: boolean;
-  @Prop({ type: Boolean }) readonly loading!: boolean;
-  @Prop({ type: Boolean }) readonly small!: boolean;
-  @Prop({ type: Boolean }) readonly xSmall!: boolean;
-  @Prop({ type: Boolean }) readonly large!: boolean;
-  @Prop({ type: Boolean }) readonly xLarge!: boolean;
-  @Prop({ type: Boolean }) readonly block!: boolean;
-}
+export default defineComponent({
+  props: {
+    icon: { required: true, type: String },
+    text: { required: true, type: String },
+    color: { default: "primary", type: String },
+    disabled: { type: Boolean },
+    loading: { type: Boolean },
+    small: { type: Boolean },
+    xSmall: { type: Boolean },
+    large: { type: Boolean },
+    xLarge: { type: Boolean },
+    block: { type: Boolean },
+  },
+});
 </script>

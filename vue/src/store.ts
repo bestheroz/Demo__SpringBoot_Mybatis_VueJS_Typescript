@@ -9,15 +9,15 @@ import Vuetify from "./plugins/vuetify";
 import { ROLE_AUTHORITY_TYPE } from "@/definitions/selections";
 import config from "./configs";
 import {
-  getAccessToken,
   getAdminCodes,
   getCurrentAuthority,
   getDrawersFromRoleMenuMaps,
   getFlatRoleMenuMaps,
+  getNewToken,
   signOut,
   uploadConfig,
 } from "@/utils/commands";
-import { defaultAdminConfig } from "@/definitions/defaults";
+import { defaultAdmin, defaultAdminConfig } from "@/definitions/defaults";
 import { getApi } from "@/utils/apis";
 
 Vue.use(Vuex);
@@ -29,8 +29,7 @@ const admin = {
     loginId: "",
     name: "",
     roleId: 0,
-    accessToken: null,
-    refreshToken: null,
+    accessToken: null as string | null,
   },
   getters: {
     roleId: (state: any) => {
@@ -44,18 +43,25 @@ const admin = {
         roleId: state.roleId,
       };
     },
-    signedIn: (state: any): boolean => {
-      return !!state.id && !!state.accessToken && !!state.refreshToken;
+    loggedIn: (state: any): boolean => {
+      return (
+        !!state.id &&
+        !!window.localStorage.getItem("accessToken") &&
+        !!window.localStorage.getItem("refreshToken")
+      );
     },
     accessToken: (state: any): string | null => {
       return state.accessToken;
     },
-    refreshToken: (state: any): string | null => {
-      return state.refreshToken;
-    },
   },
   mutations: {
-    setAccessToken(state: any, accessToken: string): void {
+    saveToken(
+      state: any,
+      payload: {
+        accessToken: string;
+        refreshToken: string;
+      },
+    ): void {
       try {
         const jwt = jwt_decode<{
           exp: number;
@@ -63,52 +69,37 @@ const admin = {
           loginId: string;
           name: string;
           roleId: string;
-        }>(accessToken);
+        }>(payload.accessToken);
         state.id = jwt.id;
         state.loginId = jwt.loginId;
         state.name = jwt.name;
         state.roleId = jwt.roleId;
-        state.accessToken = accessToken;
+        state.accessToken = payload.accessToken;
+        window.localStorage.setItem("accessToken", payload.accessToken);
+        window.localStorage.setItem("refreshToken", payload.refreshToken);
       } catch (e: unknown) {
         signOut().then();
       }
     },
-    setRefreshToken(state: any, refreshToken: string): void {
-      state.refreshToken = refreshToken;
-    },
-    setAdmin: (
-      state: any,
-      admin: {
-        id: number;
-        loginId: string;
-        name: string;
-        roleId: number;
-      },
-    ) => {
+    clearAdmin: (state: any) => {
+      const admin = defaultAdmin();
       state.id = admin.id;
       state.loginId = admin.loginId;
       state.name = admin.name;
-      state.roleId = admin.roleId;
+      state.roleId = admin.role.id;
       state.accessToken = null;
-      state.refreshToken = null;
+      window.localStorage.removeItem("accessToken");
+      window.localStorage.removeItem("refreshToken");
     },
   },
   actions: {
-    saveToken(
-      { commit }: ActionContext<any, any>,
-      payload: { accessToken: string; refreshToken: string },
-    ): void {
-      commit("setAccessToken", payload.accessToken);
-      commit("setRefreshToken", payload.refreshToken);
-    },
     async reIssueAccessToken({
       commit,
-      getters,
     }: ActionContext<any, any>): Promise<void> {
-      await commit(
-        "setAccessToken",
-        await getAccessToken(getters.accessToken, getters.refreshToken),
-      );
+      const newToken = await getNewToken();
+      if (newToken) {
+        await commit("saveToken", newToken);
+      }
     },
   },
 };
@@ -224,7 +215,7 @@ const config1 = {
     },
     reloadConfig: ({ commit, getters }: ActionContext<any, any>) => {
       commit("setConfig", defaultAdminConfig());
-      if (getters.signedIn) {
+      if (getters.loggedIn) {
         uploadConfig(getters.config);
       }
     },
@@ -233,9 +224,9 @@ const config1 = {
 const authority = {
   state: {
     superAdminFlag: false,
-    drawers: [],
-    flatAuthorities: [],
-    currentAuthority: null,
+    drawers: [] as Drawer[],
+    flatAuthorities: [] as RoleMenuMap[],
+    currentAuthority: null as RoleMenuMap | null,
     writeAuthority: false,
     deleteAuthority: false,
     excelAuthority: false,
@@ -295,7 +286,7 @@ const authority = {
 };
 const codes = {
   state: {
-    adminCodes: null,
+    adminCodes: [] as SelectItem<number>[],
   },
   getters: {
     adminCodes: (state: any): SelectItem<number>[] => {

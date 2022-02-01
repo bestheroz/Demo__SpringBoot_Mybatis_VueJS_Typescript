@@ -13,7 +13,7 @@
           <v-form :readonly="!$store.getters.writeAuthority">
             <ValidationObserver ref="observer">
               <v-row>
-                <v-col cols="12" md="3">
+                <v-col cols="12" md="6">
                   <ValidationProvider
                     v-slot="{ errors }"
                     name="역할명"
@@ -50,63 +50,65 @@
 </template>
 
 <script lang="ts">
-import { Component, PropSync, Ref, VModel, Vue } from "vue-property-decorator";
-import { postApi, putApi } from "@/utils/apis";
+import { postApi } from "@/utils/apis";
 import { ValidationObserver } from "vee-validate";
 import DialogTitle from "@/components/title/DialogTitle.vue";
 import type { Role } from "@/definitions/models";
 import CreatedUpdatedBar from "@/components/history/CreatedUpdatedBar.vue";
 import ButtonWithIcon from "@/components/button/ButtonWithIcon.vue";
+import {
+  defineComponent,
+  PropType,
+  reactive,
+  ref,
+  toRefs,
+} from "@vue/composition-api";
+import store from "@/store";
+import setupEditDialog from "@/composition/setupEditDialog";
 
-@Component({
-  components: {
-    ButtonWithIcon,
-    CreatedUpdatedBar,
-    DialogTitle,
+export default defineComponent({
+  components: { ButtonWithIcon, CreatedUpdatedBar, DialogTitle },
+  props: {
+    value: {
+      type: Object as PropType<Role>,
+      required: true,
+    },
+    dialog: {
+      required: true,
+      type: Boolean,
+    },
   },
-})
-export default class extends Vue {
-  @VModel({ required: true }) vModel!: Role;
-  @PropSync("dialog", { required: true, type: Boolean }) syncedDialog!: boolean;
-  @Ref("observer") readonly observer!: InstanceType<typeof ValidationObserver>;
+  setup(props, { emit }) {
+    const editDialog = setupEditDialog<Role>(props, emit, "roles/");
+    const state = reactive({});
+    const methods = {
+      save: async (): Promise<void> => {
+        const isValid = await observer.value?.validate();
+        if (!isValid) {
+          return;
+        }
+        editDialog.isNew.value
+          ? await methods.create()
+          : await editDialog.update();
+      },
 
-  loading = false;
-
-  get isNew(): boolean {
-    return !this.vModel.id;
-  }
-
-  protected async save(): Promise<void> {
-    const isValid = await this.observer.validate();
-    if (!isValid) {
-      return;
-    }
-    this.isNew ? await this.create() : await this.update();
-  }
-
-  protected async create(): Promise<void> {
-    this.loading = true;
-    const response = await postApi<Role>(
-      `roles/?parentId=${
-        this.$store.getters.isSuperAdmin ? "" : this.$store.getters.roleId
-      }`,
-      this.vModel,
-    );
-    this.loading = false;
-    if (response.success) {
-      this.syncedDialog = false;
-      this.$emit("created", response.data);
-    }
-  }
-
-  protected async update(): Promise<void> {
-    this.loading = true;
-    const response = await putApi<Role>(`roles/${this.vModel.id}`, this.vModel);
-    this.loading = false;
-    if (response.success) {
-      this.syncedDialog = false;
-      this.$emit("updated", response.data);
-    }
-  }
-}
+      create: async (): Promise<void> => {
+        editDialog.loading.value = true;
+        const response = await postApi<Role>(
+          `roles/?parentId=${
+            store.getters.isSuperAdmin ? "" : store.getters.roleId
+          }`,
+          editDialog.vModel.value,
+        );
+        editDialog.loading.value = false;
+        if (response.success) {
+          editDialog.syncedDialog.value = false;
+          emit("created", response.data);
+        }
+      },
+    };
+    const observer = ref<null | InstanceType<typeof ValidationObserver>>(null);
+    return { ...editDialog, ...toRefs(state), ...methods, observer };
+  },
+});
 </script>

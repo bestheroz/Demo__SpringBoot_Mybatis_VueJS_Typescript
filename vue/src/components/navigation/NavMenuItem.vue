@@ -45,15 +45,23 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
 import type { Drawer } from "@/definitions/types";
 import { MENU_TYPE } from "@/definitions/selections";
+import {
+  defineComponent,
+  PropType,
+  reactive,
+  toRefs,
+} from "@vue/composition-api";
 
-@Component({})
-export default class extends Vue {
-  @Prop({ required: true }) readonly drawer!: Drawer;
-  @Prop({ required: true }) readonly depth!: number;
-
-  readonly MENU_TYPE = MENU_TYPE;
-}
+export default defineComponent({
+  props: {
+    drawer: { type: Object as PropType<Drawer>, required: true },
+    depth: { type: Number, required: true },
+  },
+  setup() {
+    const state = reactive({ MENU_TYPE: MENU_TYPE });
+    return { ...toRefs(state) };
+  },
+});
 </script>

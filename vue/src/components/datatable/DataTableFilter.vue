@@ -48,12 +48,12 @@
     <!--    필터 선택 Chip 부분-->
     <template>
       <span
-        v-for="(filter, index) in cloneFilters"
+        v-for="(filter, _index) in cloneFilters"
         :key="filter.key"
         class="d-inline-flex ml-1 mt-0 mb-1"
       >
         <data-table-filter-selected-chip
-          v-model="cloneFilters[index]"
+          v-model="cloneFilters[_index]"
           @change="onChangeFilter"
         />
       </span>
@@ -62,71 +62,88 @@
 </template>
 
 <script lang="ts">
-import { Component, Emit, Prop, Vue, Watch } from "vue-property-decorator";
-import { Filter } from "@/definitions/types";
+import type { Filter } from "@/definitions/types";
 import DataTableFilterItems from "@/components/datatable/DataTableFilterItems.vue";
 import DataTableFilterSelectedChip from "@/components/datatable/DataTableFilterSelectedChip.vue";
+import {
+  computed,
+  defineComponent,
+  PropType,
+  reactive,
+  toRefs,
+  watch,
+} from "@vue/composition-api";
 
-@Component({
+export default defineComponent({
   components: { DataTableFilterSelectedChip, DataTableFilterItems },
-})
-export default class extends Vue {
-  @Prop({ required: true }) readonly filters!: Filter[];
-
-  cloneFilters: Filter[] = [];
-  index = 0;
-
-  get filteredLength(): number {
-    return this.cloneFilters
-      .map((f) => f.items.some((i) => i.checked))
-      .filter((f) => f).length;
-  }
-
-  @Watch("filters", { immediate: true })
-  protected watchFilters(val: Filter[]): void {
-    this.cloneFilters = [
-      ...val.map((f) => {
-        const cloneItems =
-          this.cloneFilters.find((c) => c.key === f.key)?.items || [];
-        return {
-          ...f,
-          items: [
-            ...f.items.map((i) => {
-              return {
-                ...i,
-                checked:
-                  cloneItems.find((ci) => ci.value === i.value)?.checked ||
-                  i.checked,
-              };
-            }),
-          ],
-        };
-      }),
-    ];
-    this.onChangeFilter();
-  }
-
-  public resetFilter(): void {
-    this.cloneFilters = [];
-    this.watchFilters(this.filters);
-  }
-
-  @Emit("update:output")
-  protected onChangeFilter(): Record<string, (string | number | boolean)[]> {
-    return Object.fromEntries(
-      Object.entries(
-        this.cloneFilters
-          .filter((v) => v.items.some((i) => i.checked))
-          .map((v) => {
+  props: {
+    filters: { type: Array as PropType<Filter[]>, required: true },
+  },
+  setup(props, { emit }) {
+    const state = reactive({ cloneFilters: [] as Filter[], index: 0 });
+    const computes = {
+      filteredLength: computed(
+        (): number =>
+          state.cloneFilters
+            .map((f) => f.items.some((i) => i.checked))
+            .filter((f) => f).length,
+      ),
+    };
+    const methods = {
+      resetFilter: (): void => {
+        state.cloneFilters = [];
+        methods.changeCloneFilters(props.filters);
+      },
+      changeCloneFilters: (val: Filter[]): void => {
+        state.cloneFilters = [
+          ...val.map((f) => {
+            const cloneItems =
+              state.cloneFilters.find((c) => c.key === f.key)?.items || [];
             return {
-              key: v.key,
-              value: v.items.filter((i) => i.checked).map((i) => i.value),
+              ...f,
+              items: [
+                ...f.items.map((i) => {
+                  return {
+                    ...i,
+                    checked:
+                      cloneItems.find((ci) => ci.value === i.value)?.checked ||
+                      i.checked,
+                  };
+                }),
+              ],
             };
           }),
-      ).map(([, v]) => {
-        return [v.key, v.value];
-      }),
+        ];
+      },
+      onChangeFilter: (): void => {
+        emit(
+          "update:output",
+          Object.fromEntries(
+            Object.entries(
+              state.cloneFilters
+                .filter((v) => v.items.some((i) => i.checked))
+                .map((v) => {
+                  return {
+                    key: v.key,
+                    value: v.items.filter((i) => i.checked).map((i) => i.value),
+                  };
+                }),
+            ).map(([, v]) => {
+              return [v.key, v.value];
+            }),
+          ),
+        );
+      },
+    };
+    watch(
+      () => props.filters,
+      (val: Filter[]) => {
+        methods.changeCloneFilters(val);
+        methods.onChangeFilter();
+      },
+      { immediate: true },
     );
-  }
-}
+    return { ...toRefs(state), ...computes, ...methods };
+  },
+});
 </script>

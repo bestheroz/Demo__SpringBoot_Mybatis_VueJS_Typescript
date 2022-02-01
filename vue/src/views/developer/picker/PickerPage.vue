@@ -149,45 +149,53 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
 import DatePicker from "@/components/picker/DatePicker.vue";
 import dayjs from "dayjs";
 import DatetimePicker from "@/components/picker/DatetimePicker.vue";
 import DateStartEndPicker from "@/components/picker/DateStartEndPicker.vue";
 import DatetimeStartEndPicker from "@/components/picker/DatetimeStartEndPicker.vue";
 import { DateTime } from "@/definitions/types";
+import {
+  computed,
+  defineComponent,
+  reactive,
+  toRefs,
+} from "@vue/composition-api";
 
-@Component({
+export default defineComponent({
   components: {
     DatetimeStartEndPicker,
     DateStartEndPicker,
     DatetimePicker,
     DatePicker,
   },
-})
-export default class extends Vue {
-  date: DateTime = new Date();
-  dateParseISOString: string = dayjs().toISOString();
-  dateParseNumber: number = dayjs().toDate().getTime();
-  date2: DateTime = new Date();
-  date3: DateTime = new Date();
-  start1: DateTime = dayjs().add(-1, "day").toDate();
-  end1: DateTime = dayjs().add(1, "day").toDate();
-  start2: DateTime = dayjs().add(-1, "day").startOf("day").toDate();
-  end2: DateTime = dayjs().add(1, "day").endOf("day").toDate();
-  start3: DateTime = dayjs().add(-1, "day").startOf("day").toDate();
-  end3: DateTime = dayjs().add(1, "day").endOf("day").toDate();
-
-  get now(): Date {
-    return new Date();
-  }
-
-  protected getType(val: DateTime): string {
-    return typeof val === "object"
-      ? val instanceof Date
-        ? "Date"
-        : "object"
-      : typeof val;
-  }
-}
+  setup() {
+    const state = reactive({
+      date: new Date() as DateTime,
+      dateParseISOString: dayjs().toISOString(),
+      dateParseNumber: dayjs().toDate().getTime(),
+      date2: new Date() as DateTime,
+      date3: new Date() as DateTime,
+      start1: dayjs().add(-1, "day").toDate() as DateTime,
+      end1: dayjs().add(1, "day").toDate() as DateTime,
+      start2: dayjs().add(-1, "day").startOf("day").toDate() as DateTime,
+      end2: dayjs().add(1, "day").endOf("day").toDate() as DateTime,
+      start3: dayjs().add(-1, "day").startOf("day").toDate() as DateTime,
+      end3: dayjs().add(1, "day").endOf("day").toDate() as DateTime,
+    });
+    const computes = {
+      now: computed((): Date => new Date()),
+    };
+    const methods = {
+      getType: (val: DateTime): string => {
+        return typeof val === "object"
+          ? val instanceof Date
+            ? "Date"
+            : "object"
+          : typeof val;
+      },
+    };
+    return { ...toRefs(state), ...computes, ...methods };
+  },
+});
 </script>

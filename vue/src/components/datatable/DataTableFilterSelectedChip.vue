@@ -3,10 +3,10 @@
     <v-menu rounded="lg" v-model="isOpen" offset-y>
       <template #activator="{ on }">
         <v-chip
-          :close="!filter.required"
+          :close="!vModel.required"
           @click:close="emptySelectFilters"
           outlined
-          :color="filter.required ? 'error' : 'primary'"
+          :color="vModel.required ? 'error' : 'primary'"
           v-on="on"
           class="pa-2"
           v-show="chipLabel"
@@ -19,7 +19,7 @@
         v-if="isOpen && filtered.items.length > 0 && filtered.type !== 'text'"
       >
         <data-table-filter-items
-          v-model="filter"
+          v-model="vModel"
           from-chip
           @closed="isOpen = false"
           @change="$emit('change')"
@@ -30,53 +30,71 @@
 </template>
 
 <script lang="ts">
-import { Component, VModel, Vue } from "vue-property-decorator";
 import type { Filter } from "@/definitions/types";
 import DataTableFilterItems from "@/components/datatable/DataTableFilterItems.vue";
+import {
+  computed,
+  defineComponent,
+  PropType,
+  reactive,
+  toRefs,
+} from "@vue/composition-api";
+import setupVModel from "@/composition/setupVModel";
 
-@Component({
+export default defineComponent({
   components: { DataTableFilterItems },
-})
-export default class extends Vue {
-  @VModel({ required: true }) filter!: Filter;
-
-  isOpen = false;
-
-  get filtered(): Filter {
-    return {
-      ...this.filter,
-      items: this.filter.items.filter((i) => i.checked),
-    };
-  }
-
-  get chipLabel(): string | undefined {
-    if (this.filtered.items.length > 0) {
-      if (["dateStartEndPicker", "text"].includes(this.filtered.type)) {
-        return `${this.filtered.text} = ["${
-          this.filtered.items[0].chipText || this.filtered.items[0].value
-        }"]`;
-      } else {
-        return `${this.filtered.text} = ["${this.filtered.items
-          .map((i) => i.text)
-          /* eslint-disable quotes */
-          .join('", "')}"]`;
-      }
-    }
-    return undefined;
-  }
-
-  protected emptySelectFilters(): void {
-    this.filter = {
-      ...this.filter,
-      items: this.filter.items.map((item) => {
-        if (this.filter.type === "text") {
-          return { ...item, checked: false, value: "" };
-        } else {
-          return { ...item, checked: false };
+  props: {
+    value: { required: true, type: Object as PropType<Filter> },
+  },
+  setup(props, { emit }) {
+    const vModel = setupVModel<Filter>(props, emit);
+    const state = reactive({ isOpen: false });
+    const computes = {
+      filtered: computed((): Filter => {
+        return {
+          ...vModel.vModel.value,
+          items: vModel.vModel.value.items.filter((i) => i.checked),
+        };
+      }),
+      chipLabel: computed((): string | undefined => {
+        if (computes.filtered.value.items.length > 0) {
+          if (
+            ["dateStartEndPicker", "text"].includes(
+              computes.filtered.value.type,
+            )
+          ) {
+            return `${computes.filtered.value.text} = ["${
+              computes.filtered.value.items[0].chipText ||
+              computes.filtered.value.items[0].value
+            }"]`;
+          } else {
+            return `${
+              computes.filtered.value.text
+            } = ["${computes.filtered.value.items
+              .map((i) => i.text)
+              /* eslint-disable quotes */
+              .join('", "')}"]`;
+          }
         }
+        return undefined;
       }),
     };
-    this.$emit("change");
-  }
-}
+    const methods = {
+      emptySelectFilters: (): void => {
+        vModel.vModel.value = {
+          ...vModel.vModel.value,
+          items: vModel.vModel.value.items.map((item) => {
+            if (vModel.vModel.value.type === "text") {
+              return { ...item, checked: false, value: "" };
+            } else {
+              return { ...item, checked: false };
+            }
+          }),
+        };
+        emit("change");
+      },
+    };
+    return { ...vModel, ...toRefs(state), ...computes, ...methods };
+  },
+});
 </script>

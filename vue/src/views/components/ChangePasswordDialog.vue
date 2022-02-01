@@ -82,50 +82,57 @@
 </template>
 
 <script lang="ts">
-import { Component, PropSync, Ref, Vue } from "vue-property-decorator";
 import { patchApi } from "@/utils/apis";
 import { ValidationObserver } from "vee-validate";
 import pbkdf2 from "pbkdf2";
 import DialogTitle from "@/components/title/DialogTitle.vue";
 import ButtonWithIcon from "@/components/button/ButtonWithIcon.vue";
+import { defineComponent, reactive, ref, toRefs } from "@vue/composition-api";
+import setupSyncedDialog from "@/composition/setupSyncedDialog";
 
-@Component({
+export default defineComponent({
   components: { ButtonWithIcon, DialogTitle },
-})
-export default class extends Vue {
-  @PropSync("dialog", { required: true, type: Boolean }) syncedDialog!: boolean;
-  @Ref("observer") readonly observer!: InstanceType<typeof ValidationObserver>;
-
-  loading = false;
-  oldPassword = "";
-  password = "";
-  password2 = "";
-  show1 = false;
-  show2 = false;
-  show3 = false;
-
-  protected async save(): Promise<void> {
-    const isValid = await this.observer.validate();
-    if (!isValid) {
-      return;
-    }
-
-    this.loading = true;
-    const response = await patchApi<{
-      oldPassword: string;
-      newPassword: string;
-    }>("mine/password", {
-      oldPassword: pbkdf2
-        .pbkdf2Sync(this.oldPassword, "salt", 1, 32, "sha512")
-        .toString(),
-      newPassword: pbkdf2
-        .pbkdf2Sync(this.password, "salt", 1, 32, "sha512")
-        .toString(),
+  props: {
+    dialog: { required: true, type: Boolean },
+  },
+  setup(props, { emit }) {
+    const syncedDialog = setupSyncedDialog(props, emit);
+    const state = reactive({
+      loading: false,
+      oldPassword: "",
+      password: "",
+      password2: "",
+      show1: false,
+      show2: false,
+      show3: false,
     });
-    this.loading = false;
-    if (response.success) {
-      this.syncedDialog = false;
-    }
-  }
-}
+    const methods = {
+      save: async (): Promise<void> => {
+        const isValid = await observer.value?.validate();
+        if (!isValid) {
+          return;
+        }
+
+        state.loading = true;
+        const response = await patchApi<{
+          oldPassword: string;
+          newPassword: string;
+        }>("mine/password", {
+          oldPassword: pbkdf2
+            .pbkdf2Sync(state.oldPassword, "salt", 1, 32, "sha512")
+            .toString(),
+          newPassword: pbkdf2
+            .pbkdf2Sync(state.password, "salt", 1, 32, "sha512")
+            .toString(),
+        });
+        state.loading = false;
+        if (response.success) {
+          syncedDialog.syncedDialog.value = false;
+        }
+      },
+    };
+    const observer = ref<null | InstanceType<typeof ValidationObserver>>(null);
+    return { ...syncedDialog, ...toRefs(state), ...methods, observer };
+  },
+});
 </script>

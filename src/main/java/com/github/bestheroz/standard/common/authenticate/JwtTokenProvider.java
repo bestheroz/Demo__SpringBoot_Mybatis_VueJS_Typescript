@@ -23,8 +23,8 @@ import org.springframework.util.Assert;
 @UtilityClass
 public class JwtTokenProvider {
   private final Algorithm ALGORITHM = Algorithm.HMAC512("secret");
-  private final Long expiresAtAccessToken = 300L;
-  private final Long expiresAtRefreshToken = 2592000L; // 3600 * 24 * 30 == 1month
+  private final Long expiresAtAccessToken = 300L; // 5 minutes
+  private final Long expiresAtRefreshToken = 7_200L; //  2 hours
 
   public String createAccessToken(final CustomUserDetails customUserDetails) {
     Assert.notNull(customUserDetails, "customUserDetails parameter must not be empty or null");
@@ -104,6 +104,16 @@ public class JwtTokenProvider {
     Assert.hasText(token, "token parameter must not be empty or null");
     try {
       JWT.require(ALGORITHM).acceptExpiresAt(expiresAtAccessToken).build().verify(token);
+      return true;
+    } catch (final JWTVerificationException | NullPointerException e) {
+      return false;
+    }
+  }
+
+  public boolean issuedRefreshTokenIn3Seconds(final String refreshToken) {
+    Assert.hasText(refreshToken, "refreshToken parameter must not be empty or null");
+    try {
+      JWT.require(ALGORITHM).acceptExpiresAt(5L).build().verify(refreshToken);
       return true;
     } catch (final JWTVerificationException | NullPointerException e) {
       return false;

@@ -1,7 +1,6 @@
 package com.github.bestheroz.demo.entity;
 
 import com.github.bestheroz.demo.api.menu.MenuSimpleDTO;
-import com.github.bestheroz.demo.repository.MenuRepository;
 import com.github.bestheroz.demo.type.MenuType;
 import java.io.Serial;
 import java.io.Serializable;
@@ -36,11 +35,10 @@ public class Menu implements Serializable {
   protected Long updatedBy;
   protected Instant updated;
 
-  public void changeMenu(MenuRepository menuRepository, final MenuSimpleDTO dto) {
+  public void changeMenu(final MenuSimpleDTO dto) {
     this.name = dto.getName();
     this.type = dto.getType();
     this.url = dto.getUrl();
     this.icon = dto.getIcon();
-    menuRepository.updateById(this, this.id);
   }
 }

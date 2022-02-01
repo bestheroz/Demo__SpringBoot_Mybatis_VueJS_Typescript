@@ -3,12 +3,12 @@
     <draggable
       class="dragArea"
       tag="div"
-      :list="menus"
+      :list="vModel"
       :group="{ name: 'g1' }"
-      v-bind="dragOptions"
+      :animation="200"
       handle=".drag-handle"
     >
-      <v-list-item dense :key="menu.id" v-for="menu in menus">
+      <v-list-item dense :key="menu.id" v-for="menu in vModel">
         <v-list-item-icon>
           <v-icon v-text="menu.icon" />
         </v-list-item-icon>
@@ -51,30 +51,35 @@
   </v-list>
 </template>
 <script lang="ts">
-import { Component, VModel, Vue } from "vue-property-decorator";
 import { Menu } from "@/definitions/models";
 import draggable from "vuedraggable";
 import { MENU_TYPE } from "@/definitions/selections";
+import {
+  defineComponent,
+  PropType,
+  reactive,
+  toRefs,
+} from "@vue/composition-api";
+import setupVModel from "@/composition/setupVModel";
 
-@Component({
+export default defineComponent({
+  name: "MenuNestedDraggable",
   components: {
-    MenuNestedDraggable: () =>
-      import("@/views/management/menu/MenuNestedDraggable.vue"),
     draggable,
   },
-})
-export default class extends Vue {
-  @VModel({ required: true, type: Array, default: () => [] })
-  readonly menus!: Menu[];
-
-  readonly MENU_TYPE = MENU_TYPE;
-
-  get dragOptions(): { animation: number } {
-    return {
-      animation: 200,
-    };
-  }
-}
+  props: {
+    value: {
+      type: Array as PropType<Menu[]>,
+      required: true,
+      default: () => [],
+    },
+  },
+  setup(props, { emit }) {
+    const vModel = setupVModel<Menu[]>(props, emit);
+    const state = reactive({ MENU_TYPE: MENU_TYPE });
+    return { ...vModel, ...toRefs(state) };
+  },
+});
 </script>
 <style scoped lang="scss">
 .dragArea {

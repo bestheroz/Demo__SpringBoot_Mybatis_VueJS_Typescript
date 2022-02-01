@@ -2,7 +2,7 @@
   <div>
     <h3 v-text="label" v-if="label" class="secondary mb-3" />
     <vue-editor
-      v-model="textHtml"
+      v-model="vModel"
       :editor-options="defaultOptions"
       :placeholder="placeholder"
       use-custom-image-handler
@@ -13,70 +13,88 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, VModel, Vue } from "vue-property-decorator";
 import { VueEditor } from "vue2-editor";
 import { uploadFileApi } from "@/utils/apis";
 import { getImageUrl } from "@/utils/formatter";
+import { computed, defineComponent } from "@vue/composition-api";
+import setupVModel from "@/composition/setupVModel";
 
-@Component({
-  name: "TextEditor",
+export default defineComponent({
   components: { VueEditor },
-})
-export default class extends Vue {
-  @VModel({ required: true }) textHtml!: string;
-  @Prop() readonly label!: string;
-  @Prop({ default: "uploaded/textEditor" }) readonly folderName!: string;
-  @Prop({ default: "upload/file" }) readonly apiUrl!: string;
-  @Prop({ default: "40vh" }) readonly height!: string | number;
-  @Prop({ default: "Please enter text." }) readonly placeholder!: string;
+  props: {
+    value: {
+      type: String,
+      required: true,
+    },
+    label: { type: String, default: undefined },
+    folderName: { type: String, default: "uploaded/textEditor" },
+    apiUrl: { type: String, default: "upload/file" },
+    height: { type: [String, Number], default: "40vh" },
+    placeholder: { type: String, default: "Please enter text." },
+  },
+  setup(props, { emit }) {
+    const vModel = setupVModel<string>(props, emit);
+    const computes = {
+      defaultOptions: computed(
+        (): {
+          modules: { toolbar: unknown[] };
+        } => ({
+          modules: {
+            toolbar: [
+              [{ color: [] }],
+              ["bold", "italic", "underline", "strike"],
+              [
+                { align: "" },
+                { align: "center" },
+                { align: "right" },
+                { align: "justify" },
+              ],
 
-  get defaultOptions(): {
-    modules: { toolbar: unknown[] };
-  } {
-    return {
-      modules: {
-        toolbar: [
-          [{ color: [] }],
-          ["bold", "italic", "underline", "strike"],
-          [
-            { align: "" },
-            { align: "center" },
-            { align: "right" },
-            { align: "justify" },
-          ],
+              [{ list: "ordered" }, { list: "bullet" }],
+              ["link", "image", "video"],
 
-          [{ list: "ordered" }, { list: "bullet" }],
-          ["link", "image", "video"],
+              ["clean"], // remove formatting button
+            ],
+          },
+        }),
+      ),
+    };
+    const methods = {
+      uploadImage: async (
+        file: File,
+        // eslint-disable-next-line @typescript-eslint/ban-types
+        Editor: { insertEmbed: Function },
+        cursorLocation: number,
+      ): Promise<void> => {
+        const formData = new FormData();
+        formData.append("folderName", props.folderName);
+        formData.append("file", file);
+        const result = await uploadFileApi(props.apiUrl, formData);
+        Editor.insertEmbed(cursorLocation, "image", getImageUrl(result.data));
+      },
 
-          ["clean"], // remove formatting button
-        ],
+      validateText: (): boolean => {
+        // html 태그 삭제 정규식
+        const extractTextPattern = /(<([^>]+)>)/gi;
+        return !!vModel.vModel.value.replace(extractTextPattern, "");
       },
     };
-  }
-
-  protected async uploadImage(
-    file: File,
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    Editor: { insertEmbed: Function },
-    cursorLocation: number,
-  ): Promise<void> {
-    const formData = new FormData();
-    formData.append("folderName", this.folderName);
-    formData.append("file", file);
-    const result = await uploadFileApi(this.apiUrl, formData);
-    Editor.insertEmbed(cursorLocation, "image", getImageUrl(result.data));
-  }
-}
+    return { ...vModel, ...computes, ...methods };
+  },
+});
 </script>
 
 <style lang="scss">
 .quillWrapper {
   padding-bottom: 40px;
+
   .ql-toolbar {
     background-color: #a6a6a6;
   }
+
   .ql-container {
     overflow-y: auto;
+
     .ql-tooltip {
       left: 0 !important;
     }

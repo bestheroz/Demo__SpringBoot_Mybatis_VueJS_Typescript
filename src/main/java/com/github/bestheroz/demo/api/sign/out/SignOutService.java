@@ -17,6 +17,10 @@ public class SignOutService {
   public void signOut() {
     this.adminRepository
         .getItemById(AuthenticationUtils.getId())
-        .ifPresent(admin -> admin.signOut(adminRepository));
+        .ifPresent(
+            admin -> {
+              admin.signOut();
+              this.adminRepository.updateTokenNullById(AuthenticationUtils.getId());
+            });
   }
 }

@@ -5,13 +5,12 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
 import RoleList from "@/views/management/role/RoleList.vue";
+import { defineComponent } from "@vue/composition-api";
 
-@Component({
+export default defineComponent({
   components: {
     RoleList,
   },
-})
-export default class extends Vue {}
+});
 </script>

@@ -27,28 +27,37 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
-import type { DateTime } from "@/definitions/types";
 import { formatDatetime } from "@/utils/formatter";
+import { computed, defineComponent, PropType } from "@vue/composition-api";
+import { DateTime } from "@/definitions/types";
 
-@Component({
-  components: {},
-})
-export default class extends Vue {
-  @Prop() readonly createdDateTime!: DateTime;
-  @Prop() readonly updatedDateTime!: DateTime;
-
-  get createdDateTimeString(): string {
-    if (!this.createdDateTime) {
-      return "";
-    }
-    return formatDatetime(this.createdDateTime);
-  }
-  get updatedDateTimeString(): string {
-    if (!this.updatedDateTime) {
-      return "";
-    }
-    return formatDatetime(this.updatedDateTime);
-  }
-}
+export default defineComponent({
+  props: {
+    createdDateTime: {
+      type: [String, Number, Date, Object] as PropType<DateTime>,
+      default: undefined,
+    },
+    updatedDateTime: {
+      type: [String, Number, Date, Object] as PropType<DateTime>,
+      default: undefined,
+    },
+  },
+  setup(props) {
+    const computes = {
+      createdDateTimeString: computed((): string => {
+        if (!props.createdDateTime) {
+          return "";
+        }
+        return formatDatetime(props.createdDateTime);
+      }),
+      updatedDateTimeString: computed((): string => {
+        if (!props.updatedDateTime) {
+          return "";
+        }
+        return formatDatetime(props.updatedDateTime);
+      }),
+    };
+    return { ...computes };
+  },
+});
 </script>

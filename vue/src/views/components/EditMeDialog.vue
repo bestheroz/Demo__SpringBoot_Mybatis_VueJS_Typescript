@@ -55,7 +55,6 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, PropSync, Ref, Vue } from "vue-property-decorator";
 import { getApi, patchApi } from "@/utils/apis";
 import { ValidationObserver } from "vee-validate";
 import DialogTitle from "@/components/title/DialogTitle.vue";
@@ -63,42 +62,58 @@ import { defaultAdmin } from "@/definitions/defaults";
 import type { Admin } from "@/definitions/models";
 import CreatedUpdatedBar from "@/components/history/CreatedUpdatedBar.vue";
 import ButtonWithIcon from "@/components/button/ButtonWithIcon.vue";
+import {
+  defineComponent,
+  onBeforeMount,
+  reactive,
+  ref,
+  toRefs,
+} from "@vue/composition-api";
+import setupSyncedDialog from "@/composition/setupSyncedDialog";
+import store from "@/store";
 
-@Component({
+export default defineComponent({
   components: {
     ButtonWithIcon,
     CreatedUpdatedBar,
     DialogTitle,
   },
-})
-export default class extends Vue {
-  @PropSync("dialog", { required: true, type: Boolean }) syncedDialog!: boolean;
-  @Prop({}) readonly adminPassword!: string;
-  @Ref("observer") readonly observer!: InstanceType<typeof ValidationObserver>;
-
-  item: Admin = defaultAdmin();
-  loading = false;
-
-  protected async created(): Promise<void> {
-    const response = await getApi<Admin>("mine");
-    this.item = response.data || defaultAdmin();
-  }
-
-  protected async save(): Promise<void> {
-    const isValid = await this.observer.validate();
-    if (!isValid) {
-      return;
-    }
-
-    this.loading = true;
-    const payload = { ...this.item, password: this.adminPassword };
-    const response = await patchApi<Admin>("mine", payload);
-    this.loading = false;
-    if (response.success) {
-      await this.$store.dispatch("reIssueAccessToken");
-      await this.$store.dispatch("reloadAdminCodes");
-      this.syncedDialog = false;
-    }
-  }
-}
+  props: {
+    dialog: {
+      required: true,
+      type: Boolean,
+    },
+    adminPassword: {
+      required: true,
+      type: String,
+    },
+  },
+  setup(props, { emit }) {
+    const syncedDialog = setupSyncedDialog(props, emit);
+    const state = reactive({ item: defaultAdmin(), loading: false });
+    const methods = {
+      save: async () => {
+        const isValid = await observer.value?.validate();
+        if (!isValid) {
+          return;
+        }
+        state.loading = true;
+        const payload = { ...state.item, password: props.adminPassword };
+        const response = await patchApi<Admin>("mine", payload);
+        state.loading = false;
+        if (response.success) {
+          await store.dispatch("reIssueAccessToken");
+          await store.dispatch("reloadAdminCodes");
+          syncedDialog.syncedDialog.value = false;
+        }
+      },
+    };
+    onBeforeMount(async () => {
+      const response = await getApi<Admin>("mine");
+      state.item = response.data || defaultAdmin();
+    });
+    const observer = ref<null | InstanceType<typeof ValidationObserver>>(null);
+    return { ...syncedDialog, ...toRefs(state), ...methods, observer };
+  },
+});
 </script>

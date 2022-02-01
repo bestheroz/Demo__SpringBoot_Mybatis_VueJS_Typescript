@@ -1,10 +1,12 @@
 package com.github.bestheroz.demo.api.sign.in;
 
+import com.github.bestheroz.standard.common.exception.BusinessException;
+import com.github.bestheroz.standard.common.exception.ExceptionCode;
 import com.github.bestheroz.standard.common.response.ApiResult;
 import com.github.bestheroz.standard.common.response.Result;
-import java.util.Map;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,14 +22,18 @@ public class SignInController {
   private final SignInService signInService;
 
   @PostMapping
-  ResponseEntity<ApiResult<Map<String, String>>> signIn(
-      @RequestBody @Valid final SignInDTO payload) {
-    return Result.ok(this.signInService.signIn(payload.getLoginId(), payload.getPassword()));
+  ResponseEntity<ApiResult<TokenDTO>> signIn(@RequestBody @Valid final SignInDTO payload) {
+    final TokenDTO tokenDTO =
+        this.signInService.signIn(payload.getLoginId(), payload.getPassword());
+    if (tokenDTO == null || StringUtils.isEmpty(tokenDTO.getAccessToken())) {
+      throw new BusinessException(ExceptionCode.FAIL_NOT_ALLOWED_ADMIN);
+    }
+    return Result.ok(tokenDTO);
   }
 
   @GetMapping(value = "/refresh-token")
-  public ResponseEntity<ApiResult<String>> refreshToken(
+  public ResponseEntity<ApiResult<TokenDTO>> refreshToken(
       @RequestHeader(value = "AuthorizationR") final String refreshToken) {
-    return Result.ok(this.signInService.getNewAccessToken(refreshToken));
+    return Result.ok(this.signInService.getNewToken(refreshToken));
   }
 }

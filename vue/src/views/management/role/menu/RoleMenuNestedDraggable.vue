@@ -3,12 +3,12 @@
     <draggable
       class="dragArea"
       tag="div"
-      :list="items"
+      :list="vModel"
       :group="{ name: 'g1' }"
-      v-bind="dragOptions"
+      :animation="200"
       handle=".drag-handle"
     >
-      <v-list-item dense :key="item.menu.id" v-for="item in items">
+      <v-list-item dense :key="item.menu.id" v-for="item in vModel">
         <v-row no-gutters>
           <v-col sm="12" lg="5">
             <v-list-item-icon>
@@ -94,33 +94,39 @@
   </v-list>
 </template>
 <script lang="ts">
-import { Component, Prop, VModel, Vue } from "vue-property-decorator";
 import { RoleMenuMap } from "@/definitions/models";
 import draggable from "vuedraggable";
-import { ROLE_AUTHORITY_TYPE, MENU_TYPE } from "@/definitions/selections";
+import { MENU_TYPE, ROLE_AUTHORITY_TYPE } from "@/definitions/selections";
+import {
+  defineComponent,
+  PropType,
+  reactive,
+  toRefs,
+} from "@vue/composition-api";
+import setupVModel from "@/composition/setupVModel";
 
-@Component({
-  components: {
-    RoleMenuNestedDraggable: () =>
-      import("@/views/management/role/menu/RoleMenuNestedDraggable.vue"),
-    draggable,
+export default defineComponent({
+  name: "RoleMenuNestedDraggable",
+  components: { draggable },
+  props: {
+    value: {
+      type: Array as PropType<RoleMenuMap[]>,
+      required: true,
+    },
+    roleId: {
+      type: Number,
+      required: true,
+    },
   },
-})
-export default class extends Vue {
-  @VModel({ required: true, type: Array, default: () => [] })
-  readonly items!: RoleMenuMap[];
-
-  @Prop({ required: true }) roleId!: number;
-
-  readonly ROLE_AUTHORITY_TYPE = ROLE_AUTHORITY_TYPE;
-  readonly MENU_TYPE = MENU_TYPE;
-
-  get dragOptions(): { animation: number } {
-    return {
-      animation: 200,
-    };
-  }
-}
+  setup(props, { emit }) {
+    const vModel = setupVModel<RoleMenuMap[]>(props, emit);
+    const state = reactive({
+      ROLE_AUTHORITY_TYPE: ROLE_AUTHORITY_TYPE,
+      MENU_TYPE: MENU_TYPE,
+    });
+    return { ...vModel, ...toRefs(state) };
+  },
+});
 </script>
 <style scoped lang="scss">
 .dragArea {

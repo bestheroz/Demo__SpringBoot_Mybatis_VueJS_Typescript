@@ -1,7 +1,6 @@
 package com.github.bestheroz.demo.entity;
 
 import com.github.bestheroz.demo.api.admin.AdminDTO;
-import com.github.bestheroz.demo.repository.AdminRepository;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
@@ -32,37 +31,28 @@ public class Admin implements Serializable {
   protected Long updatedBy;
   protected Instant updated;
 
-  public void plusSignInFailCnt(AdminRepository adminRepository) {
+  public void plusSignInFailCnt() {
     this.signInFailCnt = this.signInFailCnt + 1;
-    adminRepository.plusSignInFailCnt(this.id);
   }
 
-  public void signedSuccess(AdminRepository adminRepository, final String token) {
+  public void signedSuccess(final String token) {
     this.token = token;
     this.signInFailCnt = 0;
-    adminRepository.updateTokenAndSignInFailCnt(this.id, this.token);
   }
 
-  public void signOut(AdminRepository adminRepository) {
-    adminRepository.updateTokenNullById(this.id);
+  public void signOut() {
+    this.setToken(null);
   }
 
-  public void changePassword(AdminRepository adminRepository, final String password) {
+  public void changePassword(final String password) {
     this.password = password;
     this.signInFailCnt = 0;
-    adminRepository.updateById(this, this.id);
   }
 
-  public void changeName(AdminRepository adminRepository, final String name) {
-    this.name = name;
-    adminRepository.updateById(this, this.id);
-  }
-
-  public void change(AdminRepository adminRepository, final AdminDTO dto) {
+  public void change(final AdminDTO dto) {
     this.name = dto.getName();
     this.roleId = dto.getRole().getId();
     this.available = dto.getAvailable();
     this.expired = dto.getExpired();
-    adminRepository.updateById(this, this.id);
   }
 }

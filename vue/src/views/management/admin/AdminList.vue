@@ -12,7 +12,7 @@
           <v-icon> mdi-file-excel</v-icon>
           엑셀다운로드
         </v-btn>
-        <v-btn @click="getList" color="primary" outlined x-large>
+        <v-btn @click="fetchList" color="primary" outlined x-large>
           <v-icon> mdi-refresh</v-icon>
           새로고침
         </v-btn>
@@ -99,204 +99,161 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue, Watch } from "vue-property-decorator";
-import type { Filter, PageResult, Pagination } from "@/definitions/types";
-import { SelectItem } from "@/definitions/types";
+import type { Filter, SelectItem } from "@/definitions/types";
 import { downloadExcelApi, getApi } from "@/utils/apis";
-import envs from "@/constants/envs";
 import AdminEditDialog from "@/views/management/admin/AdminEditDialog.vue";
-import qs from "qs";
 import { defaultAdmin } from "@/definitions/defaults";
 import type { Admin, Role } from "@/definitions/models";
-import { cloneDeep, debounce } from "lodash-es";
 import PageTitle from "@/components/title/PageTitle.vue";
-import dayjs from "dayjs";
 import { BooleanTypes } from "@/definitions/selections";
 import DataTableFilter from "@/components/datatable/DataTableFilter.vue";
+import {
+  computed,
+  defineComponent,
+  onMounted,
+  reactive,
+  toRefs,
+  watch,
+} from "@vue/composition-api";
+import setupReadonly from "@/composition/setupReadonly";
+import setupListDialog from "@/composition/setupListDialog";
 import { DataTableHeader } from "vuetify";
+import setupDatatable from "@/composition/setupDatatable";
+import qs from "qs";
 
-@Component({
-  components: {
-    DataTableFilter,
-    PageTitle,
-    AdminEditDialog,
+export default defineComponent({
+  components: { DataTableFilter, PageTitle, AdminEditDialog },
+  props: {
+    height: {
+      type: [Number, String],
+      default: undefined,
+    },
   },
-})
-export default class AdminList extends Vue {
-  @Prop() readonly height!: number | string;
 
-  readonly envs: typeof envs = envs;
-  readonly dayjs = dayjs;
+  setup() {
+    const listDialog = setupListDialog<Admin>(defaultAdmin);
+    const datatable = setupDatatable<Admin>("admins/");
 
-  pagination: Pagination = {
-    page: 1,
-    sortBy: ["updated"],
-    sortDesc: [true],
-    itemsPerPage: 10,
-  };
+    const state = reactive({
+      saving: false,
+      roles: [] as SelectItem<number>[],
+    });
 
-  items: Admin[] = [];
-  totalItems = 0;
-  loading = false;
-  saving = false;
-  editItem: Admin = defaultAdmin();
-  dialog = false;
-
-  search = "";
-  roles: SelectItem<number>[] = [];
-  filterOutput: Record<string, string | number | boolean[]> = {};
-
-  get filters(): Filter[] {
-    return [
-      {
-        type: "checkbox",
-        text: "권한",
-        key: "roleIdList",
-        items: this.roles.map((v) => {
-          return { ...v, checked: false };
+    const computes = {
+      headers: computed((): DataTableHeader[] => [
+        {
+          text: "#key",
+          align: "start",
+          value: "id",
+        },
+        {
+          text: "관리자 아이디",
+          align: "start",
+          value: "loginId",
+        },
+        {
+          text: "관리자 이름",
+          align: "start",
+          value: "name",
+        },
+        {
+          text: "역할",
+          align: "center",
+          value: "role.name",
+        },
+        {
+          text: "만료일",
+          align: "center",
+          value: "expired",
+          width: "11.5rem",
+        },
+        {
+          text: "사용 가능",
+          align: "center",
+          value: "available",
+          width: "6rem",
+        },
+        {
+          text: "로그인 가능",
+          align: "center",
+          value: "availableSignIn",
+          width: "6rem",
+          sortable: false,
+        },
+        {
+          text: "작업 일시",
+          align: "center",
+          value: "updated",
+          width: "11.5rem",
+        },
+        {
+          text: "작업자",
+          align: "start",
+          value: "updatedBy",
+          width: "8rem",
+        },
+      ]),
+      filters: computed((): Filter[] => [
+        {
+          type: "checkbox",
+          text: "권한",
+          key: "roleIdList",
+          items: state.roles.map((v) => {
+            return { ...v, checked: false };
+          }),
+        },
+        {
+          type: "checkbox",
+          text: "사용 가능",
+          key: "availableList",
+          items: BooleanTypes.map((v) => {
+            return { ...v, checked: false };
+          }),
+          single: true,
+        },
+      ]),
+      queryStringForExcel: computed((): string =>
+        qs.stringify({
+          search: datatable.search.value,
+          ...datatable.filterOutput.value,
+          ...datatable.pagination.value,
+          page: 1,
+          itemsPerPage: 99999999,
         }),
+      ),
+    };
+    const methods = {
+      excel: async (): Promise<void> => {
+        state.saving = true;
+        await downloadExcelApi(
+          `excel/admins?${computes.queryStringForExcel.value}`,
+        );
+        state.saving = false;
       },
-      {
-        type: "checkbox",
-        text: "사용 가능",
-        key: "availableList",
-        items: BooleanTypes.map((v) => {
-          return { ...v, checked: false };
-        }),
-        single: true,
-      },
-    ];
-  }
-
-  get headers(): DataTableHeader[] {
-    return [
-      {
-        text: "#key",
-        align: "start",
-        value: "id",
-      },
-      {
-        text: "관리자 아이디",
-        align: "start",
-        value: "loginId",
-      },
-      {
-        text: "관리자 이름",
-        align: "start",
-        value: "name",
-      },
-      {
-        text: "역할",
-        align: "center",
-        value: "role.name",
-      },
-      {
-        text: "만료일",
-        align: "center",
-        value: "expired",
-        width: "11.5rem",
-      },
-      {
-        text: "사용 가능",
-        align: "center",
-        value: "available",
-        width: "6rem",
-      },
-      {
-        text: "로그인 가능",
-        align: "center",
-        value: "availableSignIn",
-        width: "6rem",
-        sortable: false,
-      },
-      {
-        text: "작업 일시",
-        align: "center",
-        value: "updated",
-        width: "11.5rem",
-      },
-      {
-        text: "작업자",
-        align: "start",
-        value: "updatedBy",
-        width: "8rem",
-      },
-    ];
-  }
-
-  get queryString(): string {
-    return qs.stringify({
-      search: this.search,
-      ...this.filterOutput,
-      ...this.pagination,
+    };
+    onMounted(async () => {
+      const response = await getApi<Role[]>("roles/selections/");
+      state.roles = response.data.map((v) => {
+        return { value: v.id || 0, text: v.name };
+      });
     });
-  }
 
-  get queryStringForExcel(): string {
-    return qs.stringify({
-      search: this.search,
-      ...this.filterOutput,
-      ...this.pagination,
-      page: 1,
-      itemsPerPage: 99999999,
-    });
-  }
-
-  protected async created(): Promise<void> {
-    const response = await getApi<Role[]>("roles/selections/");
-    this.roles = response.data.map((v) => {
-      return { value: v.id || 0, text: v.name };
-    });
-  }
-
-  @Watch("queryString", { immediate: true })
-  public async getList(): Promise<void> {
-    this.fetchList();
-  }
-
-  protected fetchList = debounce(async function (this: AdminList) {
-    this.items = [];
-    this.totalItems = 0;
-    this.loading = true;
-    const response = await getApi<PageResult<Admin>>(
-      `admins/?${this.queryString}`,
+    watch(
+      () => datatable.queryString.value,
+      () => datatable.fetchList.value(),
+      {
+        immediate: true,
+      },
     );
-    this.loading = false;
-    this.items = response.data.content || [];
-    this.totalItems = response.data.totalElements;
-  }, 300);
 
-  protected onCreated(value: Admin): void {
-    this.saving = true;
-    this.items = [value, ...this.items].slice(0, this.pagination.itemsPerPage);
-    this.totalItems++;
-    this.saving = false;
-  }
-
-  protected onUpdated(value: Admin): void {
-    this.saving = true;
-    this.items.splice(
-      this.items.findIndex((item) => item.id === this.editItem.id),
-      1,
-      value,
-    );
-    this.saving = false;
-  }
-
-  protected showAddDialog(): void {
-    this.editItem = defaultAdmin();
-    this.dialog = true;
-  }
-
-  protected showEditDialog(value: Admin): void {
-    this.editItem = cloneDeep(value);
-    this.dialog = true;
-  }
-
-  protected async excel(): Promise<void> {
-    this.saving = true;
-    await downloadExcelApi(`excel/admins?${this.queryStringForExcel}`);
-    this.saving = false;
-  }
-}
+    return {
+      ...datatable,
+      ...listDialog,
+      ...setupReadonly(),
+      ...toRefs(state),
+      ...computes,
+      ...methods,
+    };
+  },
+});
 </script>

@@ -5,6 +5,16 @@ module.exports = {
     sourceType: "module",
     ecmaVersion: 2021,
     parser: "@typescript-eslint/parser",
+    ecmaFeatures: {
+      globalReturn: false,
+      impliedStrict: false,
+      jsx: false,
+    },
+    vueFeatures: {
+      filter: true,
+      interpolationAsNonHTML: false,
+      styleCSSVariableInjection: true,
+    },
   },
   env: {
     node: true,
@@ -12,12 +22,11 @@ module.exports = {
   extends: [
     "plugin:vue/strongly-recommended",
     "eslint:recommended",
-    "@vue/typescript/recommended",
-    "@vue/prettier",
-    "@vue/standard",
-    "@vue/prettier/@typescript-eslint",
+    "plugin:vuetify/base",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:prettier/recommended",
   ],
-  plugins: ["vue", "prettier"],
+  plugins: ["vue"],
   rules: {
     "no-console":
       process.env.NODE_ENV === "production"

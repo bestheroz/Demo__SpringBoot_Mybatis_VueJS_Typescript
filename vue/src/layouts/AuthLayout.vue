@@ -7,7 +7,7 @@
         <slot></slot>
       </div>
       <div
-        class="overline mt-4"
+        class="text-overline mt-4"
         v-text="`${envs.PRODUCT_TITLE} - ${envs.PRODUCT_VERSION}`"
       />
     </div>
@@ -15,13 +15,18 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
 import envs from "@/constants/envs";
+import { computed, defineComponent } from "@vue/composition-api";
 
-@Component({})
-export default class extends Vue {
-  readonly envs = envs;
-}
+export default defineComponent({
+  setup() {
+    const computes = {
+      envs: computed((): typeof envs => envs),
+    };
+
+    return { ...computes };
+  },
+});
 </script>
 
 <style scoped>

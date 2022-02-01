@@ -62,3 +62,5 @@ export interface Filter {
   required?: boolean;
   object?: unknown;
 }
+
+export type FilterOutput = Record<string, (string | number | boolean)[]>;

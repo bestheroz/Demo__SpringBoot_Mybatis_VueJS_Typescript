@@ -11,7 +11,6 @@
 
 <script lang="ts">
 import "@/scss/common.scss";
-import { Component, Vue, Watch } from "vue-property-decorator";
 
 import AuthLayout from "@/layouts/AuthLayout.vue";
 import DefaultLayout from "@/layouts/DefaultLayout.vue";
@@ -23,63 +22,89 @@ import jwt_decode from "jwt-decode";
 import dayjs from "dayjs";
 import { goSignInPage, signOut } from "@/utils/commands";
 import type { RoleMenuMap } from "@/definitions/models";
+import {
+  computed,
+  defineComponent,
+  onBeforeMount,
+  onMounted,
+  watch,
+} from "@vue/composition-api";
+import router from "@/router";
+import store from "@/store";
 
-@Component({
+export default defineComponent({
   components: {
     AuthLayout,
     DefaultLayout,
     ErrorLayout,
   },
-})
-export default class extends Vue {
-  get isRouterLoaded(): boolean {
-    return this.$route.name !== null;
-  }
-
-  get currentLayout(): string {
-    return (this.$route.meta?.layout || "default") + "Layout";
-  }
-
-  protected async mounted(): Promise<void> {
-    document.title = envs.PRODUCT_TITLE;
-  }
-
-  @Watch("$route.fullPath")
-  protected watchRouteFullPath(val: string): void {
-    this.$store.commit("reloadCurrentAuthority", val);
-  }
-
-  @Watch("$store.getters.currentAuthority", { immediate: true })
-  watchCurrentAuthority(val: RoleMenuMap): void {
-    const pageTitle = val?.menu?.name;
-    document.title = pageTitle
-      ? `${envs.PRODUCT_TITLE}::${pageTitle}`
-      : envs.PRODUCT_TITLE;
-  }
-
-  @Watch("$store.getters.accessToken", { immediate: true })
-  async watchAccessToken(val: string): Promise<void> {
-    if (!val) {
-      await goSignInPage();
-      return;
-    }
-    try {
-      if (
-        dayjs((jwt_decode(val) as { exp: number }).exp * 1000).isBefore(dayjs())
-      ) {
-        await this.$store.dispatch("reIssueAccessToken");
+  setup() {
+    const computes = {
+      isRouterLoaded: computed((): boolean => router.app.$route.name !== null),
+      currentLayout: computed(
+        (): string => (router.app.$route.meta?.layout || "default") + "Layout",
+      ),
+    };
+    onBeforeMount(async () => {
+      const refreshToken = window.localStorage.getItem("refreshToken");
+      const accessToken = window.localStorage.getItem("accessToken");
+      if (!refreshToken || !accessToken) {
+        await goSignInPage();
+        return;
       }
-    } catch (e: unknown) {
-      await signOut();
-    }
-  }
 
-  @Watch("$store.getters.primaryColor", { immediate: true })
-  watchPrimaryColor(val: string): void {
-    Vuetify.framework.theme.themes.dark.primary = val;
-    Vuetify.framework.theme.themes.light.primary = val;
-  }
-}
+      if (
+        dayjs(
+          (jwt_decode(refreshToken) as { exp: number }).exp * 1000,
+        ).isBefore(dayjs())
+      ) {
+        await signOut();
+        return;
+      }
+      try {
+        if (
+          dayjs(
+            (jwt_decode(accessToken) as { exp: number }).exp * 1000,
+          ).isBefore(dayjs())
+        ) {
+          await store.dispatch("reIssueAccessToken");
+        }
+      } catch (e: unknown) {
+        await signOut();
+      }
+    });
+
+    onMounted(() => {
+      document.title = envs.PRODUCT_TITLE;
+    });
+
+    watch(
+      () => router.app.$route.fullPath,
+      (val: string) => {
+        store.commit("reloadCurrentAuthority", val);
+      },
+    );
+    watch(
+      () => store.getters.currentAuthority,
+      (val: RoleMenuMap) => {
+        const pageTitle = val?.menu?.name;
+        document.title = pageTitle
+          ? `${envs.PRODUCT_TITLE}::${pageTitle}`
+          : envs.PRODUCT_TITLE;
+      },
+      { immediate: true },
+    );
+    watch(
+      () => store.getters.primaryColor,
+      (val: string) => {
+        Vuetify.framework.theme.themes.dark.primary = val;
+        Vuetify.framework.theme.themes.light.primary = val;
+      },
+    );
+
+    return { ...computes };
+  },
+});
 </script>
 <style scoped>
 /**
